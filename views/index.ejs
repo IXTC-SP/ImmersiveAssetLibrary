@@ -1,0 +1,50 @@
+<%- include('partials/header') %>
+
+    <!-- Upload File Section -->
+    <h1>Upload File</h1>
+    <form action="/" method="post" type="text" enctype="multipart/form-data">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name"><br><br>
+      <label for="description">Description:</label>
+      <input type="textarea" id="description" name="description"><br><br>
+      <input type="file" id="myFile" name="filetoupload" accept=".obj, .fbx">
+      <input type="submit">
+    </form>
+
+    <br>
+    <hr class="solid">
+    <br>
+    <!-- Search Bar Section -->
+    <h1>Search</h1>
+    <form action="/search" method="post" type="text" enctype="multipart/form-data">
+      <input type="text" id="search-input" name="searchinput">
+      <input type="submit">
+    </form>
+    <table>
+      <% for(var i = 0; i < data.searchList.length; i++) { %>
+      <tr>
+          <td><%= data.searchList[i].name %></td>
+          <td><%= data.searchList[i].description %></td>
+          <td><a href="download/<%= data.searchList[i].fileLocation %>" role="button"><button>Download</button></a></td>
+          <td><a href="delete/<%= data.searchList[i].id %>" role="button"><button>Delete</button></a></td>
+      </tr>
+      <% } %>
+    </table>
+
+    <br>
+    <hr class="solid">
+    <br>
+    <!-- List of Content Section -->
+    <h1>Database</h1>
+    <table>
+      <% for(var i = 0; i < data.modelList.length; i++) { %>
+      <tr>
+          <td><%= data.modelList[i].name %></td>
+          <td><%= data.modelList[i].description %></td>
+          <td><a href="download/<%= data.modelList[i].fileLocation %>" role="button"><button>Download</button></a></td>
+          <td><a href="delete/<%= data.modelList[i].id %>" role="button"><button>Delete</button></a></td>
+      </tr>
+      <% } %>
+    </table>
+
+<%- include('partials/footer') %>

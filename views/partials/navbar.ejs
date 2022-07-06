@@ -1,0 +1,22 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="/">Immersive Asset Library</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item" style="<%= navbarState.allowLogin ? '' : 'display:none' %>">
+        <a class="nav-link" href="/login" role="button">Login</a>
+      </li>
+      <li class="nav-item" style="<%= navbarState.allowRegister ? '' : 'display:none' %>">
+        <a class="nav-link" href="/register" role="button">Register</a>
+      </li>
+      <li class="nav-item" style="<%= navbarState.allowLogout ? '' : 'display:none' %>">
+        <form action="/logout" method="post">
+          <input class="nav-link bg-dark border border-dark" type="submit" value="Logout" />
+        </form>
+      </li>
+    </ul>
+  </div>
+</nav>
