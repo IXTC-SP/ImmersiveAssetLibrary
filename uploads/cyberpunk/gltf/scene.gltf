@@ -1,0 +1,277 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 2647,
+      "max": [
+        460.448974609375,
+        -6.0999998822808266e-05,
+        887.3867797851563
+      ],
+      "min": [
+        -460.448974609375,
+        -1381.0423583984375,
+        -887.38671875
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 31764,
+      "componentType": 5126,
+      "count": 2647,
+      "max": [
+        0.9994998574256897,
+        0.9987406730651855,
+        0.9997434020042419
+      ],
+      "min": [
+        -0.9994998574256897,
+        -0.9999366402626038,
+        -1.0
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 2647,
+      "max": [
+        1.0,
+        0.9726353883743286,
+        0.9996910691261292,
+        1.0
+      ],
+      "min": [
+        -1.0,
+        -0.9999927878379822,
+        -0.9990698099136353,
+        -1.0
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 2647,
+      "max": [
+        0.9876390099525452,
+        0.9898380041122437
+      ],
+      "min": [
+        0.0117419995367527,
+        0.011792000383138657
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 12948,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "CatBYTE Studio (https://sketchfab.com/K3NMA)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/cyberpunk-metallic-shiba-inu-a48148bc85b14c9e90ddf00afaef027a",
+      "title": "Cyberpunk: Metallic Shiba Inu"
+    },
+    "generator": "Sketchfab-12.68.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 51792,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 21176,
+      "byteOffset": 51792,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 63528,
+      "byteOffset": 72968,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 42352,
+      "byteOffset": 136496,
+      "byteStride": 16,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 178848,
+      "uri": "scene.bin"
+    }
+  ],
+  "extensionsUsed": [
+    "KHR_materials_clearcoat"
+  ],
+  "images": [
+    {
+      "uri": "textures/Mat_0_baseColor.png"
+    },
+    {
+      "uri": "textures/Mat_0_metallicRoughness.png"
+    },
+    {
+      "uri": "textures/Mat_0_emissive.png"
+    },
+    {
+      "uri": "textures/Mat_0_normal.png"
+    },
+    {
+      "uri": "textures/Mat_0_clearcoat.png"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "emissiveFactor": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "emissiveTexture": {
+        "index": 2
+      },
+      "extensions": {
+        "KHR_materials_clearcoat": {
+          "clearcoatFactor": 0.3095356680134757,
+          "clearcoatRoughnessFactor": 0.4477118677911376,
+          "clearcoatRoughnessTexture": {
+            "index": 1
+          },
+          "clearcoatTexture": {
+            "index": 4
+          }
+        }
+      },
+      "name": "Mat_0",
+      "normalTexture": {
+        "index": 3
+      },
+      "occlusionTexture": {
+        "index": 1,
+        "strength": 0.259289777185235
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Object_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TANGENT": 2,
+            "TEXCOORD_0": 3
+          },
+          "indices": 4,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0,
+        -4.440892098500626e-16,
+        0.0,
+        0.0,
+        4.440892098500626e-16,
+        -1.0,
+        0.0,
+        0.0,
+        -690.5186157226564,
+        690.5181274414061,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "name": "b2805a81f013443b986c2a33cc5e8452.obj.cleaner.materialmerger.gles"
+    },
+    {
+      "mesh": 0,
+      "name": "Object_2"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    },
+    {
+      "sampler": 0,
+      "source": 3
+    },
+    {
+      "sampler": 0,
+      "source": 4
+    }
+  ]
+}

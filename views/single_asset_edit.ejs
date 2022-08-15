@@ -1,0 +1,77 @@
+<%- include('partials/header') %>
+<link rel="stylesheet" href="modellist.css">
+
+
+<div class="container py-5">
+  <!-- Upload File Section -->
+  <h1>Upload File</h1>
+  <form action="/upload" method="post" type="text" enctype="multipart/form-data">
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" name="name"><br><br>
+    <label for="description">Description:</label><br>
+    <input type="textarea" id="description" name="description"><br><br>
+    <label for="tag">Tags:</label><br>
+    <input type="textarea" id="tag" name="tag"><br><br>
+    <div class="3D-content">
+      <input type="checkbox" id="low-poly" name="low-poly" value="LowPoly">
+      <label for="low-poly">Low Poly</label><br>
+      <input type="checkbox" id="animated" name="animated" value="Animated">
+      <label for="animated">Animated</label><br>
+      <input type="checkbox" id="rigged" name="rigged" value="Rigged">
+      <label for="rigged">Rigged</label><br>
+    </div>
+    <div class="360-content">
+    </div>
+    <div class="script-content">
+    </div>
+    <br><input type="submit">
+  </form>
+
+
+</div>
+
+<script type="text/javascript">
+  var e = document.getElementById("asset-type");
+  var value = e.value;
+
+  function checktype(assettype){
+    var value = e.value;
+    console.log(value);
+    var content3d = document.getElementsByClassName("3D-content")[0];
+    var content360 = document.getElementsByClassName("360-content")[0];
+    var contentscript = document.getElementsByClassName("script-content")[0];
+    console.log(content3d);
+    console.log(content360);
+    console.log(contentscript);
+    switch(value) {
+      case "3D":
+        // code block
+        content3d.style.display = "block";
+        content360.style.display = "none";
+        contentscript.style.display = "none";
+        console.log(content3d);
+        break;
+      case "360":
+        // code block
+        content3d.style.display = "none";
+        content360.style.display = "block";
+        contentscript.style.display = "none";
+        console.log("360");
+        break;
+      case "script":
+        // code block
+        content3d.style.display = "none";
+        content360.style.display = "none";
+        contentscript.style.display = "block";
+        console.log("script");
+        break;
+      default:
+        // code block
+    }
+  }
+
+</script>
+
+
+
+<%- include('partials/footer') %>
