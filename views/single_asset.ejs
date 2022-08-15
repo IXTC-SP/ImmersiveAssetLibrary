@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <!-- Upload File Section -->
+    <h1><%= data.model.name %></h1>
+    <br>
+    <hr class="solid">
+    <br>
+    <h3><%= data.model.description %></h3>
+    <br>
+    <hr class="solid">
+    <br>
+    <model-viewer id="model-viewer" alt="<%= data.model.description %>" src="<%= data.model.paths.modelviewerfilepath %>" ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
+
+
+    <script type="module">
+    const modelViewerTexture = document.querySelector("model-viewer");
+
+    modelViewerTexture.addEventListener("load", () => {
+
+      const material = modelViewerTexture.model.materials[0];
+      console.log(material);
+      const createAndApplyTexture = async (channel) => {
+        // Applies the new texture to the specified channel.
+        var diffuse = await modelViewerTexture.createTexture('<%= data.model.paths.diffuse %>');
+        material.pbrMetallicRoughness['baseColorTexture'].setTexture(diffuse);
+
+        var emission = await modelViewerTexture.createTexture('<%= data.model.paths.emission %>');
+        material['emissiveTexture'].setTexture(emission);
+      }
+      createAndApplyTexture('baseColorTexture');
+    });
+
+    </script>
+
+<%- include('partials/footer') %>

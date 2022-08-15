@@ -1,0 +1,34 @@
+<%- include('partials/header') %>
+
+    <!-- Upload File Section -->
+    <h1>Upload File</h1>
+    <form action="/upload" method="post" type="text" enctype="multipart/form-data">
+      <label for="name">Name:</label><br>
+      <input type="text" id="name" name="name"><br><br>
+      <label for="description">Description:</label><br>
+      <input type="textarea" id="description" name="description"><br><br>
+      <label for="description">Model File:</label><br>
+      <input type="file" id="objectfile" name="objectfile" accept=".obj, .fbx"><br><br>
+      <label for="description">Diffuse:</label><br>
+      <input type="file" id="diffuse" name="diffuse" accept=".png, .jpg, .jpeg"><br><br>
+      <label for="description">Metallic Roughness:</label><br>
+      <input type="file" id="metallicroughness" name="metallicroughness" accept=".png, .jpg, .jpeg"><br><br>
+      <label for="description">Normal Map:</label><br>
+      <input type="file" id="normal" name="normal" accept=".png, .jpg, .jpeg"><br><br>
+      <label for="description">Occlusion:</label><br>
+      <input type="file" id="occlusion" name="occlusion" accept=".png, .jpg, .jpeg"><br><br>
+      <label for="description">Emission:</label><br>
+      <input type="file" id="emission" name="emission" accept=".png, .jpg, .jpeg"><br><br>
+      <input type="checkbox" id="low-poly" name="low-poly" value="LowPoly">
+      <label for="low-poly">Low Poly</label><br>
+      <input type="checkbox" id="animated" name="animated" value="Animated">
+      <label for="animated">Animated</label><br>
+      <input type="checkbox" id="rigged" name="rigged" value="Rigged">
+      <label for="rigged">Rigged</label><br>
+      <input type="submit">
+    </form>
+    <br>
+    <hr class="solid">
+    <br>
+
+<%- include('partials/footer') %>
