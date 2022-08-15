@@ -1,39 +1,30 @@
 const express = require('express');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const ejs = require('ejs');
 const app = express();
-const multer = require('multer');
-const fs = require('fs');
+// const multer = require('multer');
+// const fs = require('fs');
 const bodyParser = require('body-parser');
 
 const session = require('express-session');
 const passport = require('passport');
-const passportLocalMongoose = require('passport-local-mongoose');
+// const passportLocalMongoose = require('passport-local-mongoose');
+const path = require('path');
+const url = require('url');
 
-//Multer - for interpreting multipart forms to get model file
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, 'uploads/');
-  },
-
-  filename: function(req, file, cb) {
-    cb(null, file.originalname);
-  }
-});
-var upload = multer({
-  storage: storage
-});
-//Multer
-
+const gltfmodel = require('./scripts/gltfmodel');
+const modeldatabase = require('./scripts/modeldatabase');
+const usermanagement = require('./scripts/usermanagement');
+const modeldisplay = require('./scripts/modeldisplay');
+const storagemanagement = require('./scripts/storagemanagement');
 
 app.use(express.static('public'));
-//EJS
+app.use('/uploads', express.static('uploads'));
+app.use('/scripts', express.static('scripts'));
 app.set('view engine', 'ejs');
-//EJS
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-
 app.use(session({
   secret: "This is a secret key",
   resave: false,
@@ -42,52 +33,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-//Mongoose
-const MONGODB_URI = "mongodb+srv://mongo_admin:WATcb1g6AvJaq4JZ@cluster0.w9bli.mongodb.net/?retryWrites=true&w=majority";
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
-//3D model collection
-const modelSchema = new mongoose.Schema({
-  name: String,
-  fileLocation: String,
-  description: String,
-})
-const Model = mongoose.model('Model', modelSchema);
-
-//user account collection
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String
-  },
-  password: {
-    type: String
-  },
-  isAdmin: {
-        type: Boolean,
-        default: false
-    }
-});
-userSchema.plugin(passportLocalMongoose);
-const User = mongoose.model('User', userSchema);
-passport.use(User.createStrategy());
-
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-//Mongoose
-async function createAdmin(){
-  User.findOne({username: 'admin'})
-  .then(function(res){
-    if(res === null){
-      console.log('registering new admin');
-      User.register({username: 'admin', isAdmin : true}, 'password');
-    } else {
-      console.log('result from find admin is ' ,res);
-    }
-  });
-}
-createAdmin();
 
 const port = process.env.PORT || 3000;
 app.listen(port, function(req, res) {
@@ -95,12 +40,13 @@ app.listen(port, function(req, res) {
 });
 
 app.get("/register", function(req, res) {
-  res.render("register",{
-  navbarState: {
-    allowLogin: true,
-    allowRegister: false,
-    allowLogout: false
-  }});
+  res.render("register", {
+    navbarState: {
+      allowLogin: true,
+      allowRegister: false,
+      allowLogout: false
+    }
+  });
 });
 
 app.get("/login", function(req, res) {
@@ -115,132 +61,300 @@ app.get("/login", function(req, res) {
 
 app.post('/logout', function(req, res, next) {
   req.logout(function(err) {
-    if (err) { return next(err); }
+    if (err) {
+      return next(err);
+    }
     res.redirect('/');
   });
 });
 
-app.get("/home", function(req, res) {
-  if (req.isAuthenticated()) {
-    Model.find({})
-      .then((result) => {
-        Model.find({
-            name: searchInput
-          })
-          .then((searchresult) => {
-            res.render('home', {
-              data: {
-                modelList: result,
-                searchList: searchresult
-              },
-              userStatus: {
-                isAdmin: req.user.isAdmin
-              },
-              navbarState: {
-                allowLogin: false,
-                allowRegister: false,
-                allowLogout: true
-              }
-            });
-            searchInput = "";
-          });
-      });
-  } else {
-    res.redirect("/login");
-    return;
-  }
-});
-
 app.post("/register", function(req, res) {
-  User.register({
-    username: req.body.username
-  }, req.body.password, function(err, user) {
-    if (err) {
-      console.log(err);
-      res.redirect("/register");
-    } else {
-      passport.authenticate("local")(req, res, function() {
-        //go to main page
-        res.redirect("/home");
-      });
-    }});
+  usermanagement.Register(req, res, (path) => {
+    res.redirect(path);
+  })
+  // User.register({
+  //   username: req.body.username
+  // }, req.body.password, function(err, user) {
+  //   if (err) {
+  //     console.log(err);
+  //     res.redirect("/register");
+  //   } else {
+  //     passport.authenticate("local")(req, res, function() {
+  //       //go to main page
+  //       res.redirect("/home");
+  //     });
+  //   }});
 });
 
 app.post("/login", function(req, res) {
-  const user = new User({
-    username: req.body.username,
-    passport: req.body.password
+  usermanagement.Login(req, res, (path) => {
+    res.redirect(path);
+  })
+  // const user = new User({
+  //   username: req.body.username,
+  //   passport: req.body.password
+  // });
+  //
+  // req.login(user, function(err) {
+  //   if (err) {
+  //     console.log(err);
+  //
+  //   } else {
+  //     passport.authenticate("local")(req, res, function() {
+  //       //go to main page
+  //       res.redirect("/home");
+  //     });
+  //   }});
+});
+
+// app.get("/objectview", function(req,res){
+//   modeldisplay.LoadTempFilesForModels(req, (result)=> {
+//     console.log(result);
+//   });
+//   res.render('objectview', {
+//   data: {
+//     objectname: req.query.objectname,
+//     objectdescription: req.query.objectdescription,
+//     objectgltf: 'temp.gltf',
+//     diffuse: 'temp_diffuse.png',
+//     metallicroughness: 'temp_roughness.png',
+//     normal: 'temp_normal.png',
+//     occlusion: 'temp_occlusion.png',
+//     emission: 'temp_emission.png',
+//
+//   },
+//   navbarState: {
+//     allowLogin: false,
+//     allowRegister: false,
+//     allowLogout: true
+//   }
+// });
+//
+//   // if (req.isAuthenticated()) {lo
+//   // } else {
+//   //   res.redirect("/login");
+//   //   return;
+//   // }
+// });
+
+app.post('/asset/:modelid', function(req, res) {
+  modeldatabase.FindModelById(req.params.modelid, (result) => {
+    console.log(result);
+    res.render('single_asset', {
+      data: {
+        model: result
+      },
+      navbarState: {
+        allowLogin: false,
+        allowRegister: false,
+        allowLogout: true
+      }
+    });
   });
 
-  req.login(user, function(err) {
-    if (err) {
-      console.log(err);
-
-    } else {
-      passport.authenticate("local")(req, res, function() {
-        //go to main page
-        res.redirect("/home");
-      });
-    }});
 });
 
-app.get("/", function(req, res) {
-  res.render("main", {
-  navbarState: {
-    allowLogin: false,
-    allowRegister: false,
-    allowLogout: false
-  }});
-});
 
-//Download Feature
-app.get("/download/:filename", function(req, res) {
-  var fileName = "uploads/";
-  fileName += req.params.filename;
-  res.download(fileName);
-});
-
-//Delete Feature
-app.get("/delete/:id", function(req, res) {
-  //delete from uploads
-  Model.find({
-      _id: req.params.id
-    })
-    .then((deleteResult) => {
-      console.log(deleteResult[0].fileLocation);
-      fs.unlink("uploads/" + deleteResult[0].fileLocation, (err) => {
-        if (err) console.error(err);
+app.get("/assets", function(req, res) {
+  if(typeof req.query.model === 'undefined'){
+    console.log("get all result on model list");
+    modeldatabase.GetAllModels((result) => {
+      res.render('assets', {
+        data: {
+          models: result
+        },
+        navbarState: {
+          allowLogin: false,
+          allowRegister: false,
+          allowLogout: true
+        }
       });
     });
+  } else {
+    console.log("running result on model list");
+    res.render('assets', {
+      data: {
+        models: req.query.model
+      },
+      navbarState: {
+        allowLogin: false,
+        allowRegister: false,
+        allowLogout: true
+      }
+    });
+  }
 
-  //delete from database
-  Model.deleteOne({
-    _id: req.params.id
-  }, function(err, result) {
-    if (err) console.log(err);
-    else {
-      console.log("Result: ", result);
+});
+
+app.post('/search', function(req, res) {
+  console.log("req body " + req.body.searchterm);
+  modeldatabase.SearchBar(req.body.searchterm, (result) => {
+    console.log(result);
+    res.redirect(url.format({
+      pathname: "/assets",
+      query: {
+        "model": result
+      }
+    }));
+  });
+});
+
+
+app.get("/single_asset_edit", function(req, res) {
+  res.render('single_asset_edit', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
     }
   });
-
-  res.redirect("/home");
 });
 
-//Search Feature
-let searchInput = "";
-app.post("/search", upload.none(), function(req, res) {
-  searchInput = req.body.searchinput;
-  res.redirect("/home");
+app.get("/single_asset_create", function(req, res) {
+  res.render('single_asset_create', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
 });
 
-//Upload Feature
-app.post("/home", upload.single('filetoupload'), function(req, res) {
-  var newModel = new Model({
-    name: req.body.name,
-    fileLocation: req.file.originalname,
-    description: req.body.description,
+app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile', maxCount: 1}, {name: 'diffuse', maxCount: 1},{name: 'metallicroughness', maxCount: 1},{name: 'normal', maxCount: 1},
+{name: 'occlusion', maxCount: 1},{name: 'emission', maxCount: 1}]), function(req, res) {
+  var modelfolderpath = req.files.objectfile[0].destination.split("/model")[0];
+  gltfmodel.Create(modelfolderpath, function(gltfresult){
+    console.log(gltfresult);
   })
-  newModel.save();
-
-  res.redirect('/home');
+  res.send("done");
 });
+
+
+
+
+// app.get("/", function(req, res) {
+//   res.render("main", {
+//   navbarState: {
+//     allowLogin: false,
+//     allowRegister: false,
+//     allowLogout: false
+//   }});
+// });
+//
+// app.get("/home", function(req, res) {
+//   if (req.isAuthenticated()) {
+//     Model.find({})
+//       .then((result) => {
+//         Model.find({
+//             name: searchInput
+//           })
+//           .then((searchresult) => {
+//             res.render('home', {
+//               data: {
+//                 modelList: result,
+//                 searchList: searchresult
+//               },
+//               userStatus: {
+//                 isAdmin: req.user.isAdmin
+//               },
+//               navbarState: {
+//                 allowLogin: false,
+//                 allowRegister: false,
+//                 allowLogout: true
+//               }
+//             });
+//             searchInput = "";
+//           });
+//       });
+//   } else {
+//     res.redirect("/login");
+//     return;
+//   }
+// });
+//
+// //Download Feature
+// app.get("/download/:filename", function(req, res) {
+//   var fileName = "uploads/";
+//   fileName += req.params.filename;
+//   res.download(fileName);
+// });
+//
+// //Delete Feature
+// app.get("/delete/:id", function(req, res) {
+//   //delete from uploads
+//   Model.find({
+//       _id: req.params.id
+//     })
+//     .then((deleteResult) => {
+//       console.log(deleteResult[0].fileLocation);
+//       fs.unlink("uploads/" + deleteResult[0].fileLocation, (err) => {
+//         if (err) console.error(err);
+//       });
+//     });
+//
+//   //delete from database
+//   Model.deleteOne({
+//     _id: req.params.id
+//   }, function(err, result) {
+//     if (err) console.log(err);
+//     else {
+//       console.log("Result: ", result);
+//     }
+//   });
+//
+//   res.redirect("/home");
+// });
+//
+// //Search Feature
+// let searchInput = "";
+// app.post("/search", upload.none, function(req, res) {
+//   searchInput = req.body.searchinput;
+//   res.redirect("/home");
+// });
+//
+// app.get("/upload", function(req,res){
+//   res.render('upload', {
+//     // userStatus: {
+//     //   isAdmin: req.user.isAdmin
+//     // },
+//     navbarState: {
+//       allowLogin: false,
+//       allowRegister: false,
+//       allowLogout: true
+//     }
+//   });
+//   // if (req.isAuthenticated()) {
+//   // } else {
+//   //   res.redirect("/login");
+//   //   return;
+//   // }
+// })
+//
+//
+
+//
+//Upload Feature
+// app.post("/upload", upload.fields([{name: 'objectfile', maxCount: 1}, {name: 'diffuse', maxCount: 1},{name: 'metallicroughness', maxCount: 1},{name: 'normal', maxCount: 1},
+// {name: 'occlusion', maxCount: 1},{name: 'emission', maxCount: 1}]), function(req, res) {
+//   // var newModel = new Model({
+//   //   name: req.body.name,
+//   //   fileLocation: req.file.originalname,
+//   //   description: req.body.description,
+//   // })
+//   // newModel.save();
+//   creategltfmodel.convert(__dirname + "/" + req.files.objectfile[0].path, (gltfpath)=> {
+//     res.redirect(url.format({
+//        pathname:"/objectview",
+//        query: {
+//           "objectname": req.body.name,
+//           "objectdescription": req.body.description,
+//           "gltfpath": gltfpath,
+//           "diffuse" : req.files.diffuse[0].path,
+//           "metallicroughness" : req.files.metallicroughness[0].path,
+//           "normal" : req.files.normal[0].path,
+//           "occlusion" : req.files.occlusion[0].path,
+//           "emission" : req.files.emission[0].path
+//         }
+//      }));
+//   });
+// });

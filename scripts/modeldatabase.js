@@ -1,0 +1,276 @@
+const mongoose = require('mongoose');
+
+//Mongoose
+const MONGODB_URI = "mongodb+srv://mongo_admin:WATcb1g6AvJaq4JZ@cluster0.w9bli.mongodb.net/?retryWrites=true&w=majority";
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+//3D model collection
+const modelSchema = new mongoose.Schema({
+  name: String,
+  description: String,
+  paths: mongoose.Schema.Types.Mixed,
+  lowpoly: Boolean,
+  animated: Boolean,
+  rigged: Boolean,
+  uploadedby: String,
+  downloadcount: Number,
+  downloadby: [String],
+  tags: [String]
+})
+const Model = mongoose.model('Model', modelSchema);
+
+class ModelPaths {
+  folderpath = "";
+  modelfilepath = "";
+  modelviewerfilepath = "";
+  diffuse = "";
+  normal = "";
+  roughness = "";
+  occlusion = "";
+  emission = "";
+  thumbnail = "";
+
+  setPath(texturetype, filepath){
+    switch(texturetype){
+      case "folderpath":
+        this.folderpath = filepath;
+        break;
+      case "modelfilepath":
+        this.modelfilepath = filepath;
+        break;
+      case "modelviewerfilepath":
+        this.modelviewerfilepath = filepath;
+        break;
+      case "diffuse":
+        this.diffuse = filepath;
+        break;
+      case "normal":
+        this.normal = filepath;
+        break;
+      case "roughness":
+        this.roughness = filepath;
+        break;
+      case "occlusion":
+        this.occlusion = filepath;
+        break;
+      case "emission":
+        this.emission = filepath;
+        break;
+      case "thumbnail":
+        this.thumbnail = filepath;
+        break;
+    }
+  }
+}
+
+class ModelAsset {
+  downloadcount = 0;
+  downloadedby = [];
+  modelpaths = new ModelPaths();
+  tags = [];
+  constructor(name, description, folderpath, modelfilepath, modelviewerfilepath, lowpoly, animated, rigged, uploadedby) {
+    this.name = name;
+    this.description = description;
+    this.modelpaths.setPath("folderpath", folderpath);
+    this.modelpaths.setPath("modelfilepath", modelfilepath);
+    this.modelpaths.setPath("modelviewerfilepath", modelviewerfilepath);
+    this.lowpoly = lowpoly;
+    this.animated = animated;
+    this.rigged = rigged;
+    this.uploadedby = uploadedby;
+  }
+
+  addTags(tags){
+    this.tags = tags;
+  }
+
+  addDownloadUser(user){
+    this.downloadedby.push(user);
+  }
+
+  saveModel(){
+    var model = new Model({
+      name:   this.name,
+      description: this.description,
+      paths: this.modelpaths,
+      lowpoly: this.lowpoly,
+      animated: this.animated,
+      rigged: this.rigged,
+      uploadedby: this.uploadedby,
+      downloadcount: this.downloadcount,
+      downloadby: this.downloadedby,
+      tags: this.tags
+    });
+    model.save();
+  }
+}
+
+
+function FindModelByName(name){
+  Model.findOne({name: name}, (err,result)=> {
+    console.log(result.paths.diffuse);
+  });
+}
+
+// module.exports = function GetAllModels(callback){
+//   var arr = [];
+//   Model.find({}, (err,result)=>{
+//     if(err) console.log(err);
+//     else {
+//       arr = result;
+//     }
+//     callback(arr);
+//   });
+// }
+
+
+const GetAllModels = (callback) =>{
+  var arr = [];
+  Model.find({}, (err,result)=>{
+    if(err) console.log(err);
+    else {
+      arr = result;
+    }
+    callback(arr);
+  });
+}
+module.exports.GetAllModels = GetAllModels;
+
+
+function FindModelsByTags(tags){
+  Model.find({tags: tags}, (err,result)=> {
+    console.log(result);
+  });
+}
+
+const SearchBar = (searchterm, callback) =>{
+  var arr = [];
+  console.log(searchterm + " search term");
+  Model.find({name: searchterm}, (err,result)=> {
+    arr.push(result);
+    console.log("found name");
+
+  });
+  Model.find({tags: searchterm}, (err,result)=> {
+    arr.push(result);
+    console.log("found tags");
+  });
+  arr = [...new Set(arr)];
+  callback(arr);
+}
+module.exports.SearchBar = SearchBar;
+
+// function FindModelById(id, callback){
+//   Model.findOne({_ud: id}, (err,result)=> {
+//     if(err) console.log(err);
+//     else {
+//       callback(result);
+//     }
+//   });
+// }
+
+ const FindModelById = (id, callback) =>{
+  Model.findOne({ _id: id}, (err,result)=> {
+    if(err) console.log(err);
+    else {
+      callback(result);
+    }
+  });
+}
+
+module.exports.FindModelById = FindModelById;
+
+function Run(){
+  var apple_watch = new ModelAsset("apple_watch", "apple watch model", "/uploads/apple_watch", "/uploads/apple_watch/model/apple_watch.blend",
+  "/uploads/apple_watch/gltf/scene.gltf", true, false, false, "upload by me");
+  apple_watch.modelpaths.setPath("diffuse", "/uploads/apple_watch/gltf/baseColor.png");
+  apple_watch.modelpaths.setPath("thumbnail", "/uploads/apple_watch/thumbnail.png");
+  apple_watch.addTags(['apple', 'ios', 'watch']);
+  console.log(apple_watch);
+  apple_watch.saveModel();
+
+  var cyberpunk = new ModelAsset("cyberpunk", "cyberpunk model", "/uploads/cyberpunk", "/uploads/cyberpunk/model/cyberpunk_obj.obj",
+  "/uploads/cyberpunk/gltf/scene.gltf", true, false, false, "upload by me");
+  cyberpunk.modelpaths.setPath("diffuse", "/uploads/cyberpunk/gltf/textures/Mat_0_baseColor.png");
+  cyberpunk.modelpaths.setPath("emission", "/uploads/cyberpunk/gltf/textures/Mat_0_emissive.png");
+  cyberpunk.modelpaths.setPath("normal", "/uploads/cyberpunk/gltf/textures/Mat_0_normal.png");
+  cyberpunk.modelpaths.setPath("roughness", "/uploads/cyberpunk/gltf/textures/Mat_0_metallicRoughness.png");
+  cyberpunk.modelpaths.setPath("thumbnail", "/uploads/cyberpunk/thumbnail.png");
+  cyberpunk.addTags(['cyberpunk', 'shiba', 'dog', 'robot']);
+  console.log(cyberpunk);
+  cyberpunk.saveModel();
+
+  var deadpool = new ModelAsset("deadpool", "deadpool model", "/uploads/deadpool", "/uploads/deadpool/model/deadpool_obj.obj",
+  "/uploads/deadpool/gltf/scene.gltf", true, false, false, "upload by me");
+  deadpool.modelpaths.setPath("diffuse", "/uploads/deadpool/gltf/textures/body_baseColor.png");
+  deadpool.modelpaths.setPath("emission", "/uploads/deadpool/gltf/textures/body_emissive.png");
+  deadpool.modelpaths.setPath("normal", "/uploads/deadpool/gltf/textures/body_normal.png");
+  deadpool.modelpaths.setPath("roughness", "/uploads/deadpool/gltf/textures/body_metallicRoughness.png");
+  deadpool.modelpaths.setPath("thumbnail", "/uploads/deadpool/thumbnail.png");
+  deadpool.addTags(['deadpool', 'shiba', 'dog', 'red']);
+  console.log(deadpool);
+  deadpool.saveModel();
+
+  var harrypotter = new ModelAsset("harry_potter", "harry potter model", "/uploads/harry_potter", "/uploads/harry_potter/model/harry_potter_fbx.fbx",
+  "/uploads/harry_potter/gltf/scene.gltf", true, false, false, "upload by me");
+  harrypotter.modelpaths.setPath("diffuse", "/uploads/harry_potter/gltf/textures/Shiba_baseColor.png");
+  harrypotter.modelpaths.setPath("normal", "/uploads/harry_potter/gltf/textures/Shiba_normal.png");
+  harrypotter.modelpaths.setPath("roughness", "/uploads/harry_potter/gltf/textures/Shiba_metallicRoughness.png");
+  harrypotter.modelpaths.setPath("thumbnail", "/uploads/harrypotter/thumbnail.png");
+  harrypotter.addTags(['harrypotter', 'shiba', 'dog', 'wizard']);
+  console.log(harrypotter);
+  harrypotter.saveModel();
+
+  var painter = new ModelAsset("painter", "painter model", "/uploads/painter", "/uploads/painter/painter_fbx.fbx",
+  "/uploads/painter/gltf/scene.gltf", true, false, false, "upload by me");
+  painter.modelpaths.setPath("diffuse", "/uploads/painter/gltf/textures/Scene_-_Root_baseColor.png");
+  painter.modelpaths.setPath("normal", "/uploads/painter/gltf/textures/Scene_-_Root_normal.png");
+  painter.modelpaths.setPath("roughness", "/uploads/painter/gltf/textures/Scene_-_Root_metallicRoughness.png");
+  painter.modelpaths.setPath("thumbnail", "/uploads/painter/thumbnail.png");
+  painter.addTags(['painter', 'shiba', 'dog', 'art']);
+  console.log(painter);
+  painter.saveModel();
+
+
+  var robot = new ModelAsset("robot", "robot model", "/uploads/robot", "/uploads/robot/robot_fbx.fbx",
+  "/uploads/robot/gltf/scene.gltf", true, false, false, "upload by me");
+  robot.modelpaths.setPath("diffuse", "/uploads/robot/gltf/textures/Shiba_baseColor.png");
+  robot.modelpaths.setPath("normal", "/uploads/robot/gltf/textures/Shiba_normal.png");
+  robot.modelpaths.setPath("roughness", "/uploads/robot/gltf/textures/Shiba_metallicRoughness.png");
+  robot.modelpaths.setPath("emission", "/uploads/robot/gltf/textures/Shiba_emissive.png");
+  robot.modelpaths.setPath("thumbnail", "/uploads/robot/thumbnail.png");
+  robot.addTags(['robot', 'shiba', 'dog', 'metal']);
+  console.log(robot);
+  robot.saveModel();
+
+  var trailer = new ModelAsset("trailer", "trailer model", "/uploads/trailer", "/uploads/trailer/Alena_Shek.obj",
+  "/uploads/trailer/gltf/scene.gltf", true, false, false, "upload by me");
+  trailer.modelpaths.setPath("diffuse", "/uploads/trailer/gltf/textures/0208trailer_default_baseColor.png");
+  trailer.modelpaths.setPath("emission", "/uploads/trailer/gltf/textures/0208trailer_default_emissive.png");
+  trailer.modelpaths.setPath("thumbnail", "/uploads/trailer/thumbnail.png");
+  trailer.addTags(['trailer', 'transport', 'home']);
+  console.log(trailer);
+  trailer.saveModel();
+
+  var tree = new ModelAsset("tree", "tree model", "/uploads/tree", "/uploads/tree/tree_fbx.fbx",
+  "/uploads/tree/gltf/scene.gltf", true, false, false, "upload by me");
+  tree.modelpaths.setPath("diffuse", "/uploads/tree/gltf/textures/m_tree_baseColor.png");
+  tree.modelpaths.setPath("thumbnail", "/uploads/tree/thumbnail.png");
+  tree.addTags(['tree', 'nature', 'green']);
+  console.log(tree);
+  tree.saveModel();
+}
+
+function ClearDB(){
+  Model.deleteMany({}, (err)=>{
+    console.log(err);
+  });
+}
+
+// ClearDB();
+// FindModelByName("sample model");
+// FindModelsByTags('ship');
+// Run();

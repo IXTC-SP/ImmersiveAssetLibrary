@@ -1,0 +1,58 @@
+<%- include('partials/header') %>
+<link rel="stylesheet" href="modellist.css">
+
+
+<div class="container py-5">
+
+  <!-- For demo purpose -->
+  <div class="row text-center text-white mb-5">
+    <div class="col-lg-7 mx-auto">
+      <h1 id="modellist-title" class=" display-4">Model list</h1>
+    </div>
+  </div>
+  <!-- End -->
+  <div class="row text-center text-white mb-5">
+    <div class="col-lg-7 mx-auto">
+      <form class="" action="search" method="post">
+        <label for="search"></label>
+        <input class=" large" type="text" name="searchterm" value="">
+        <button class="font-italic large" name="button">Search</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <!-- List group-->
+      <ul class="list-group shadow">
+        <!-- list group item -->
+        <li class="list-group-item">
+          <!-- Custom content-->
+          <!-- <table> -->
+          <% for(var i = 0; i < data.models.length; i++) { %>
+          <div class="media align-items-lg-center flex-column flex-lg-row p-3">
+            <div class="media-body order-2 order-lg-1">
+              <h5 class="mt-0 font-weight-bold mb-2"><%= data.models[i].name %></h5>
+              <p class="font-italic text-muted mb-0 small"><%= data.models[i].description %></p>
+              <div class="d-flex flex-row align-content-stretch">
+                <% for(var t = 0; t < data.models[i].tags.length; t++) { %>
+                  <h6 class="font-weight-light pr-2"><%= data.models[i].tags[t] %></h6>
+                <% } %>
+              </div>
+              <br>
+              <form class="font-italic text-muted mb-0 small" action="asset/<%= data.models[i].id %>" method="post">
+                <button>Open</button>
+              </form>
+            </div><img src="<%= data.models[i].paths.thumbnail %>" alt="Generic placeholder image" width="200" class="ml-lg-5 order-1 order-lg-2">
+
+          </div>
+          <% } %>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+
+<%- include('partials/footer') %>
