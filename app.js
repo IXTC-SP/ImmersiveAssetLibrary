@@ -156,7 +156,7 @@ app.post('/asset/:modelid', function(req, res) {
 
 
 app.get("/assets", function(req, res) {
-  if(typeof req.query.model === 'undefined'){
+  if(typeof req.query.search === 'undefined' || req.query.search == ""){
     console.log("get all result on model list");
     modeldatabase.GetAllModels((result) => {
       res.render('assets', {
@@ -171,32 +171,32 @@ app.get("/assets", function(req, res) {
       });
     });
   } else {
-    console.log("running result on model list");
-    res.render('assets', {
-      data: {
-        models: req.query.model
-      },
-      navbarState: {
-        allowLogin: false,
-        allowRegister: false,
-        allowLogout: true
-      }
+    modeldatabase.SearchBar(req.query.search, (result) => {
+      console.log("running result on model list" , result);
+      res.render('assets', {
+        data: {
+          models: result
+        },
+        navbarState: {
+          allowLogin: false,
+          allowRegister: false,
+          allowLogout: true
+        }
+      });
     });
+
+
   }
 
 });
 
 app.post('/search', function(req, res) {
-  console.log("req body " + req.body.searchterm);
-  modeldatabase.SearchBar(req.body.searchterm, (result) => {
-    console.log(result);
-    res.redirect(url.format({
-      pathname: "/assets",
-      query: {
-        "model": result
-      }
-    }));
-  });
+  res.redirect(url.format({
+    pathname: "/assets",
+    query: {
+      search: req.body.searchterm
+    }
+  }));
 });
 
 

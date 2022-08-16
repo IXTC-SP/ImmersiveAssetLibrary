@@ -146,20 +146,19 @@ function FindModelsByTags(tags){
   });
 }
 
-const SearchBar = (searchterm, callback) =>{
+const SearchBar = (searchterm, callback) => {
   var arr = [];
-  console.log(searchterm + " search term");
-  Model.find({name: searchterm}, (err,result)=> {
-    arr.push(result);
-    console.log("found name");
-
+  console.log('start mongoose search');
+  Model.find({name: searchterm}).then(function(nameresult){
+    arr.push(nameresult);
+    console.log('finish search name', nameresult);
+    Model.find({tags: searchterm}).then(function(tagresult){
+      // arr.push(tagresult);
+      arr = [...new Set(tagresult)]
+      console.log('finish search tag', tagresult);
+      callback(arr);
+    });
   });
-  Model.find({tags: searchterm}, (err,result)=> {
-    arr.push(result);
-    console.log("found tags");
-  });
-  arr = [...new Set(arr)];
-  callback(arr);
 }
 module.exports.SearchBar = SearchBar;
 
