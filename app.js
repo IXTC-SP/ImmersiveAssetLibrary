@@ -223,10 +223,11 @@ app.get("/single_asset_create", function(req, res) {
 app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile', maxCount: 1}, {name: 'diffuse', maxCount: 1},{name: 'metallicroughness', maxCount: 1},{name: 'normal', maxCount: 1},
 {name: 'occlusion', maxCount: 1},{name: 'emission', maxCount: 1}]), function(req, res) {
   var modelfolderpath = req.files.objectfile[0].destination.split("/model")[0];
-  gltfmodel.Create(modelfolderpath, function(gltfresult){
+  gltfmodel.Create(req.files.objectfile, function(gltfresult){
     console.log(gltfresult);
+      res.send("done");
   })
-  res.send("done");
+
 });
 
 
