@@ -18,6 +18,7 @@
     </select><br>
     <label for="tag_input_content">Tags:</label>
     <input type="text" id="tag_input_content" name="tag_input_content" value=""  readonly><br>
+    <p id ="selected_tags_group"></p>
     <input type="text" id='tag_create' value=""><br>
     <div class="row no-gutters" id="tag_suggest">
 
@@ -151,9 +152,21 @@
   }
 
   function addTag(tagname) {
+    //get paragraph child from group
+    var paragraph = document.getElementById('selected_tags_group');
+    console.log(paragraph);
+    //create span element with id of selected_tag_element
+    var tag = document.createElement('span');
+    tag.innerText = " " + tagname;
+    tag.setAttribute("id","selected_tag_element");
+    tag.onclick = function() {
+      paragraph.removeChild(tag);
+      selectedtagelements = selectedtagelements.filter(e => e !== tagname);
+    };
+    paragraph.appendChild(tag);
     let taginput = document.getElementById("tag_input_content");
-    selectedtagelements.push(tagname);
     taginput.value = selectedtagelements.toString();
+    selectedtagelements.push(tagname);
   }
 </script>
 

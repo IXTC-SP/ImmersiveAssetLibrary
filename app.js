@@ -200,13 +200,18 @@ app.post('/search', function(req, res) {
 });
 
 
-app.get("/single_asset_edit", function(req, res) {
-  res.render('single_asset_edit', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
+app.get("/single_asset_edit/:modelid", function(req, res) {
+  var tmpid = '62d7b3de10351866025affb7'
+  // modeldatabase.FindModelById(req.params.modelid, (result) => {
+  modeldatabase.FindModelById(tmpid, (result) => {
+    res.render('single_asset_edit', {
+      model: result,
+      navbarState: {
+        allowLogin: false,
+        allowRegister: false,
+        allowLogout: true
+      }
+    });
   });
 });
 
@@ -222,6 +227,7 @@ app.get("/single_asset_create", function(req, res) {
 
 app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile', maxCount: 1}, {name: 'diffuse', maxCount: 1},{name: 'metallicroughness', maxCount: 1},{name: 'normal', maxCount: 1},
 {name: 'occlusion', maxCount: 1},{name: 'emission', maxCount: 1}]), function(req, res) {
+  console.log(req.body);
   var modelfolderpath = req.files.objectfile[0].destination.split("/model")[0];
   gltfmodel.Create(req.files.objectfile, function(gltfresult){
     console.log(gltfresult);
