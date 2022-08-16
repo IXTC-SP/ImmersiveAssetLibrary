@@ -15,12 +15,20 @@ model-viewer {
   border: 2px solid beige;
 }
 
+#selected_tag_element:hover {
+  background-color: beige;
+}
 
 #tag_input_content {
-    background: none;
-    border: none;
+  display: none;
+  background: none;
+  border: none;
 }
 
 #tag_input_content:focus {
     outline: none !important;
+}
+
+#tag_input_content:hover {
+  background-color: #ffff66;
 }
