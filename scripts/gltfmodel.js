@@ -4,8 +4,12 @@ const fs = require('fs')
 
 
 const Create = (objectfile, callback) => {
-  var modelfolderpath = objectfile[0].destination.split("/model")[0];
+  var modelfolderpath = path.resolve(objectfile[0].destination.split("/model")[0]);
   var modeltype = objectfile[0].filename.split(".")[1];
+  var modelfilepath = path.resolve(objectfile[0].destination + "\\" + objectfile[0].originalname);
+  var gltfpath = modelfolderpath + "\\model.gltf";
+  // var gltfpath = modelfolderpath + "\\" + "gltf" + "\\" + "model.gltf";
+
   try {
     if (fs.existsSync(modelfolderpath)) {
       //file exists
@@ -14,17 +18,15 @@ const Create = (objectfile, callback) => {
   } catch (error) {
     console.error(error)
   }
-  var gltfpath = modelfolderpath + "/gltf/model.gltf";
-  console.log(gltfpath);
-  var runcode = "";
   if (!fs.existsSync(gltfpath)) {
-    runcode = "";
+
     switch (modeltype) {
       case "obj":
         // code block
-        runcode = 'obj2gltf -i ';
+        console.log("running obj conversion");
+        var runcode = 'obj2gltf -i ';
         // runcode += file;
-        runcode += modelfolderpath + ' -o ' + gltfpath;
+        runcode += modelfilepath + ' -o ' + gltfpath;
         exec(runcode, (err, output) => {
           // once the command has completed, the callback function is called
           if (err) {
@@ -37,15 +39,26 @@ const Create = (objectfile, callback) => {
         });
         callback(gltfpath);
         break;
-      default:
+        case "fbx":
         // code block
-        runcode = 'fbx2gltf -e -i ' + filepath + ' -o ' + gltfpath;
+        // runcode = 'fbx2gltf -e -i ' + modelfilepath + ' -o ' + gltfpath;
         const convert = require('fbx2gltf');
-        convert(modelfolderpath, gltfpath, ['--embed']).then(
+        convert(modelfilepath, gltfpath, ['--embed']).then(
           destPath => {
-            // yay, do what we will with our shiny new GLB file!
-            gltfpath = path.dirname(filepath) + "/" + path.basename(filepath, path.extname(filepath)) + "_out/" + path.basename(filepath, path.extname(filepath)) + ".gltf"
+            let oldDirName = modelfolderpath + "/model_out";
+            let newDirName = modelfolderpath + "/gltf";
+            // rename the directory
+            fs.rename(oldDirName, newDirName, (err) => {
+                if(err) {
+                    throw err;
+                }
+
+                console.log("Directory renamed successfully.");
+            });
+            gltfpath = modelfolderpath + "\\gltf\\model.gltf"
             console.log(gltfpath);
+            // yay, do what we will with our shiny new GLB file!
+            console.log("completed fbx to gltf conversion");
             callback(gltfpath);
           },
           error => {
