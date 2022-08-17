@@ -6,7 +6,7 @@
 <div class="container py-5">
   <!-- Upload File Section -->
   <h1>Edit File</h1>
-  <form id="upload_form" action="/upload" method="post" enctype="multipart/form-data" onkeydown="return event.key != 'Enter';">
+  <form id="update_form" action="/update/<%= model._id %>" method="post"  onkeydown="return event.key != 'Enter';">
     <label for="name">Name:</label><br>
     <input type="text" id="name" name="name" value="<%= model.name %>"><br><br>
     <label for="description">Description:</label><br>
@@ -26,8 +26,8 @@
     </div>
     <div class="3D-content">
       <model-viewer id="model-viewer" alt="<%= model.description %>" src="<%= model.paths.modelviewerfilepath %>" ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
-      <input type="checkbox" id="low-poly" name="low-poly" value="LowPoly">
-      <label for="low-poly">Low Poly</label><br>
+      <input type="checkbox" id="lowpoly" name="lowpoly" value="LowPoly">
+      <label for="lowpoly">Low Poly</label><br>
       <input type="checkbox" id="animated" name="animated" value="Animated">
       <label for="animated">Animated</label><br>
       <input type="checkbox" id="rigged" name="rigged" value="Rigged">
@@ -54,20 +54,28 @@
 
 </div>
 
-<script type="text/javascript" src="datamuse.js"></script>
+<script type="text/javascript" src="/datamuse.js"></script>
 <script type="text/javascript">
   var e = document.getElementById("asset-type");
   var suggestedtagelements = [];
   var selectedtagelements = [];
-
   checktype(e);
   populateinputs();
   function populateinputs(){
     var tags = '<%= model.tags %>'.split(',');
     tags.forEach(tag => {
       addTag(tag);
-    })
-    console.log(tags);
+    });
+    modelcheckboxes();
+  }
+
+  function modelcheckboxes(){
+    var lowpolybool = <%= model.lowpoly %>;
+    document.getElementById("lowpoly").checked = lowpolybool;
+    var animatedbool = <%= model.animated %>;
+    document.getElementById("animated").checked = animatedbool;
+    var riggedbool = <%= model.rigged %>;
+    document.getElementById("rigged").checked = riggedbool;
   }
 
   function checktype(assettype){
@@ -81,21 +89,18 @@
         content3d.style.display = "block";
         content360.style.display = "none";
         contentscript.style.display = "none";
-        console.log(content3d);
         break;
       case "360":
         // code block
         content3d.style.display = "none";
         content360.style.display = "block";
         contentscript.style.display = "none";
-        console.log("360");
         break;
       case "script":
         // code block
         content3d.style.display = "none";
         content360.style.display = "none";
         contentscript.style.display = "block";
-        console.log("script");
         break;
       default:
         // code block
@@ -148,11 +153,9 @@
     suggestedtagelements.push(col);
   }
 
-
   function addTag(tagname) {
     //get paragraph child from group
     var paragraph = document.getElementById('selected_tags_group');
-    console.log(paragraph);
     //create span element with id of selected_tag_element
     var tag = document.createElement('span');
     tag.innerText = " " + tagname;
@@ -166,7 +169,6 @@
     taginput.value = selectedtagelements.toString();
     selectedtagelements.push(tagname);
   }
-
 
   const modelViewerTexture = document.querySelector("model-viewer");
 

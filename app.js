@@ -233,8 +233,24 @@ app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile',
     console.log(gltfresult);
       res.send("done");
   })
-
 });
+
+app.post("/update/:modelid", function(req, res) {
+  modeldatabase.UpdateModelFromEditPage(req.params.modelid, req, (result) => {
+    modeldatabase.FindModelById(req.params.modelid, (doc) => {
+      console.log(doc);
+      res.render('single_asset', {
+        model: doc,
+        navbarState: {
+          allowLogin: false,
+          allowRegister: false,
+          allowLogout: true
+        }
+      });
+    });
+  });
+});
+
 
 
 
