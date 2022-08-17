@@ -141,9 +141,7 @@ app.post('/asset/:modelid', function(req, res) {
   modeldatabase.FindModelById(req.params.modelid, (result) => {
     console.log(result);
     res.render('single_asset', {
-      data: {
-        model: result
-      },
+      model: result,
       navbarState: {
         allowLogin: false,
         allowRegister: false,
@@ -251,6 +249,19 @@ app.post("/update/:modelid", function(req, res) {
   });
 });
 
+const child_process = require('child_process');
+app.post("/downloadasset/:modelid", function(req, res) {
+  modeldatabase.GetModel(req.params.modelid, (result)=> {
+    var downloadpath = result.paths.folderpath + "/model";
+      child_process.execSync(`zip -r archive *`, {
+      cwd: downloadpath
+    });
+
+    // zip archive of your folder is ready to download
+    res.download(downloadpath + '/archive.zip');
+    console.log(result);
+  })
+});
 
 
 

@@ -115,6 +115,16 @@ function FindModelByName(name){
   });
 }
 
+const GetModel = (id,callback) =>{
+  Model.findOne({_id: id}, (err,result)=>{
+    if(err) console.log(err);
+    else {
+      callback(result);
+    }
+  });
+}
+module.exports.GetModel = GetModel;
+
 const GetAllModels = (callback) =>{
   var arr = [];
   Model.find({}, (err,result)=>{
