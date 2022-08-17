@@ -115,18 +115,6 @@ function FindModelByName(name){
   });
 }
 
-// module.exports = function GetAllModels(callback){
-//   var arr = [];
-//   Model.find({}, (err,result)=>{
-//     if(err) console.log(err);
-//     else {
-//       arr = result;
-//     }
-//     callback(arr);
-//   });
-// }
-
-
 const GetAllModels = (callback) =>{
   var arr = [];
   Model.find({}, (err,result)=>{
@@ -138,7 +126,6 @@ const GetAllModels = (callback) =>{
   });
 }
 module.exports.GetAllModels = GetAllModels;
-
 
 function FindModelsByTags(tags){
   Model.find({tags: tags}, (err,result)=> {
@@ -162,14 +149,6 @@ const SearchBar = (searchterm, callback) => {
 }
 module.exports.SearchBar = SearchBar;
 
-// function FindModelById(id, callback){
-//   Model.findOne({_ud: id}, (err,result)=> {
-//     if(err) console.log(err);
-//     else {
-//       callback(result);
-//     }
-//   });
-// }
 
  const FindModelById = (id, callback) =>{
   Model.findOne({ _id: id}, (err,result)=> {
@@ -179,7 +158,6 @@ module.exports.SearchBar = SearchBar;
     }
   });
 }
-
 module.exports.FindModelById = FindModelById;
 
 function Run(){
@@ -268,6 +246,62 @@ function ClearDB(){
     console.log(err);
   });
 }
+
+
+//Update Model Changes//
+function UpdateModelFromEditPage(modelid, req, callback){
+  var newname = req.body.name;
+  var newdescription = req.body.description;
+  var newlowpoly = typeof req.body.lowpoly !== 'undefined';
+  var newanimated = typeof req.body.animated !== 'undefined';
+  var newrigged = typeof req.body.rigged !== 'undefined';
+
+  Model.updateOne({_id: modelid}, {
+    name: newname,
+    description: newdescription,
+    lowpoly: newlowpoly,
+    animated: newanimated,
+    rigged: newrigged
+  }, function (err, doc) {
+    if (err){
+        console.log(err)
+    }
+    else{
+        console.log("Updated Docs : ", doc);
+        callback(modelid);
+    }
+  });
+}
+module.exports.UpdateModelFromEditPage = UpdateModelFromEditPage;
+
+
+async function UpdateModelName(modelid, newname){
+  await Model.updateOne({_id: modelid}, { name: newname });
+  console.log('completed model name update');
+}
+
+async function UpdateModelDescription(modelid, newdescription){
+  await Model.updateOne({_id: modelid}, { description: newdescription });
+  console.log('completed model description update');
+}
+
+async function UpdateModelLowPoly(modelid, newlowpoly){
+  await Model.updateOne({_id: modelid}, { lowpoly: newlowpoly });
+  console.log('completed model lowpoly update');
+}
+
+async function UpdateModelAnimated(modelid, newanimted){
+  await Model.updateOne({_id: modelid}, { animated: newanimted });
+  console.log('completed model animated update');
+}
+
+async function UpdateModelRigged(modelid, newrigged){
+  await Model.updateOne({_id: modelid}, { rigged: newrigged });
+  console.log('completed model rigged update');
+}
+
+
+
 
 // ClearDB();
 // FindModelByName("sample model");
