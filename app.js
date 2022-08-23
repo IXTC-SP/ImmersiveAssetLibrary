@@ -17,6 +17,7 @@ const modeldatabase = require('./scripts/modeldatabase');
 const usermanagement = require('./scripts/usermanagement');
 const modeldisplay = require('./scripts/modeldisplay');
 const storagemanagement = require('./scripts/storagemanagement');
+const filedownloader = require('./scripts/filedownloader');
 
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
@@ -249,18 +250,24 @@ app.post("/update/:modelid", function(req, res) {
   });
 });
 
-const child_process = require('child_process');
+const fs = require('fs');
 app.post("/downloadasset/:modelid", function(req, res) {
   modeldatabase.GetModel(req.params.modelid, (result)=> {
-    var downloadpath = result.paths.folderpath + "/model";
-      child_process.execSync(`zip -r archive *`, {
-      cwd: downloadpath
+    var downloadpath = __dirname + result.paths.folderpath + "/model";
+    console.log(downloadpath);
+    filedownloader.CreateZipArchive(result.name, downloadpath, (tmppath)=> {
+      res.download(tmppath, req.param('file'), function(err){
+      //CHECK FOR ERROR
+      fs.unlink(tmppath, (err)=> {
+        if(err) console.log(err);
+        else {
+          console.log("complete fs delete tmp file");
+        }
+      });
+      });
     });
 
-    // zip archive of your folder is ready to download
-    res.download(downloadpath + '/archive.zip');
-    console.log(result);
-  })
+  });
 });
 
 

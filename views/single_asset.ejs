@@ -12,7 +12,7 @@
     <br>
     <model-viewer id="model-viewer" alt="<%= model.description %>" src="<%= model.paths.modelviewerfilepath %>" ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
     <form class="" action="/downloadasset/<%= model._id %>" method="post">
-      <input type="submit" id='submit-btn'>
+      <input type="submit" id='submit-btn' value="download">
     </form>
 
     <script type="module">
