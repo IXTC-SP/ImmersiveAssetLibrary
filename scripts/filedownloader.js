@@ -3,6 +3,8 @@ const tmp = require('tmp');
 const fs = require('fs');
 const path = require('path');
 
+tmp.tmpdir = __dirname + "/tmp";
+console.log(tmp.tmpdir);
 // extension should include the dot, for example '.html'
 function changeExtension(file, extension) {
   const basename = path.basename(file, path.extname(file))
@@ -10,6 +12,7 @@ function changeExtension(file, extension) {
 }
 
 
+var currentTmpPath;
 const CreateZipArchive = async (assetname, assetfolderpath, callback) => {
 
   var tmpfile = tmp.fileSync();
@@ -29,6 +32,7 @@ const CreateZipArchive = async (assetname, assetfolderpath, callback) => {
         console.log(err);
     } else {
         console.log("The file was saved!");
+        currentTmpPath = exportpath;
         callback(exportpath);
     }
   });
@@ -40,6 +44,19 @@ const CreateZipArchive = async (assetname, assetfolderpath, callback) => {
 
 module.exports.CreateZipArchive = CreateZipArchive;
 
+
+const ClearTmpFile = () => {
+  fs.unlink(currentTmpPath, (err) => {
+  if (err)
+    {
+    console.error(err)
+    return
+    }
+  console.log("remove tmp file");
+});
+}
+
+module.exports.ClearTmpFile = ClearTmpFile;
 
 // var directory = __dirname.split("\scripts")[0];
 // console.log(directory);
