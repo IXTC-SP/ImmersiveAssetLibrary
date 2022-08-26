@@ -150,7 +150,48 @@ app.post('/asset/:modelid', function(req, res) {
       }
     });
   });
+});
 
+app.get('/360/equi', function(req, res) {
+  res.render('demopages/360viewer(equi)', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+
+app.get('/360/cube', function(req, res) {
+  res.render('demopages/360viewer(cube)', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+
+app.get('/dragndrop', function(req, res) {
+  res.render('demopages/dragndrop', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+
+app.get('/sample_asset', function(req, res) {
+  res.render('sample_asset', {
+    modelpath: "./uploads/00_sample/gltf/model.gltf",
+    texturepath: "./uploads/00_sample/gltf/Exitlight_Diffuse.tga",
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
 });
 
 
@@ -188,6 +229,8 @@ app.get("/assets", function(req, res) {
   }
 
 });
+
+
 
 app.post('/search', function(req, res) {
   res.redirect(url.format({
