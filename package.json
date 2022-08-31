@@ -4,6 +4,7 @@
   "description": "Web portal for storage and sharing of immersive assets",
   "main": "index.js",
   "scripts": {
+    "seed": "node ./seeds/seeds.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "IXTC",
