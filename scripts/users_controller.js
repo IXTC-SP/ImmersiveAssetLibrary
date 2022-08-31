@@ -1,29 +1,6 @@
 
 //const userValidators = require("../validators/users");
-const passport = require('passport');
-const passportLocalMongoose = require('passport-local-mongoose');
-const mongoose = require('mongoose');
-
-//Mongoose
-const MONGODB_URI = "mongodb+srv://mongo_admin:WATcb1g6AvJaq4JZ@cluster0.w9bli.mongodb.net/?retryWrites=true&w=majority";
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
-
-//user account collection
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String
-  },
-  password: {
-    type: String
-  },
-  isAdmin: {
-    type: Boolean,
-    default: false
-  }
-});
+const userModel = require("../models/user")
 
 const controller = {
     //login
@@ -51,6 +28,7 @@ const controller = {
         let showProfile = true;
         let editProfile = false;
         //let saveProfile = false;
+        console.log(typeof req.params)
         try {
           if (req.body) {
             if(!req.body.credits){//this is the put req, click save button
@@ -68,7 +46,7 @@ const controller = {
               user= req.body;
             }
           } else{
-            user = await userModel.findById({ _id: req.session.user });
+            user = await userModel.findById({ _id: req.params.user_id  });
           }
         } catch (err) {
           console.log(err);

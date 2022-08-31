@@ -22,3 +22,6 @@ const seed = async () => {
 }
 
 seed()
+//run npm start seed, it will call this js file, 
+//which will evaluate .congif (connecting to db), 
+//then invoke seed(). which will go through each requred filepath and evaluate

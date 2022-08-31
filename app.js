@@ -16,11 +16,14 @@ const url = require('url');
 
 const gltfmodel = require('./scripts/gltfmodel');
 const modeldatabase = require('./scripts/modeldatabase');
-const usermanagement = require('./scripts/usermanagement');
+//const usermanagement = require('./scripts/usermanagement');
 const modeldisplay = require('./scripts/modeldisplay');
 const storagemanagement = require('./scripts/storagemanagement');
 const filedownloader = require('./scripts/filedownloader');
 const userController = require('./scripts/users_controller');
+const authMiddleware = require('./middlewares/auth_middleware')// middleware for the authentication, to check if theres a session
+
+
 
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
@@ -36,7 +39,7 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(authMiddleware.setAuthUserVar)
 
 const port = process.env.PORT || 3000;
 app.listen(port, function(req, res) {
