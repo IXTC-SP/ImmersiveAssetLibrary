@@ -1,0 +1,15 @@
+[{
+    "email": "sandra_fong@sp.edu.sg",
+    "isAdmin": true,
+    "password": "password"
+},
+{
+    "email": "goh_zhe_an@sp.edu.sg",
+    "isAdmin": true,
+    "password": "password"
+},
+{
+    "email": "wil_lim@sp.edu.sg",
+    "isAdmin": true,
+    "password": "password"
+}]
