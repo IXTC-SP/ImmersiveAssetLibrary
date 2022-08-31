@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const express = require('express');
 // const mongoose = require('mongoose');
 const ejs = require('ejs');
@@ -18,6 +20,7 @@ const usermanagement = require('./scripts/usermanagement');
 const modeldisplay = require('./scripts/modeldisplay');
 const storagemanagement = require('./scripts/storagemanagement');
 const filedownloader = require('./scripts/filedownloader');
+const userController = require('./scripts/users_controller');
 
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
@@ -442,3 +445,20 @@ app.post("/downloadasset/:modelid", function(req, res) {
 //      }));
 //   });
 // });
+
+
+//sandra user admin routes
+app.get("/:user_id/profile", userController.showProfile)
+app.get("/:user_id/uploads", userController.showUploads)
+app.get("/:user_id/downloads", userController.showDownloads)
+app.get("/:user_id/enrollment", userController.showEnrollment)
+
+app.post("/:user_id/enrollment", userController.showEnrollment)
+app.post("/:user_id/uploads", userController.showUploads)
+
+app.patch("/:user_id/profile", userController.showProfile)
+app.patch("/:user_id/uploads", userController.showUploads)
+
+
+app.delete("/:user_id/uploads", userController.showUploads)
+app.delete("/:user_id/enrollment", userController.showEnrollment)
