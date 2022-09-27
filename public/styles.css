@@ -3,9 +3,10 @@ model-viewer {
   height: 600px;
 }
 
-@media (min-width: 1200px)
+@media (min-width: 1200px) {
+}
 .container {
-    max-width: 1300px;
+  max-width: 1300px;
 }
 
 .tag_element {
@@ -26,9 +27,10 @@ model-viewer {
 }
 
 #tag_input_content:focus {
-    outline: none !important;
+  outline: none !important;
 }
 
 #tag_input_content:hover {
   background-color: #ffff66;
 }
+

@@ -2,7 +2,7 @@
   "name": "immersiveassetlibrary",
   "version": "1.0.0",
   "description": "Web portal for storage and sharing of immersive assets",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "seed": "node ./seeds/seeds.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,6 +17,7 @@
     "3d-model-converter": "^1.0.0",
     "adm-zip": "^0.5.9",
     "body-parser": "^1.20.0",
+    "bootstrap-table": "^1.21.0",
     "dotenv": "^16.0.2",
     "ejs": "^3.1.8",
     "express": "^4.18.1",
@@ -24,6 +25,7 @@
     "fbx2gltf": "^0.9.7-p1",
     "formidable": "^2.0.1",
     "glob-all": "^3.3.0",
+    "mdb-ui-kit": "^5.0.0",
     "mongoose": "^6.4.0",
     "multer": "^1.4.5-lts.1",
     "passport": "^0.6.0",

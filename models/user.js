@@ -2,12 +2,17 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
+    // username: {
+    //   type: String,
+    //   default:"-"
+    // },
     email: {
       type: String,
       required: true,
     },
     password: {
-      type: String
+      type: String,
+      required: true,
     },
     isAdmin: {
       type: Boolean,
@@ -16,7 +21,7 @@ const userSchema = new mongoose.Schema({
     createdBy:{
         type: Schema.Types.ObjectId,
         ref: "User",
-        default: " "
+        default:  new mongoose.Types.ObjectId("630f0acc7fa286ec83e1bcad")///usr sandra
     },
    }, 
    { timestamps: true }
