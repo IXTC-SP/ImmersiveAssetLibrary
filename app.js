@@ -24,7 +24,6 @@ const userController = require('./scripts/users_controller');
 const authMiddleware = require('./middlewares/auth_middleware')// middleware for the authentication, to check if theres a session
 
 
-
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 app.use('/scripts', express.static('scripts'));
@@ -41,10 +40,26 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(authMiddleware.setAuthUserVar)
 
+//sandra connection
+const mongoose = require('mongoose');
+//Mongoose
+const MONGODB_URI = "mongodb+srv://ixtcdeveloper:uxtcdeveloper1234@ixtc.trfz1qc.mongodb.net/";
 const port = process.env.PORT || 3000;
-app.listen(port, function(req, res) {
-  console.log('Server running on localhost ', port);
-});
+app.listen(port, async () => {
+  try {
+    await mongoose.connect(MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        dbName: process.env.MONGO_DB
+     });
+  } catch(err) {
+      console.log(`Failed to connect to DB`)
+      process.exit(1)
+  }
+
+  console.log(`Immersive Library backend listening on port ${port}`)
+})
+
 
 app.get("/register", function(req, res) {
   res.render("register", {
@@ -56,15 +71,15 @@ app.get("/register", function(req, res) {
   });
 });
 
-app.get("/login", function(req, res) {
-  res.render('login', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: true,
-      allowLogout: false
-    }
-  });
-});
+// app.get("/login", function(req, res) {
+//   res.render('login', {
+//     navbarState: {
+//       allowLogin: false,
+//       allowRegister: true,
+//       allowLogout: false
+//     }
+//   });
+// });
 
 app.post('/logout', function(req, res, next) {
   req.logout(function(err) {
@@ -451,12 +466,13 @@ app.post("/downloadasset/:modelid", function(req, res) {
 
 
 //sandra user admin routes
-app.get("/:user_id/profile", userController.showProfile)
-app.get("/:user_id/uploads", userController.showUploads)
-app.get("/:user_id/downloads", userController.showDownloads)
-app.get("/:user_id/enrollment", userController.showEnrollment)
+app.get("/:user_id/profile", userController.showProfile)//need upoads by users,
+app.get("/:user_id/uploads", userController.showUploads)//need uploads by user,
+app.get("/:user_id/downloads", userController.showDownloads)//need downloads from dbs
+app.get("/users/dashboard/enrollment", userController.showEnrollment)
+app.get("/login", userController.showlogin)
 
-app.post("/:user_id/enrollment", userController.showEnrollment)
+app.post("/:user_id/enrollment", userController.createEnrollment)//done 
 app.post("/:user_id/uploads", userController.showUploads)
 
 app.patch("/:user_id/profile", userController.showProfile)
@@ -464,4 +480,4 @@ app.patch("/:user_id/uploads", userController.showUploads)
 
 
 app.delete("/:user_id/uploads", userController.showUploads)
-app.delete("/:user_id/enrollment", userController.showEnrollment)
+//app.delete("/:user_id/enrollment", userController.deleteEnrollment)

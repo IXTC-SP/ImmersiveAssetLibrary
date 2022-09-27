@@ -1,71 +1,56 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ImmersiveAssetLibrary</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.4.0/mdb.min.css" rel="stylesheet" /> -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.css"
+      rel="stylesheet"
+    />
 
-    <link href=" https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="/main.css" rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table.min.css"
+    />
+    <style>
+      .login-page {
+        height: 500px;
+      }
+      .title{
+        font-family: Oswald;
+        color: #2B7A9E;
+        font-size: 48px;
+        font-weight: 700
+      }
+      .background-color{
+        background: linear-gradient(to left, #F1F1F1 200px, #fff 100px);
+        z-index: -10;
+      }
+      .login-img{
+        z-index: 10;
+      }
+      .login-btn{
+        background: linear-gradient(to left, #155E60, #2B7A9E);
+        color: white;
+      }
+    </style>
+  </head>
 
-
-</head>
-
-<body class="d-flex flex-column min-vh-100">
-    <!-- nav bar -->
-    <nav id="page-header" class="navbar navbar-expand-lg bg-light fixed-top">
-        <div class="container">
-            <div>
-              <a href="/">               
-                <h2 class="navbar-brand text-secondary my-auto">Immersive Asset Library</h2>
-              </a>                
-            </div>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/studios">Find Classes</a>
-                    </li>
-                    <% if (authUser !==null) { %>
-                        <li class="nav-item">
-                          <div class="dropdown ">
-                            <a href="/single_asset_create" type="button" 
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            UPLOAD
-                            </a>
-                            <a class="nav-link dropdown-toggle" type="button" id="dropdownMenuButton"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <%= authUser %>
-                            </a>
-                            <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                              <a type="button" href="/<%= user %>/profile" class="dropdown-item">Profile</a>
-                              <a type="button" href="/<%= user %>/uploads" class="dropdown-item">Upcoming</a>
-                              <a type="button" href="/<%= user %>/download" class="dropdown-item">History</a>
-                              <a type="button" href="/<%= user %>/enrollment" class="dropdown-item">Shopping Cart</a>
-                              <a type="button" href="/<%= user %>/logout" class="dropdown-item">Logout</a>
-                            </div>
-                        </div>
-                      </li>
-                    <% } else { %>
-                      <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/login">Login</a>
-                      </li>
-                    <% } %>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <main class="pt-5">
+  <body class="d-flex flex-column min-vh-100">
+    <!-- site bar -->
+    <% if (isLoginpage) { %> <%- include('./sitebar'); %> <% } %>
+  </body>
+</html>
