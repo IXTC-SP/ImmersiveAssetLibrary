@@ -43,7 +43,7 @@ app.use(authMiddleware.setAuthUserVar)
 //sandra connection
 const mongoose = require('mongoose');
 //Mongoose
-const MONGODB_URI = "mongodb+srv://ixtcdeveloper:uxtcdeveloper1234@ixtc.trfz1qc.mongodb.net/";
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}.trfz1qc.mongodb.net/`;
 const port = process.env.PORT || 3000;
 app.listen(port, async () => {
   try {
