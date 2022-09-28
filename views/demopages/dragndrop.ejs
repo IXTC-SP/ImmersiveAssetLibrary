@@ -1,14 +1,77 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<style>
-  #drop_zone {
-    border: 5px solid blue;
-    width:  200px;
-    height: 100px;
-  }
-</style>
+<%- include('../partials/header') %>
+
+<body>
+  <style>
+    #drop_zone {
+      border: 2px dotted gray;
+      width:  auto;
+      height: 400px;
+    }
+
+    .horizontal-middle {
+      text-align: center;
+    }
+
+    .browse-btn {
+      text-decoration: underline;
+    }
+
+
+    .upload-btn-group {
+      padding-top: 2em;
+    }
+
+    .upload-page-btn {
+      border: 1px solid black;
+      background-color: white;
+      /* border-radius: 30%; */
+      color: black;
+      padding: 14px 48px;
+    }
+  </style>
+
+<div class="horizontal-middle"><h2>Upload a new asset</h2></div>
+<div class="container">
+  <div class="row">
+    <div class="col">
+    </div>
+    <div class="col-9">
+      <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+        <div class="horizontal-middle">
+          <span class="">Drag and Drop </span>
+          <span class="">or <span class="browse-btn" id="browse-btn" onclick="browse()">Browse</span></span>
+          <input type="file" id="browse-input" name="file" value="" style="display:none;">
+        </div>
+        <p class="horizontal-middle" id="format-support-info">We support ....</p>
+        <p class="horizontal-middle" id="format-3dmodel-info">You can also upload a model folder like ZIP, RAR, or 7z, containing only your textures, materials, and mesh.</p>
+        <p class="horizontal-middle">Additional files can be added in the next step</p>
+      </div>
+      <div class="upload-btn-group">
+        <button class="upload-page-btn left" type="button" name="button">Cancel</button>
+        <button class="upload-page-btn right" type="button" name="button">Next</button>
+      </div>
+
+    </div>
+    <div class="col">
+      <label for="asset-select">Select Asset Type:</label>
+      <select name="assets" id="asset-select" onchange="triggerChangeWithAssetSelect()">
+          <option value="3dmodel">3D Model</option>
+          <option value="script">Script</option>
+          <option value="360image">360 Image</option>
+      </select>
+
+      <label id="asset-format-id" for="asset-format">Select Format:</label>
+      <select name="format" id="asset-format">
+      </select>
+    </div>
+  </div>
+</div>
+
+
+</body>
+
 <script>
+//drag and drop feature
 function dropHandler(ev) {
   console.log('File(s) dropped');
 
@@ -21,20 +84,80 @@ function dropHandler(ev) {
     });
   }
 }
-
 function dragOverHandler(ev) {
   console.log('File(s) in drop zone');
 
   // Prevent default behavior (Prevent file from being opened)
   ev.preventDefault();
 }
+
+//browse button
+function browse(){
+  var i = document.getElementById("browse-input");
+  i.click();
+}
+
+
+//updating page based on selected asset
+triggerChangeWithAssetSelect();
+function triggerChangeWithAssetSelect() {
+  var e = document.getElementById("asset-select");
+  var value = e.value;
+  var options = [];
+  var supportformat = "";
+  switch (value) {
+    case "360image":
+      options = ["cubemap", "equirectangular"];
+      supportformat = "We support JPG, JPEG, PNG.";
+      enableModelInfo(false);
+      break;
+    case "script":
+      options = ["c#", "javascript", "python"];
+      supportformat = "We support c#, javascript, python.";
+      enableModelInfo(false);
+      break;
+    case "3dmodel":
+      supportformat = "We support obj, fbx.";
+      enableModelInfo(true);
+      break;
+  }
+  createAssetFormat(options);
+  updateSupportFormatText(supportformat);
+}
+
+function createAssetFormat(opts){
+  var x = document.getElementById("asset-format");
+  var y = document.getElementById("asset-format-id");
+  if(opts.length == 0){
+    x.style.display = "none";
+    y.style.display = "none";
+  } else {
+    x.style.display = "inline-block"
+    y.style.display = "inline-block"
+    x.options.length = 0;
+    opts.forEach((o)=>{
+      var option = document.createElement("option");
+      option.text = o;
+      option.value = o;
+      x.add(option);
+    });
+  }
+
+}
+function updateSupportFormatText(t){
+  var i = document.getElementById("format-support-info");
+  i.innerHTML = t;
+}
+function enableModelInfo(b){
+  var i = document.getElementById("format-3dmodel-info");
+  if(b){
+    i.style.display = "inline-block";
+  } else {
+    i.style.display = "none";
+
+  }
+}
 </script>
-</head>
-<body>
 
-<div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
-  <p>Drag one or more files to this <i>drop zone</i>.</p>
-</div>
 
-</body>
-</html>
+<%- include('../partials/footer') %>
