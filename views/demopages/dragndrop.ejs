@@ -37,23 +37,10 @@
     }
 
     .file-btn {
-      padding: 3px;
-      width: 24px;
-      height: 24px;
-      -ms-flex: 0 0 24px;
-      flex: 0 0 24px;
-      text-align: center;
-      background: rgba(0,0,0,.1);
-      background: #e5e5e9;
-      margin-left: 4px;
-      border-radius: 100%;
-      cursor: pointer;
-      display: -ms-flexbox;
-      display: flex;
-      -ms-flex-align: center;
-      align-items: center;
-      -ms-flex-pack: center;
-      justify-content: center;
+      position: absolute;
+      left: 100px;
+      font-size: 20px;
+      top: -5px;
     }
 
     .card-file-info {
@@ -62,6 +49,45 @@
       width: 100%;
       bottom: 0;
       left: 0;
+    }
+
+    /* The Modal (background) */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      padding-top: 100px; /* Location of the box */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+
+    /* The Close Button */
+    .close {
+      color: #aaaaaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
     }
 
   </style>
@@ -85,7 +111,7 @@
         <p class="horizontal-middle">Additional files can be added in the next step</p>
       </div>
       <div class="upload-btn-group">
-        <button class="upload-page-btn left" type="button" name="button">Cancel</button>
+        <button class="cancel-page-btn left" type="button" name="button">Cancel</button>
         <button class="upload-page-btn right" type="button" name="button">Next</button>
       </div>
 
@@ -105,6 +131,14 @@
   </div>
 </div>
 
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="cubemap-modal-content">
+    <span class="close">&times;</span>
+    <p>Some text in the Modal..</p>
+  </div>
 
 </body>
 
@@ -112,11 +146,25 @@
   const dragArea = document.querySelector(".drop-zone");
   const dragText = document.querySelector(".drag-text");
   const collectedfiles = document.querySelector(".collected-files");
+  const nextpagebtn = document.querySelector(".upload-page-btn");
+  nextpagebtn.addEventListener('click', function(event){
+    processUploads();
+    event.preventDefault();
+  })
+  //next page btn
+  function processUploads(){
+    //if no uploads added
+    if(files.length == 0)
+      alert("no uploads added");
 
+    //if model file, process and popup to assign textures
+
+    //if cubemap file, process and popup to assign textures
+  }
+
+  //creating and managing file card
   let acceptedtype = "";
   let currenttype = "";
-
-
   function createFileCard(filename){
     //create a card
     const card = document.createElement("div");
@@ -124,7 +172,8 @@
     collectedfiles.appendChild(card);
 
     //create remove-btn for the card
-    var removebtn = document.createElement('a');
+    var removebtn = document.createElement('span');
+    removebtn.innerHTML = "&times;";
     removebtn.classList.add("file-btn");
     removebtn.addEventListener('click', function(event) {
       removeFile(card,filename);
@@ -157,7 +206,6 @@
     collectedfiles.innerHTML = '';
     files = [];
   }
-
   function removeFile(card, filename){
     card.remove();
     for( var i = 0; i < files.length; i++){
@@ -166,7 +214,6 @@
         }
     }
   }
-
   function setAcceptedType(type){
     console.log('change accepted type');
     switch (type)
@@ -282,6 +329,9 @@ function enableModelInfo(b){
 
   }
 }
+
+
+
 </script>
 
 
