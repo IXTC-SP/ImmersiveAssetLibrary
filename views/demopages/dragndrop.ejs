@@ -29,6 +29,14 @@
       padding: 14px 48px;
     }
 
+    .cancel-page-btn {
+      border: 1px solid black;
+      background-color: white;
+      /* border-radius: 30%; */
+      color: black;
+      padding: 14px 48px;
+    }
+
     .card {
         width: 120px;
         height: 120px;
@@ -51,9 +59,14 @@
       left: 0;
     }
 
+    .texture-assign-box {
+      border: 1px solid black;
+      background-color: white;
+    }
+
     /* The Modal (background) */
     .modal {
-      display: none; /* Hidden by default */
+      display: block; /* Hidden by default */
       position: fixed; /* Stay in place */
       z-index: 1; /* Sit on top */
       padding-top: 100px; /* Location of the box */
@@ -125,7 +138,7 @@
       </select>
 
       <label id="asset-format-id" for="asset-format">Select Format:</label>
-      <select name="format" id="asset-format" onchange="clearAllFileContent()">
+      <select name="format" id="asset-format" onchange="onChangeFormatType(this)">
       </select>
     </div>
   </div>
@@ -133,11 +146,61 @@
 
 <!-- The Modal -->
 <div id="myModal" class="modal">
-
   <!-- Modal content -->
-  <div class="cubemap-modal-content">
-    <span class="close">&times;</span>
-    <p>Some text in the Modal..</p>
+  <div class="modal-content">
+    <div class="cubemap-content">
+      <span class="close">&times;</span>
+      <p>Assign Texture : </p>
+      <div class="container">
+        <div class="row" style="height: 100px;">
+          <div class="col-3 texture-assign-box">
+            <label for="top-texture-selection">Top</label>
+            <select name="top-texture-selection" class="cubemap-texture-assign" id="texture-selection">
+            </select>
+          </div>
+        </div>
+        <div class="row" style="height: 100px;">
+          <div class="col-3 texture-assign-box">
+            <label for="front-texture-selection">Front</label>
+            <select name="front-texture-selection" class="cubemap-texture-assign" id="texture-selection">
+            </select>
+          </div>
+          <div class="col-3 texture-assign-box">
+            <label for="right-texture-selection">Right</label>
+            <select name="right-texture-selection" class="cubemap-texture-assign" id="texture-selection">
+            </select>
+          </div>
+          <div class="col-3 texture-assign-box">
+            <label for="back-texture-selection">Back</label>
+            <select name="back-texture-selection" class="cubemap-texture-assign" id="texture-selection">
+            </select>
+          </div>
+          <div class="col-3 texture-assign-box">
+            <label for="left-texture-selection">Left</label>
+            <select name="left-texture-selection" class="cubemap-texture-assign" id="texture-selection">
+            </select>
+          </div>
+        </div>
+        <div class="row" style="height: 100px;">
+          <div class="col-3 texture-assign-box">
+            <label for="bottom-texture-selection">Bottom</label>
+            <select name="bottom-texture-selection" class="cubemap-texture-assign" id="texture-selection">
+
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="upload-btn-group">
+        <button class="upload-page-btn right" type="button" name="button">Next</button>
+      </div>
+    </div>
+    <div class="model-content">
+      <span class="close">&times;</span>
+      <p>Hello World</p>
+      <div class="upload-btn-group">
+        <button class="upload-page-btn" type="button" name="button">Next</button>
+      </div>
+    </div>
   </div>
 
 </body>
@@ -150,21 +213,37 @@
   nextpagebtn.addEventListener('click', function(event){
     processUploads();
     event.preventDefault();
-  })
+  });
+
+  //create option for select element
+  function createoption(text,value,parent){
+    var option = document.createElement("option");
+    option.text = text;
+    option.value = value;
+    parent.add(option);
+  }
+
   //next page btn
   function processUploads(){
+    console.log(currenttype + " " + currentformat);
     //if no uploads added
     if(files.length == 0)
       alert("no uploads added");
 
     //if model file, process and popup to assign textures
-
+    if(currenttype == "3dmodel"){
+      changeModalContent("model");
+    }
     //if cubemap file, process and popup to assign textures
+    if(currenttype == "360image" && currentformat == "cubemap"){
+      changeModalContent("cubemap");
+    }
   }
 
   //creating and managing file card
   let acceptedtype = "";
   let currenttype = "";
+  let currentformat = "";
   function createFileCard(filename){
     //create a card
     const card = document.createElement("div");
@@ -296,7 +375,6 @@ function triggerChangeWithAssetSelect() {
   createAssetFormat(options);
   updateSupportFormatText(supportformat);
 }
-
 function createAssetFormat(opts){
   var x = document.getElementById("asset-format");
   var y = document.getElementById("asset-format-id");
@@ -308,11 +386,9 @@ function createAssetFormat(opts){
     y.style.display = "inline-block"
     x.options.length = 0;
     opts.forEach((o)=>{
-      var option = document.createElement("option");
-      option.text = o;
-      option.value = o;
-      x.add(option);
+      createoption(o,o,x);
     });
+    currentformat = x.value;
   }
 
 }
@@ -329,8 +405,62 @@ function enableModelInfo(b){
 
   }
 }
+function onChangeFormatType(e){
+  clearAllFileContent();
+  currentformat = e.value;
+}
+
+//modal content selection
+const modelmodalcontent = document.querySelector(".model-content");
+const cubemapmodalcontent = document.querySelector(".cubemap-content")
+const cubemaptextureassignselect = document.querySelectorAll('.cubemap-texture-assign');
+const modalcontent = document.querySelector(".modal")
+modalcontent.style = "display:none;"
+modelmodalcontent.style = "display:none;"
+cubemapmodalcontent.style = "display:none;"
 
 
+let textureassignarray = [];
+function setupCubemapTextureAssignOptions(){
+  let textureassignarray = files;
+  console.log("running setup cubemap texture assign options");
+  for(var i = 0; i< cubemaptextureassignselect.length; i++){
+      cubemaptextureassignselect[i].onchange = function(e){
+      //allowOnlySingleTextureAssigning(e);
+    }
+    createoption("none", "none", cubemaptextureassignselect[i]);
+    for(var j = 0; j < files.length; j++){
+      createoption(files[j].name, files[j].name, cubemaptextureassignselect[i]);
+    }
+  }
+}
+function allowOnlySingleTextureAssigning(e){
+  console.log(e.target);
+  for(var i = 0; i< cubemaptextureassignselect.length; i++){
+      if(cubemaptextureassignselect[i] != e.target && cubemaptextureassignselect[i].value == e.target.value){
+        cubemaptextureassignselect[i].value = "none";
+      }
+    }
+}
+
+
+function changeModalContent(condition){
+  switch (condition){
+    case "model":
+    //show model content
+    modalcontent.style = "display:block;"
+    modelmodalcontent.style = "display:block;"
+    cubemapmodalcontent.style = "display:none;"
+    break;
+    case "cubemap":
+    //show cubemap content
+    modalcontent.style = "display:block;"
+    modelmodalcontent.style = "display:none;"
+    cubemapmodalcontent.style = "display:block;"
+    setupCubemapTextureAssignOptions();
+    break;
+  }
+}
 
 </script>
 
