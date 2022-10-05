@@ -4,7 +4,7 @@
   <style>
     .drop-zone {
       border: 2px dotted gray;
-      width:  auto;
+      width: auto;
       height: 400px;
     }
 
@@ -38,10 +38,10 @@
     }
 
     .card {
-        width: 120px;
-        height: 120px;
-        position: relative;
-        display: inline-block;
+      width: 120px;
+      height: 120px;
+      position: relative;
+      display: inline-block;
     }
 
     .file-btn {
@@ -66,17 +66,26 @@
 
     /* The Modal (background) */
     .modal {
-      display: block; /* Hidden by default */
-      position: fixed; /* Stay in place */
-      z-index: 1; /* Sit on top */
-      padding-top: 100px; /* Location of the box */
+      display: block;
+      /* Hidden by default */
+      position: fixed;
+      /* Stay in place */
+      z-index: 1;
+      /* Sit on top */
+      padding-top: 100px;
+      /* Location of the box */
       left: 0;
       top: 0;
-      width: 100%; /* Full width */
-      height: 100%; /* Full height */
-      overflow: auto; /* Enable scroll if needed */
-      background-color: rgb(0,0,0); /* Fallback color */
-      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      width: 100%;
+      /* Full width */
+      height: 100%;
+      /* Full height */
+      overflow: auto;
+      /* Enable scroll if needed */
+      background-color: rgb(0, 0, 0);
+      /* Fallback color */
+      background-color: rgba(0, 0, 0, 0.4);
+      /* Black w/ opacity */
     }
 
     /* Modal Content */
@@ -102,106 +111,118 @@
       text-decoration: none;
       cursor: pointer;
     }
-
   </style>
 
-<div class="horizontal-middle"><h2>Upload a new asset</h2></div>
-<div class="container">
-  <div class="row">
-    <div class="col">
-    </div>
-    <div class="col-9">
-      <div class="drop-zone">
-        <div class="collected-files">
-        </div>
-        <div class="horizontal-middle">
-          <span class="drag-text">Drag and Drop </span><br>
-          <span class="">or <span class="browse-btn" id="browse-btn" onclick="browse()">Browse</span></span>
-          <input type="file" id="browse-input" name="file" value="" style="display:none;">
-        </div>
-        <p class="horizontal-middle" id="format-support-info">We support ....</p>
-        <p class="horizontal-middle" id="format-3dmodel-info">You can also upload a model folder like ZIP, RAR, or 7z, containing only your textures, materials, and mesh.</p>
-        <p class="horizontal-middle">Additional files can be added in the next step</p>
+  <div class="horizontal-middle">
+    <h2>Upload a new asset</h2>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col">
       </div>
-      <div class="upload-btn-group">
-        <button class="cancel-page-btn left" type="button" name="button">Cancel</button>
-        <button class="upload-page-btn right" type="button" name="button">Next</button>
-      </div>
+      <div class="col-9">
+        <div class="drop-zone">
+          <div class="collected-files">
+          </div>
+          <div class="horizontal-middle">
+            <span class="drag-text">Drag and Drop </span><br>
+            <span class="">or <span class="browse-btn" id="browse-btn" onclick="browse()">Browse</span></span>
+            <input type="file" id="browse-input" name="file" value="" style="display:none;">
+          </div>
+          <p class="horizontal-middle" id="format-support-info">We support ....</p>
+          <p class="horizontal-middle" id="format-3dmodel-info">You can also upload a model folder like ZIP, RAR, or 7z, containing only your textures, materials, and mesh.</p>
+          <p class="horizontal-middle">Additional files can be added in the next step</p>
+        </div>
+        <div class="upload-btn-group">
+          <button class="cancel-page-btn left" type="button" name="button">Cancel</button>
+          <button class="upload-page-btn right" type="button" name="button">Next</button>
+        </div>
 
-    </div>
-    <div class="col">
-      <label for="asset-select">Select Asset Type:</label>
-      <select name="assets" id="asset-select" onchange="triggerChangeWithAssetSelect()">
+      </div>
+      <div class="col">
+        <label for="asset-select">Select Asset Type:</label>
+        <select name="assets" id="asset-select" onchange="triggerChangeWithAssetSelect()">
           <option value="3dmodel">3D Model</option>
           <option value="script">Script</option>
           <option value="360image">360 Image</option>
-      </select>
+        </select>
 
-      <label id="asset-format-id" for="asset-format">Select Format:</label>
-      <select name="format" id="asset-format" onchange="onChangeFormatType(this)">
-      </select>
+        <label id="asset-format-id" for="asset-format">Select Format:</label>
+        <select name="format" id="asset-format" onchange="onChangeFormatType(this)">
+        </select>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- The Modal -->
-<div id="myModal" class="modal">
-  <!-- Modal content -->
-  <div class="modal-content">
-    <div class="cubemap-content">
-      <span class="close">&times;</span>
-      <p>Assign Texture : </p>
-      <div class="container">
-        <div class="row" style="height: 100px;">
-          <div class="col-3 texture-assign-box">
-            <label for="top-texture-selection">Top</label>
-            <select name="top-texture-selection" class="cubemap-texture-assign" id="texture-selection">
-            </select>
+  <!-- The Modal -->
+  <div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close" onclick="closeModalContent()">&times;</span>
+      <div class="cubemap-content">
+        <p>Assign Texture : </p>
+        <div class="container">
+          <div class="row" style="height: 100px;">
+            <div class="col-3 texture-assign-box">
+              <label for="top-texture-selection">Top</label>
+              <select name="top-texture-selection" class="cubemap-texture-assign" id="texture-selection">
+              </select>
+            </div>
           </div>
-        </div>
-        <div class="row" style="height: 100px;">
-          <div class="col-3 texture-assign-box">
-            <label for="front-texture-selection">Front</label>
-            <select name="front-texture-selection" class="cubemap-texture-assign" id="texture-selection">
-            </select>
+          <div class="row" style="height: 100px;">
+            <div class="col-3 texture-assign-box">
+              <label for="front-texture-selection">Front</label>
+              <select name="front-texture-selection" class="cubemap-texture-assign" id="texture-selection">
+              </select>
+            </div>
+            <div class="col-3 texture-assign-box">
+              <label for="right-texture-selection">Right</label>
+              <select name="right-texture-selection" class="cubemap-texture-assign" id="texture-selection">
+              </select>
+            </div>
+            <div class="col-3 texture-assign-box">
+              <label for="back-texture-selection">Back</label>
+              <select name="back-texture-selection" class="cubemap-texture-assign" id="texture-selection">
+              </select>
+            </div>
+            <div class="col-3 texture-assign-box">
+              <label for="left-texture-selection">Left</label>
+              <select name="left-texture-selection" class="cubemap-texture-assign" id="texture-selection">
+              </select>
+            </div>
           </div>
-          <div class="col-3 texture-assign-box">
-            <label for="right-texture-selection">Right</label>
-            <select name="right-texture-selection" class="cubemap-texture-assign" id="texture-selection">
-            </select>
-          </div>
-          <div class="col-3 texture-assign-box">
-            <label for="back-texture-selection">Back</label>
-            <select name="back-texture-selection" class="cubemap-texture-assign" id="texture-selection">
-            </select>
-          </div>
-          <div class="col-3 texture-assign-box">
-            <label for="left-texture-selection">Left</label>
-            <select name="left-texture-selection" class="cubemap-texture-assign" id="texture-selection">
-            </select>
-          </div>
-        </div>
-        <div class="row" style="height: 100px;">
-          <div class="col-3 texture-assign-box">
-            <label for="bottom-texture-selection">Bottom</label>
-            <select name="bottom-texture-selection" class="cubemap-texture-assign" id="texture-selection">
+          <div class="row" style="height: 100px;">
+            <div class="col-3 texture-assign-box">
+              <label for="bottom-texture-selection">Bottom</label>
+              <select name="bottom-texture-selection" class="cubemap-texture-assign" id="texture-selection">
 
-            </select>
+              </select>
+            </div>
           </div>
         </div>
+      </div>
+      <div class="model-content">
+        <p>Assign Texture : </p>
+        <label for="diffuse-texture-selection">Diffuse</label>
+        <select name="diffuse-texture-selection" class="model-texture-assign" id="texture-selection">
+        </select>
+        <label for="normal-texture-selection">Normal</label>
+        <select name="normal-texture-selection" class="model-texture-assign" id="texture-selection">
+        </select>
+        <label for="occlusion-texture-selection">Occlusion</label>
+        <select name="occlusion-texture-selection" class="model-texture-assign" id="texture-selection">
+        </select>
+        <label for="height-texture-selection">Height</label>
+        <select name="height-texture-selection" class="model-texture-assign" id="texture-selection">
+        </select>
+        <label for="emissive-texture-selection">Emissive</label>
+        <select name="emissive-texture-selection" class="model-texture-assign" id="texture-selection">
+        </select>
       </div>
       <div class="upload-btn-group">
         <button class="upload-page-btn right" type="button" name="button">Next</button>
       </div>
     </div>
-    <div class="model-content">
-      <span class="close">&times;</span>
-      <p>Hello World</p>
-      <div class="upload-btn-group">
-        <button class="upload-page-btn" type="button" name="button">Next</button>
-      </div>
-    </div>
-  </div>
 
 </body>
 
@@ -210,13 +231,13 @@
   const dragText = document.querySelector(".drag-text");
   const collectedfiles = document.querySelector(".collected-files");
   const nextpagebtn = document.querySelector(".upload-page-btn");
-  nextpagebtn.addEventListener('click', function(event){
+  nextpagebtn.addEventListener('click', function(event) {
     processUploads();
     event.preventDefault();
   });
 
   //create option for select element
-  function createoption(text,value,parent){
+  function createoption(text, value, parent) {
     var option = document.createElement("option");
     option.text = text;
     option.value = value;
@@ -224,18 +245,18 @@
   }
 
   //next page btn
-  function processUploads(){
+  function processUploads() {
     console.log(currenttype + " " + currentformat);
     //if no uploads added
-    if(files.length == 0)
+    if (files.length == 0)
       alert("no uploads added");
 
     //if model file, process and popup to assign textures
-    if(currenttype == "3dmodel"){
+    if (currenttype == "3dmodel") {
       changeModalContent("model");
     }
     //if cubemap file, process and popup to assign textures
-    if(currenttype == "360image" && currentformat == "cubemap"){
+    if (currenttype == "360image" && currentformat == "cubemap") {
       changeModalContent("cubemap");
     }
   }
@@ -244,7 +265,8 @@
   let acceptedtype = "";
   let currenttype = "";
   let currentformat = "";
-  function createFileCard(filename){
+
+  function createFileCard(filename) {
     //create a card
     const card = document.createElement("div");
     card.classList.add("card");
@@ -255,9 +277,9 @@
     removebtn.innerHTML = "&times;";
     removebtn.classList.add("file-btn");
     removebtn.addEventListener('click', function(event) {
-      removeFile(card,filename);
+      removeFile(card, filename);
       event.preventDefault();
-      });
+    });
 
     card.appendChild(removebtn);
     //create image for the card
@@ -275,28 +297,31 @@
     fileinfospan.innerHTML = filename;
     fileinfo.appendChild(fileinfospan);
   }
-  function clearFilesIfNewType(newtype){
-    if(currenttype != newtype){
+
+  function clearFilesIfNewType(newtype) {
+    if (currenttype != newtype) {
       clearAllFileContent();
       currenttype = newtype;
     }
   }
-  function clearAllFileContent(){
+
+  function clearAllFileContent() {
     collectedfiles.innerHTML = '';
     files = [];
   }
-  function removeFile(card, filename){
+
+  function removeFile(card, filename) {
     card.remove();
-    for( var i = 0; i < files.length; i++){
-        if ( files[i].name === filename) {
-            files.splice(i, 1);
-        }
+    for (var i = 0; i < files.length; i++) {
+      if (files[i].name === filename) {
+        files.splice(i, 1);
+      }
     }
   }
-  function setAcceptedType(type){
+
+  function setAcceptedType(type) {
     console.log('change accepted type');
-    switch (type)
-    {
+    switch (type) {
       case "image":
         acceptedtype = "image/";
         break;
@@ -311,21 +336,21 @@
   }
 
   let files = [];
-  dragArea.addEventListener('dragover', (event)=>{
+  dragArea.addEventListener('dragover', (event) => {
     event.preventDefault();
     console.log('File is inside the drag area');
     dragText.textContent = "Release to Upload"
   });
-  dragArea.addEventListener('dragleave', ()=>{
+  dragArea.addEventListener('dragleave', () => {
     console.log('File left the drag area');
     dragText.textContent = "Drag & Drop"
   });
-  dragArea.addEventListener('drop', (event)=>{
+  dragArea.addEventListener('drop', (event) => {
     event.preventDefault();
     if (event.dataTransfer.items) {
       // Use DataTransfer interface to access the file(s)
       [...event.dataTransfer.files].forEach((file, i) => {
-        if(acceptedtype != ""){
+        if (acceptedtype != "") {
           if (file.type.startsWith(acceptedtype)) {
             files.push(file);
             console.log('File is an accepted type.', file.type, file);
@@ -335,133 +360,147 @@
           //accept if it's model
           files.push(file);
         }
-    });
+      });
     }
   });
 
-//browse button
-function browse(){
-  var i = document.getElementById("browse-input");
-  i.click();
-}
-
-//updating page based on selected asset
-triggerChangeWithAssetSelect();
-function triggerChangeWithAssetSelect() {
-  var e = document.getElementById("asset-select");
-  var value = e.value;
-  var options = [];
-  var supportformat = "";
-  switch (value) {
-    case "360image":
-      options = ["cubemap", "equirectangular"];
-      supportformat = "We support JPG, JPEG, PNG.";
-      setAcceptedType("image");
-      enableModelInfo(false);
-      break;
-    case "script":
-      options = ["c#", "javascript", "python"];
-      supportformat = "We support c#, javascript, python.";
-      setAcceptedType("script");
-      enableModelInfo(false);
-      break;
-    case "3dmodel":
-      supportformat = "We support obj, fbx.";
-      setAcceptedType("model");
-      enableModelInfo(true);
-      break;
-  }
-  clearFilesIfNewType(value);
-  createAssetFormat(options);
-  updateSupportFormatText(supportformat);
-}
-function createAssetFormat(opts){
-  var x = document.getElementById("asset-format");
-  var y = document.getElementById("asset-format-id");
-  if(opts.length == 0){
-    x.style.display = "none";
-    y.style.display = "none";
-  } else {
-    x.style.display = "inline-block"
-    y.style.display = "inline-block"
-    x.options.length = 0;
-    opts.forEach((o)=>{
-      createoption(o,o,x);
-    });
-    currentformat = x.value;
+  //browse button
+  function browse() {
+    var i = document.getElementById("browse-input");
+    i.click();
   }
 
-}
-function updateSupportFormatText(t){
-  var i = document.getElementById("format-support-info");
-  i.innerHTML = t;
-}
-function enableModelInfo(b){
-  var i = document.getElementById("format-3dmodel-info");
-  if(b){
-    i.style.display = "inline-block";
-  } else {
-    i.style.display = "none";
+  //updating page based on selected asset
+  triggerChangeWithAssetSelect();
 
-  }
-}
-function onChangeFormatType(e){
-  clearAllFileContent();
-  currentformat = e.value;
-}
-
-//modal content selection
-const modelmodalcontent = document.querySelector(".model-content");
-const cubemapmodalcontent = document.querySelector(".cubemap-content")
-const cubemaptextureassignselect = document.querySelectorAll('.cubemap-texture-assign');
-const modalcontent = document.querySelector(".modal")
-modalcontent.style = "display:none;"
-modelmodalcontent.style = "display:none;"
-cubemapmodalcontent.style = "display:none;"
-
-
-let textureassignarray = [];
-function setupCubemapTextureAssignOptions(){
-  let textureassignarray = files;
-  console.log("running setup cubemap texture assign options");
-  for(var i = 0; i< cubemaptextureassignselect.length; i++){
-      cubemaptextureassignselect[i].onchange = function(e){
-      //allowOnlySingleTextureAssigning(e);
+  function triggerChangeWithAssetSelect() {
+    var e = document.getElementById("asset-select");
+    var value = e.value;
+    var options = [];
+    var supportformat = "";
+    switch (value) {
+      case "360image":
+        options = ["cubemap", "equirectangular"];
+        supportformat = "We support JPG, JPEG, PNG.";
+        setAcceptedType("image");
+        enableModelInfo(false);
+        break;
+      case "script":
+        options = ["c#", "javascript", "python"];
+        supportformat = "We support c#, javascript, python.";
+        setAcceptedType("script");
+        enableModelInfo(false);
+        break;
+      case "3dmodel":
+        supportformat = "We support obj, fbx.";
+        setAcceptedType("model");
+        enableModelInfo(true);
+        break;
     }
-    createoption("none", "none", cubemaptextureassignselect[i]);
-    for(var j = 0; j < files.length; j++){
-      createoption(files[j].name, files[j].name, cubemaptextureassignselect[i]);
+    clearFilesIfNewType(value);
+    createAssetFormat(options);
+    updateSupportFormatText(supportformat);
+  }
+
+  function createAssetFormat(opts) {
+    var x = document.getElementById("asset-format");
+    var y = document.getElementById("asset-format-id");
+    if (opts.length == 0) {
+      x.style.display = "none";
+      y.style.display = "none";
+    } else {
+      x.style.display = "inline-block"
+      y.style.display = "inline-block"
+      x.options.length = 0;
+      opts.forEach((o) => {
+        createoption(o, o, x);
+      });
+      currentformat = x.value;
+    }
+
+  }
+
+  function updateSupportFormatText(t) {
+    var i = document.getElementById("format-support-info");
+    i.innerHTML = t;
+  }
+
+  function enableModelInfo(b) {
+    var i = document.getElementById("format-3dmodel-info");
+    if (b) {
+      i.style.display = "inline-block";
+    } else {
+      i.style.display = "none";
+
     }
   }
-}
-function allowOnlySingleTextureAssigning(e){
-  console.log(e.target);
-  for(var i = 0; i< cubemaptextureassignselect.length; i++){
-      if(cubemaptextureassignselect[i] != e.target && cubemaptextureassignselect[i].value == e.target.value){
+
+  function onChangeFormatType(e) {
+    clearAllFileContent();
+    currentformat = e.value;
+  }
+
+  //modal content selection
+  const modelmodalcontent = document.querySelector(".model-content");
+  const cubemapmodalcontent = document.querySelector(".cubemap-content")
+  const cubemaptextureassignselect = document.querySelectorAll('.cubemap-texture-assign');
+  const modeltextureassignselect = document.querySelectorAll('.model-texture-assign');
+  const modalcontent = document.querySelector(".modal")
+  modalcontent.style = "display:none;"
+  modelmodalcontent.style = "display:none;"
+  cubemapmodalcontent.style = "display:none;"
+
+
+  let textureassignarray = [];
+
+  function setupTextureAssignOptions(selects) {
+    let textureassignarray = files;
+    console.log("running setup cubemap texture assign options");
+    if (selects[0].options.length - 1 == files.length) return;
+    for (var i = 0; i < selects.length; i++) {
+      selects[i].onchange = function(e) {
+        //allowOnlySingleTextureAssigning(e);
+      }
+      createoption("none", "none", selects[i]);
+      for (var j = 0; j < files.length; j++) {
+        createoption(files[j].name, files[j].name, selects[i]);
+      }
+    }
+  }
+
+  function allowOnlySingleTextureAssigning(e) {
+    console.log(e.target);
+    for (var i = 0; i < cubemaptextureassignselect.length; i++) {
+      if (cubemaptextureassignselect[i] != e.target && cubemaptextureassignselect[i].value == e.target.value) {
         cubemaptextureassignselect[i].value = "none";
       }
     }
-}
-
-
-function changeModalContent(condition){
-  switch (condition){
-    case "model":
-    //show model content
-    modalcontent.style = "display:block;"
-    modelmodalcontent.style = "display:block;"
-    cubemapmodalcontent.style = "display:none;"
-    break;
-    case "cubemap":
-    //show cubemap content
-    modalcontent.style = "display:block;"
-    modelmodalcontent.style = "display:none;"
-    cubemapmodalcontent.style = "display:block;"
-    setupCubemapTextureAssignOptions();
-    break;
   }
-}
 
+  function closeModalContent() {
+    modalcontent.style = "display:none;"
+    modelmodalcontent.style = "display:none;"
+    cubemapmodalcontent.style = "display:none;"
+  }
+
+  function changeModalContent(condition) {
+    switch (condition) {
+      case "model":
+        //show model content
+        modalcontent.style = "display:block;"
+        modelmodalcontent.style = "display:block;"
+        cubemapmodalcontent.style = "display:none;"
+        setupTextureAssignOptions(modeltextureassignselect);
+        break;
+      case "cubemap":
+        //show cubemap content
+        modalcontent.style = "display:block;"
+        modelmodalcontent.style = "display:none;"
+        cubemapmodalcontent.style = "display:block;"
+        setupTextureAssignOptions(cubemaptextureassignselect);
+        break;
+    }
+  }
 </script>
 
 
