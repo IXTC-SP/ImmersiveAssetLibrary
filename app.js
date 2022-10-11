@@ -152,6 +152,37 @@ app.post('/asset/:modelid', function(req, res) {
   });
 });
 
+
+app.get('/editpage/360', function(req, res) {
+  res.render('demopages/editpage-360', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+
+app.get('/editpage/model', function(req, res) {
+  res.render('demopages/editpage-model', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+
+app.get('/editpage/script', function(req, res) {
+  res.render('demopages/editpage-script', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+
 app.get('/360/equi', function(req, res) {
   res.render('demopages/360viewer(equi)', {
     navbarState: {
@@ -172,6 +203,7 @@ app.get('/360/cube', function(req, res) {
   });
 });
 
+//WORKING (UPLOAD PAGE)
 app.get('/dragndrop', function(req, res) {
   res.render('demopages/dragndrop', {
     navbarState: {
@@ -182,6 +214,7 @@ app.get('/dragndrop', function(req, res) {
   });
 });
 
+//
 app.get('/sample_asset', function(req, res) {
   res.render('sample_asset', {
     modelpath: "./uploads/00_sample/gltf/model.gltf",
@@ -194,7 +227,7 @@ app.get('/sample_asset', function(req, res) {
   });
 });
 
-
+//WORKING (ASSET LIST PAGE)
 app.get("/assets", function(req, res) {
   if(typeof req.query.search === 'undefined' || req.query.search == ""){
     console.log("get all result on model list");

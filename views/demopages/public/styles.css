@@ -1,0 +1,34 @@
+model-viewer {
+  width: 600px;
+  height: 600px;
+}
+
+@media (min-width: 1200px)
+.container {
+    max-width: 1300px;
+}
+
+.tag_element {
+  padding-left: 8px;
+  padding-right: 8px;
+  color: darkslategray;
+  border: 2px solid beige;
+}
+
+#selected_tag_element:hover {
+  background-color: beige;
+}
+
+#tag_input_content {
+  display: none;
+  background: none;
+  border: none;
+}
+
+#tag_input_content:focus {
+    outline: none !important;
+}
+
+#tag_input_content:hover {
+  background-color: #ffff66;
+}
