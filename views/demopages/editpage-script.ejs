@@ -1,22 +1,12 @@
 <%- include('../partials/header') %>
 
 <link rel="stylesheet" href="../modellist.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
-
-<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-
 <!-- Create a simple CodeMirror instance -->
-<link rel="stylesheet" href="/codemirror5-5.65.9/lib/codemirror.css">
-<script src="/codemirror5-5.65.9/mode/javascript/javascript.js"></script>
+<link rel="stylesheet" href="/codemirror-5.65.9/lib/codemirror.css">
+<script src="/codemirror-5.65.9/lib/codemirror.js"></script>
+<script src="/codemirror-5.65.9/mode/javascript/javascript.js"></script>
 
 <script type="text/javascript" src="/datamuse.js"></script>
-
-<style>
-  #panorama {
-    width: 600px;
-    height: 400px;
-  }
-</style>
 
 <body>
   <h2 class="Title text-center">Edit Properties</h2><br>
@@ -31,7 +21,7 @@
   <div class="container-fluid">
     <div class="row justify-content-center">
       <div class="col-4">
-        <model-viewer id="model-viewer" alt="" src="../uploads/cyberpunk/gltf/scene.gltf" ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
+        <textarea class="codemirror-textarea"></textarea>
         <br>
         <h5>Additional Files</h5>
         <div class="custom-file">
@@ -87,9 +77,11 @@
 </body>
 
 <script>
-  var editor = CodeMirror.fromTextArea(myTextarea, {
+  var editor = CodeMirror.fromTextArea(document.querySelector(".codemirror-textarea"), {
     lineNumbers: true
   });
+
+
 
 
   var suggestedtagelements = [];

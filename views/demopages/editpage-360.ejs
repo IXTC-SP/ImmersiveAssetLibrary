@@ -1,0 +1,165 @@
+<%- include('../partials/header') %>
+
+<link rel="stylesheet" href="../modellist.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+<script type="text/javascript" src="/datamuse.js"></script>
+
+<style>
+  #panorama {
+    width: 600px;
+    height: 400px;
+  }
+</style>
+
+<body>
+  <h2 class="Title text-center">Edit Properties</h2><br>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-6 d-flex align-items-end flex-column">
+        <h5 class="asset-name">360 Image: Exterior_360_street.jpg</h5>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-4">
+        <div class="" id="panorama"></div>
+        <br>
+        <h5>Additional Files</h5>
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="inputGroupFile01">
+          <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+        </div>
+      </div>
+      <div class="col-4">
+        <h5>Title</h5>
+        <input type="text" class="form-control" placeholder="" aria-label="Username" aria-describedby="basic-addon1">
+        <br>
+        <h5>Description</h5>
+        <textarea class="form-control" aria-label="With textarea"></textarea>
+        <br>
+        <h5>Technical Details</h5>
+        <div class="form-check form-check-inline">
+          <input name="optradio" class="form-check-input" type="radio" id="inlineCheckbox1" value="option1" />
+          <label class="form-check-label" for="inlineCheckbox1">Equirectangular</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input name="optradio" class="form-check-input" type="radio" id="inlineCheckbox2" checked value="option2" />
+          <label class="form-check-label" for="inlineCheckbox2" checked>Cubemap</label>
+        </div>
+        <br><br>
+        <h5>Tags</h5>
+
+        <input type="text" id="tag_input_content" name="tag_input_content" value="" readonly>
+        <p id="selected_tags_group"></p>
+        <input type="text" class="form-control" type="text" id='tag_create' value="" placeholder="" aria-label="Username" aria-describedby="basic-addon1">
+        <div class="row justify-content-sm-start" id="tag_suggest">
+        </div>
+      </div>
+    </div>
+    <br><br>
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-4">
+          <button type="button" class="btn btn-lg btn-outline-primary text-white">Delete</button>
+        </div>
+        <div class="col-4 d-flex  justify-content-end">
+          <button type="button" class="mr-4 btn btn-lg btn-outline-primary text-white">Preview</button>
+          <button type="button" class="btn btn-lg btn-outline-primary text-white">Publish</button>
+        </div>
+      </div>
+    </div>
+</body>
+<script>
+  runPannellum()
+
+  function runPannellum() {
+
+    // https://naver.github.io/egjs-view360/examples/img/equi.jpg
+
+    pannellum.viewer('panorama', {
+      "type": "cubemap",
+      "cubeMap": [
+        "../cubemap/nx.png",
+        "../cubemap/pz.png",
+        "../cubemap/px.png",
+        "../cubemap/nz.png",
+        "../cubemap/py.png",
+        "../cubemap/ny.png"
+      ],
+      "autoLoad": true
+    });
+  }
+
+  var suggestedtagelements = [];
+  var selectedtagelements = [];
+
+  const node = document.getElementById("tag_create");
+  node.addEventListener("keyup", function(event) {
+    if (event.key === "Enter") {
+      // Do work
+      if (selectedtagelements.includes(node.value)) return;
+      addTag(node.value);
+      createTagSuggestion(node.value);
+      node.value = "";
+
+    }
+  });
+
+  function clearsuggestedtagelements() {
+    if (suggestedtagelements.length === 0) return;
+    suggestedtagelements.forEach(e => {
+      e.remove();
+    })
+  }
+
+  function createTagSuggestion(tagname) {
+    clearsuggestedtagelements();
+    suggestionsFromDatamuse(tagname).then(result => {
+      result.forEach(a => {
+        createSuggestElement(a.word);
+      });
+    });
+  }
+
+  function createSuggestElement(tagname) {
+    let col = document.createElement('div');
+    col.classList.add('col-auto');
+    document.getElementById('tag_suggest').appendChild(col);
+    let tag = document.createElement("p");
+    tag.innerHTML = tagname;
+    col.appendChild(tag);
+    tag.classList.add('tag_element');
+    tag.onclick = function() {
+      if (selectedtagelements.includes(tagname)) return;
+      addTag(tagname);
+      createTagSuggestion(tagname);
+    };
+
+    //add to suggested tag element array
+    suggestedtagelements.push(col);
+  }
+
+  function addTag(tagname) {
+    //get paragraph child from group
+    var paragraph = document.getElementById('selected_tags_group');
+    //create span element with id of selected_tag_element
+    var tag = document.createElement('span');
+    tag.innerText = " " + tagname;
+    tag.setAttribute("id", "selected_tag_element");
+    tag.onclick = function() {
+      paragraph.removeChild(tag);
+      selectedtagelements = selectedtagelements.filter(e => e !== tagname);
+    };
+    paragraph.appendChild(tag);
+    let taginput = document.getElementById("tag_input_content");
+    taginput.value = selectedtagelements.toString();
+    selectedtagelements.push(tagname);
+  }
+</script>
+
+
+<%- include('../partials/footer') %>
