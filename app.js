@@ -152,7 +152,33 @@ app.post('/asset/:modelid', function(req, res) {
   });
 });
 
-
+app.get('/view/360', function(req, res) {
+  res.render('demopages/view-360', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+app.get('/view/model', function(req, res) {
+  res.render('demopages/view-model', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+app.get('/view/script', function(req, res) {
+  res.render('demopages/view-script', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
 app.get('/editpage/360', function(req, res) {
   res.render('demopages/editpage-360', {
     navbarState: {
