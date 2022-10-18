@@ -1,58 +1,72 @@
 <%- include('partials/header') %>
 <link rel="stylesheet" href="modellist.css">
 
-
-<div class="container py-5">
-
-  <!-- For demo purpose -->
-  <div class="row text-center text-white mb-5">
-    <div class="col-lg-7 mx-auto">
-      <h1 id="modellist-title" class=" display-4">Model list</h1>
-    </div>
+<div class="container-fluid px-5" id="top-bar">
+  <br><br>
+  <div class="mx-auto" style="display: flex;">
+    <form class="" style="width:400px;" action="changeAssetType" method="post">
+      <label style="font-size:1.5em;" for="search">Download Assets : </label>
+      <select class="" style="font-size: 1.2em; background: none; border: none;" name="type">
+        <option value="3dmodel">3D Model</option>
+        <option value="script">Script</option>
+        <option value="360">360 Image</option>
+      </select>
+    </form>
+    <form class="" style=" margin: auto; width:400px;" action="search" method="post">
+      <label for="search"></label>
+      <input class=" large" type="text" name="searchterm" value="">
+      <button class="font-italic large" name="button">Search</button>
+    </form>
   </div>
-  <!-- End -->
-  <div class="row text-center text-white mb-5">
-    <div class="col-lg-7 mx-auto">
-      <form class="" action="search" method="post">
-        <label for="search"></label>
-        <input class=" large" type="text" name="searchterm" value="">
-        <button class="font-italic large" name="button">Search</button>
-      </form>
-    </div>
+  <hr>
+  <div class="mx-auto" style="display: flex;">
+    <form class=""  style="width:120px;" action="changeAssetType" method="post">
+      <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+        <option selected>Format</option>
+        <option value="obj">.obj</option>
+        <option value="fbx">.fbx</option>
+      </select>
+    </form>
+    <input type="checkbox" name="animated" value="animated">
+    <label class="px-3" for="animated">Animated</label>
+    <input type="checkbox" name="low-poly" value="lowpoly">
+    <label class="px-3" for="lowpoly">Low Poly</label>
+    <input type="checkbox" name="rigged" value="rigged">
+    <label class="px-3" for="rigged">Rigged</label>
   </div>
-
+  <hr>
+</div>
+<br><br>
+<div class="container-fluid px-5">
   <div class="row">
-    <div class="col-lg-8 mx-auto">
-      <!-- List group-->
-      <ul class="list-group shadow">
-        <!-- list group item -->
-        <li class="list-group-item">
-          <!-- Custom content-->
-          <!-- <table> -->
-          <% for(var i = 0; i < data.models.length; i++) { %>
-          <div class="media align-items-lg-center flex-column flex-lg-row p-3">
-            <div class="media-body order-2 order-lg-1">
-              <h5 class="mt-0 font-weight-bold mb-2"><%= data.models[i].name %></h5>
-              <p class="font-italic text-muted mb-0 small"><%= data.models[i].description %></p>
-              <div class="d-flex flex-row align-content-stretch">
-                <% for(var t = 0; t < data.models[i].tags.length; t++) { %>
-                  <h6 class="font-weight-light pr-2"><%= data.models[i].tags[t] %></h6>
-                <% } %>
-              </div>
-              <br>
-              <form class="font-italic text-muted mb-0 small" action="asset/<%= data.models[i].id %>" method="post">
-                <button>Open</button>
-              </form>
-            </div><img src="<%= data.models[i].paths.thumbnail %>" alt="Generic placeholder image" width="200" class="ml-lg-5 order-1 order-lg-2">
-
+    <% for(var i = 0; i < data.models.length; i++) { %>
+    <div class="col-md-2">
+      <div class="card mb-4 box-shadow">
+        <img class="card-img-top" alt="" style="height: 200px; width:100%; display: block;" src="<%= data.models[i].paths.thumbnail %>" data-holder-rendered="true">
+        <div class="card-body">
+          <h4 class="card-title"><%= data.models[i].name %></h4>
+          <p class="card-text"><%= data.models[i].description %></p>
+          <div class="d-flex flex-row align-content-stretch">
+            <% for(var t = 0; t < data.models[i].tags.length; t++) { %>
+            <h6 class="font-weight-light pr-2"><%= data.models[i].tags[t] %></h6>
+            <% } %>
           </div>
-          <% } %>
-        </li>
-      </ul>
+          <div class="d-flex justify-content-between align-items-center">
+            <form class="font-italic text-muted mb-0 small" action="asset/<%= data.models[i].id %>" method="post">
+              <button>Open</button>
+            </form>
+            <small class="text-muted">upload date</small>
+          </div>
+        </div>
+      </div>
     </div>
+    <% } %>
   </div>
 </div>
-
+<div class="mx-auto" style="width: 200px;">
+  <button type="button" class="btn btn-warning">Load More</button>
+</div>
+<br><br>
 
 
 <%- include('partials/footer') %>
