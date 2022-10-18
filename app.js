@@ -253,6 +253,16 @@ app.get('/sample_asset', function(req, res) {
   });
 });
 
+app.get('/', function(req, res) {
+  res.render('main', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+
 //WORKING (ASSET LIST PAGE)
 app.get("/assets", function(req, res) {
   if(typeof req.query.search === 'undefined' || req.query.search == ""){
