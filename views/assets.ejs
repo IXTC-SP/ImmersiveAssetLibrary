@@ -45,10 +45,7 @@
         <div class="card-body">
           <h4 class="card-title" id="asset-name"><%= data.models[0].name %></h4>
           <p class="card-text" id="asset-desc"><%= data.models[0].description %></p>
-          <div class="d-flex flex-row align-content-stretch" id="asset-tag">
-            <% for(var t = 0; t < data.models[0].tags.length; t++) { %>
-            <h6 class="font-weight-light pr-2"><%= data.models[0].tags[t] %></h6>
-            <% } %>
+          <div class="d-flex flex-row align-content-stretch" id="asset-tag-list">
           </div>
           <div class="d-flex justify-content-between align-items-center">
             <form class="font-italic text-muted mb-0 small" id="asset-id-action" action="asset/<%= data.models[0].id %>" method="post">
@@ -67,7 +64,7 @@
 <br><br>
 
 <script type="text/javascript">
-  var fulldatamodels = < % -JSON.stringify(data.models) % > ;
+  var fulldatamodels = <%-JSON.stringify(data.models) %> ;
   var loadamt = 3;
   var beforelen = 1;
   var afterlen = 0;
@@ -88,17 +85,23 @@
   }
 
   function CreateAssetCard(data) {
-    const clone = cardmain.cloneNode(true);
-    const assetimg = clone.querySelector("#asset-img");
+    let clone = cardmain.cloneNode(true);
+    let assetimg = clone.querySelector("#asset-img");
     assetimg.src = data.paths.thumbnail;
     console.log(assetimg.src);
-    const assetname = clone.querySelector("#asset-name");
+    let assetname = clone.querySelector("#asset-name");
     assetname.innerHTML = data.name;
     console.log(assetname.innerHTML);
-    const assetdesc = clone.querySelector("#asset-desc");
+    let assetdesc = clone.querySelector("#asset-desc");
     assetdesc.innerHTML = data.description;
     console.log(assetdesc.innerHTML);
-    const assettag = clone.querySelector("#asset-tag");
+    let assettaglist = clone.querySelector("#asset-tag-list");
+    for(var i = 0; i<data.tags.length;i++){
+      let assettag = document.createElement('h6');
+      assettag.innerHTML = data.tags[i];
+      assettag.className = "font-weight-light pr-2";
+      assettaglist.appendChild(assettag);
+    }
     assetrow.appendChild(clone);
 
   }
