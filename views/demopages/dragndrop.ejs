@@ -1,4 +1,5 @@
 <%- include('../partials/header') %>
+<script type="text/javascript" src="jszip.min.js"></script>
 
 <body>
   <style>
@@ -338,11 +339,9 @@
   let files = [];
   dragArea.addEventListener('dragover', (event) => {
     event.preventDefault();
-    console.log('File is inside the drag area');
     dragText.textContent = "Release to Upload"
   });
   dragArea.addEventListener('dragleave', () => {
-    console.log('File left the drag area');
     dragText.textContent = "Drag & Drop"
   });
   dragArea.addEventListener('drop', (event) => {
@@ -357,12 +356,27 @@
             createFileCard(file.name);
           }
         } else {
+          console.log(typeof(file));
+          var new_zip = new JSZip();
+          // more files !
+          new_zip.loadAsync(file)
+          .then(function(zip) {
+              // you now have every files contained in the loaded zip
+              console.log(zip);
+              // zip.file("hello.txt").async("string"); // a promise of "Hello World\n"
+          });
           //accept if it's model
-          files.push(file);
+          // files.push(file);
         }
       });
     }
   });
+
+  function loadfile(file){
+    //check if it is a zip file
+    //if it is not a zip file, check all files if they are the accepted type
+
+  }
 
   //browse button
   function browse() {
@@ -501,6 +515,9 @@
         break;
     }
   }
+
+
+
 </script>
 
 
