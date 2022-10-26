@@ -131,7 +131,7 @@
             <input type="file" id="browse-input" name="file" value="" style="display:none;">
           </div>
           <p class="horizontal-middle" id="format-support-info">We support ....</p>
-          <p class="horizontal-middle" id="format-3dmodel-info">You can also upload a model folder like ZIP, RAR, or 7z, containing only your textures, materials, and mesh.</p>
+          <p class="horizontal-middle" id="format-3dmodel-info">You can also upload a ZIP folder containing only your textures, materials, and mesh.</p>
           <p class="horizontal-middle">Additional files can be added in the next step</p>
         </div>
         <div class="upload-btn-group">
@@ -227,6 +227,7 @@
 
 </body>
 
+<script type="text/javascript" src="fileextensioncheck.js"></script>
 <script>
   const dragArea = document.querySelector(".drop-zone");
   const dragText = document.querySelector(".drag-text");
@@ -262,8 +263,10 @@
     }
   }
 
+
+
+
   //creating and managing file card
-  let acceptedtype = "";
   let currenttype = "";
   let currentformat = "";
 
@@ -320,20 +323,30 @@
     }
   }
 
-  function setAcceptedType(type) {
-    console.log('change accepted type');
-    switch (type) {
-      case "image":
-        acceptedtype = "image/";
-        break;
-      case "script":
-        acceptedtype = "text/";
-        break;
-      case "model":
-        acceptedtype = "";
-        break;
-    }
+  function readFiles(files) {
+    console.log(files.length);
+    for (let file of files) {
+      let correctfiletype = false;
+      console.log(file);
+      switch (currenttype) {
+        case "3dmodel":
+          correctfiletype = isObj(file.name);
+          break;
+        case "script":
+          correctfiletype = isScript(file.name);
+          break;
+        case "image":
+          correctfiletype = isImage(file.name);
+          break;
+      }
+      console.log(correctfiletype);
+      if(correctfiletype){
+        console.log(file);
+        console.log('File is an accepted type.', file.type, file);
+        createFileCard(file.name);
+      }
 
+    }
   }
 
   let files = [];
@@ -345,38 +358,38 @@
     dragText.textContent = "Drag & Drop"
   });
   dragArea.addEventListener('drop', (event) => {
+    var collectedfiles = [];
     event.preventDefault();
     if (event.dataTransfer.items) {
       // Use DataTransfer interface to access the file(s)
-      [...event.dataTransfer.files].forEach((file, i) => {
-        if (acceptedtype != "") {
-          if (file.type.startsWith(acceptedtype)) {
-            files.push(file);
-            console.log('File is an accepted type.', file.type, file);
-            createFileCard(file.name);
+      [...event.dataTransfer.files].forEach(async (file, i) => {
+        if (isZip(file.name)) {
+          let loop = async _ => {
+            var jszip = new JSZip();
+            // more files !
+            var zip = await jszip.loadAsync(file);
+            console.log(zip);
+            await zip.forEach(async function(relativePath,zipEntry){
+              var fileData = await zipEntry.async('blob');
+              collectedfiles.push(new File([fileData], relativePath));
+              console.log(collectedfiles);
+            });
+            console.log("complete push");
           }
-        } else {
-          console.log(typeof(file));
-          var new_zip = new JSZip();
-          // more files !
-          new_zip.loadAsync(file)
-          .then(function(zip) {
-              // you now have every files contained in the loaded zip
-              console.log(zip);
-              // zip.file("hello.txt").async("string"); // a promise of "Hello World\n"
+          loop().then(()=>{
+            console.log("running");
+            readFiles(collectedfiles);
+
           });
-          //accept if it's model
-          // files.push(file);
+
+        } else {
+          console.log("not zip");
+          collectedfiles.push(file);
+          readFiles(collectedfiles);
         }
       });
     }
   });
-
-  function loadfile(file){
-    //check if it is a zip file
-    //if it is not a zip file, check all files if they are the accepted type
-
-  }
 
   //browse button
   function browse() {
@@ -396,18 +409,15 @@
       case "360image":
         options = ["cubemap", "equirectangular"];
         supportformat = "We support JPG, JPEG, PNG.";
-        setAcceptedType("image");
         enableModelInfo(false);
         break;
       case "script":
         options = ["c#", "javascript", "python"];
         supportformat = "We support c#, javascript, python.";
-        setAcceptedType("script");
         enableModelInfo(false);
         break;
       case "3dmodel":
         supportformat = "We support obj, fbx.";
-        setAcceptedType("model");
         enableModelInfo(true);
         break;
     }
@@ -468,16 +478,22 @@
   let textureassignarray = [];
 
   function setupTextureAssignOptions(selects) {
+
     let textureassignarray = files;
+
+    files.forEach((item, i) => {
+      console.log(item);
+    });
+
     console.log("running setup cubemap texture assign options");
-    if (selects[0].options.length - 1 == files.length) return;
+    if (selects[0].options.length - 1 == textureassignarray.length) return;
     for (var i = 0; i < selects.length; i++) {
       selects[i].onchange = function(e) {
         //allowOnlySingleTextureAssigning(e);
       }
       createoption("none", "none", selects[i]);
-      for (var j = 0; j < files.length; j++) {
-        createoption(files[j].name, files[j].name, selects[i]);
+      for (var j = 0; j < textureassignarray.length; j++) {
+        createoption(textureassignarray[j].name, textureassignarray[j].name, selects[i]);
       }
     }
   }
@@ -515,9 +531,6 @@
         break;
     }
   }
-
-
-
 </script>
 
 
