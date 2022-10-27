@@ -324,28 +324,30 @@
   }
 
   function readFiles(files) {
-    console.log(files.length);
     for (let file of files) {
-      let correctfiletype = false;
-      console.log(file);
-      switch (currenttype) {
-        case "3dmodel":
-          correctfiletype = isObj(file.name);
-          break;
-        case "script":
-          correctfiletype = isScript(file.name);
-          break;
-        case "image":
-          correctfiletype = isImage(file.name);
-          break;
-      }
-      console.log(correctfiletype);
-      if(correctfiletype){
-        console.log(file);
-        console.log('File is an accepted type.', file.type, file);
-        createFileCard(file.name);
-      }
+      readFile(file);
+    }
+  }
 
+  function readFile(file){
+    let correctfiletype = false;
+    switch (currenttype) {
+      case "3dmodel":
+        correctfiletype = isObj(file.name);
+        break;
+      case "script":
+        correctfiletype = isScript(file.name);
+        break;
+      case "image":
+        correctfiletype = isImage(file.name);
+        break;
+    }
+    console.log(correctfiletype);
+    if (correctfiletype) {
+      console.log(file);
+      console.log('File is an accepted type.', file.type, file);
+      createFileCard(file.name);
+      files.push(file);
     }
   }
 
@@ -357,39 +359,37 @@
   dragArea.addEventListener('dragleave', () => {
     dragText.textContent = "Drag & Drop"
   });
-  dragArea.addEventListener('drop', (event) => {
-    var collectedfiles = [];
+  dragArea.addEventListener('drop', async (event) => {
     event.preventDefault();
     if (event.dataTransfer.items) {
-      // Use DataTransfer interface to access the file(s)
-      [...event.dataTransfer.files].forEach(async (file, i) => {
+      [...event.dataTransfer.files].forEach(async(file, i) => {
         if (isZip(file.name)) {
-          let loop = async _ => {
-            var jszip = new JSZip();
-            // more files !
-            var zip = await jszip.loadAsync(file);
-            console.log(zip);
-            await zip.forEach(async function(relativePath,zipEntry){
-              var fileData = await zipEntry.async('blob');
-              collectedfiles.push(new File([fileData], relativePath));
-              console.log(collectedfiles);
-            });
-            console.log("complete push");
-          }
-          loop().then(()=>{
-            console.log("running");
-            readFiles(collectedfiles);
-
-          });
-
+          await convertziptofile(file)
         } else {
           console.log("not zip");
-          collectedfiles.push(file);
-          readFiles(collectedfiles);
+          readFile(file);
         }
       });
     }
   });
+
+  async function convertziptofile(file){
+    var collectedfiles = [];
+    var jszip = new JSZip();
+    var zip = await jszip.loadAsync(file);
+    var foldername = '';
+    zip.forEach((relativePath, zipEntry) => {
+      if(foldername == ""){
+        foldername = relativePath;
+        return;
+      }
+      var fileData = zipEntry.async('blob');
+      var filename = relativePath.replace(foldername, "");
+      var file = new File([fileData], filename);
+      collectedfiles.push(file);
+    });
+    readFiles(collectedfiles);
+  }
 
   //browse button
   function browse() {
@@ -475,14 +475,14 @@
   cubemapmodalcontent.style = "display:none;"
 
 
-  let textureassignarray = [];
-
   function setupTextureAssignOptions(selects) {
 
-    let textureassignarray = files;
-
+    let textureassignarray = [];
     files.forEach((item, i) => {
-      console.log(item);
+      if(isImage(item.name)){
+        textureassignarray.push(item);
+        console.log(item);
+      }
     });
 
     console.log("running setup cubemap texture assign options");
