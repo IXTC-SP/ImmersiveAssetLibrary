@@ -220,9 +220,13 @@
         <select name="emissive-texture-selection" class="model-texture-assign" id="texture-selection">
         </select>
       </div>
-      <div class="upload-btn-group">
-        <button class="upload-page-btn right" type="button" name="button">Next</button>
-      </div>
+      <button class="upload-page-btn left" type="button" name="button" onclick="createuploadcontent()">Next</button>
+
+      <!-- <form class="upload-form" id="upload-form" action="/uploadcontent" method="post" enctype="multipart/form-data" onkeydown="return event.key != 'Enter';">
+        <div class="upload-btn-group">
+          <input class="upload-page-btn right" type="submit" id='submit-btn' value="Next">
+        </div>
+      </form> -->
     </div>
 
 </body>
@@ -237,6 +241,19 @@
     processUploads();
     event.preventDefault();
   });
+
+  const uploadform = document.querySelector(".upload-form");
+
+  function createuploadcontent() {
+    const formData = new FormData();
+    const request = new XMLHttpRequest();
+    files.forEach((file, i) => {
+      formData.append("files", files[i], files[i].name);
+    })
+
+    request.open("POST", "/uploadcontent");
+    request.send(formData);
+  }
 
   //create option for select element
   function createoption(text, value, parent) {
@@ -329,7 +346,7 @@
     }
   }
 
-  function readFile(file){
+  function readFile(file) {
     let correctfiletype = false;
     switch (currenttype) {
       case "3dmodel":
@@ -342,10 +359,7 @@
         correctfiletype = isImage(file.name);
         break;
     }
-    console.log(correctfiletype);
     if (correctfiletype) {
-      console.log(file);
-      console.log('File is an accepted type.', file.type, file);
       createFileCard(file.name);
       files.push(file);
     }
@@ -362,33 +376,48 @@
   dragArea.addEventListener('drop', async (event) => {
     event.preventDefault();
     if (event.dataTransfer.items) {
-      [...event.dataTransfer.files].forEach(async(file, i) => {
+      [...event.dataTransfer.files].forEach(async (file, i) => {
         if (isZip(file.name)) {
           await convertziptofile(file)
         } else {
           console.log("not zip");
+          console.log(file);
           readFile(file);
         }
       });
     }
   });
 
-  async function convertziptofile(file){
+
+  async function convertziptofile(file) {
     var collectedfiles = [];
     var jszip = new JSZip();
     var zip = await jszip.loadAsync(file);
     var foldername = '';
-    zip.forEach((relativePath, zipEntry) => {
-      if(foldername == ""){
-        foldername = relativePath;
-        return;
-      }
-      var fileData = zipEntry.async('blob');
-      var filename = relativePath.replace(foldername, "");
+    var zipfiles = Object.keys(zip.files);
+    for (var i in zipfiles){
+      var zipfile = zip.files[zipfiles[i]];
+      var fileData = await zipfile.async('blob');
+      var filename = zipfiles[i].replace(foldername, "");
       var file = new File([fileData], filename);
       collectedfiles.push(file);
-    });
+    }
+    console.log("complete");
     readFiles(collectedfiles);
+  }
+
+  function openImage(files) {
+    console.log(files);
+    files.forEach((file, i) => {
+      if (isImage(file.name)) {
+        var img = document.createElement("img");
+        img.width = "300";
+        img.height = "300";
+        img.src = URL.createObjectURL(file);
+        document.body.appendChild(img);
+        console.log(img.src);
+      }
+    });
   }
 
   //browse button
@@ -479,9 +508,8 @@
 
     let textureassignarray = [];
     files.forEach((item, i) => {
-      if(isImage(item.name)){
+      if (isImage(item.name)) {
         textureassignarray.push(item);
-        console.log(item);
       }
     });
 

@@ -161,6 +161,7 @@ app.get('/view/360', function(req, res) {
     }
   });
 });
+
 app.get('/view/model', function(req, res) {
   res.render('demopages/view-model', {
     navbarState: {
@@ -344,6 +345,22 @@ app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile',
     console.log(gltfresult);
       res.send("done");
   })
+});
+
+multer = require('multer');
+var storage = multer.diskStorage({
+    destination: function (request, file, callback) {
+      console.log(request.body.files);
+        callback(null, './uploads/');
+    },
+    filename: function (request, file, callback) {
+        console.log(file);
+        callback(null, file.originalname)
+    }
+});
+var upload = multer({ storage: storage });
+app.post("/uploadcontent", upload.array('files'), function(req, res) {
+  res.json({ message: "Successfully uploaded files" });
 });
 
 app.post("/update/:modelid", function(req, res) {
