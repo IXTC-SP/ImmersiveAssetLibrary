@@ -22,21 +22,15 @@
       padding-top: 2em;
     }
 
-    .upload-page-btn {
+    .page-btn {
       border: 1px solid black;
       background-color: white;
       /* border-radius: 30%; */
       color: black;
       padding: 14px 48px;
+      margin: auto;
     }
 
-    .cancel-page-btn {
-      border: 1px solid black;
-      background-color: white;
-      /* border-radius: 30%; */
-      color: black;
-      padding: 14px 48px;
-    }
 
     .card {
       width: 120px;
@@ -50,6 +44,7 @@
       left: 100px;
       font-size: 20px;
       top: -5px;
+
     }
 
     .card-file-info {
@@ -135,8 +130,8 @@
           <p class="horizontal-middle">Additional files can be added in the next step</p>
         </div>
         <div class="upload-btn-group">
-          <button class="cancel-page-btn left" type="button" name="button">Cancel</button>
-          <button class="upload-page-btn right" type="button" name="button">Next</button>
+          <button class="cancel-page-btn page-btn left" type="button" name="button">Cancel</button>
+          <button class="upload-page-btn page-btn right" type="button" name="button">Next</button>
         </div>
 
       </div>
@@ -196,7 +191,6 @@
             <div class="col-3 texture-assign-box">
               <label for="bottom-texture-selection">Bottom</label>
               <select name="bottom-texture-selection" class="cubemap-texture-assign" id="texture-selection">
-
               </select>
             </div>
           </div>
@@ -220,7 +214,7 @@
         <select name="emissive-texture-selection" class="model-texture-assign" id="texture-selection">
         </select>
       </div>
-      <button class="upload-page-btn left" type="button" name="button" onclick="createuploadcontent()">Next</button>
+      <button class="page-btn left" type="button" name="button" onclick="createuploadcontent()">Next</button>
 
       <!-- <form class="upload-form" id="upload-form" action="/uploadcontent" method="post" enctype="multipart/form-data" onkeydown="return event.key != 'Enter';">
         <div class="upload-btn-group">
@@ -237,6 +231,16 @@
   const dragText = document.querySelector(".drag-text");
   const collectedfiles = document.querySelector(".collected-files");
   const nextpagebtn = document.querySelector(".upload-page-btn");
+  class fileObj {
+    constructor(filename, file) {
+      this.filename = filename;
+      this.file = file;
+    }
+  }
+  var fileObjs = [];
+
+
+
   nextpagebtn.addEventListener('click', function(event) {
     processUploads();
     event.preventDefault();
@@ -244,14 +248,39 @@
 
   const uploadform = document.querySelector(".upload-form");
 
+  function assigntexture(e){
+    console.log(e);
+    var filename = e.target.name.split("-")[0];
+    fileObjs.forEach((f,i)=>{
+      if(f.file.name == e.target.value){
+        f.filename = filename;
+        return;
+      }
+    })
+    console.log(fileObjs);
+
+
+  }
+
+
   function createuploadcontent() {
     const formData = new FormData();
     const request = new XMLHttpRequest();
-    files.forEach((file, i) => {
-      formData.append("files", files[i], files[i].name);
-    })
 
-    request.open("POST", "/uploadcontent");
+    //decide asset type
+    formData.append("type", currenttype);
+    //set file names
+
+    fileObjs.forEach((fileObj, i) => {
+      formData.append(fileObj.filename, fileObj.file, fileObj.file.name);
+    });
+
+    request.onreadystatechange = function() { // listen for state changes
+      if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+        window.location = "/editpage/model";
+      }
+    }
+    request.open("POST", "/uploadcontent", true);
     request.send(formData);
   }
 
@@ -270,6 +299,7 @@
     if (files.length == 0)
       alert("no uploads added");
 
+    setupFileObjs();
     //if model file, process and popup to assign textures
     if (currenttype == "3dmodel") {
       changeModalContent("model");
@@ -279,9 +309,6 @@
       changeModalContent("cubemap");
     }
   }
-
-
-
 
   //creating and managing file card
   let currenttype = "";
@@ -365,6 +392,15 @@
     }
   }
 
+  function setupFileObjs(){
+    fileObjs = [];
+    files.forEach((file,i)=>{
+      var f = new fileObj("other", file);
+      fileObjs.push(f);
+    });
+    console.log(fileObjs);
+  }
+
   let files = [];
   dragArea.addEventListener('dragover', (event) => {
     event.preventDefault();
@@ -404,20 +440,6 @@
     }
     console.log("complete");
     readFiles(collectedfiles);
-  }
-
-  function openImage(files) {
-    console.log(files);
-    files.forEach((file, i) => {
-      if (isImage(file.name)) {
-        var img = document.createElement("img");
-        img.width = "300";
-        img.height = "300";
-        img.src = URL.createObjectURL(file);
-        document.body.appendChild(img);
-        console.log(img.src);
-      }
-    });
   }
 
   //browse button
@@ -503,7 +525,6 @@
   modelmodalcontent.style = "display:none;"
   cubemapmodalcontent.style = "display:none;"
 
-
   function setupTextureAssignOptions(selects) {
 
     let textureassignarray = [];
@@ -512,12 +533,13 @@
         textureassignarray.push(item);
       }
     });
+    let currenttextureassignselect = selects;
 
-    console.log("running setup cubemap texture assign options");
     if (selects[0].options.length - 1 == textureassignarray.length) return;
     for (var i = 0; i < selects.length; i++) {
       selects[i].onchange = function(e) {
-        //allowOnlySingleTextureAssigning(e);
+        allowOnlySingleTextureAssigning(selects,e);
+        assigntexture(e);
       }
       createoption("none", "none", selects[i]);
       for (var j = 0; j < textureassignarray.length; j++) {
@@ -526,11 +548,10 @@
     }
   }
 
-  function allowOnlySingleTextureAssigning(e) {
-    console.log(e.target);
-    for (var i = 0; i < cubemaptextureassignselect.length; i++) {
-      if (cubemaptextureassignselect[i] != e.target && cubemaptextureassignselect[i].value == e.target.value) {
-        cubemaptextureassignselect[i].value = "none";
+  function allowOnlySingleTextureAssigning(selects,e) {
+    for (var i = 0; i < selects.length; i++) {
+      if (selects[i] != e.target && selects[i].value == e.target.value) {
+        selects[i].value = "none";
       }
     }
   }

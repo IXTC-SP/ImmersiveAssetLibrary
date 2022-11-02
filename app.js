@@ -50,6 +50,8 @@ app.get("/register", function(req, res) {
   });
 });
 
+
+
 app.get("/login", function(req, res) {
   res.render('login', {
     navbarState: {
@@ -347,20 +349,40 @@ app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile',
   })
 });
 
-multer = require('multer');
-var storage = multer.diskStorage({
-    destination: function (request, file, callback) {
-      console.log(request.body.files);
-        callback(null, './uploads/');
-    },
-    filename: function (request, file, callback) {
-        console.log(file);
-        callback(null, file.originalname)
-    }
+const tempupload = require('./scripts/tempuploadsmanager');
+const cpUpload = tempupload.uploadHandler.fields([{ name: 'diffuse', maxCount: 1 },{ name: 'normal', maxCount: 1 },{ name: 'occlusion', maxCount: 1 },
+{ name: 'height', maxCount: 1 },{ name: 'emissive', maxCount: 1 },{ name: 'other', maxCount: 10 }]);
+
+app.post("/uploadcontent", cpUpload, function(req, res) {
+  console.log(req.body.type);
+  console.log(req.files);
+  // res.render('demopages/editpage-model', {
+  //   navbarState: {
+  //     allowLogin: false,
+  //     allowRegister: false,
+  //     allowLogout: true
+  //   }
+  // });
+  console.log(res);
+  res.redirect('/editpage/model');
 });
-var upload = multer({ storage: storage });
-app.post("/uploadcontent", upload.array('files'), function(req, res) {
-  res.json({ message: "Successfully uploaded files" });
+
+app.post('/test', function(req,res){
+  console.log("post test form");
+  res.redirect('/editpage/model')
+})
+
+
+// Begin reading from stdin so the process does not exit imidiately
+process.stdin.resume();
+process.on('SIGINT', function() {
+  console.log('Interrupted');
+  process.exit();
+});
+
+process.on('exit',() => {
+  tempupload.closeTmpFolder();
+  console.log("process.exit() method is fired")
 });
 
 app.post("/update/:modelid", function(req, res) {
@@ -379,6 +401,7 @@ app.post("/update/:modelid", function(req, res) {
   });
 });
 
+
 const fs = require('fs');
 app.post("/downloadasset/:modelid", function(req, res) {
   modeldatabase.GetModel(req.params.modelid, (result)=> {
@@ -395,7 +418,6 @@ app.post("/downloadasset/:modelid", function(req, res) {
       });
       });
     });
-
   });
 });
 
