@@ -182,35 +182,6 @@ app.get('/view/script', function(req, res) {
     }
   });
 });
-app.get('/editpage/360', function(req, res) {
-  res.render('demopages/editpage-360', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
-  });
-});
-
-app.get('/editpage/model', function(req, res) {
-  res.render('demopages/editpage-model', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
-  });
-});
-
-app.get('/editpage/script', function(req, res) {
-  res.render('demopages/editpage-script', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
-  });
-});
 
 app.get('/360/equi', function(req, res) {
   res.render('demopages/360viewer(equi)', {
@@ -232,16 +203,7 @@ app.get('/360/cube', function(req, res) {
   });
 });
 
-//WORKING (UPLOAD PAGE)
-app.get('/dragndrop', function(req, res) {
-  res.render('demopages/dragndrop', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
-  });
-});
+
 
 //
 app.get('/sample_asset', function(req, res) {
@@ -296,10 +258,7 @@ app.get("/assets", function(req, res) {
         }
       });
     });
-
-
   }
-
 });
 
 
@@ -349,23 +308,67 @@ app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile',
   })
 });
 
-const tempupload = require('./scripts/tempuploadsmanager');
-const cpUpload = tempupload.uploadHandler.fields([{ name: 'diffuse', maxCount: 1 },{ name: 'normal', maxCount: 1 },{ name: 'occlusion', maxCount: 1 },
-{ name: 'height', maxCount: 1 },{ name: 'emissive', maxCount: 1 },{ name: 'other', maxCount: 10 }]);
-
-app.post("/uploadcontent", cpUpload, function(req, res) {
-  console.log(req.body.type);
-  console.log(req.files);
-  // res.render('demopages/editpage-model', {
-  //   navbarState: {
-  //     allowLogin: false,
-  //     allowRegister: false,
-  //     allowLogout: true
-  //   }
-  // });
-  console.log(res);
-  res.redirect('/editpage/model');
+//WORKING (UPLOAD PAGE)
+app.get('/dragndrop', function(req, res) {
+  res.render('demopages/dragndrop', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
 });
+const tempupload = require('./scripts/tempuploadsmanager');
+var tmpContent;
+app.post("/uploadtmp3dmodel", tempupload.uploadtmp3D, function(req, res) {
+  console.log(req.files);
+  tmpContent = req.files;
+  res.end("complete");
+});
+app.get('/editpage/model', function(req, res) {
+  res.render('demopages/editpage-model', {
+    tmpfileContent : tmpContent,
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+app.post("/uploadtmp360", tempupload.uploadtmp360, function(req, res) {
+  tmpContent = req.files;
+  res.end("complete");
+});
+app.get('/editpage/360', function(req, res) {
+  res.render('demopages/editpage-360', {
+    tmpfileContent : tmpContent,
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+app.post("/uploadtmpscript", tempupload.uploadtmpscript, function(req, res) {
+  tmpContent = req.files;
+  res.end("complete");
+});
+app.get('/editpage/script', function(req, res) {
+  res.render('demopages/editpage-script', {
+    tmpfileContent : tmpContent,
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+
+
+
+
+
+
 
 app.post('/test', function(req,res){
   console.log("post test form");
