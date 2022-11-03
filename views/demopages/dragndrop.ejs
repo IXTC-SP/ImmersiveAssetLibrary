@@ -266,7 +266,24 @@
   function createuploadcontent() {
     const formData = new FormData();
     const request = new XMLHttpRequest();
+    var nextURL = "";
+    var postURL = "";
 
+    switch (currenttype){
+      case "3dmodel":
+        nextURL = "/editpage/model";
+        postURL = "/uploadtmp3dmodel";
+        break;
+      case "360image":
+        nextURL = "/editpage/360";
+        postURL = "/uploadtmp360";
+      break;
+      case "script":
+        nextURL = "/editpage/script";
+        postURL = "/uploadtmpscript";
+        break;
+    }
+    console.log(nextURL, postURL);
     //decide asset type
     formData.append("type", currenttype);
     //set file names
@@ -276,11 +293,15 @@
     });
 
     request.onreadystatechange = function() { // listen for state changes
+      console.log("request on ready state change");
+      console.log(request.readyState);
+      console.log(request.status);
       if (request.readyState == 4 && request.status == 200) { // when completed we can move away
-        window.location = "/editpage/model";
+        console.log("running");
+        window.location = nextURL;
       }
     }
-    request.open("POST", "/uploadcontent", true);
+    request.open("POST", postURL, false);
     request.send(formData);
   }
 
@@ -506,7 +527,6 @@
       i.style.display = "inline-block";
     } else {
       i.style.display = "none";
-
     }
   }
 
