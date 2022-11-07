@@ -9,7 +9,7 @@ const app = express();
 const bodyParser = require('body-parser');
 
 const session = require('express-session');
-const passport = require('passport');
+
 // const passportLocalMongoose = require('passport-local-mongoose');
 const path = require('path');
 const url = require('url');
@@ -22,7 +22,7 @@ const storagemanagement = require('./scripts/storagemanagement');
 const filedownloader = require('./scripts/filedownloader');
 const userController = require('./scripts/users_controller');
 const authMiddleware = require('./middlewares/auth_middleware')// middleware for the authentication, to check if theres a session
-
+const passport = require("passport");
 
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
@@ -32,13 +32,29 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(session({
-  secret: "This is a secret key",
+  secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 //1 DAY
+  }
 }));
-app.use(passport.initialize());
-app.use(passport.session());
+
+//every route
+//fisrt check if the req.session.passport.user is there ( on login will store)
+//if null, no need to get the userid, so no req.user
+//if have then, means has login, pass in the userid for the deserializer
+app.use(passport.initialize());//refresh the passport middleware, thers a chance the session expired
+app.use(passport.session());//so that can tap into the express sessions data
+// createStrategy is responsible to setup passport-local LocalStrategy with the correct options.
+require("./config/passport")
 app.use(authMiddleware.setAuthUserVar)
+
+app.use((req,res,next)=>{
+  console.log(req.session)
+  //console.log(req.user)
+  next()
+})
 
 //sandra connection
 const mongoose = require('mongoose');
@@ -81,14 +97,6 @@ app.get("/register", function(req, res) {
 //   });
 // });
 
-app.post('/logout', function(req, res, next) {
-  req.logout(function(err) {
-    if (err) {
-      return next(err);
-    }
-    res.redirect('/');
-  });
-});
 
 app.post("/register", function(req, res) {
   usermanagement.Register(req, res, (path) => {
@@ -108,10 +116,10 @@ app.post("/register", function(req, res) {
   //   }});
 });
 
-app.post("/login", function(req, res) {
-  usermanagement.Login(req, res, (path) => {
-    res.redirect(path);
-  })
+// app.post("/login", function(req, res) {
+//   usermanagement.Login(req, res, (path) => {
+//     res.redirect(path);
+//   })
   // const user = new User({
   //   username: req.body.username,
   //   passport: req.body.password
@@ -127,7 +135,7 @@ app.post("/login", function(req, res) {
   //       res.redirect("/home");
   //     });
   //   }});
-});
+// });
 
 // app.get("/objectview", function(req,res){
 //   modeldisplay.LoadTempFilesForModels(req, (result)=> {
@@ -315,6 +323,7 @@ app.post("/update/:modelid", function(req, res) {
 });
 
 const fs = require('fs');
+
 app.post("/downloadasset/:modelid", function(req, res) {
   modeldatabase.GetModel(req.params.modelid, (result)=> {
     var downloadpath = __dirname + result.paths.folderpath + "/model";
@@ -465,19 +474,33 @@ app.post("/downloadasset/:modelid", function(req, res) {
 // });
 
 
-//sandra user admin routes
-app.get("/:user_id/profile", userController.showProfile)//need upoads by users,
-app.get("/:user_id/uploads", userController.showUploads)//need uploads by user,
-app.get("/:user_id/downloads", userController.showDownloads)//need downloads from dbs
-app.get("/users/dashboard/enrollment", userController.showEnrollment)
+//sandra user admin routes,
+// app.get("/:user_id/profile", userController.showProfile)//need upoads by users,
+// app.get("/:user_id/uploads", userController.showUploads)//need uploads by user,
+// app.get("/:user_id/downloads", userController.showDownloads)//need downloads from dbs
+app.get("/:user_id/dashboard", userController.showDashboard)
 app.get("/login", userController.showlogin)
-
-app.post("/:user_id/enrollment", userController.createEnrollment)//done 
-app.post("/:user_id/uploads", userController.showUploads)
-
-app.patch("/:user_id/profile", userController.showProfile)
-app.patch("/:user_id/uploads", userController.showUploads)
+app.get("/authentication/activate", userController.showActivateAndSetPassword)//done 
+app.get("/forgot-password", userController.showForgotPassword)//done 
+app.get("/reset-password", userController.showSetPassword)//done 
 
 
-app.delete("/:user_id/uploads", userController.showUploads)
+app.post("/:user_id/enrollment", userController.createEnrollment, userController.emailActivation)//done 
+app.post("/:user_id/uploads", userController.upload)
+app.post("/reset-password-link", userController.sendResetPasswordLink)
+app.post("/authentication/activate", userController.setPassword)
+app.post("/reset-password", userController.setPassword)//done 
+//pass the middleware. authenticate will look into the passport.js for the verify callback, and can include options of authntication
+//with the veryfycall back ut finds the user in the dbs and
+//a passport props wil be created in the the express session
+//so there is a req.user 
+app.post("/login", passport.authenticate("local"), userController.login)
+app.post('/logout', userController.logout);
+
+
+// app.patch("/:user_id/profile", userController.showProfile)
+// app.patch("/:user_id/uploads", userController.showUploads)
+
+
+// app.delete("/:user_id/uploads", userController.showUploads)
 //app.delete("/:user_id/enrollment", userController.deleteEnrollment)

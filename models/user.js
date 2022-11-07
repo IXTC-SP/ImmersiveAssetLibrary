@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
+const passportLocalMongoose = require('passport-local-mongoose');
 
 const userSchema = new mongoose.Schema({
     // username: {
@@ -9,14 +10,22 @@ const userSchema = new mongoose.Schema({
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     password: {
       type: String,
-      required: true,
     },
     isAdmin: {
       type: Boolean,
       default: false
+    },
+    isActivated: {
+      type: Boolean,
+      default: false
+    },
+    activatePasswordLink:{
+      type: String,
+      required: true
     },
     createdBy:{
         type: Schema.Types.ObjectId,
@@ -26,8 +35,13 @@ const userSchema = new mongoose.Schema({
    }, 
    { timestamps: true }
 )
-   
+
+// Setting up the passport plugin
+// userSchema.plugin(passportLocalMongoose, {usernameField: "email"});
+
 //this creates the user collections
 const User = mongoose.model('User', userSchema)
+
+   
 
 module.exports = User

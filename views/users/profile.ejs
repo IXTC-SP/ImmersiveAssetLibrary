@@ -1,6 +1,105 @@
 <%- include('../partials/header'); %>
-<div>
-    <h1>Profile</h1>
+
+    
+<div class="card-body w-100">
+    <!-- tab contents -->
+
+<% if(showProfile){%>
+    <form method="POST" action="/users/profile">
+        <div class="card-body">
+            <!-- email -->
+            <div class="row">
+            <div class="col-sm-3">
+                <p class="mb-0">Email</p>
+            </div>
+            <div class="col-sm-9">
+                <input type="hidden" name="email" value ="<%= user.email %>"class="text-muted mb-0"><%= user.email %></input>   
+            </div>
+            </div>
+            <!-- Account Type-->
+            <div class="row">
+            <div class="col-sm-3">
+                <p class="mb-0">Account Type</p>
+            </div>
+            <div class="col-sm-9">
+                <% if(user.isAdmin ){%>
+                    <input type="hidden" name="credits" value ="Admin" class="text-muted mb-0">Admin</p>
+                <%} else {%>
+                    <input type="hidden" name="credits" value ="Admin" class="text-muted mb-0">Student</p>
+                <%}%>
+            </div>
+            </div>
+              <!-- Account Type-->
+            <div class="row">
+            <div class="col-sm-3">
+                <p class="mb-0">Uploads</p>
+            </div>
+            <div class="col-sm-9">
+                <input type="hidden" name="credits" value ="3" class="text-muted mb-0">3</p>
+            </div>
+            </div>
+            <!-- edit button-->
+            <div>
+                <button type="submit" class="w-100 btn btn-warning btn-rounded btn-block mb-4 text-white"
+                 >Edit Profile</button>
+            </div>
+        </div>
+    </form>
+<%}else{%>
+<form method="post" action="/users/profile?_method=PUT">
+    <div class="card-body">
+        <!-- first name -->
+        <div class="row">
+        <div class="col-sm-3">
+            <p class="mb-0">First Name</p>
+        </div>
+        <div class="col-sm-9">
+            <input name="firstname" value="<%= user.firstname %>"class="text-muted mb-0"></input>
+        </div>
+        </div>
+        <hr>
+        <!-- last name -->
+        <div class="row">
+            <div class="col-sm-3">
+            <p class="mb-0">Last Name</p>
+            </div>
+            <div class="col-sm-9">
+            <input name="lastname" value="<%= user.lastname %>"class="text-muted mb-0"></input>
+            </div>
+        </div>
+        <hr>
+        <!-- email -->
+        <div class="row">
+        <div class="col-sm-3">
+            <p class="mb-0">Email</p>
+        </div>
+        <div class="col-sm-9">
+            <input name="email" value="<%= user.email %>"class="text-muted mb-0"></input>
+        </div>
+        </div>
+        <hr>
+        <!-- credits-->
+        <div class="row">
+        <div class="col-sm-3">
+            <p class="mb-0">Credits</p>
+        </div>
+        <div class="col-sm-9">
+            <p class="text-muted mb-0"><%= user.credits %></p>
+        </div>
+        </div>
+        <!-- edit button-->
+        <div>
+            <button type="submit" class="w-100 btn btn-warning btn-rounded btn-block mb-4 text-white">
+                Save Profile</button>
+        </div>
+    </div>
+</form>
+<%}%>
+
+
+
+
+    
 
 </div>
 <%- include('../partials/footer'); %>
