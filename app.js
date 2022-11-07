@@ -319,21 +319,27 @@ app.get('/dragndrop', function(req, res) {
   });
 });
 const tempupload = require('./scripts/tempuploadsmanager');
-var tmpContent;
+var tmpContent = [];
 app.post("/uploadtmp3dmodel", tempupload.uploadtmp3D, function(req, res) {
   console.log(req.files);
-  tmpContent = req.files;
+  // tmpContent = [...req.files.other, ...req.files.diffuse,
+  // ...req.files.normal, ...req.files.height, ...req.files.emissive];
   res.end("complete");
 });
 app.get('/editpage/model', function(req, res) {
-  res.render('demopages/editpage-model', {
-    tmpfileContent : tmpContent,
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
-  });
+  if(tmpContent){
+    console.log(tmpContent);
+    // console.log(tmpContent.model[0].path);
+    res.render('demopages/editpage-model', {
+      tmpfileContent : tmpContent,
+      navbarState: {
+        allowLogin: false,
+        allowRegister: false,
+        allowLogout: true
+      }
+    });
+  }
+
 });
 app.post("/uploadtmp360", tempupload.uploadtmp360, function(req, res) {
   tmpContent = req.files;

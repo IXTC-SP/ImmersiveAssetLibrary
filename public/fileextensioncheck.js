@@ -33,9 +33,6 @@ switch (ext.toLowerCase()) {
   case 'obj':
   case 'gltf':
   case 'glb':
-  case 'jpg':
-  case 'png':
-  case 'jpeg':
     //etc
     return true;
 }

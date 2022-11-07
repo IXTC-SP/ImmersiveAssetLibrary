@@ -19,9 +19,14 @@
   <div class="container-fluid">
     <div class="row justify-content-center">
       <div class="col-4">
-        <model-viewer id="model-viewer" alt="" src="../uploads/cyberpunk/gltf/scene.gltf" ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
+        <model-viewer id="model-viewer" alt="" src='../uploads/shiba/gltf/scene.gltf' ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
         <br>
         <h5>Additional Files</h5>
+        <div class="current-files">
+          <ul class="list-files">
+            <li class="list-files-item"></li>
+          </ul>
+        </div>
         <div class="custom-file">
           <input type="file" class="custom-file-input" id="inputGroupFile01">
           <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
@@ -74,10 +79,45 @@
     </div>
 </body>
 <script>
-
   var suggestedtagelements = [];
   var selectedtagelements = [];
 
+  getEJScontent();
+
+  function getEJScontent() {
+    <% if (tmpfileContent) {  %>
+      let modelpath = '.' + '<%- tmpfileContent.model[0].destination %>' + '<%- tmpfileContent.model[0].originalname %>'
+      var modelviewer = document.getElementById('model-viewer')
+      modelviewer.src = modelpath;
+      let diffusefile = "";
+      let normalfile = "";
+      let occlusionfile = "";
+      let heightfile = "";
+      let emissivefile = "";
+      console.log(typeof(<%= tmpfileContent.diffuse%>));
+      let files = [];
+      <% for(var file in  tmpfileContent.other) %>
+      <%{%>
+        files.push(file.originalname);
+      <%}%>
+      console.log(files);
+      console.log(diffusefile);
+      console.log(normalfile);
+      console.log(occlusionfile);
+      console.log(heightfile);
+      console.log(emissivefile);
+      <% } else { %>
+      console.log("does not exist");
+      <% } %>
+  }
+
+  function listFiles(){
+
+  }
+
+  function addtolistFiles(){
+
+  }
   const node = document.getElementById("tag_create");
   node.addEventListener("keyup", function(event) {
     if (event.key === "Enter") {

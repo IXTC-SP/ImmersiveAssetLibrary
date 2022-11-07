@@ -30,6 +30,10 @@ function closeTmpFolder() {
 
 const uploadtmp3D = upload.fields([
   {
+    name: 'model',
+    maxCount: 1
+  },
+  {
     name: 'diffuse',
     maxCount: 1
   }, {
@@ -45,8 +49,9 @@ const uploadtmp3D = upload.fields([
   }, {
     name: 'emissive',
     maxCount: 1
-  }, {
-    name: 'other',
+  },
+  {
+    name: 'image',
     maxCount: 10
   }
 ]);
