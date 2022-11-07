@@ -232,7 +232,8 @@
   const collectedfiles = document.querySelector(".collected-files");
   const nextpagebtn = document.querySelector(".upload-page-btn");
   class fileObj {
-    constructor(filename, file) {
+    constructor(type,filename,file) {
+      this.type = type
       this.filename = filename;
       this.file = file;
     }
@@ -289,17 +290,15 @@
     //set file names
 
     fileObjs.forEach((fileObj, i) => {
-      formData.append(fileObj.filename, fileObj.file, fileObj.file.name);
+      formData.append(fileObj.type, JSON.stringify(fileObj));
     });
+    console.log(formData);
 
     request.onreadystatechange = function() { // listen for state changes
-      console.log("request on ready state change");
-      console.log(request.readyState);
-      console.log(request.status);
-      if (request.readyState == 4 && request.status == 200) { // when completed we can move away
-        console.log("running");
-        window.location = nextURL;
-      }
+      // if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+      //   console.log("running");
+      //   window.location = nextURL;
+      // }
     }
     request.open("POST", postURL, false);
     request.send(formData);
@@ -398,7 +397,7 @@
     let correctfiletype = false;
     switch (currenttype) {
       case "3dmodel":
-        correctfiletype = isObj(file.name);
+        correctfiletype = isObj(file.name) || isImage(file.name);
         break;
       case "script":
         correctfiletype = isScript(file.name);
@@ -416,7 +415,12 @@
   function setupFileObjs(){
     fileObjs = [];
     files.forEach((file,i)=>{
-      var f = new fileObj("other", file);
+      var f;
+      if(isObj(file.name)){
+        f = new fileObj("model","model", file)
+      } else {
+        f = new fileObj("image","other", file)
+      }
       fileObjs.push(f);
     });
     console.log(fileObjs);
