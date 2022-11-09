@@ -250,7 +250,6 @@
   const uploadform = document.querySelector(".upload-form");
 
   function assigntexture(e){
-    console.log(e);
     var filename = e.target.name.split("-")[0];
     fileObjs.forEach((f,i)=>{
       if(f.file.name == e.target.value){
@@ -258,9 +257,6 @@
         return;
       }
     })
-    console.log(fileObjs);
-
-
   }
 
 
@@ -284,21 +280,19 @@
         postURL = "/uploadtmpscript";
         break;
     }
-    console.log(nextURL, postURL);
     //decide asset type
     formData.append("type", currenttype);
     //set file names
 
     fileObjs.forEach((fileObj, i) => {
-      formData.append(fileObj.type, JSON.stringify(fileObj));
+      var savedName = fileObj.filename + "_" + fileObj.file.name.split("/")[1];
+      formData.append(fileObj.type, fileObj.file, savedName);
     });
-    console.log(formData);
 
     request.onreadystatechange = function() { // listen for state changes
-      // if (request.readyState == 4 && request.status == 200) { // when completed we can move away
-      //   console.log("running");
-      //   window.location = nextURL;
-      // }
+      if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+        window.location = nextURL;
+      }
     }
     request.open("POST", postURL, false);
     request.send(formData);
@@ -314,7 +308,6 @@
 
   //next page btn
   function processUploads() {
-    console.log(currenttype + " " + currentformat);
     //if no uploads added
     if (files.length == 0)
       alert("no uploads added");
