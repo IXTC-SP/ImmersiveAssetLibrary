@@ -321,17 +321,25 @@ app.get('/dragndrop', function(req, res) {
 const tempupload = require('./scripts/tempuploadsmanager');
 var tmpContent = [];
 app.post("/uploadtmp3dmodel", tempupload.uploadtmp3D, function(req, res) {
-  console.log(req.files);
-  // tmpContent = [...req.files.other, ...req.files.diffuse,
-  // ...req.files.normal, ...req.files.height, ...req.files.emissive];
+  tmpContent = req.files;
+  console.log(tmpContent);
+  let result = tmpContent.image.map(a => a.originalname);
+  console.log(result);
+  // console.log(tmpContent.model[0].path);
+  // console.log(Object.values(tmpContent.image));
+
   res.end("complete");
 });
 app.get('/editpage/model', function(req, res) {
   if(tmpContent){
-    console.log(tmpContent);
-    // console.log(tmpContent.model[0].path);
+    let images = tmpContent.image.map(a => a.originalname);
+    console.log(images);
     res.render('demopages/editpage-model', {
-      tmpfileContent : tmpContent,
+      content : {
+        destination : tmpContent.model[0].destination,
+        modelfile: tmpContent.model[0].originalname,
+        imagefiles: images
+      },
       navbarState: {
         allowLogin: false,
         allowRegister: false,
