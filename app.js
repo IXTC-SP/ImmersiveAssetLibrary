@@ -24,10 +24,14 @@ const userController = require('./scripts/users_controller');
 const authMiddleware = require('./middlewares/auth_middleware')// middleware for the authentication, to check if theres a session
 const passport = require("passport");
 
+const flash  = require("connect-flash")
+
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 app.use('/scripts', express.static('scripts'));
+app.use(express.static('public'))
 app.set('view engine', 'ejs');
+app.use(flash());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
@@ -52,7 +56,7 @@ app.use(authMiddleware.setAuthUserVar)
 
 app.use((req,res,next)=>{
   console.log(req.session)
-  //console.log(req.user)
+
   next()
 })
 
@@ -472,7 +476,15 @@ app.post("/downloadasset/:modelid", function(req, res) {
 //      }));
 //   });
 // });
+// app.locals.use(function(req, res) {
+//   // Expose "error" and "message" to all views that are rendered.
+//   res.locals.error = req.session.error || '';
+//   res.locals.message = req.session.message || '';
 
+//   // Remove them so they're not displayed on subsequent renders.
+//   delete req.session.error;
+//   delete req.session.message;
+// });
 
 //sandra user admin routes,
 // app.get("/:user_id/profile", userController.showProfile)//need upoads by users,
@@ -486,6 +498,9 @@ app.get("/reset-password", userController.showSetPassword)//done
 
 
 app.post("/:user_id/enrollment", userController.createEnrollment, userController.emailActivation)//done 
+// app.post("/:user_id/dashboard", userController.showDashboard)
+app.post("/:user_id/uploads/delete", userController.deleteUpload)//done
+app.post("/:user_id/uploads/edit", userController.editUpload) 
 app.post("/:user_id/uploads", userController.upload)
 app.post("/reset-password-link", userController.sendResetPasswordLink)
 app.post("/authentication/activate", userController.setPassword)
@@ -494,7 +509,7 @@ app.post("/reset-password", userController.setPassword)//done
 //with the veryfycall back ut finds the user in the dbs and
 //a passport props wil be created in the the express session
 //so there is a req.user 
-app.post("/login", passport.authenticate("local"), userController.login)
+app.post("/login", passport.authenticate("local", { failureRedirect: '/login', failureFlash: true }), userController.login)
 app.post('/logout', userController.logout);
 
 

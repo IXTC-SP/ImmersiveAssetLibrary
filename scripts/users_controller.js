@@ -11,6 +11,7 @@ const jwt_decode = require("jwt-decode");
 const crypto = require("crypto");
 const { error } = require("console");
 const nodemailer = require("nodemailer");
+const e = require("connect-flash");
 
 //need 2 step verfication for app password, cos google diables the less secure apps in may 2022
 let mailTransporter = nodemailer.createTransport({
@@ -27,6 +28,10 @@ mailTransporter.verify(function (error, success) {
     console.log("Server is ready to take our messages");
   }
 });
+
+const errorMessage = (error, message) => {
+  return { error, message };
+};
 
 const controller = {
   login: async (req, res) => {
@@ -48,30 +53,24 @@ const controller = {
     const { password, confirmPassword } = req.body;
     const token = req.query.token; //taken from the form action url
     const userId = req.query.id;
+    let errorObj = null;
     let user = null;
     try {
       user = await userModel.findOne({
         _id: userId,
       });
-      //if set is a reset pw, is already activated
-      //check that the reset token is valid,
-      //means the person that send the email link is the person setting the pw
-      if (user.isActivated) {
-        //check if user has a reset token,
-        const passwordResetToken = await tokenModel.findOne({ userId });
-        if (!passwordResetToken) {
-          throw new error("Invalid or expired password link has expired");
-        }
-        const isValid = await bcrypt.compare(token, passwordResetToken.token);
-        if (!isValid) {
-          throw new error("Invalid or expired password link has expired");
-        }
-        //delete the token
-        await passwordResetToken.deleteOne();
+      if (password === "" || confirmPassword === "") {
+        errorObj = errorMessage(true, "Please fill in the required fields");
+        return res.render("users/setPassword", {
+          errorObj,
+          isActivated: true,
+          isLoginpage: false,
+          isInvalid: false,
+          token: req.query.token,
+          userId: req.query.id,
+        });
       }
-      //reset token is valid
-      //token is valid
-      if (password && confirmPassword) {
+      if (password === confirmPassword) {
         const hash = await bcrypt.hash(password, 10);
         await userModel.findOneAndUpdate(
           {
@@ -80,21 +79,38 @@ const controller = {
           { $set: { password: hash, isActivated: true } },
           { new: true }
         );
+        return res.render("users/passwordLinkSent", {
+          checkEmail: false,
+          isLoginpage: false,
+        });
       } else {
-        return res
-          .status(401)
-          .send({ error: "Please fill in required fields" });
+        errorObj = errorMessage(true, "Confirm password does not match");
+        return res.render("users/setPassword", {
+          errorObj,
+          isActivated: true,
+          isLoginpage: false,
+          isInvalid: false,
+          token: req.query.token,
+          userId: req.query.id,
+        });
       }
     } catch (err) {
       console.log(err);
-      return res.status(401).send({ error: "Reset link has expired" });
+      errorObj = errorMessage(true, err);
+      res.render("users/setPassword", {
+        errorObj,
+        isActivated: true,
+        isLoginpage: false,
+        token: req.query.token,
+        userId: req.query.id,
+      });
     }
-    res.redirect("/login");
   },
   sendResetPasswordLink: async (req, res) => {
     //CLICK SEND LINK
     let resetPasswordToken = null;
     let user = null;
+    let errorObj = null;
     try {
       if (req.body.email) {
         //check that user exist and is activated already
@@ -103,11 +119,6 @@ const controller = {
           isActivated: true,
         });
         if (user) {
-          // const userData = {
-          //   email: req.body.email,
-          // };
-          //generate new secret key diff frm acct activate secret,
-          //so the token will always be diff when you want to reset
           const resetPasswordTokenPromise = new Promise((resolve, reject) => {
             crypto.randomBytes(48, function (err, buffer) {
               if (err) {
@@ -117,25 +128,22 @@ const controller = {
             });
           });
           resetPasswordTokenPromise
-            .then((value) => {
+            .then(async (value) => {
               console.log("---->", value, typeof value);
               resetPasswordToken = value;
-            })
-            .catch((err) => {
-              return res
-              .status(401)
-              .send({ error: err });
-            })
-            .finally(async () => {
-              //find in the token model
-              //if exists delete it
-              //update the token model
               let token = await tokenModel.findOne({ userId: user._id });
               if (token) {
                 await token.deleteOne();
               }
               const hash = await bcrypt.hash(resetPasswordToken, 10);
               await tokenModel.create({ userId: user._id, token: hash });
+              // const token = jwt.sign(
+              //   {
+              //     data: userData,
+              //   },
+              //   resetPasswordSecret,
+              //   { expiresIn: "20s" }
+              // );
               const mailDetails = {
                 from: process.env.AUTH_EMAIL,
                 to: req.body.email,
@@ -143,32 +151,91 @@ const controller = {
                 html: `<p>Please click on the given link to reset your password</p>
                 <a href = ${process.env.CLIENT_URL}/reset-password/?token=${resetPasswordToken}&id=${user._id}>${process.env.CLIENT_URL}/reset-password</a>`,
               };
+
               mailTransporter.sendMail(mailDetails, function (err, data) {
-                console.log("send email")
-                if (err) {
-                  return res.json({ error: err.message });
-                } else {
-                  return res.json("Reset Password link been sent, kindly check your email");
-                }
+                console.log("send email");
+                return res.render("users/passwordLinkSent", {
+                  checkEmail: true,
+                  email: user.email,
+                  isLoginpage: false,
+                });
+              });
+            })
+            .catch((err) => {
+              console.error(err);
+              errorObj = errorMessage(true, err.message);
+              return res.render("users/resetPassword", {
+                isLoginpage: false,
+                errorObj,
+              });
             });
-          })
         } else {
-          return res
-            .status(401)
-            .send({ error: "Email has not been activated " });
+          errorObj = errorMessage(true, "Email has not been activated ");
+          return res.render("users/resetPassword", {
+            isLoginpage: false,
+            isActivated: true,
+            errorObj,
+          });
         }
       } else {
-        return res.status(401).send({ error: "Please fill in email address " });
+        errorObj = errorMessage(true, "Please fill in email address ");
+        return res.render("users/resetPassword", {
+          isLoginpage: false,
+          errorObj,
+        });
       }
     } catch (err) {
       console.log(err);
-      return res.status(401).send({ error: err.message });
+      errorObj = errorMessage(true, err.message);
+      return res.render("users/resetPassword", {
+        isLoginpage: false,
+        errorObj,
+      });
     }
   },
   //show routes
   showSetPassword: async (req, res) => {
     //click the email link,
+    const token = req.query.token; //taken from the form action url
+    const userId = req.query.id;
+    let errorObj = null;
+    let user = null;
+    user = await userModel.findOne({
+      _id: userId,
+    });
+    //if set is a reset pw, is already activated
+    //check that the reset token is valid,
+    //means the person that send the email link is the person setting the pw
+    if (user.isActivated) {
+      //check if user has a reset token,
+      const passwordResetToken = await tokenModel.findOne({ userId });
+      if (!passwordResetToken) {
+        errorObj = errorMessage(
+          true,
+          "This link has expired, click forget password to reset"
+        );
+        return res.render("users/setPassword", {
+          isLoginpage: false,
+          errorObj,
+          isInvalid: true,
+        });
+      }
+      const isValid = await bcrypt.compare(token, passwordResetToken.token);
+      if (!isValid) {
+        errorObj = errorMessage(
+          true,
+          "This link has expired, click forget password to reset"
+        );
+        return res.render("users/setPassword", {
+          isLoginpage: false,
+          errorObj,
+          isInvalid: true,
+        });
+      }
+    }
     res.render("users/setPassword", {
+      isInvalid: false,
+      errorObj: false,
       isActivated: true,
       isLoginpage: false,
       token: req.query.token,
@@ -207,9 +274,21 @@ const controller = {
     });
   },
   showlogin: async (req, res) => {
-    res.render("users/login", {
-      isLoginpage: false,
-    });
+    if (req.session.flash) {
+      console.log("----->", req.session.flash.error[0]);
+      let message = req.session.flash.error[0];
+      req.session.flash.error = [];
+      res.render("users/login", {
+        isLoginpage: false,
+        error: true,
+        message,
+      });
+    } else {
+      res.render("users/login", {
+        isLoginpage: false,
+        error: false,
+      });
+    }
   },
   // showProfile: async (req, res) => {
   //   let user = null;
@@ -287,8 +366,9 @@ const controller = {
   // },
 
   showDashboard: async (req, res) => {
-    let students = [];
-    let admins = [];
+    let accounts = [];
+    let  isSuccess= false;
+    let errorObj = errorMessage(false, "");
     let user = [];
     try {
       user = await userModel.findById({ _id: req.params.user_id });
@@ -296,13 +376,11 @@ const controller = {
         return res.status(401).send({ error: "no such user" });
       }
       //find all accts
-      students = await userModel.find({ isAdmin: false });
-      admins = await userModel.find({ isAdmin: true });
+      accounts = await userModel.find();
+      // admins = await userModel.find({ isAdmin: true });
 
       console.log(user);
       console.log("Get the accounts");
-      console.log(students);
-      console.log(admins);
     } catch (err) {
       console.log(err);
       return res.status(401).send({ error: "Failed to get users" });
@@ -311,16 +389,24 @@ const controller = {
 
     res.render("users/dashboard", {
       isLoginpage: true,
-      students,
-      admins,
+      isSuccess,
+      accounts,
+      errorObj,
+      tab: "profile",
       user,
       showProfile: true,
+      showUploads: false,
+      showDownloads: false,
+      showEnrollment: false,
     });
   },
+
   showForgotPassword: async (req, res) => {
     //click forget pw,
+    let errorObj = errorMessage(false, "");
     res.render("users/resetPassword", {
       isLoginpage: false,
+      errorObj,
     });
   },
   // deleteEnrollment: async (req, res) => {
@@ -338,79 +424,122 @@ const controller = {
   createEnrollment: async (req, res, next) => {
     //click add account
     let students = [];
-    let admins = [];
-    let errors = null;
+    let isSuccess  = false;
+    let errorObj = errorMessage(false, "");
     let user = null;
     let isAdmin = null;
+    let accounts = [];
     try {
-      //check if email has been created before
-      user = await userModel.findOne({ email: req.body.email });
-      if (user) {
-        console.log(user);
-        return res
-          .status(401)
-          .send({ error: "This email has account already been created" });
-        // return res.render("users/enrollment", {
-        //   errors: "This email has account already been created",
-        // });
+      console.log("---->", req.body);
+      user = await userModel.findById({ _id: req.params.user_id });
+      if (!user) {
+        return res.status(401).send({ error: "no such user" });
+      }
+      //find all accts
+      accounts = await userModel.find();
+      // admins = await userModel.find({ isAdmin: true });
+
+      console.log(user);
+      console.log("Get the accounts");
+      if (req.body.email !== "") {
+        //check if email has been created before
+        const addedUser = await userModel.findOne({ email: req.body.email });
+        if (addedUser) {
+          console.log(addedUser);
+          errorObj = errorMessage(
+            true,
+            "This email has account already been created"
+          );
+          // return res
+          //   .status(401)
+          //   .send({ error: "This email has account already been created" });
+        } else {
+          //generate the token to pass to the email link
+          //store token into DBs to autheticate at set pw that the authorized uses to setting the pw
+          const token = jwt.sign(
+            {
+              data: req.body.email,
+            },
+            process.env.JWT_ACC_ACTIVATE,
+            { expiresIn: "3 days" }
+          );
+          //only created the _id, email, isAdmin field
+          req.body.isAdmin === "Admin" ? (isAdmin = true) : (isAdmin = false);
+          user = await userModel.create({
+            ...req.body,
+            isAdmin,
+            activatePasswordLink: token,
+          });
+          req.token = token;
+          req.user = user;
+          req.accounts = accounts;
+          console.log("next is email activation");
+          return next();
+        }
       } else {
-        //generate the token to pass to the email link
-        //store token into DBs to autheticate at set pw that the authorized uses to setting the pw
-        const token = jwt.sign(
-          {
-            data: req.body.email,
-          },
-          process.env.JWT_ACC_ACTIVATE,
-          { expiresIn: "50m" }
-        );
-        //only created the _id, email, isAdmin field
-        req.body.isAdmin === "Admin" ? (isAdmin = true) : (isAdmin = false);
-        user = await userModel.create({
-          ...req.body,
-          isAdmin,
-          activatePasswordLink: token,
-        });
-        req.token = token;
-        req.user = user;
-        console.log("next is email activation");
-        next();
+        errorObj = errorMessage(true, "Please fill in required fields");
+        //return res.status(401).send({ error: "Failed to create users" });
       }
     } catch (err) {
       console.log(err);
-      return res.status(401).send({ error: "Failed to create users" });
+      errorObj = errorMessage(true, err.message);
+      // return res.status(401).send({ error: "Failed to add account" });
     }
 
-    // res.render("users/enrollment", {
-    //   students,
-    //   admins,
-    // });
+    res.render("users/dashboard", {
+      isLoginpage: true,
+      isSuccess,
+      errorObj,
+      accounts,
+      user,
+      showProfile: false,
+      showUploads: false,
+      showDownloads: false,
+      showEnrollment: true,
+    });
   },
   emailActivation: async (req, res) => {
+    let isSuccess  = false;
+    let errorObj = errorMessage(false, " ");
     try {
+      const email = req.user.email;
       console.log("transporter, is created above, sendMail");
-
-      console.log(req.user.email);
       // send mail with defined transport object
       let mailDetails = {
         from: process.env.AUTH_EMAIL,
-        to: req.user.email,
+        to: email,
         subject: "Account Activation link",
         html: `<p>Please click on the given link to set your password and activate your account</p>
               <a href = ${process.env.CLIENT_URL}/authentication/activate?token=${req.token}&id=${req.user._id}>${process.env.CLIENT_URL}/authentication/activate</a>`,
       };
 
       mailTransporter.sendMail(mailDetails, function (err, data) {
-        console.log("send email")
-        if (err) {
-          return res.json({ error: err.message });
-        } else {
-          return res.json("Email has been sent, kindly activate your account");
-        }
+        console.log("send email");
+        isSuccess = true;
+
       });
     } catch (error) {
+      errorObj = (true, error.message);
       console.log(error);
-      return res.status(500).json({ error });
     }
+    return res.render("users/dashboard", {
+      isLoginpage: true,
+      errorObj,
+      isSuccess,
+      accounts: req.accounts,
+      user: req.user,
+      showProfile: false,
+      showUploads: false,
+      showDownloads: false,
+      showEnrollment: true,
+    });
+  },
+  deleteUpload: async (req, res) => {
+    //get the id of the selecetd upload
+    //dont delet eth upload, but siable view of upload
+  },
+  editUpload: async (req, res) => {
+    //got to edit page
   },
   // createEnrollment: async (req, res) => {
   //   req.body.isAdmin === "Admin" ? (isAdmin = true) : (isAdmin = false);

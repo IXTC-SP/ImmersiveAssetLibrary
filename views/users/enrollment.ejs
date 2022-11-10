@@ -1,59 +1,78 @@
-
 <!-- Add button -->
-<form action="/<%=user._id %>/enrollment" method="post">
-  <div class="md-form d-flex w-50 flex-column">
-    <div class="mb-3">
-      <label class="form-label me-1"for="form1Example1">Account type:</label>
-      <select class="select p-1">
-        <option name="isAdmin" value="Admin">Admin</option>
-        <option name="isAdmin" value="Student">Student</option>
-      </select>
-    </div>
-    <div class="mb-3 d-flex">
-      <!-- <div class="align-self-center"> -->
-       <label class="align-self-center me-1" >Email Address:</label >
-      <!-- </div> -->
-      <div class="form-outline">
-        <i class="fas fa-envelope trailing"></i>
-        <input type="email" id="form1Example1" class="form-control input-field" name= "email">    
-        <label class="form-label"for="form1Example1">xxxx@sp.edu.sg</label>
+<form action="/<%= user._id %>/enrollment" method="post">
+  <div class="md-form d-flex justify-content-between align-items-end">
+    <div class="d-flex gap-4">
+      <div class="mb-3 d-flex flex-column align-start">
+        <label class="form-label me-1" for="form1Example1">Account type:</label>
+
+        <select name="isAdmin"  class="select p-1 rounded-2 admin-input">
+          <option value="Admin">Admin</option>
+          <option value="Student">Student</option>
+        </select>
       </div>
-    
+      <div class="mb-3 d-flex flex-column align-start">
+        <!-- <div class="align-self-center"> -->
+        <label class="form-label me-1">Email Address:</label>
+        <!-- </div> -->
+        <div class="form-outline email-box">
+          <i class="fas fa-envelope trailing"></i>
+          <input
+            type="email"
+            id="form1Example1"
+            class="form-control input-field p-1"
+            name="email"
+          />
+          <label class="form-label p-0 email-input" for="form1Example1"
+            >xxxx@sp.edu.sg</label
+          >
+        </div>
+      </div>
+    </div>
+    <div class="mb-3">
+      <button type="submit" class="btn theme-color btn-rounded">
+        <i class="fa fa-plus me-2" aria-hidden="true"></i>Add
+      </button>
     </div>
   </div>
   <div class="mb-3">
-    <button type="submit" class="btn theme-color btn-rounded"><i class="fa fa-plus me-2" aria-hidden="true"></i>Add</button>
+  <%if(errorObj.error){%>
+  <!-- <i class="fa-solid fa-circle-exclamation error-message align-self-center px-2"></i> -->
+  <p class="error-message m-0"><%= errorObj.message %></p>
+  <%}%>
   </div>
-
 </form>
-<table id="dtHorizontalVerticalExample" class="table border table-sm" cellspacing="0"
-width="70%">
+<table
+  id="dtHorizontalVerticalExample"
+  class="table border table-sm mb-8"
+  cellspacing="0"
+  width="70%"
+>
   <thead>
     <tr class="table-secondary">
       <th>No.</th>
-      <th>Username</th>
       <th>E-mail</th>
       <th>Role</th>
-      <th>Date Created</th>     
-      <th>Delete</th>  
+      <th>Date Created</th>
+      <th class="text-center">Delete</th>
     </tr>
   </thead>
-  <tbody>
+  <tbody class="table-body">
+    <%accounts.forEach((eachAcct, idx)=>{%>
     <tr class="enrollment-row">
-      <td>1</td>
-      <td>Nixon</td>
-      <td>Nixom@sp.edu.sg</td>
+      <td><%= idx+1 %></td>
+      <td><%= eachAcct.email %></td>
+      <%if(eachAcct.isAdmin){%>
       <td>Admin</td>
-      <td>2011/04/25</td>
-      <td><Button type="button" class="-0 btn btn-link btn-sm btn-rounded">Delete</Button></td>
+      <%}else{%>
+      <td>Student</td>
+      <%}%>
+      <td><%= eachAcct.createdAt.toISOString().split("T")[0] %></td>
+      <td class="text-center">
+        <Button type="button" class="p-0 btn btn-link btn-sm btn-rounded"
+          ><i class="fa-solid fa-trash-can delete-icon text-danger"></i
+        ></Button>
+      </td>
     </tr>
-    <tr>
-      <td>1</td>
-      <td>Nixon</td>
-      <td>Nixom@sp.edu.sg</td>
-      <td>Admin</td>
-      <td>2011/04/25</td>
-      <td><Button type="button" class="-0 btn btn-link btn-sm btn-rounded">Delete</Button></td>
-    </tr>
+    <%})%>
   </tbody>
 </table>

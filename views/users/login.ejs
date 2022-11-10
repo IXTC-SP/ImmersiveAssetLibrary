@@ -7,6 +7,13 @@
           <h1 class="title text-start">IMMERSIVE ASSET </br>LIBRARY</h1>
         </div>
         <div class="align-self-center">
+          <div class="d-flex mb-3">
+            <%if(error){%>
+              <!-- <i class="fa-solid fa-circle-exclamation error-message align-self-center px-2"></i> -->
+              <p class="error-message m-0"><%= message %></p>
+              <%}%>  
+          </div>
+        
             <form action="/login" method="POST">
               <!-- Email input -->
               <div class="form-outline mb-4">
