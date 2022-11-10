@@ -367,7 +367,7 @@ const controller = {
 
   showDashboard: async (req, res) => {
     let accounts = [];
-    let  isSuccess= false;
+    let isSuccess = false;
     let errorObj = errorMessage(false, "");
     let user = [];
     try {
@@ -424,16 +424,17 @@ const controller = {
   createEnrollment: async (req, res, next) => {
     //click add account
     let students = [];
-    let isSuccess  = false;
+    let isSuccess = false;
     let errorObj = errorMessage(false, "");
     let user = null;
+    let adminUser = null;
     let isAdmin = null;
     let accounts = [];
     try {
       console.log("---->", req.body);
       user = await userModel.findById({ _id: req.params.user_id });
       if (!user) {
-        return res.status(401).send({ error: "no such user" });
+        errorObj = errorMessage(false, "Unauthorized account");
       }
       //find all accts
       accounts = await userModel.find();
@@ -465,7 +466,7 @@ const controller = {
           );
           //only created the _id, email, isAdmin field
           req.body.isAdmin === "Admin" ? (isAdmin = true) : (isAdmin = false);
-          user = await userModel.create({
+          const addedUser = await userModel.create({
             ...req.body,
             isAdmin,
             activatePasswordLink: token,
@@ -499,7 +500,7 @@ const controller = {
     });
   },
   emailActivation: async (req, res) => {
-    let isSuccess  = false;
+    let isSuccess = false;
     let errorObj = errorMessage(false, " ");
     try {
       const email = req.user.email;
@@ -513,21 +514,24 @@ const controller = {
               <a href = ${process.env.CLIENT_URL}/authentication/activate?token=${req.token}&id=${req.user._id}>${process.env.CLIENT_URL}/authentication/activate</a>`,
       };
 
-      mailTransporter.sendMail(mailDetails, function (err, data) {
-        console.log("send email");
+      let result = await mailTransporter.sendMail(mailDetails);
+      console.log(result);
+      if (result.accepted.length>0) {
         isSuccess = true;
-
-      });
+      }else{
+        errorObj = (true, "Email account has been rejected");
+      }
     } catch (error) {
       errorObj = (true, error.message);
       console.log(error);
     }
+    console.log("---->", isSuccess);
     return res.render("users/dashboard", {
       isLoginpage: true,
       errorObj,
       isSuccess,
       accounts: req.accounts,
-      user: req.user,
+      user : req.user,
       showProfile: false,
       showUploads: false,
       showDownloads: false,
