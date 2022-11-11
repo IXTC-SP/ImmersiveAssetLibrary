@@ -1,9 +1,6 @@
-
-.error-message{
+.error-message {
   color: red;
-  
 }
-  
 
 .login-page {
   height: 500px;
@@ -57,21 +54,38 @@
   width: 100%;
 }
 
-.email-input{
+.email-input {
   top: 2px !important;
 }
 
-.admin-input{
+.admin-input {
   border: 1px solid #bdbdbd;
 }
 
-.email-box{
+.email-box {
   height: 32px;
   width: 263px;
 }
-.table-body{
+.table-body {
   background-color: #e9fcfd;
 }
-.delete-icon{
+.delete-icon {
   font-size: 18px;
+}
+
+.my-custom-scrollbar {
+  position: relative;
+  height: 55%;
+  overflow: auto;
+}
+.table-wrapper-scroll-y {
+  display: block;
+}
+
+
+.sticky-table-headers__sticky {
+  background: white;
+  position: sticky;
+  top: -0.5px; /* Don't forget this, required for the stickiness */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.2);
 }

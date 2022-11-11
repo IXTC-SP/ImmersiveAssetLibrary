@@ -25,7 +25,8 @@ const authMiddleware = require('./middlewares/auth_middleware')// middleware for
 const passport = require("passport");
 
 const flash  = require("connect-flash")
-
+const methodOverride = require('method-override');
+app.use(methodOverride('_method'));
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 app.use('/scripts', express.static('scripts'));
@@ -499,7 +500,7 @@ app.get("/reset-password", userController.showSetPassword)//done
 
 app.post("/:user_id/enrollment", userController.createEnrollment, userController.emailActivation)//done 
 // app.post("/:user_id/dashboard", userController.showDashboard)
-app.post("/:user_id/uploads/delete", userController.deleteUpload)//done
+app.post("/:user_id/uploads/delete", userController.deleteUpload)
 app.post("/:user_id/uploads/edit", userController.editUpload) 
 app.post("/:user_id/uploads", userController.upload)
 app.post("/reset-password-link", userController.sendResetPasswordLink)
@@ -518,4 +519,4 @@ app.post('/logout', userController.logout);
 
 
 // app.delete("/:user_id/uploads", userController.showUploads)
-//app.delete("/:user_id/enrollment", userController.deleteEnrollment)
+app.delete("/:user._id/enrollment/:acct._id/delete", userController.deleteEnrollment)
