@@ -49,11 +49,12 @@ const controller = {
     }
   },
   setPassword: async (req, res) => {
-    //click set, use for reset and activation also
+    //click set, use for reset and activation
     const { password, confirmPassword } = req.body;
     const token = req.query.token; //taken from the form action url
     const userId = req.query.id;
     let errorObj = null;
+    let isInvalid = false;
     let user = null;
     try {
       user = await userModel.findOne({
@@ -61,14 +62,14 @@ const controller = {
       });
       if (password === "" || confirmPassword === "") {
         errorObj = errorMessage(true, "Please fill in the required fields");
-        return res.render("users/setPassword", {
-          errorObj,
-          isActivated: true,
-          isLoginpage: false,
-          isInvalid: false,
-          token: req.query.token,
-          userId: req.query.id,
-        });
+        // return res.render("users/setPassword", {
+        //   errorObj,
+        //   isActivated: true,
+        //   isLoginpage: false,
+        //   isInvalid: false,
+        //   token: req.query.token,
+        //   userId: req.query.id,
+        // });
       }
       if (password === confirmPassword) {
         const hash = await bcrypt.hash(password, 10);
@@ -85,26 +86,27 @@ const controller = {
         });
       } else {
         errorObj = errorMessage(true, "Confirm password does not match");
-        return res.render("users/setPassword", {
-          errorObj,
-          isActivated: true,
-          isLoginpage: false,
-          isInvalid: false,
-          token: req.query.token,
-          userId: req.query.id,
-        });
+        // return res.render("users/setPassword", {
+        //   errorObj,
+        //   isActivated: true,
+        //   isLoginpage: false,
+        //   isInvalid: false,
+        //   token: req.query.token,
+        //   userId: req.query.id,
+        // });
       }
     } catch (err) {
       console.log(err);
       errorObj = errorMessage(true, err);
-      res.render("users/setPassword", {
-        errorObj,
-        isActivated: true,
-        isLoginpage: false,
-        token: req.query.token,
-        userId: req.query.id,
-      });
     }
+    return res.render("users/setPassword", {
+      errorObj,
+      isActivated: true,
+      isLoginpage: false,
+      isInvalid: false,
+      token: req.query.token,
+      userId: req.query.id,
+    });
   },
   sendResetPasswordLink: async (req, res) => {
     //CLICK SEND LINK
@@ -198,6 +200,7 @@ const controller = {
     //click the email link,
     const token = req.query.token; //taken from the form action url
     const userId = req.query.id;
+    let isInvalid = false;
     let errorObj = null;
     let user = null;
     user = await userModel.findOne({
@@ -214,11 +217,12 @@ const controller = {
           true,
           "This link has expired, click forget password to reset"
         );
-        return res.render("users/setPassword", {
-          isLoginpage: false,
-          errorObj,
-          isInvalid: true,
-        });
+        isInvalid = true;
+        // return res.render("users/setPassword", {
+        //   isLoginpage: false,
+        //   errorObj,
+        //   isInvalid: true,
+        // });
       }
       const isValid = await bcrypt.compare(token, passwordResetToken.token);
       if (!isValid) {
@@ -226,11 +230,12 @@ const controller = {
           true,
           "This link has expired, click forget password to reset"
         );
-        return res.render("users/setPassword", {
-          isLoginpage: false,
-          errorObj,
-          isInvalid: true,
-        });
+        isInvalid = true;
+        // return res.render("users/setPassword", {
+        //   isLoginpage: false,
+        //   errorObj,
+        //   isInvalid: true,
+        // });
       }
     }
     res.render("users/setPassword", {
@@ -243,9 +248,11 @@ const controller = {
     });
   },
   showActivateAndSetPassword: async (req, res) => {
-    //click the set pw email link
+    //click the set pw email link for activation
+    errorObj = errorMessage(false, "");
     let tokenVerified = false;
     let token = null;
+    let isInvalid = false;
     console.log(req.query.token);
     console.log(req.query.id);
     let secret = null;
@@ -257,16 +264,22 @@ const controller = {
         if (verified) {
           tokenVerified = true;
         } else {
-          return res
-            .status(401)
-            .send({ error: "Invalid token or expired link" });
+          errorObj = errorMessage(true, "Invalid token or expired link");
+          isInvalid = true;
+          // return res
+          //   .status(401)
+          //   .send({ error: "Invalid token or expired link" });
         }
       }
     } catch (err) {
       console.log(err);
-      return res.status(401).send({ error: err.message });
+      errorObj = errorMessage(true, err.message);
+      isInvalid = true;
+      // return res.status(401).send({ error: err.message });
     }
     res.render("users/setPassword", {
+      isInvalid: false,
+      errorObj,
       isActivated: false,
       isLoginpage: false,
       token,
@@ -473,6 +486,7 @@ const controller = {
           });
           req.token = token;
           req.user = user;
+          req.addedUser = addedUser;
           req.accounts = accounts;
           console.log("next is email activation");
           return next();
@@ -503,22 +517,21 @@ const controller = {
     let isSuccess = false;
     let errorObj = errorMessage(false, " ");
     try {
-      const email = req.user.email;
       console.log("transporter, is created above, sendMail");
       // send mail with defined transport object
       let mailDetails = {
         from: process.env.AUTH_EMAIL,
-        to: email,
+        to: req.addedUser.email,
         subject: "Account Activation link",
         html: `<p>Please click on the given link to set your password and activate your account</p>
-              <a href = ${process.env.CLIENT_URL}/authentication/activate?token=${req.token}&id=${req.user._id}>${process.env.CLIENT_URL}/authentication/activate</a>`,
+              <a href = ${process.env.CLIENT_URL}/authentication/activate?token=${req.token}&id=${req.addedUser._id}>${process.env.CLIENT_URL}/authentication/activate</a>`,
       };
 
       let result = await mailTransporter.sendMail(mailDetails);
       console.log(result);
-      if (result.accepted.length>0) {
+      if (result.accepted.length > 0) {
         isSuccess = true;
-      }else{
+      } else {
         errorObj = (true, "Email account has been rejected");
       }
     } catch (error) {
@@ -531,7 +544,36 @@ const controller = {
       errorObj,
       isSuccess,
       accounts: req.accounts,
-      user : req.user,
+      user: req.user,
+      showProfile: false,
+      showUploads: false,
+      showDownloads: false,
+      showEnrollment: true,
+    });
+  },
+  deleteEnrollment: async (req, res) => {
+    console.log("delete enrollment")
+    let isSuccess = false;
+    let errorObj = errorMessage(false, " ");
+    try {
+      await userModel.deleteOne({ _id: req.params.acct_id });
+
+      //find all accts
+      accounts = await userModel.find();
+      // admins = await userModel.find({ isAdmin: true });
+
+      console.log(user);
+      console.log("Get the accounts");
+      isSuccess(true)
+    } catch (error) {
+      errorObj = errorMessage(true, error.message);
+    }
+    return res.render("users/dashboard", {
+      isLoginpage: true,
+      errorObj,
+      isSuccess,
+      accounts,
+      user: req.user,
       showProfile: false,
       showUploads: false,
       showDownloads: false,
