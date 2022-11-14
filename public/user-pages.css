@@ -89,3 +89,16 @@
   top: -0.5px; /* Don't forget this, required for the stickiness */
   box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.2);
 }
+
+.upload-card-img{
+  height:65%
+}
+
+.upload-card-body{
+  height:35%
+}
+
+.upload-card{
+  width: 200px;
+  height: 244px;
+}
