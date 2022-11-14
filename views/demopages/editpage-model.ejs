@@ -97,7 +97,7 @@
     var data =
     {
       files : [],
-      newfiles: [],
+      modelfile: <%- JSON.stringify(content.modelfile)%>,
       title : document.querySelector(".title-info").value,
       description : document.querySelector(".desc-info").value,
       lowpoly : document.querySelector(".low-poly-info").checked,
@@ -111,17 +111,20 @@
       data.tags.push(tags[i].innerText);
     }
     data.files = files;
-    data.newfiles = newfiles;
-
     console.log(data);
+
+    for(i = 0; i< newfiles.length;i++){
+      formData.append('file', newfiles[i]);
+    }
+    formData.append('data', JSON.stringify(data));
 
     // request.onreadystatechange = function() { // listen for state changes
     //   if (request.readyState == 4 && request.status == 200) { // when completed we can move away
     //     window.location = nextURL;
     //   }
     // }
-    // request.open("POST", postURL, false);
-    // request.send(formData);
+    request.open("POST", postURL, false);
+    request.send(formData);
   }
 
 
