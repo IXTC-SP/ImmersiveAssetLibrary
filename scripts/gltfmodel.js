@@ -4,9 +4,10 @@ const fs = require('fs')
 
 
 const Create = (objectfile, callback) => {
-  var modelfolderpath = path.resolve(objectfile[0].destination.split("/model")[0]);
-  var modeltype = objectfile[0].filename.split(".")[1];
-  var modelfilepath = path.resolve(objectfile[0].destination + "\\" + objectfile[0].originalname);
+  var modelfolderpath = path.resolve(objectfile.destination);
+  // var modelfolderpath = path.resolve(objectfile.destination.split("/model")[0]);
+  var modeltype = objectfile.filename.split(".")[1];
+  var modelfilepath = path.resolve(objectfile.destination + "\\" + objectfile.originalname);
   var gltfpath = modelfolderpath + "\\model.gltf";
   // var gltfpath = modelfolderpath + "\\" + "gltf" + "\\" + "model.gltf";
 
@@ -19,7 +20,6 @@ const Create = (objectfile, callback) => {
     console.error(error)
   }
   if (!fs.existsSync(gltfpath)) {
-
     switch (modeltype) {
       case "obj":
         // code block
@@ -65,6 +65,9 @@ const Create = (objectfile, callback) => {
             // ack, conversion failed: inspect 'error' for details
           }
         );
+        break;
+        default:
+          callback('');
         break;
     }
 
