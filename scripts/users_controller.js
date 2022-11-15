@@ -9,7 +9,7 @@ const tokenModel = require("../models/token");
 const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
 const crypto = require("crypto");
-const { error } = require("console");
+// const { error } = require("console");
 const nodemailer = require("nodemailer");
 const e = require("connect-flash");
 
@@ -32,6 +32,11 @@ mailTransporter.verify(function (error, success) {
 const errorMessage = (error, message) => {
   return { error, message };
 };
+
+const alertMessage = (alert, message) => {
+  return { alert, message };
+};
+
 
 const controller = {
   login: async (req, res) => {
@@ -378,7 +383,7 @@ const controller = {
   //   });
   // },
 
-  showDashboard: async (req, res) => {
+  showProfile: async (req, res) => {
     let accounts = [];
     let isSuccess = false;
     let errorObj = errorMessage(false, "");
@@ -413,6 +418,44 @@ const controller = {
       showEnrollment: false,
     });
   },
+  showEnrollment: async (req, res) => {
+    let accounts = [];
+    // let isSuccess = alertMessage(false, "");
+    // let errorObj = errorMessage(false, "")
+    console.log("-->",req.errorObj)
+    // req.errorObj? errorObj = errorMessage(false, "") : errorObj =  req.errorObj
+    
+    let user = [];
+    try {
+      user = await userModel.findById({ _id: req.params.user_id });
+      if (!user) {
+        return res.status(401).send({ error: "no such user" });
+      }
+      //find all accts
+      accounts = await userModel.find();
+      // admins = await userModel.find({ isAdmin: true });
+
+      console.log(user);
+      console.log("Get the accounts");
+    } catch (err) {
+      console.log(err);
+      return res.status(401).send({ error: "Failed to get users" });
+      //res.redirect("/login");
+    }
+
+    res.render("users/dashboard", {
+      isLoginpage: true,
+      isSuccess: req.isSuccess || alertMessage(false, ""),
+      accounts,
+      errorObj: req.errorObj || errorMessage(false, ""),
+      tab: "Enrollments",
+      user,
+      showProfile: false,
+      showUploads: false,
+      showDownloads: false,
+      showEnrollment: true,
+    });
+  },
 
   showForgotPassword: async (req, res) => {
     //click forget pw,
@@ -445,16 +488,16 @@ const controller = {
     let accounts = [];
     try {
       console.log("---->", req.body);
-      user = await userModel.findById({ _id: req.params.user_id });
-      if (!user) {
-        errorObj = errorMessage(false, "Unauthorized account");
-      }
-      //find all accts
-      accounts = await userModel.find();
-      // admins = await userModel.find({ isAdmin: true });
+      // user = await userModel.findById({ _id: req.params.user_id });
+      // if (!user) {
+      //   errorObj = errorMessage(false, "Unauthorized account");
+      // }
+      // //find all accts
+      // accounts = await userModel.find();
+      // // admins = await userModel.find({ isAdmin: true });
 
-      console.log(user);
-      console.log("Get the accounts");
+      // console.log(user);
+      // console.log("Get the accounts");
       if (req.body.email !== "") {
         //check if email has been created before
         const addedUser = await userModel.findOne({ email: req.body.email });
@@ -485,9 +528,9 @@ const controller = {
             activatePasswordLink: token,
           });
           req.token = token;
-          req.user = user;
+          // req.user = user;
           req.addedUser = addedUser;
-          req.accounts = accounts;
+          // req.accounts = accounts;
           console.log("next is email activation");
           return next();
         }
@@ -500,7 +543,7 @@ const controller = {
       errorObj = errorMessage(true, err.message);
       // return res.status(401).send({ error: "Failed to add account" });
     }
-
+    // res.redirect(`/${req.params.user_id}/dashboard/enrollment`, {errorObj})
     res.render("users/dashboard", {
       isLoginpage: true,
       isSuccess,
@@ -514,7 +557,7 @@ const controller = {
     });
   },
   emailActivation: async (req, res) => {
-    let isSuccess = false;
+    let isSuccess = alertMessage(false, " ");
     let errorObj = errorMessage(false, " ");
     try {
       console.log("transporter, is created above, sendMail");
@@ -530,55 +573,68 @@ const controller = {
       let result = await mailTransporter.sendMail(mailDetails);
       console.log(result);
       if (result.accepted.length > 0) {
-        isSuccess = true;
+        isSuccess = alertMessage(true, "An email with activation instructions has been sent to the account.");
+       
       } else {
         errorObj = (true, "Email account has been rejected");
+        
       }
     } catch (error) {
       errorObj = (true, error.message);
+      
       console.log(error);
     }
+    req.isSuccess = isSuccess
+    req.errorObj = errorObj
+    next()
     console.log("---->", isSuccess);
-    return res.render("users/dashboard", {
-      isLoginpage: true,
-      errorObj,
-      isSuccess,
-      accounts: req.accounts,
-      user: req.user,
-      showProfile: false,
-      showUploads: false,
-      showDownloads: false,
-      showEnrollment: true,
-    });
+    //res.redirect(`/${req.params.user_id}/dashboard/enrollment`)
+    // return res.render("users/dashboard", {
+    //   isLoginpage: true,
+    //   errorObj,
+    //   isSuccess,
+    //   accounts: req.accounts,
+    //   user: req.user,
+    //   showProfile: false,
+    //   showUploads: false,
+    //   showDownloads: false,
+    //   showEnrollment: true,
+    // });
   },
   deleteEnrollment: async (req, res) => {
+    let user = [];
     console.log("delete enrollment")
-    let isSuccess = false;
+    let isSuccess = alertMessage(false, " ");
     let errorObj = errorMessage(false, " ");
     try {
       await userModel.deleteOne({ _id: req.params.acct_id });
+      // user = await userModel.findById({ _id: req.params.user_id });
+      // if (!user) {
+      //   return res.status(401).send({ error: "no such user" });
+      // }
+      // //find all accts
+      // accounts = await userModel.find();
+      // // admins = await userModel.find({ isAdmin: true });
 
-      //find all accts
-      accounts = await userModel.find();
-      // admins = await userModel.find({ isAdmin: true });
-
-      console.log(user);
-      console.log("Get the accounts");
-      isSuccess(true)
+      // console.log(req.params.acct_id );
+      // console.log("Get the accounts");
+      isSuccess = alertMessage(true, "Account successfully deleted")
+      // isSuccess(true)
     } catch (error) {
       errorObj = errorMessage(true, error.message);
     }
-    return res.render("users/dashboard", {
-      isLoginpage: true,
-      errorObj,
-      isSuccess,
-      accounts,
-      user: req.user,
-      showProfile: false,
-      showUploads: false,
-      showDownloads: false,
-      showEnrollment: true,
-    });
+    res.redirect(`/${req.params.user_id}/dashboard/enrollment`, {errorObj, isSuccess})
+    // return res.render("users/dashboard", {
+    //   isLoginpage: true,
+    //   errorObj,
+    //   isSuccess,
+    //   accounts,
+    //   user: req.user,
+    //   showProfile: false,
+    //   showUploads: false,
+    //   showDownloads: false,
+    //   showEnrollment: true,
+    // });
   },
   deleteUpload: async (req, res) => {
     //get the id of the selecetd upload

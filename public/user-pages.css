@@ -90,15 +90,25 @@
   box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.2);
 }
 
-.upload-card-img{
-  height:65%
+.upload-row{
+  --mdb-gutter-x: 0 !important;
 }
 
 .upload-card-body{
-  height:35%
+  height:45%
+
 }
 
 .upload-card{
-  width: 200px;
-  height: 244px;
+  width: 230px;
+   height: 100%;
+}
+
+.upload-card-img{
+/* height: 186px; */
+}
+.upload-btn{
+  padding-left: 1em;
+  padding-right: 1em;
+  border-width: 1px
 }

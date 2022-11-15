@@ -1,14 +1,14 @@
 <!-- Add button -->
-<%if(isSuccess){%>
+<%if(isSuccess.alert){%>
 <div class="alert alert-success d-flex align-items-center" role="alert">
   <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Success:">
     <use xlink:href="#check-circle-fill" />
   </svg>
-  <div>An email with activation instructions has been sent to the account.</div>
+  <div><%= isSuccess.message %></div>
 </div>
 <%}%>
 
-<form action="/<%= user._id %>/enrollment" method="post">
+<form action="/<%= user._id %>/dashboard/enrollment" method="post">
   <div class="md-form d-flex justify-content-between align-items-end">
     <div class="d-flex gap-4">
       <div class="mb-3 d-flex flex-column align-start">
@@ -86,7 +86,7 @@
 
         <td class="text-center">
           <form
-            action="/<%= user._id %>/enrollment/<%= eachAcct._id %>/delete?_method=DELETE"
+            action="/<%= user._id %>/dashboard/enrollment/<%= eachAcct._id %>/delete?_method=DELETE"
             method="POST"
           >
             <Button type="submit" class="p-0 btn btn-link btn-sm btn-rounded"
