@@ -491,14 +491,15 @@ app.post("/downloadasset/:modelid", function(req, res) {
 // app.get("/:user_id/profile", userController.showProfile)//need upoads by users,
 // app.get("/:user_id/uploads", userController.showUploads)//need uploads by user,
 // app.get("/:user_id/downloads", userController.showDownloads)//need downloads from dbs
-app.get("/:user_id/dashboard", userController.showDashboard)
+app.get("/:user_id/dashboard/profile", userController.showProfile)
+app.get("/:user_id/dashboard/enrollment", userController.showEnrollment)
 app.get("/login", userController.showlogin)
 app.get("/authentication/activate", userController.showActivateAndSetPassword)//done 
 app.get("/forgot-password", userController.showForgotPassword)//done 
 app.get("/reset-password", userController.showSetPassword)//done 
 
 
-app.post("/:user_id/enrollment", userController.createEnrollment, userController.emailActivation)//done 
+app.post("/:user_id/dashboard/enrollment", userController.createEnrollment, userController.emailActivation, userController.showEnrollment)//done 
 // app.post("/:user_id/dashboard", userController.showDashboard)
 app.post("/:user_id/uploads/delete", userController.deleteUpload)
 app.post("/:user_id/uploads/edit", userController.editUpload) 
@@ -519,4 +520,4 @@ app.post('/logout', userController.logout);
 
 
 // app.delete("/:user_id/uploads", userController.showUploads)
-app.delete("/:user._id/enrollment/:acct._id/delete", userController.deleteEnrollment)
+app.delete("/:user_id/dashboard/enrollment/:acct_id/delete", userController.deleteEnrollment, userController.showEnrollment)
