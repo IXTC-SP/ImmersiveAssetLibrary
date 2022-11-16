@@ -89,32 +89,69 @@ const uploadtmpscript = upload.fields([
   maxCount: 10
 }]);
 
-const publishfile = function(foldername, files){
+const publishfile = async function(foldername, files){
+  var filesizetotal = 0;
     //create a new folder based on title
-    if (!fs.existsSync('./uploads/' + foldername)){
-    fs.mkdirSync('./uploads/' + foldername);
+    var publishpath = './uploads/' + foldername;
+    if (!fs.existsSync(publishpath)){
+    fs.mkdirSync(publishpath);
     }
     //move temp files into new folder
-    for(i=0;i<files.length;i++){
-      var oldPath = './uploads/tmp/' + files[i]
-      var newPath = './uploads/' + foldername + '/' + files[i]
-      fs.rename(oldPath, newPath, function (err) {
-        if (err) throw err
-        console.log('move ' + oldPath + ' to ' + newPath)
-      });
+    for (const file of files) {
+      var oldPath = './uploads/tmp/' + file
+      var newPath = publishpath + '/' + file
+      fs.renameSync(oldPath, newPath);
+      filesizetotal += getFilesizeInBytes(newPath);
+    }
+    console.log('move complete');
+
+    if (fs.existsSync('./uploads/tmp/gltf')){
+      if (!fs.existsSync(publishpath + '/gltf/')){
+      fs.mkdirSync(publishpath + '/gltf/');
+      }
+      var oldPath = './uploads/tmp/gltf/model.gltf'
+      var newPath = (publishpath + '/gltf/model.gltf');
+      fs.renameSync(oldPath, newPath);
+      console.log('add gltf folder');
+      filesizetotal += getFilesizeInBytes(newPath);
     }
 
-    let dir = getDirectories('./uploads/tmp');
-    for(i=0;i<dir.length;i++){
-      var oldPath = dir[i]
-      var newPath = dir[i].replace('tmp', foldername);
-      fs.rename(oldPath, newPath, function (err) {
-        if (err) throw err
-      });
-    }
-    //remove rest of tmp files
-    // fs.rmSync(storagepath, { recursive: true, force: true });
+    //data required -> folderpath, totalfilesize, publish date,  assettype, ownedby, main asset type, main asset path, download count
+    console.log('getting file size ' + filesizetotal);
+    // getfilesize(publishpath);
+
 };
+
+function getFilesizeInBytes(filename) {
+    var stats = fs.statSync(filename);
+    var fileSizeInMegabytes = stats.size / (1024*1024);
+    return fileSizeInMegabytes ;
+}
+
+const getAllFiles = function(dirPath, arrayOfFiles) {
+  files = fs.readdirSync(dirPath)
+
+  arrayOfFiles = arrayOfFiles || []
+
+  files.forEach(function(file) {
+    if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+      arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles)
+    } else {
+      arrayOfFiles.push(path.join(__dirname, dirPath, "/", file))
+    }
+  })
+
+  return arrayOfFiles
+}
+
+function setPublishDate(){
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var yyyy = today.getFullYear();
+  today = mm + '/' + dd + '/' + yyyy;
+  return today
+}
 
 function getDirectories(srcpath) {
   return fs.readdirSync(srcpath)

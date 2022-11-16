@@ -164,15 +164,7 @@ app.get('/view/360', function(req, res) {
   });
 });
 
-app.get('/view/model', function(req, res) {
-  res.render('demopages/view-model', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
-  });
-});
+
 app.get('/view/script', function(req, res) {
   res.render('demopages/view-script', {
     navbarState: {
@@ -324,8 +316,16 @@ app.post("/uploadtmp3dmodel", tempupload.uploadtmp3D, function(req, res) {
   tmpContent = req.files;
   let result = tmpContent.image.map(a => a.originalname);
   gltfmodel.Create(req.files.model[0], function(gltfresult){
-    console.log(gltfresult);
+    // Include fs module
+    var fs = require('fs');
+    if(gltfresult != ''){
+      tmpContent["modelviewerpath"] = '../uploads/tmp/gltf/model.gltf';
+    } else {
+      tmpContent['modelviewerpath'] = '.' + tmpContent.model[0].destination +  tmpContent.model[0].originalname;
+    }
+    console.log(tmpContent);
     res.end("complete");
+
   });
   // let files = tmpContent.image.map(a => a.originalname);
   // files.push(tmpContent.model[0].originalname);
@@ -342,7 +342,7 @@ app.get('/editpage/model', function(req, res) {
     console.log(images);
     res.render('demopages/editpage-model', {
       content : {
-        destination : tmpContent.model[0].destination,
+        modelviewerpath : tmpContent.modelviewerpath,
         modelfile: tmpContent.model[0].originalname,
         imagefiles: images
       },
@@ -361,13 +361,22 @@ app.post('/save3dmodel', tempupload.upload3D, function(req,res){
 
   //create list with all files required to save
   let body = JSON.parse(req.body.data);
-  console.log(body.files);
   let newfiles = req.files.file.map(a=> a.originalname);
   let allfiles = body.files.concat(newfiles);
   allfiles.push(body.modelfile);
 
   console.log(allfiles);
   tempupload.publish(tmpContent.model[0].originalname.split('.')[0], allfiles, tmpContent.model[0].destination)
+});
+
+app.get('/view/model', function(req, res) {
+  res.render('demopages/view-model', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
 });
 
 app.post("/uploadtmp360", tempupload.uploadtmp360, function(req, res) {
