@@ -133,8 +133,7 @@
   function getEJScontent()
   {
     <% if (content) {  %>
-        let des = '<%- content.destination %>';
-        let modelpath = '.' + des + '<%- content.modelfile %>';
+        let modelpath = '<%- content.modelviewerpath %>';
         var modelviewer = document.getElementById('model-viewer');
         modelviewer.src = modelpath;
         files = <%- JSON.stringify(content.imagefiles)%>;
