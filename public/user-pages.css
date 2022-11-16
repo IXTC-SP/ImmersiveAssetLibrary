@@ -37,7 +37,9 @@
   height: 60px; /* Height of the footer */
 }
 .tab-content-height {
-  height: 630px;
+  /* height: 630px; */
+  height: inherit;
+  margin-bottom: 100px;
 }
 .enrollment-row {
   height: 10%;

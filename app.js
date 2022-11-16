@@ -492,6 +492,8 @@ app.post("/downloadasset/:modelid", function(req, res) {
 // app.get("/:user_id/uploads", userController.showUploads)//need uploads by user,
 // app.get("/:user_id/downloads", userController.showDownloads)//need downloads from dbs
 app.get("/:user_id/dashboard/profile", userController.showProfile)
+app.get("/:user_id/dashboard/uploads", userController.showUploads)
+app.get("/:user_id/dashboard/downloads", userController.showDownloads)
 app.get("/:user_id/dashboard/enrollment", userController.showEnrollment)
 app.get("/login", userController.showlogin)
 app.get("/authentication/activate", userController.showActivateAndSetPassword)//done 
