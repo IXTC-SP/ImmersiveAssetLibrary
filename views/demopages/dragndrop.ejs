@@ -213,6 +213,9 @@
         <label for="emissive-texture-selection">Emissive</label>
         <select name="emissive-texture-selection" class="model-texture-assign" id="texture-selection">
         </select>
+        <label for="thumbnail">Thumbnail</label>
+        <select name="thumbnail" class="model-texture-assign" id="texture-selection">
+        </select>
       </div>
       <button class="page-btn left" type="button" name="button" onclick="createuploadcontent()">Next</button>
 
@@ -286,14 +289,17 @@
 
     fileObjs.forEach((fileObj, i) => {
       var savedName = fileObj.filename + "_" + fileObj.file.name.split("/")[1];
-      formData.append(fileObj.type, fileObj.file, savedName);
+      if(fileObj.filename == 'thumbnail') {
+        formData.append('thumbnail', fileObj.file, savedName);
+      }
+      else formData.append(fileObj.type, fileObj.file, savedName);
     });
 
-    // request.onreadystatechange = function() { // listen for state changes
-    //   if (request.readyState == 4 && request.status == 200) { // when completed we can move away
-    //     window.location = nextURL;
-    //   }
-    // }
+    request.onreadystatechange = function() { // listen for state changes
+      if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+        window.location = nextURL;
+      }
+    }
     request.open("POST", postURL, false);
     request.send(formData);
   }
