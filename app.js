@@ -164,15 +164,7 @@ app.get('/view/360', function(req, res) {
   });
 });
 
-app.get('/view/model', function(req, res) {
-  res.render('demopages/view-model', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
-  });
-});
+
 app.get('/view/script', function(req, res) {
   res.render('demopages/view-script', {
     navbarState: {
@@ -318,27 +310,39 @@ app.get('/dragndrop', function(req, res) {
     }
   });
 });
-const tempupload = require('./scripts/tempuploadsmanager');
+const tempupload = require('./scripts/uploadsmanager');
 var tmpContent = [];
 app.post("/uploadtmp3dmodel", tempupload.uploadtmp3D, function(req, res) {
   tmpContent = req.files;
   let result = tmpContent.image.map(a => a.originalname);
-  gltfmodel.Create(req.files.model, function(gltfresult){
-    console.log(gltfresult);
-      res.send("done");
-  })
-  // console.log(tmpContent.model[0].path);
-  // console.log(Object.values(tmpContent.image));
+  gltfmodel.Create(req.files.model[0], function(gltfresult){
+    // Include fs module
+    var fs = require('fs');
+    if(gltfresult != ''){
+      tmpContent["modelviewerpath"] = '../uploads/tmp/gltf/model.gltf';
+    } else {
+      tmpContent['modelviewerpath'] = '.' + tmpContent.model[0].destination +  tmpContent.model[0].originalname;
+    }
+    console.log(tmpContent);
+    res.end("complete");
 
-  res.end("complete");
+  });
+  // let files = tmpContent.image.map(a => a.originalname);
+  // files.push(tmpContent.model[0].originalname);
+  // console.log(files);
+  // let folderpath = req.files.model[0].originalname.split('.')[0];
+  // console.log(folderpath);
+  // tempupload.publish(req.files.model[0].originalname.split('.')[0], files, req.files.model[0].destination)
+
 });
+
 app.get('/editpage/model', function(req, res) {
   if(tmpContent){
     let images = tmpContent.image.map(a => a.originalname);
     console.log(images);
     res.render('demopages/editpage-model', {
       content : {
-        destination : tmpContent.model[0].destination,
+        modelviewerpath : tmpContent.modelviewerpath,
         modelfile: tmpContent.model[0].originalname,
         imagefiles: images
       },
@@ -351,6 +355,7 @@ app.get('/editpage/model', function(req, res) {
   }
 
 });
+<<<<<<< HEAD
 
 app.post("/save3dmodelcontent", tempupload.upload3D, function(req, res) {
   console.log(req.files);
@@ -359,12 +364,37 @@ app.post("/save3dmodelcontent", tempupload.upload3D, function(req, res) {
   // console.log(Object.values(tmpContent.image));
 
   res.end("complete");
+=======
+app.post('/save3dmodel', tempupload.upload3D, function(req,res){
+  console.log(req.files);
+  console.log(req.body);
+
+  //create list with all files required to save
+  let body = JSON.parse(req.body.data);
+  let newfiles = req.files.file.map(a=> a.originalname);
+  let allfiles = body.files.concat(newfiles);
+  allfiles.push(body.modelfile);
+
+  console.log(allfiles);
+  tempupload.publish(tmpContent.model[0].originalname.split('.')[0], allfiles, tmpContent.model[0].destination)
+});
+
+app.get('/view/model', function(req, res) {
+  res.render('demopages/view-model', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+>>>>>>> 43f864424fd4be3c462474f9d97bf01610b4c47d
 });
 
 app.post("/uploadtmp360", tempupload.uploadtmp360, function(req, res) {
   tmpContent = req.files;
   res.end("complete");
 });
+
 app.get('/editpage/360', function(req, res) {
   res.render('demopages/editpage-360', {
     tmpfileContent : tmpContent,

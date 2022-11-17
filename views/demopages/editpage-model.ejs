@@ -97,6 +97,7 @@
     var data =
     {
       files : [],
+      modelfile: <%- JSON.stringify(content.modelfile)%>,
       title : document.querySelector(".title-info").value,
       description : document.querySelector(".desc-info").value,
       lowpoly : document.querySelector(".low-poly-info").checked,
@@ -110,20 +111,18 @@
       data.tags.push(tags[i].innerText);
     }
     data.files = files;
+    console.log(data);
 
-    newfiles.forEach((file, i) => {
-      formData.append('newfile', file);
-    });
-
+    for(i = 0; i< newfiles.length;i++){
+      formData.append('file', newfiles[i]);
+    }
     formData.append('data', JSON.stringify(data));
-    console.log(formData);
 
     // request.onreadystatechange = function() { // listen for state changes
     //   if (request.readyState == 4 && request.status == 200) { // when completed we can move away
     //     window.location = nextURL;
     //   }
     // }
-    
     request.open("POST", postURL, false);
     request.send(formData);
   }
@@ -134,8 +133,7 @@
   function getEJScontent()
   {
     <% if (content) {  %>
-        let des = '<%- content.destination %>';
-        let modelpath = '.' + des + '<%- content.modelfile %>';
+        let modelpath = '<%- content.modelviewerpath %>';
         var modelviewer = document.getElementById('model-viewer');
         modelviewer.src = modelpath;
         files = <%- JSON.stringify(content.imagefiles)%>;
