@@ -322,9 +322,11 @@ const tempupload = require('./scripts/tempuploadsmanager');
 var tmpContent = [];
 app.post("/uploadtmp3dmodel", tempupload.uploadtmp3D, function(req, res) {
   tmpContent = req.files;
-  console.log(tmpContent);
   let result = tmpContent.image.map(a => a.originalname);
-  console.log(result);
+  gltfmodel.Create(req.files.model, function(gltfresult){
+    console.log(gltfresult);
+      res.send("done");
+  })
   // console.log(tmpContent.model[0].path);
   // console.log(Object.values(tmpContent.image));
 
@@ -349,6 +351,16 @@ app.get('/editpage/model', function(req, res) {
   }
 
 });
+
+app.post("/save3dmodelcontent", tempupload.upload3D, function(req, res) {
+  console.log(req.files);
+  console.log(req.body);
+  // console.log(tmpContent.model[0].path);
+  // console.log(Object.values(tmpContent.image));
+
+  res.end("complete");
+});
+
 app.post("/uploadtmp360", tempupload.uploadtmp360, function(req, res) {
   tmpContent = req.files;
   res.end("complete");

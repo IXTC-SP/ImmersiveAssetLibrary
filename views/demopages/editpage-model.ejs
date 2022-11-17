@@ -91,13 +91,12 @@
     const formData = new FormData();
     const request = new XMLHttpRequest();
     var nextURL = "/view-model";
-    var postURL = "/save3dmodel";
+    var postURL = "/save3dmodelcontent";
     console.log("create upload content");
 
     var data =
     {
       files : [],
-      newfiles: [],
       title : document.querySelector(".title-info").value,
       description : document.querySelector(".desc-info").value,
       lowpoly : document.querySelector(".low-poly-info").checked,
@@ -111,17 +110,22 @@
       data.tags.push(tags[i].innerText);
     }
     data.files = files;
-    data.newfiles = newfiles;
 
-    console.log(data);
+    newfiles.forEach((file, i) => {
+      formData.append('newfile', file);
+    });
+
+    formData.append('data', JSON.stringify(data));
+    console.log(formData);
 
     // request.onreadystatechange = function() { // listen for state changes
     //   if (request.readyState == 4 && request.status == 200) { // when completed we can move away
     //     window.location = nextURL;
     //   }
     // }
-    // request.open("POST", postURL, false);
-    // request.send(formData);
+    
+    request.open("POST", postURL, false);
+    request.send(formData);
   }
 
 

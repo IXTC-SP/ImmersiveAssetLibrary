@@ -289,11 +289,11 @@
       formData.append(fileObj.type, fileObj.file, savedName);
     });
 
-    request.onreadystatechange = function() { // listen for state changes
-      if (request.readyState == 4 && request.status == 200) { // when completed we can move away
-        window.location = nextURL;
-      }
-    }
+    // request.onreadystatechange = function() { // listen for state changes
+    //   if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+    //     window.location = nextURL;
+    //   }
+    // }
     request.open("POST", postURL, false);
     request.send(formData);
   }
