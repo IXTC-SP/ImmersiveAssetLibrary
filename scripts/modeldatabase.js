@@ -71,7 +71,7 @@ class ModelAsset {
   downloadedby = [];
   modelpaths = new ModelPaths();
   tags = [];
-  constructor(name, description, folderpath, modelfilepath, modelviewerfilepath, lowpoly, animated, rigged, uploadedby) {
+  constructor(name, description, folderpath, modelfilepath, modelviewerfilepath, lowpoly, animated, textured, rigged, uploadedby) {
     this.name = name;
     this.description = description;
     this.modelpaths.setPath("folderpath", folderpath);
@@ -79,6 +79,7 @@ class ModelAsset {
     this.modelpaths.setPath("modelviewerfilepath", modelviewerfilepath);
     this.lowpoly = lowpoly;
     this.animated = animated;
+    this.textured = textured;
     this.rigged = rigged;
     this.uploadedby = uploadedby;
   }
@@ -99,6 +100,7 @@ class ModelAsset {
       lowpoly: this.lowpoly,
       animated: this.animated,
       rigged: this.rigged,
+      textured: this.textured,
       uploadedby: this.uploadedby,
       downloadcount: this.downloadcount,
       downloadby: this.downloadedby,
@@ -169,6 +171,18 @@ module.exports.SearchBar = SearchBar;
   });
 }
 module.exports.FindModelById = FindModelById;
+
+const SaveModel = function(name, description, folderpath, modelfilepath,
+  modelviewerfilepath, lowpoly, animated, textured,rigged, uploadedby,tags){
+  var model = new ModelAsset(name, description, folderpath, modelfilepath,
+  modelviewerfilepath, lowpoly, animated, textured, rigged, uploadedby);
+  model.modelpaths.setPath("thumbnail", "/uploads/cyberpunk/thumbnail.png");
+  model.addTags(tags);
+  console.log(model);
+  model.saveModel();
+}
+module.exports.SaveModel = SaveModel;
+
 
 function Run(){
   var apple_watch = new ModelAsset("apple_watch", "apple watch model", "/uploads/apple_watch", "/uploads/apple_watch/model/apple_watch.blend",

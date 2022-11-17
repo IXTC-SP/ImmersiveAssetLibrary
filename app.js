@@ -344,6 +344,7 @@ app.get('/editpage/model', function(req, res) {
       content : {
         modelviewerpath : tmpContent.modelviewerpath,
         modelfile: tmpContent.model[0].originalname,
+        thumbnail: typeof(tmpContent.thumbnail) == 'undefined' ? '' : tmpContent.thumbnail[0].originalname,
         imagefiles: images
       },
       navbarState: {
@@ -355,16 +356,7 @@ app.get('/editpage/model', function(req, res) {
   }
 
 });
-<<<<<<< HEAD
 
-app.post("/save3dmodelcontent", tempupload.upload3D, function(req, res) {
-  console.log(req.files);
-  console.log(req.body);
-  // console.log(tmpContent.model[0].path);
-  // console.log(Object.values(tmpContent.image));
-
-  res.end("complete");
-=======
 app.post('/save3dmodel', tempupload.upload3D, function(req,res){
   console.log(req.files);
   console.log(req.body);
@@ -376,7 +368,8 @@ app.post('/save3dmodel', tempupload.upload3D, function(req,res){
   allfiles.push(body.modelfile);
 
   console.log(allfiles);
-  tempupload.publish(tmpContent.model[0].originalname.split('.')[0], allfiles, tmpContent.model[0].destination)
+  tempupload.publish(tmpContent.model[0].originalname.split('.')[0], allfiles, tmpContent.model[0].destination);
+  //save model database
 });
 
 app.get('/view/model', function(req, res) {
@@ -387,7 +380,6 @@ app.get('/view/model', function(req, res) {
       allowLogout: true
     }
   });
->>>>>>> 43f864424fd4be3c462474f9d97bf01610b4c47d
 });
 
 app.post("/uploadtmp360", tempupload.uploadtmp360, function(req, res) {
