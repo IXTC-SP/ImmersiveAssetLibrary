@@ -20,6 +20,24 @@ var upload = multer({
   storage: uploadstorage
 });
 
+var finalstoragepath = './uploads/tmp/';
+const finaluploadstorage = multer.diskStorage({
+  destination: (req, file, cb) => { // setting destination of uploading files
+    console.log(file);
+    fs.mkdirSync('./uploads/final/', {
+      recursive: true
+    })
+    cb(null, './uploads/final/');
+  },
+  filename: (req, file, cb) => { // naming file
+    cb(null, file.originalname);
+  }
+});
+var finalupload = multer({
+  storage: finaluploadstorage
+});
+
+
 function closeTmpFolder() {
   if (fs.existsSync(storagepath)) {
     fs.rmSync(storagepath, {
@@ -55,6 +73,16 @@ const uploadtmp3D = upload.fields([
     maxCount: 10
   }
 ]);
+const upload3D = finalupload.fields([
+  {
+    name: 'newfile',
+    maxCount: 10
+  },
+  {
+    name: 'data',
+    maxCount: 1
+  }
+]);
 const uploadtmp360 = upload.fields([
   {
     name: 'top',
@@ -86,6 +114,7 @@ const uploadtmpscript = upload.fields([
 
 module.exports.uploadHandler = upload;
 module.exports.closeTmpFolder = closeTmpFolder;
+module.exports.upload3D = upload3D;
 module.exports.uploadtmp3D = uploadtmp3D;
 module.exports.uploadtmp360 = uploadtmp360;
 module.exports.uploadtmpscript = uploadtmpscript;
