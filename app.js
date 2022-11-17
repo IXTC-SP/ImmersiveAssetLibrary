@@ -26,6 +26,7 @@ const passport = require("passport");
 
 const flash  = require("connect-flash")
 const methodOverride = require('method-override');
+const job = require('./Cron/cron_jobs');
 app.use(methodOverride('_method'));
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
@@ -79,6 +80,7 @@ app.listen(port, async () => {
   }
 
   console.log(`Immersive Library backend listening on port ${port}`)
+  job.start()
 })
 
 
