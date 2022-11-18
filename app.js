@@ -188,6 +188,27 @@ app.post('/asset/:modelid', function(req, res) {
   });
 });
 
+app.get('/view/360', function(req, res) {
+  res.render('demopages/view-360', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+
+
+app.get('/view/script', function(req, res) {
+  res.render('demopages/view-script', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+
 app.get('/360/equi', function(req, res) {
   res.render('demopages/360viewer(equi)', {
     navbarState: {
@@ -208,16 +229,9 @@ app.get('/360/cube', function(req, res) {
   });
 });
 
-app.get('/dragndrop', function(req, res) {
-  res.render('demopages/dragndrop', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
-  });
-});
 
+
+//
 app.get('/sample_asset', function(req, res) {
   res.render('sample_asset', {
     modelpath: "./uploads/00_sample/gltf/model.gltf",
@@ -230,7 +244,17 @@ app.get('/sample_asset', function(req, res) {
   });
 });
 
+app.get('/', function(req, res) {
+  res.render('main', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
 
+//WORKING (ASSET LIST PAGE)
 app.get("/assets", function(req, res) {
   if(typeof req.query.search === 'undefined' || req.query.search == ""){
     console.log("get all result on model list");
@@ -260,10 +284,7 @@ app.get("/assets", function(req, res) {
         }
       });
     });
-
-
   }
-
 });
 
 
@@ -313,6 +334,142 @@ app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile',
   })
 });
 
+//WORKING (UPLOAD PAGE)
+app.get('/dragndrop', function(req, res) {
+  res.render('demopages/dragndrop', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+const tempupload = require('./scripts/uploadsmanager');
+var tmpContent = [];
+app.post("/uploadtmp3dmodel", tempupload.uploadtmp3D, function(req, res) {
+  tmpContent = req.files;
+  let result = tmpContent.image.map(a => a.originalname);
+  gltfmodel.Create(req.files.model[0], function(gltfresult){
+    // Include fs module
+    var fs = require('fs');
+    if(gltfresult != ''){
+      tmpContent["modelviewerpath"] = '../uploads/tmp/gltf/model.gltf';
+    } else {
+      tmpContent['modelviewerpath'] = '.' + tmpContent.model[0].destination +  tmpContent.model[0].originalname;
+    }
+    console.log(tmpContent);
+    res.end("complete");
+
+  });
+  // let files = tmpContent.image.map(a => a.originalname);
+  // files.push(tmpContent.model[0].originalname);
+  // console.log(files);
+  // let folderpath = req.files.model[0].originalname.split('.')[0];
+  // console.log(folderpath);
+  // tempupload.publish(req.files.model[0].originalname.split('.')[0], files, req.files.model[0].destination)
+
+});
+
+app.get('/editpage/model', function(req, res) {
+  if(tmpContent){
+    let images = tmpContent.image.map(a => a.originalname);
+    console.log(images);
+    res.render('demopages/editpage-model', {
+      content : {
+        modelviewerpath : tmpContent.modelviewerpath,
+        modelfile: tmpContent.model[0].originalname,
+        thumbnail: typeof(tmpContent.thumbnail) == 'undefined' ? '' : tmpContent.thumbnail[0].originalname,
+        imagefiles: images
+      },
+      navbarState: {
+        allowLogin: false,
+        allowRegister: false,
+        allowLogout: true
+      }
+    });
+  }
+
+});
+
+app.post('/save3dmodel', tempupload.upload3D, function(req,res){
+  console.log(req.files);
+  console.log(req.body);
+
+  //create list with all files required to save
+  let body = JSON.parse(req.body.data);
+  let newfiles = req.files.file.map(a=> a.originalname);
+  let allfiles = body.files.concat(newfiles);
+  allfiles.push(body.modelfile);
+
+  console.log(allfiles);
+  tempupload.publish(tmpContent.model[0].originalname.split('.')[0], allfiles, tmpContent.model[0].destination);
+  //save model database
+});
+
+app.get('/view/model', function(req, res) {
+  res.render('demopages/view-model', {
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+
+app.post("/uploadtmp360", tempupload.uploadtmp360, function(req, res) {
+  tmpContent = req.files;
+  res.end("complete");
+});
+
+app.get('/editpage/360', function(req, res) {
+  res.render('demopages/editpage-360', {
+    tmpfileContent : tmpContent,
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+app.post("/uploadtmpscript", tempupload.uploadtmpscript, function(req, res) {
+  tmpContent = req.files;
+  res.end("complete");
+});
+app.get('/editpage/script', function(req, res) {
+  res.render('demopages/editpage-script', {
+    tmpfileContent : tmpContent,
+    navbarState: {
+      allowLogin: false,
+      allowRegister: false,
+      allowLogout: true
+    }
+  });
+});
+
+
+
+
+
+
+
+app.post('/test', function(req,res){
+  console.log("post test form");
+  res.redirect('/editpage/model')
+})
+
+
+// Begin reading from stdin so the process does not exit imidiately
+process.stdin.resume();
+process.on('SIGINT', function() {
+  console.log('Interrupted');
+  process.exit();
+});
+
+process.on('exit',() => {
+  tempupload.closeTmpFolder();
+  console.log("process.exit() method is fired")
+});
+
 app.post("/update/:modelid", function(req, res) {
   modeldatabase.UpdateModelFromEditPage(req.params.modelid, req, (result) => {
     modeldatabase.FindModelById(req.params.modelid, (doc) => {
@@ -328,6 +485,7 @@ app.post("/update/:modelid", function(req, res) {
     });
   });
 });
+
 
 const fs = require('fs');
 
@@ -346,7 +504,6 @@ app.post("/downloadasset/:modelid", function(req, res) {
       });
       });
     });
-
   });
 });
 

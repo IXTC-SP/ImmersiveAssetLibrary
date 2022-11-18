@@ -1,0 +1,114 @@
+<%- include('../partials/header') %>
+
+<link rel="stylesheet" href="../modellist.css">
+<!-- or link to the CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.3/dist/css/splide.min.css">
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<script type="text/javascript" src="/datamuse.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.3/dist/js/splide.min.js"></script>
+<style>
+  .navbar {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  table.table.table-condensed {
+    border: 1px solid black;
+  }
+
+  model-viewer {
+    width: auto;
+  }
+</style>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Preview</a>
+  </nav>
+  <br><br>
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-7">
+        <model-viewer id="model-viewer" alt="" src="../uploads/cyberpunk/gltf/scene.gltf" ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
+        <section class="splide w-75" aria-labelledby="carousel-heading">
+          <h2 id="carousel-heading"></h2>
+
+          <div class="splide__track">
+            <ul class="splide__list">
+              <li class="splide__slide"><img height="120px" width="120px" src="../uploads/cyberpunk/thumbnail.png" alt=""></li>
+              <li class="splide__slide"><img height="120px" width="120px" src="../uploads/deadpool/thumbnail.png" alt=""></li>
+              <li class="splide__slide"><img height="120px" width="120px" src="../uploads/harry_potter/thumbnail.png" alt=""></li>
+              <li class="splide__slide"><img height="120px" width="120px" src="../uploads/painter/thumbnail.png" alt=""></li>
+              <li class="splide__slide"><img height="120px" width="120px" src="../uploads/robot/thumbnail.png" alt=""></li>
+              <li class="splide__slide"><img height="120px" width="120px" src="../uploads/shiba/thumbnail.png" alt=""></li>
+            </ul>
+          </div>
+        </section>
+        <br><br>
+        <div class="content">
+          <h5>Title</h5>
+          <p>360 cubemap image</p>
+          <hr>
+          <h5>Description</h5>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet nisi tortor. Donec luctus nulla odio, sed porta erat venenatis et. Donec lacinia, ligula eu convallis fermentum, elit mi congue arcu, nec tempus metus eros non sem.
+            Praesent turpis neque, congue ac urna id, fermentum rhoncus enim. Aenean sed suscipit nunc. Sed quis porta augue. Nulla posuere diam id quam lobortis hendrerit. Maecenas et venenatis purus. Integer dignissim hendrerit tortor vel luctus.
+            Nunc ultrices faucibus nulla vel rhoncus.</p>
+        </div>
+      </div>
+      <div class="col-3">
+        <h4>Asset Details</h4>
+        <br>
+        <div class="h-50 border border-dark rounded">
+          <table class="table table-borderless">
+            <tbody>
+              <tr>
+                <th scope="row">Uploaded By : </th>
+                <td>Sandra</td>
+              </tr>
+              <tr>
+                <th scope="row">Published : </th>
+                <td>12/10/22</td>
+              </tr>
+              <tr>
+                <th scope="row">Format : </th>
+                <td>Jpeg</td>
+              </tr>
+              <tr>
+                <th scope="row">Download Size : </th>
+                <td>56M</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <br><br>
+        <button type="button" class="btn btn-lg btn-outline-primary text-white w-100">Download</button>
+      </div>
+      <br>
+    </div>
+  </div>
+
+
+
+</body>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var splide = new Splide('.splide', {
+      type: 'loop',
+      perPage: 3,
+      perMove: 1,
+      pagination: false,
+      gap: 5,
+      autoWidth: true
+    });
+
+    splide.mount();
+
+  });
+
+  var editor = CodeMirror.fromTextArea(document.querySelector(".codemirror-textarea"), {
+    lineNumbers: true
+  });
+</script>
+
+
+<%- include('../partials/footer') %>

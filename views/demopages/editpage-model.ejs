@@ -1,0 +1,267 @@
+<%- include('../partials/header') %>
+
+<link rel="stylesheet" href="../modellist.css">
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<script type="text/javascript" src="/datamuse.js"></script>
+
+<body>
+  <h2 class="Title text-center">Edit Properties</h2><br>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-6 d-flex align-items-end flex-column">
+        <h5 class="asset-name">cyberpunk shiba inu</h5>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-4">
+        <model-viewer id="model-viewer" alt="" src='../uploads/shiba/gltf/scene.gltf' ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
+        <br>
+        <h5>Additional Files</h5>
+        <div class="all-files">
+          <% for(var i=0; i<content.imagefiles.length; i++) {%>
+          <div class="current-file">
+            <button class="remove-file" onclick="removeExistingFile(this,'<%-content.imagefiles[i]%>')">X</button>
+            <span><%=content.imagefiles[i]%></span>
+            <br>
+          </div>
+          <%}%>
+        </div>
+        <br>
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="inputGroupFile01" accept="image/png, image/jpeg" onchange="addNewFile(this)">
+          <label class="custom-file-label" for="inputGroupFile01" >Choose file</label>
+        </div>
+      </div>
+      <div class="col-4">
+        <h5>Title</h5>
+        <input class="title-info" type="text" class="form-control" placeholder="" aria-label="Username" aria-describedby="basic-addon1">
+        <br>
+        <h5>Description</h5>
+        <textarea class="desc-info form-control" aria-label="With textarea"></textarea>
+        <br>
+        <h5>Technical Details</h5>
+        <div class="form-check form-check-inline">
+          <input class="low-poly-info" name="optradio" class="form-check-input" type="checkbox" id="detail-lowpoly" value="lowpoly" />
+          <label class="form-check-label" for="detail-lowpoly">Low-poly</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="rigged-info" name="optradio" class="form-check-input" type="checkbox" id="detail-rigged" checked value="rigged" />
+          <label class="form-check-label" for="detail-rigged" checked>Rigged</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="animated-info" name="optradio" class="form-check-input" type="checkbox" id="detail-animated" checked value="animated" />
+          <label class="form-check-label" for="detail-animated" checked>Animated</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="textured-info" name="optradio" class="form-check-input" type="checkbox" id="detail-texture" checked value="textures" />
+          <label class="form-check-label" for="detail-texture" checked>Textured</label>
+        </div>
+        <br><br>
+        <h5>Tags</h5>
+        <input type="text" id="tag_input_content" name="tag_input_content" value="" readonly>
+        <p id="selected_tags_group"></p>
+        <input type="text" class="form-control" type="text" id='tag_create' value="" placeholder="" aria-label="Username" aria-describedby="basic-addon1">
+        <div class="row justify-content-sm-start" id="tag_suggest">
+        </div>
+      </div>
+    </div>
+    <br><br>
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-4">
+          <button type="button" class="btn btn-lg btn-outline-primary text-white">Delete</button>
+        </div>
+        <div class="col-4 d-flex  justify-content-end">
+          <button type="button" class="mr-4 btn btn-lg btn-outline-primary text-white">Preview</button>
+          <button onclick="createUploadContent()" type="button" class="publish-btn btn btn-lg btn-outline-primary text-white" >Publish</button>
+        </div>
+      </div>
+    </div>
+</body>
+<script>
+  var suggestedtagelements = [];
+  var selectedtagelements = [];
+  var files = [];
+  var newfiles = [];
+
+  function createUploadContent() {
+    const formData = new FormData();
+    const request = new XMLHttpRequest();
+    var nextURL = "/view-model";
+    var postURL = "/save3dmodel";
+    console.log("create upload content");
+
+    var data =
+    {
+      files : [],
+      thumbnail : saveThumbnail(),
+      modelfile: <%- JSON.stringify(content.modelfile)%>,
+      title : document.querySelector(".title-info").value,
+      description : document.querySelector(".desc-info").value,
+      lowpoly : document.querySelector(".low-poly-info").checked,
+      rigged : document.querySelector(".rigged-info").checked,
+      animated : document.querySelector(".animated-info").checked,
+      textured : document.querySelector(".textured-info").checked,
+      tags : []
+    }
+    var tags = document.querySelectorAll("#selected_tag_element");
+    for(i = 0; i<tags.length;i++){
+      data.tags.push(tags[i].innerText);
+    }
+    data.files = files;
+    console.log(data);
+
+    for(i = 0; i< newfiles.length;i++){
+      formData.append('file', newfiles[i]);
+    }
+    formData.append('data', JSON.stringify(data));
+
+    // request.onreadystatechange = function() { // listen for state changes
+    //   if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+    //     window.location = nextURL;
+    //   }
+    // }
+    request.open("POST", postURL, false);
+    request.send(formData);
+  }
+
+
+  getEJScontent();
+
+  function getEJScontent()
+  {
+    <% if (content) {  %>
+        let modelpath = '<%- content.modelviewerpath %>';
+        var modelviewer = document.getElementById('model-viewer');
+        modelviewer.src = modelpath;
+        files = <%- JSON.stringify(content.imagefiles)%>;
+
+        console.log(files[0]);
+        <% } else { %>
+        console.log("does not exist");
+        <% } %>
+
+        console.log(modelviewer);
+        modelviewer.addEventListener('load', saveThumbnail);
+  }
+
+  function saveThumbnail(){
+    let thumbnailpath = '<%- content.thumbnail %>';
+    console.log(thumbnailpath);
+    if(thumbnailpath == ''){
+      var modelviewer = document.getElementById('model-viewer');
+      //create thumbnail via canvas then save in formdata afterwards
+      var image = modelviewer.toDataURL("image/png").replace("image/png", "image/octet-stream");  // here is the most important part because if you dont replace you will get a DOM 18 exception.
+      // window.location.href=image; // it will save locally
+      console.log(image);
+    } else {
+      return thumbnailpath;
+    }
+  }
+
+  function removeExistingFile(el, filename)
+  {
+    files = files.filter(i => i !== filename);
+    console.log(files);
+    var element = el;
+    element.parentElement.remove();
+  }
+
+  function addNewFile(el)
+  {
+    console.log(el.files[0].name);
+    newfiles.push(el.files[0]);
+    let p = document.querySelector('.all-files')
+    console.log(p);
+    let main = document.createElement('div');
+    main.classList.add("new-file");
+    p.appendChild(main);
+    let btn = document.createElement('button');
+    btn.innerHTML = "X";
+    let tag = document.createElement("span");
+    tag.innerHTML = el.files[0].name;
+    main.appendChild(btn);
+    main.appendChild(tag);
+    btn.onclick = function(){
+      removeNewFile(main,el.files[0]);
+    }
+  }
+
+  function removeNewFile(el,file)
+  {
+    newfiles = newfiles.filter(i => i !== file);
+    var element = el;
+    element.remove();
+  }
+
+
+
+
+  const node = document.getElementById("tag_create");
+  node.addEventListener("keyup", function(event) {
+    if (event.key === "Enter") {
+    // Do work
+      if (selectedtagelements.includes(node.value)) return;
+      addTag(node.value);
+      createTagSuggestion(node.value);
+      node.value = "";
+
+    }
+  });
+
+  function clearsuggestedtagelements() {
+    if (suggestedtagelements.length === 0) return;
+      suggestedtagelements.forEach(e => {
+      e.remove();
+    })
+  }
+
+  function createTagSuggestion(tagname) {
+    clearsuggestedtagelements();
+    suggestionsFromDatamuse(tagname).then(result => {
+      result.forEach(a => {
+      createSuggestElement(a.word);
+      });
+    });
+  }
+
+  function createSuggestElement(tagname) {
+    let col = document.createElement('div');
+    col.classList.add('col-auto');
+    document.getElementById('tag_suggest').appendChild(col);
+    let tag = document.createElement("p");
+    tag.innerHTML = tagname;
+    col.appendChild(tag);
+    tag.classList.add('tag_element');
+    tag.onclick = function() {
+    if (selectedtagelements.includes(tagname)) return;
+    addTag(tagname);
+    createTagSuggestion(tagname);
+    };
+    //add to suggested tag element array
+    suggestedtagelements.push(col);
+  }
+
+  function addTag(tagname) {
+    //get paragraph child from group
+    var paragraph = document.getElementById('selected_tags_group');
+    //create span element with id of selected_tag_element
+    var tag = document.createElement('span');
+    tag.innerText = " " + tagname;
+    tag.setAttribute("class", "selected_tag_element");
+    tag.onclick = function() {
+      paragraph.removeChild(tag);
+      selectedtagelements = selectedtagelements.filter(e => e !== tagname);
+    };
+    paragraph.appendChild(tag);
+    let taginput = document.getElementById("tag_input_content");
+    taginput.value = selectedtagelements.toString();
+    selectedtagelements.push(tagname);
+  }
+</script>
+
+
+  <%- include('../partials/footer') %>
