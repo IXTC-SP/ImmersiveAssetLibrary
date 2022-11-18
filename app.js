@@ -363,17 +363,26 @@ app.post('/save3dmodel', tempupload.upload3D, function(req,res){
 
   //create list with all files required to save
   let body = JSON.parse(req.body.data);
-  let newfiles = req.files.file.map(a=> a.originalname);
-  let allfiles = body.files.concat(newfiles);
-  allfiles.push(body.modelfile);
+  let allfiles = [];
+  if(req.files.length > 0){
+    let newfiles = req.files.file.map(a=> a.originalname);
+    allfiles = body.files.concat(newfiles);
+  }
+  if(typeof(body.modelfile) != 'undefined'){
+    allfiles.push(body.modelfile);
+  }
+  if(typeof(req.files.newthumbnail) != 'undefined'){
+    allfiles.push(req.files.newthumbnail.originalname);
+  }
 
   console.log(allfiles);
   tempupload.publish(tmpContent.model[0].originalname.split('.')[0], allfiles, tmpContent.model[0].destination);
   //save model database
+
 });
 
 app.get('/view/model', function(req, res) {
-  
+
   res.render('demopages/view-model', {
     navbarState: {
       allowLogin: false,

@@ -87,17 +87,15 @@
   var files = [];
   var newfiles = [];
 
-  function createUploadContent() {
+  async function createUploadContent() {
     const formData = new FormData();
     const request = new XMLHttpRequest();
     var nextURL = "/view-model";
     var postURL = "/save3dmodel";
     console.log("create upload content");
 
-    var data =
-    {
+    var data = {
       files : [],
-      thumbnail : saveThumbnail(),
       modelfile: <%- JSON.stringify(content.modelfile)%>,
       title : document.querySelector(".title-info").value,
       description : document.querySelector(".desc-info").value,
@@ -106,26 +104,32 @@
       animated : document.querySelector(".animated-info").checked,
       textured : document.querySelector(".textured-info").checked,
       tags : []
-    }
-    var tags = document.querySelectorAll("#selected_tag_element");
-    for(i = 0; i<tags.length;i++){
-      data.tags.push(tags[i].innerText);
-    }
-    data.files = files;
-    console.log(data);
+      }
+      var tags = document.querySelectorAll("#selected_tag_element");
+      for(i = 0; i<tags.length;i++){ data.tags.push(tags[i].innerText); }
+      data.files=files;
+      console.log(data);
+      for(i=0; i< newfiles.length;i++)
+      { formData.append('file', newfiles[i]); }
+      formData.append('data', JSON.stringify(data));
+      let thumbnailpath='<%- content.thumbnail %>' ;
+      if(thumbnailpath=='')
+      {
+        var modelviewer=document.getElementById('model-viewer');
+        var blob = await modelviewer.toBlob();
+        var file = new File([blob], 'new-thumbnail.png');
+        console.log(file);
+        formData.append('newthumbnail', file);
+      }
 
-    for(i = 0; i< newfiles.length;i++){
-      formData.append('file', newfiles[i]);
-    }
-    formData.append('data', JSON.stringify(data));
 
-    // request.onreadystatechange = function() { // listen for state changes
-    //   if (request.readyState == 4 && request.status == 200) { // when completed we can move away
-    //     window.location = nextURL;
-    //   }
-    // }
-    request.open("POST", postURL, false);
-    request.send(formData);
+      // request.onreadystatechange = function() { // listen for state changes
+      // if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+      // window.location = nextURL;
+      // }
+      // }
+      request.open("POST", postURL, false);
+      request.send(formData);
   }
 
 
@@ -133,68 +137,66 @@
 
   function getEJScontent()
   {
-    <% if (content) {  %>
-        let modelpath = '<%- content.modelviewerpath %>';
-        var modelviewer = document.getElementById('model-viewer');
-        modelviewer.src = modelpath;
-        files = <%- JSON.stringify(content.imagefiles)%>;
+  <% if (content) {  %>
+  let modelpath = '<%- content.modelviewerpath %>';
+  var modelviewer = document.getElementById('model-viewer');
+  modelviewer.src = modelpath;
+  files = <%- JSON.stringify(content.imagefiles)%>;
 
-        console.log(files[0]);
-        <% } else { %>
-        console.log("does not exist");
-        <% } %>
+  console.log(files[0]);
+  <% } else { %>
+  console.log("does not exist");
+  <% } %>
 
-        console.log(modelviewer);
-        modelviewer.addEventListener('load', saveThumbnail);
+  console.log(modelviewer);
+  modelviewer.addEventListener('load', saveThumbnail);
   }
 
-  function saveThumbnail(){
-    let thumbnailpath = '<%- content.thumbnail %>';
-    console.log(thumbnailpath);
-    if(thumbnailpath == ''){
-      var modelviewer = document.getElementById('model-viewer');
-      //create thumbnail via canvas then save in formdata afterwards
-      var image = modelviewer.toDataURL("image/png").replace("image/png", "image/octet-stream");  // here is the most important part because if you dont replace you will get a DOM 18 exception.
-      // window.location.href=image; // it will save locally
-      console.log(image);
-    } else {
-      return thumbnailpath;
-    }
+  function saveThumbnail(callback){
+  var modelviewer = document.getElementById('model-viewer');
+  console.log('running save thumbnail 2');
+  //create thumbnail via canvas then save in formdata afterwards
+  // var image = modelviewer.toDataURL("image/png", 0.5).replace("image/png", "image/octet-stream"); // here is the most important part because if you dont replace you will get a DOM 18 exception.
+  modelviewer.toBlob((result)=>{
+  console.log(result);
+  callback(result)
+  }, 'image/jpeg');
   }
+
 
   function removeExistingFile(el, filename)
   {
-    files = files.filter(i => i !== filename);
-    console.log(files);
-    var element = el;
-    element.parentElement.remove();
+  files = files.filter(i => i !== filename);
+  console.log(files);
+  var element = el;
+  element.parentElement.remove();
   }
 
   function addNewFile(el)
   {
-    console.log(el.files[0].name);
-    newfiles.push(el.files[0]);
-    let p = document.querySelector('.all-files')
-    console.log(p);
-    let main = document.createElement('div');
-    main.classList.add("new-file");
-    p.appendChild(main);
-    let btn = document.createElement('button');
-    btn.innerHTML = "X";
-    let tag = document.createElement("span");
-    tag.innerHTML = el.files[0].name;
-    main.appendChild(btn);
-    main.appendChild(tag);
-    btn.onclick = function(){
-      removeNewFile(main,el.files[0]);
-    }
+  console.log(el.files[0].name);
+  newfiles.push(el.files[0]);
+  let p = document.querySelector('.all-files')
+  console.log(p);
+  let main = document.createElement('div');
+  main.classList.add("new-file");
+  p.appendChild(main);
+  let btn = document.createElement('button');
+  btn.innerHTML = "X";
+  let tag = document.createElement("span");
+  tag.innerHTML = el.files[0].name;
+  main.appendChild(btn);
+  main.appendChild(tag);
+  btn.onclick = function(){
+  removeNewFile(main,el.files[0]);
+  }
   }
 
   function removeNewFile(el,file)
   {
-    newfiles = newfiles.filter(i => i !== file);
-    var element = el;
-    element.remove();
+  newfiles = newfiles.filter(i => i !== file);
+  var element = el;
+  element.remove();
   }
 
 
@@ -202,66 +204,66 @@
 
   const node = document.getElementById("tag_create");
   node.addEventListener("keyup", function(event) {
-    if (event.key === "Enter") {
-    // Do work
-      if (selectedtagelements.includes(node.value)) return;
-      addTag(node.value);
-      createTagSuggestion(node.value);
-      node.value = "";
+  if (event.key === "Enter") {
+  // Do work
+  if (selectedtagelements.includes(node.value)) return;
+  addTag(node.value);
+  createTagSuggestion(node.value);
+  node.value = "";
 
-    }
+  }
   });
 
   function clearsuggestedtagelements() {
-    if (suggestedtagelements.length === 0) return;
-      suggestedtagelements.forEach(e => {
-      e.remove();
-    })
+  if (suggestedtagelements.length === 0) return;
+  suggestedtagelements.forEach(e => {
+  e.remove();
+  })
   }
 
   function createTagSuggestion(tagname) {
-    clearsuggestedtagelements();
-    suggestionsFromDatamuse(tagname).then(result => {
-      result.forEach(a => {
-      createSuggestElement(a.word);
-      });
-    });
+  clearsuggestedtagelements();
+  suggestionsFromDatamuse(tagname).then(result => {
+  result.forEach(a => {
+  createSuggestElement(a.word);
+  });
+  });
   }
 
   function createSuggestElement(tagname) {
-    let col = document.createElement('div');
-    col.classList.add('col-auto');
-    document.getElementById('tag_suggest').appendChild(col);
-    let tag = document.createElement("p");
-    tag.innerHTML = tagname;
-    col.appendChild(tag);
-    tag.classList.add('tag_element');
-    tag.onclick = function() {
-    if (selectedtagelements.includes(tagname)) return;
-    addTag(tagname);
-    createTagSuggestion(tagname);
-    };
-    //add to suggested tag element array
-    suggestedtagelements.push(col);
+  let col = document.createElement('div');
+  col.classList.add('col-auto');
+  document.getElementById('tag_suggest').appendChild(col);
+  let tag = document.createElement("p");
+  tag.innerHTML = tagname;
+  col.appendChild(tag);
+  tag.classList.add('tag_element');
+  tag.onclick = function() {
+  if (selectedtagelements.includes(tagname)) return;
+  addTag(tagname);
+  createTagSuggestion(tagname);
+  };
+  //add to suggested tag element array
+  suggestedtagelements.push(col);
   }
 
   function addTag(tagname) {
-    //get paragraph child from group
-    var paragraph = document.getElementById('selected_tags_group');
-    //create span element with id of selected_tag_element
-    var tag = document.createElement('span');
-    tag.innerText = " " + tagname;
-    tag.setAttribute("class", "selected_tag_element");
-    tag.onclick = function() {
-      paragraph.removeChild(tag);
-      selectedtagelements = selectedtagelements.filter(e => e !== tagname);
-    };
-    paragraph.appendChild(tag);
-    let taginput = document.getElementById("tag_input_content");
-    taginput.value = selectedtagelements.toString();
-    selectedtagelements.push(tagname);
+  //get paragraph child from group
+  var paragraph = document.getElementById('selected_tags_group');
+  //create span element with id of selected_tag_element
+  var tag = document.createElement('span');
+  tag.innerText = " " + tagname;
+  tag.setAttribute("class", "selected_tag_element");
+  tag.onclick = function() {
+  paragraph.removeChild(tag);
+  selectedtagelements = selectedtagelements.filter(e => e !== tagname);
+  };
+  paragraph.appendChild(tag);
+  let taginput = document.getElementById("tag_input_content");
+  taginput.value = selectedtagelements.toString();
+  selectedtagelements.push(tagname);
   }
-</script>
+  </script>
 
 
   <%- include('../partials/footer') %>
