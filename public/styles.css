@@ -10,10 +10,11 @@ model-viewer {
 }
 
 .tag_element {
+  margin-top: 10px;
   padding-left: 8px;
   padding-right: 8px;
   color: darkslategray;
-  border: 2px solid beige;
+  border: 1px solid beige;
 }
 
 #selected_tag_element:hover {
