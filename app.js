@@ -344,6 +344,7 @@ app.get('/editpage/model', function(req, res) {
       content : {
         modelviewerpath : tmpContent.modelviewerpath,
         modelfile: tmpContent.model[0].originalname,
+        thumbnail: typeof(tmpContent.thumbnail) == 'undefined' ? '' : tmpContent.thumbnail[0].originalname,
         imagefiles: images
       },
       navbarState: {
@@ -355,6 +356,7 @@ app.get('/editpage/model', function(req, res) {
   }
 
 });
+
 app.post('/save3dmodel', tempupload.upload3D, function(req,res){
   console.log(req.files);
   console.log(req.body);
@@ -366,7 +368,8 @@ app.post('/save3dmodel', tempupload.upload3D, function(req,res){
   allfiles.push(body.modelfile);
 
   console.log(allfiles);
-  tempupload.publish(tmpContent.model[0].originalname.split('.')[0], allfiles, tmpContent.model[0].destination)
+  tempupload.publish(tmpContent.model[0].originalname.split('.')[0], allfiles, tmpContent.model[0].destination);
+  //save model database
 });
 
 app.get('/view/model', function(req, res) {

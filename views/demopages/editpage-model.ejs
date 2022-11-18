@@ -97,6 +97,7 @@
     var data =
     {
       files : [],
+      thumbnail : saveThumbnail(),
       modelfile: <%- JSON.stringify(content.modelfile)%>,
       title : document.querySelector(".title-info").value,
       description : document.querySelector(".desc-info").value,
@@ -142,6 +143,23 @@
         <% } else { %>
         console.log("does not exist");
         <% } %>
+
+        console.log(modelviewer);
+        modelviewer.addEventListener('load', saveThumbnail);
+  }
+
+  function saveThumbnail(){
+    let thumbnailpath = '<%- content.thumbnail %>';
+    console.log(thumbnailpath);
+    if(thumbnailpath == ''){
+      var modelviewer = document.getElementById('model-viewer');
+      //create thumbnail via canvas then save in formdata afterwards
+      var image = modelviewer.toDataURL("image/png").replace("image/png", "image/octet-stream");  // here is the most important part because if you dont replace you will get a DOM 18 exception.
+      // window.location.href=image; // it will save locally
+      console.log(image);
+    } else {
+      return thumbnailpath;
+    }
   }
 
   function removeExistingFile(el, filename)

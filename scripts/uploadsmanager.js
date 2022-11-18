@@ -34,20 +34,7 @@ const uploadtmp3D = upload.fields([
     maxCount: 1
   },
   {
-    name: 'diffuse',
-    maxCount: 1
-  }, {
-    name: 'normal',
-    maxCount: 1
-  }, {
-    name: 'occlusion',
-    maxCount: 1
-  },
-  {
-    name: 'height',
-    maxCount: 1
-  }, {
-    name: 'emissive',
+    name: 'thumbnail',
     maxCount: 1
   },
   {
