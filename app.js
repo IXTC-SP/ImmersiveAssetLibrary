@@ -370,6 +370,7 @@ app.post('/save3dmodel', tempupload.upload3D, function(req,res){
 });
 
 app.get('/view/model', function(req, res) {
+  
   res.render('demopages/view-model', {
     navbarState: {
       allowLogin: false,
