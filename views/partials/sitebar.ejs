@@ -1,0 +1,48 @@
+  <!-- site bar -->
+  <nav id="page-header" class="navbar navbar-expand-lg bg-light fixed-top theme-color">
+    <div class="container">
+        <div>
+          <a href="/">               
+            <h2 class="navbar-brand text-secondary my-auto">Immersive Asset Library</h2>
+          </a>                
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <% if (authUser !==null) { %>
+                    <li class="nav-item">
+                      <div class="dropdown ">
+                        <a href="/single_asset_create" type="button" 
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        UPLOAD
+                        </a>
+                        <a class="nav-link dropdown-toggle" type="button" id="dropdownMenuButton"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <%= authUser %>
+                        </a>
+                        <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                          <a type="button" href="/<%= user %>/profile" class="dropdown-item">Profile</a>
+                          <a type="button" href="/<%= user %>/uploads" class="dropdown-item">Upcoming</a>
+                          <a type="button" href="/<%= user %>/download" class="dropdown-item">History</a>
+                          <a type="button" href="/<%= user %>/enrollment" class="dropdown-item">Shopping Cart</a>
+                          <a type="button" href="/<%= user %>/logout" class="dropdown-item">Logout</a>
+                        </div>
+                    </div>
+                  </li>
+                <% } else { %>
+                  <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/login-main">Login</a>
+                  </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main class="mt-5">
