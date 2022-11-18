@@ -83,174 +83,32 @@ app.listen(port, async () => {
   job.start()
 })
 
-
-app.get("/register", function(req, res) {
-  res.render("register", {
-    navbarState: {
-      allowLogin: true,
-      allowRegister: false,
-      allowLogout: false
-    }
-  });
-});
-
-// app.get("/login", function(req, res) {
-//   res.render('login', {
-//     navbarState: {
-//       allowLogin: false,
-//       allowRegister: true,
-//       allowLogout: false
-//     }
-//   });
-// });
-
-
-app.post("/register", function(req, res) {
-  usermanagement.Register(req, res, (path) => {
-    res.redirect(path);
-  })
-  // User.register({
-  //   username: req.body.username
-  // }, req.body.password, function(err, user) {
-  //   if (err) {
-  //     console.log(err);
-  //     res.redirect("/register");
-  //   } else {
-  //     passport.authenticate("local")(req, res, function() {
-  //       //go to main page
-  //       res.redirect("/home");
-  //     });
-  //   }});
-});
-
-// app.post("/login", function(req, res) {
-//   usermanagement.Login(req, res, (path) => {
-//     res.redirect(path);
-//   })
-  // const user = new User({
-  //   username: req.body.username,
-  //   passport: req.body.password
-  // });
-  //
-  // req.login(user, function(err) {
-  //   if (err) {
-  //     console.log(err);
-  //
-  //   } else {
-  //     passport.authenticate("local")(req, res, function() {
-  //       //go to main page
-  //       res.redirect("/home");
-  //     });
-  //   }});
-// });
-
-// app.get("/objectview", function(req,res){
-//   modeldisplay.LoadTempFilesForModels(req, (result)=> {
-//     console.log(result);
-//   });
-//   res.render('objectview', {
-//   data: {
-//     objectname: req.query.objectname,
-//     objectdescription: req.query.objectdescription,
-//     objectgltf: 'temp.gltf',
-//     diffuse: 'temp_diffuse.png',
-//     metallicroughness: 'temp_roughness.png',
-//     normal: 'temp_normal.png',
-//     occlusion: 'temp_occlusion.png',
-//     emission: 'temp_emission.png',
-//
-//   },
-//   navbarState: {
-//     allowLogin: false,
-//     allowRegister: false,
-//     allowLogout: true
-//   }
-// });
-//
-//   // if (req.isAuthenticated()) {lo
-//   // } else {
-//   //   res.redirect("/login");
-//   //   return;
-//   // }
-// });
-
 app.post('/asset/:modelid', function(req, res) {
   modeldatabase.FindModelById(req.params.modelid, (result) => {
     console.log(result);
     res.render('single_asset', {
       model: result,
-      navbarState: {
-        allowLogin: false,
-        allowRegister: false,
-        allowLogout: true
-      }
+      isLoginpage: true
     });
   });
 });
 
 app.get('/view/360', function(req, res) {
   res.render('demopages/view-360', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
+    isLoginpage: true
   });
 });
 
 
 app.get('/view/script', function(req, res) {
   res.render('demopages/view-script', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
-  });
-});
-
-app.get('/360/equi', function(req, res) {
-  res.render('demopages/360viewer(equi)', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
-  });
-});
-
-app.get('/360/cube', function(req, res) {
-  res.render('demopages/360viewer(cube)', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
-  });
-});
-
-
-
-//
-app.get('/sample_asset', function(req, res) {
-  res.render('sample_asset', {
-    modelpath: "./uploads/00_sample/gltf/model.gltf",
-    texturepath: "./uploads/00_sample/gltf/Exitlight_Diffuse.tga",
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
+    isLoginpage: true
   });
 });
 
 app.get('/', function(req, res) {
   res.render('main', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
+    isLoginpage: true
   });
 });
 
@@ -263,11 +121,7 @@ app.get("/assets", function(req, res) {
         data: {
           models: result
         },
-        navbarState: {
-          allowLogin: false,
-          allowRegister: false,
-          allowLogout: true
-        }
+        isLoginpage: true
       });
     });
   } else {
@@ -277,11 +131,7 @@ app.get("/assets", function(req, res) {
         data: {
           models: result
         },
-        navbarState: {
-          allowLogin: false,
-          allowRegister: false,
-          allowLogout: true
-        }
+        isLoginpage: true
       });
     });
   }
@@ -305,22 +155,14 @@ app.get("/single_asset_edit/:modelid", function(req, res) {
   modeldatabase.FindModelById(tmpid, (result) => {
     res.render('single_asset_edit', {
       model: result,
-      navbarState: {
-        allowLogin: false,
-        allowRegister: false,
-        allowLogout: true
-      }
+      isLoginpage: true
     });
   });
 });
 
 app.get("/single_asset_create", function(req, res) {
   res.render('single_asset_create', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
+    isLoginpage: true
   });
 });
 
@@ -337,11 +179,8 @@ app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile',
 //WORKING (UPLOAD PAGE)
 app.get('/dragndrop', function(req, res) {
   res.render('demopages/dragndrop', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
+    isLoginpage: true
+
   });
 });
 const tempupload = require('./scripts/uploadsmanager');
@@ -381,11 +220,7 @@ app.get('/editpage/model', function(req, res) {
         thumbnail: typeof(tmpContent.thumbnail) == 'undefined' ? '' : tmpContent.thumbnail[0].originalname,
         imagefiles: images
       },
-      navbarState: {
-        allowLogin: false,
-        allowRegister: false,
-        allowLogout: true
-      }
+      isLoginpage: true
     });
   }
 
@@ -408,11 +243,7 @@ app.post('/save3dmodel', tempupload.upload3D, function(req,res){
 
 app.get('/view/model', function(req, res) {
   res.render('demopages/view-model', {
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
+    isLoginpage: true
   });
 });
 
@@ -424,11 +255,7 @@ app.post("/uploadtmp360", tempupload.uploadtmp360, function(req, res) {
 app.get('/editpage/360', function(req, res) {
   res.render('demopages/editpage-360', {
     tmpfileContent : tmpContent,
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
+    isLoginpage: true
   });
 });
 app.post("/uploadtmpscript", tempupload.uploadtmpscript, function(req, res) {
@@ -438,11 +265,7 @@ app.post("/uploadtmpscript", tempupload.uploadtmpscript, function(req, res) {
 app.get('/editpage/script', function(req, res) {
   res.render('demopages/editpage-script', {
     tmpfileContent : tmpContent,
-    navbarState: {
-      allowLogin: false,
-      allowRegister: false,
-      allowLogout: true
-    }
+    isLoginpage: true
   });
 });
 
@@ -476,11 +299,7 @@ app.post("/update/:modelid", function(req, res) {
       console.log(doc);
       res.render('single_asset', {
         model: doc,
-        navbarState: {
-          allowLogin: false,
-          allowRegister: false,
-          allowLogout: true
-        }
+        isLoginpage: true
       });
     });
   });
@@ -508,134 +327,6 @@ app.post("/downloadasset/:modelid", function(req, res) {
 });
 
 
-
-
-// app.get("/", function(req, res) {
-//   res.render("main", {
-//   navbarState: {
-//     allowLogin: false,
-//     allowRegister: false,
-//     allowLogout: false
-//   }});
-// });
-//
-// app.get("/home", function(req, res) {
-//   if (req.isAuthenticated()) {
-//     Model.find({})
-//       .then((result) => {
-//         Model.find({
-//             name: searchInput
-//           })
-//           .then((searchresult) => {
-//             res.render('home', {
-//               data: {
-//                 modelList: result,
-//                 searchList: searchresult
-//               },
-//               userStatus: {
-//                 isAdmin: req.user.isAdmin
-//               },
-//               navbarState: {
-//                 allowLogin: false,
-//                 allowRegister: false,
-//                 allowLogout: true
-//               }
-//             });
-//             searchInput = "";
-//           });
-//       });
-//   } else {
-//     res.redirect("/login");
-//     return;
-//   }
-// });
-//
-// //Download Feature
-// app.get("/download/:filename", function(req, res) {
-//   var fileName = "uploads/";
-//   fileName += req.params.filename;
-//   res.download(fileName);
-// });
-//
-// //Delete Feature
-// app.get("/delete/:id", function(req, res) {
-//   //delete from uploads
-//   Model.find({
-//       _id: req.params.id
-//     })
-//     .then((deleteResult) => {
-//       console.log(deleteResult[0].fileLocation);
-//       fs.unlink("uploads/" + deleteResult[0].fileLocation, (err) => {
-//         if (err) console.error(err);
-//       });
-//     });
-//
-//   //delete from database
-//   Model.deleteOne({
-//     _id: req.params.id
-//   }, function(err, result) {
-//     if (err) console.log(err);
-//     else {
-//       console.log("Result: ", result);
-//     }
-//   });
-//
-//   res.redirect("/home");
-// });
-//
-// //Search Feature
-// let searchInput = "";
-// app.post("/search", upload.none, function(req, res) {
-//   searchInput = req.body.searchinput;
-//   res.redirect("/home");
-// });
-//
-// app.get("/upload", function(req,res){
-//   res.render('upload', {
-//     // userStatus: {
-//     //   isAdmin: req.user.isAdmin
-//     // },
-//     navbarState: {
-//       allowLogin: false,
-//       allowRegister: false,
-//       allowLogout: true
-//     }
-//   });
-//   // if (req.isAuthenticated()) {
-//   // } else {
-//   //   res.redirect("/login");
-//   //   return;
-//   // }
-// })
-//
-//
-
-//
-//Upload Feature
-// app.post("/upload", upload.fields([{name: 'objectfile', maxCount: 1}, {name: 'diffuse', maxCount: 1},{name: 'metallicroughness', maxCount: 1},{name: 'normal', maxCount: 1},
-// {name: 'occlusion', maxCount: 1},{name: 'emission', maxCount: 1}]), function(req, res) {
-//   // var newModel = new Model({
-//   //   name: req.body.name,
-//   //   fileLocation: req.file.originalname,
-//   //   description: req.body.description,
-//   // })
-//   // newModel.save();
-//   creategltfmodel.convert(__dirname + "/" + req.files.objectfile[0].path, (gltfpath)=> {
-//     res.redirect(url.format({
-//        pathname:"/objectview",
-//        query: {
-//           "objectname": req.body.name,
-//           "objectdescription": req.body.description,
-//           "gltfpath": gltfpath,
-//           "diffuse" : req.files.diffuse[0].path,
-//           "metallicroughness" : req.files.metallicroughness[0].path,
-//           "normal" : req.files.normal[0].path,
-//           "occlusion" : req.files.occlusion[0].path,
-//           "emission" : req.files.emission[0].path
-//         }
-//      }));
-//   });
-// });
 // app.locals.use(function(req, res) {
 //   // Expose "error" and "message" to all views that are rendered.
 //   res.locals.error = req.session.error || '';
