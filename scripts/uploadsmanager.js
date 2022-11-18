@@ -46,6 +46,10 @@ const upload3D = upload.fields([
   {
     name: 'file',
     maxCount: 10
+  },
+  {
+    name: 'newthumbnail',
+    maxCount:1
   }
 ]);
 const uploadtmp360 = upload.fields([
