@@ -1,0 +1,103 @@
+<!-- Add button -->
+<%if(isSuccess.alert){%>
+<div class="alert alert-success d-flex align-items-center" role="alert">
+  <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Success:">
+    <use xlink:href="#check-circle-fill" />
+  </svg>
+  <div><%= isSuccess.message %></div>
+</div>
+<%}%>
+
+<form action="/<%= user._id %>/dashboard/enrollment" method="post">
+  <div class="md-form d-flex justify-content-between align-items-end">
+    <div class="d-flex gap-4">
+      <div class="mb-3 d-flex flex-column align-start">
+        <label class="form-label me-1" for="form1Example1">Account type:</label>
+
+        <select name="isAdmin" class="select p-1 rounded-2 admin-input">
+          <option value="Admin">Admin</option>
+          <option value="Student">Student</option>
+        </select>
+      </div>
+      <div class="mb-3 d-flex flex-column align-start">
+        <!-- <div class="align-self-center"> -->
+        <label class="form-label me-1">Email Address:</label>
+        <!-- </div> -->
+        <!-- pattern="[a-z.]*[@]\sp.edu.sg" -->
+        <div class="form-outline email-box">
+          <i class="fas fa-envelope trailing"></i>
+          <input
+            type="email"
+            id="form1Example1"
+            class="form-control input-field p-1"
+            name="email"
+            
+          />
+          <label class="form-label p-0 email-input" for="form1Example1"
+            >xxxx@sp.edu.sg</label
+          >
+        </div>
+      </div>
+    </div>
+    <div class="mb-3">
+      <button type="submit" class="btn theme-color btn-rounded">
+        <i class="fa fa-plus me-2" aria-hidden="true"></i>Add
+      </button>
+    </div>
+  </div>
+  <div class="mb-3">
+    <%if(errorObj.error){%>
+    <!-- <i class="fa-solid fa-circle-exclamation error-message align-self-center px-2"></i> -->
+    <p class="error-message m-0"><%= errorObj.message %></p>
+    <%}%>
+  </div>
+</form>
+
+<div class="my-custom-scrollbar table-wrapper-scroll-y">
+  <table
+    class="table border table-sm mb-0"
+    cellspacing="0"
+    width="70%"
+    id="dtVerticalScrollExample"
+  >
+    <thead class="sticky-table-headers__sticky">
+      <tr class="table-secondary">
+        <th>No.</th>
+        <th>E-mail</th>
+        <th>Status</th>
+        <th>Role</th>
+        <th>Date Created</th>
+        <th class="text-center">Delete</th>
+      </tr>
+    </thead>
+    <tbody class="table-body">
+      <%accounts.forEach((eachAcct, idx)=>{%>
+      <tr class="enrollment-row">
+        <td><%= idx+1 %></td>
+        <td><%= eachAcct.email %></td>
+        <%if(eachAcct.isActivated){%>
+        <td>Activated</td>
+        <%}else{%>
+        <td>Not Activated</td>
+        <%}%> <%if(eachAcct.isAdmin){%>
+        <td>Admin</td>
+        <%}else{%>
+        <td>Student</td>
+        <%}%>
+        <td><%= eachAcct.createdAt.toISOString().split("T")[0] %></td>
+
+        <td class="text-center">
+          <form
+            action="/<%= user._id %>/dashboard/enrollment/<%= eachAcct._id %>/delete?_method=DELETE"
+            method="POST"
+          >
+            <Button type="submit" class="p-0 btn btn-link btn-sm btn-rounded"
+              ><i class="fa-solid fa-trash-can delete-icon text-danger"></i
+            ></Button>
+          </form>
+        </td>
+      </tr>
+      <%})%>
+    </tbody>
+  </table>
+</div>
