@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
-
+require('dotenv').config()
 //Mongoose
-// const MONGODB_URI = "mongodb+srv://mongo_admin:WATcb1g6AvJaq4JZ@cluster0.w9bli.mongodb.net/?retryWrites=true&w=majority";
-// mongoose.connect(MONGODB_URI, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true
-// });
+//const MONGODB_URI = "mongodb+srv://mongo_admin:WATcb1g6AvJaq4JZ@cluster0.w9bli.mongodb.net/?retryWrites=true&w=majority";
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}.trfz1qc.mongodb.net/`;
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  dbName: process.env.MONGO_DB
+});
 
 //3D model collection
 const modelSchema = new mongoose.Schema({
@@ -134,6 +136,7 @@ const GetAllModels = (callback) =>{
     else {
       arr = result;
     }
+    console.log(arr)
     callback(arr);
   });
 }
