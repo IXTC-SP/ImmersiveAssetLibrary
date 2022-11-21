@@ -117,7 +117,7 @@
       {
         var modelviewer=document.getElementById('model-viewer');
         var blob = await modelviewer.toBlob();
-        var file = new File([blob], 'new-thumbnail.png');
+        var file = new File([blob], 'new_thumbnail.png');
         console.log(file);
         formData.append('newthumbnail', file);
       }
