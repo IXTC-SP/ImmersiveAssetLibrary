@@ -86,7 +86,7 @@
   var selectedtagelements = [];
   var files = [];
   var newfiles = [];
-
+  var modelviewer = document.getElementById('model-viewer');
   async function createUploadContent() {
     const formData = new FormData();
     const request = new XMLHttpRequest();
@@ -117,7 +117,7 @@
       {
         var modelviewer=document.getElementById('model-viewer');
         var blob = await modelviewer.toBlob();
-        var file = new File([blob], 'new-thumbnail.png');
+        var file = new File([blob], 'new_thumbnail.png');
         console.log(file);
         formData.append('newthumbnail', file);
       }
@@ -135,15 +135,12 @@
 
   getEJScontent();
 
-  function getEJScontent()
-  {
+  function getEJScontent(){
   <% if (content) {  %>
-  let modelpath = '<%- content.modelviewerpath %>';
-  var modelviewer = document.getElementById('model-viewer');
-  modelviewer.src = modelpath;
   files = <%- JSON.stringify(content.imagefiles)%>;
-
-  console.log(files[0]);
+  let modelpath = '<%- content.modelviewerpath %>';
+  modelviewer.src = modelpath;
+  console.log(getTextureFromFilesArray('diffuse'));
   <% } else { %>
   console.log("does not exist");
   <% } %>
@@ -152,8 +149,35 @@
   modelviewer.addEventListener('load', saveThumbnail);
   }
 
+  function getTextureFromFilesArray(typename){
+    var result ="";
+    for(i=0;i<files.length;i++){
+      if(files[i].split("_")[0] == typename){
+        result = files[i];
+      }
+    }
+    return result;
+  }
+
+  modelviewer.addEventListener("load", () => {
+  const material = modelviewer.model.materials[0];
+  const createAndApplyTexture = async (channel) => {
+    // Applies the new texture to the specified channel.
+    var diffusepath = getTextureFromFilesArray('diffuse');
+    if(diffusepath != ""){
+      var diffuse = await modelviewer.createTexture("../uploads/tmp/" + diffusepath);
+      material.pbrMetallicRoughness['baseColorTexture'].setTexture(diffuse);
+    }
+    var emissivepath = getTextureFromFilesArray('emissive');
+    if(emissivepath != ""){
+      var emission = await modelviewer.createTexture("../uploads/tmp/" + emissivepath);
+      material['emissiveTexture'].setTexture(emission);
+    }
+  }
+    createAndApplyTexture('baseColorTexture');
+  });
+
   function saveThumbnail(callback){
-  var modelviewer = document.getElementById('model-viewer');
   console.log('running save thumbnail 2');
   //create thumbnail via canvas then save in formdata afterwards
   // var image = modelviewer.toDataURL("image/png", 0.5).replace("image/png", "image/octet-stream"); // here is the most important part because if you dont replace you will get a DOM 18 exception.
@@ -164,16 +188,14 @@
   }
 
 
-  function removeExistingFile(el, filename)
-  {
+  function removeExistingFile(el, filename){
   files = files.filter(i => i !== filename);
   console.log(files);
   var element = el;
   element.parentElement.remove();
   }
 
-  function addNewFile(el)
-  {
+  function addNewFile(el){
   console.log(el.files[0].name);
   newfiles.push(el.files[0]);
   let p = document.querySelector('.all-files')
@@ -192,8 +214,7 @@
   }
   }
 
-  function removeNewFile(el,file)
-  {
+  function removeNewFile(el,file){
   newfiles = newfiles.filter(i => i !== file);
   var element = el;
   element.remove();
