@@ -1,8 +1,8 @@
-<div class="card-body w-100">
+<div class="card-body w-100 p-0">
   <!-- tab contents -->
   <% if(profile !== "edit"){%>
   <form method="POST" action="/<%= user._id %>/dashboard/profile">
-    <div class="card-body">
+    <div class="card-body profile-body">
       <!-- email -->
       <div class="row">
         <div class="col-sm-3">
@@ -69,7 +69,7 @@
   </form>
   <%}else{%>
   <form method="POST" action="/<%= user._id %>/dashboard/profile?_method=PATCH">
-    <div class="card-body">
+    <div class="card-body profile-body">
       <!-- email -->
       <div class="row">
         <div class="col-sm-3">

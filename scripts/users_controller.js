@@ -468,6 +468,7 @@ const controller = {
     });
   },
   showUploads: async (req, res, next) => {
+    let profile = "";
     let accounts = [];
     // let isSuccess = alertMessage(false, "");
     // let errorObj = errorMessage(false, "")

@@ -1,15 +1,19 @@
 <%- include('../partials/header') %>
 <script type="text/javascript" src="jszip.min.js"></script>
 
-<body>
+
+  <section class="w-75 d-flex flex-column m-auto mt-5"></section>
   <style>
     .drop-zone {
       border: 2px dotted gray;
       width: auto;
       height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .horizontal-middle {
+    .text-center {
       text-align: center;
     }
 
@@ -20,6 +24,8 @@
 
     .upload-btn-group {
       padding-top: 2em;
+      display: flex;
+      justify-content: space-between;
     }
 
     .page-btn {
@@ -27,8 +33,8 @@
       background-color: white;
       /* border-radius: 30%; */
       color: black;
-      padding: 14px 48px;
-      margin: auto;
+      /* padding: 14px 48px;
+      margin: auto; */
     }
 
 
@@ -109,33 +115,48 @@
     }
   </style>
 
-  <div class="horizontal-middle">
+  <!-- <div class="text-center">
     <h2>Upload a new asset</h2>
-  </div>
-  <div class="container">
-    <div class="row">
-      <div class="col">
+  </div> -->
+  <div class="card-body w-100 p-0">
+    <h2 class="text-center">Upload a new asset</h2>
+    <div class="row ">
+      <div class="col-2">
       </div>
-      <div class="col-9">
+      <div class="col-8">
         <div class="drop-zone">
           <div class="collected-files">
           </div>
-          <div class="horizontal-middle">
+          <div>
+            <i class="fa-solid fa-arrow-up-from-bracket font-size-30"></i>
+          </div>
+          <div class="text-center">
+            
             <span class="drag-text">Drag and Drop </span><br>
             <span class="">or <span class="browse-btn" id="browse-btn" onclick="browse()">Browse</span></span>
             <input type="file" id="browse-input" name="file" value="" style="display:none;">
           </div>
-          <p class="horizontal-middle" id="format-support-info">We support ....</p>
-          <p class="horizontal-middle" id="format-3dmodel-info">You can also upload a ZIP folder containing only your textures, materials, and mesh.</p>
-          <p class="horizontal-middle">Additional files can be added in the next step</p>
+          <div>
+            <p class="text-center" id="format-support-info">We support ....</p>
+            <p class="text-center" id="format-3dmodel-info">You can also upload a ZIP folder containing only your textures, materials, and mesh.</p>
+            <p class="text-center">Additional files can be added in the next step</p>
+          
+          </div>
         </div>
         <div class="upload-btn-group">
-          <button class="cancel-page-btn page-btn left" type="button" name="button">Cancel</button>
-          <button class="upload-page-btn page-btn right" type="button" name="button">Next</button>
+          <!-- <button type="submit" class="btn theme-color btn-rounded">
+            <i class="fa fa-plus me-2" aria-hidden="true"></i>Cancel
+          </button>
+
+          <button type="submit" class="btn theme-color btn-rounded">
+            <i class="fa fa-plus me-2" aria-hidden="true"></i>Cancel
+          </button> -->
+          <button class="btn theme-color btn-rounded cancel-page-btn" type="button" name="button">Cancel</button>
+          <button class="btn theme-color btn-rounded upload-page-btn" type="button" name="button">Next</button>
         </div>
 
       </div>
-      <div class="col">
+      <div class="col-2">
         <label for="asset-select">Select Asset Type:</label>
         <select name="assets" id="asset-select" onchange="triggerChangeWithAssetSelect()">
           <option value="3dmodel">3D Model</option>
@@ -224,10 +245,10 @@
           <input class="upload-page-btn right" type="submit" id='submit-btn' value="Next">
         </div>
       </form> -->
-    </div>
+  </div>
 
-</body>
 
+</section>
 <script type="text/javascript" src="fileextensioncheck.js"></script>
 <script>
   const dragArea = document.querySelector(".drop-zone");
