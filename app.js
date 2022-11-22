@@ -351,7 +351,11 @@ app.post("/downloadasset/:modelid", function(req, res) {
 // app.get("/:user_id/profile", userController.showProfile)//need upoads by users,
 // app.get("/:user_id/uploads", userController.showUploads)//need uploads by user,
 // app.get("/:user_id/downloads", userController.showDownloads)//need downloads from dbs
+
 app.get("/:user_id/dashboard/profile", userController.showProfile)
+app.post("/:user_id/dashboard/profile", userController.showProfile)
+app.patch("/:user_id/dashboard/profile", userController.showProfile)
+
 app.get("/:user_id/dashboard/uploads", userController.showUploads)
 app.get("/:user_id/dashboard/downloads", userController.showDownloads)
 app.get("/:user_id/dashboard/enrollment", userController.showEnrollment)

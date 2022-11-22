@@ -323,23 +323,52 @@ const controller = {
   },
   showProfile: async (req, res) => {
     let accounts = [];
-    let isSuccess = false;
+    let isSuccess = (false, "");
+    let profile = "";
     let errorObj = errorMessage(false, "");
-    let user = [];
+    let user = null;
+    console.log("------>", req.body.email);
+    console.log("---->", req.body.confirmPassword);
+    const { password, confirmPassword, email } = req.body;
     try {
+      if (email) {
+        if (confirmPassword) {
+          console.log("--->", "save pw");
+          if (password === "" || confirmPassword === "") {
+            profile = "edit";
+            errorObj = errorMessage(true, "Please fill in the required fields");
+          }
+          if (password === confirmPassword) {
+            console.log("pw same")
+            const hash = await bcrypt.hash(password, 10);
+            await userModel.findOneAndUpdate(
+              {
+                _id: req.params.user_id,
+              },
+              { $set: { password: hash } },
+              { new: true }
+            );
+            isSuccess = alertMessage(true, "Password Reset Sucessfully");
+          }else{
+            errorObj = errorMessage(true,"Confirm password does not match" )
+            profile = "edit";
+            console.log("click save");
+          }
+        } else {
+          profile = "edit";
+          console.log("click change pw");
+        }
+      }
+
       user = await userModel.findById({ _id: req.params.user_id });
       if (!user) {
         return res.status(401).send({ error: "no such user" });
       }
-      //find all accts
-      accounts = await userModel.find();
-      // admins = await userModel.find({ isAdmin: true });
-
-      console.log(user);
-      console.log("Get the accounts");
+      console.log(isSuccess.alert);
     } catch (err) {
       console.log(err);
-      return res.status(401).send({ error: "Failed to get users" });
+      errorObj = errorMessage(true, err.message )
+      // return res.status(401).send({ error: "Failed to get users" });
       //res.redirect("/login");
     }
 
@@ -348,7 +377,7 @@ const controller = {
       isSuccess,
       accounts,
       errorObj,
-      tab: "profile",
+      profile,
       user,
       showProfile: true,
       showUploads: false,
@@ -358,6 +387,7 @@ const controller = {
   },
   showEnrollment: async (req, res) => {
     let accounts = [];
+    let profile = "";
     let isSuccess = alertMessage(false, "");
     let errorObj = errorMessage(false, "");
     //console.log('-->', req.errorObj)
@@ -388,7 +418,7 @@ const controller = {
       isSuccess: req.isSuccess || isSuccess,
       accounts,
       errorObj: req.errorObj || errorObj,
-      tab: "Enrollments",
+      profile,
       user,
       showProfile: false,
       showUploads: false,
@@ -398,6 +428,7 @@ const controller = {
   },
   showDownloads: async (req, res, next) => {
     let accounts = [];
+    let profile = "";
     // let isSuccess = alertMessage(false, "");
     // let errorObj = errorMessage(false, "")
     console.log("-->", req.errorObj);
@@ -428,7 +459,7 @@ const controller = {
       isSuccess: req.isSuccess || alertMessage(false, ""),
       accounts,
       errorObj: req.errorObj || errorMessage(false, ""),
-      tab: "Downloads",
+      profile,
       user,
       showProfile: false,
       showUploads: false,
@@ -468,7 +499,7 @@ const controller = {
       isSuccess: req.isSuccess || alertMessage(false, ""),
       accounts,
       errorObj: req.errorObj || errorMessage(false, ""),
-      tab: "Uploads",
+      profile,
       user,
       showProfile: false,
       showUploads: true,
@@ -501,14 +532,15 @@ const controller = {
     let students = [];
     let isSuccess = alertMessage(false, " ");
     let errorObj = errorMessage(false, " ");
+    let profile = ""
     let user = null;
     let adminUser = null;
     let isAdmin = null;
     let accounts = [];
-    let addedUser = null
+    let addedUser = null;
     const createUser = async () => {
       try {
-        await userModel.deleteOne({_id : addedUser.id})
+    
         const token = jwt.sign(
           {
             data: req.body.email,
@@ -572,7 +604,7 @@ const controller = {
 
               //this exp is issued with the token.....so we cant change it
               //not expired and not activate
-              console.log(user)
+              console.log(user);
               console.log(userExp);
               console.log(now);
 
@@ -586,7 +618,6 @@ const controller = {
               }
             }
           } else {
-           
             const result = await createUser();
             if (result) {
               return next();
@@ -605,7 +636,7 @@ const controller = {
     } catch (err) {
       console.log(err);
       if (err.message === "Invalid token specified") {
-
+        await userModel.deleteOne({ _id: addedUser.id });
         const result = await createUser();
         if (result) {
           return next();
@@ -619,6 +650,7 @@ const controller = {
       isSuccess: req.isSuccess || isSuccess,
       accounts,
       errorObj: req.errorObj || errorObj,
+      profile,
       user,
       showProfile: false,
       showUploads: false,
