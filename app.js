@@ -232,8 +232,8 @@ app.post('/save3dmodel', tempupload.upload3D, function(req,res){
 
   //create list with all files required to save
   let body = JSON.parse(req.body.data);
-  let allfiles = [];
-  if(req.files.length > 0){
+  let allfiles = body.files;
+  if(req.files.file.length > 0){
     let newfiles = req.files.file.map(a=> a.originalname);
     allfiles = body.files.concat(newfiles);
   }
@@ -241,7 +241,8 @@ app.post('/save3dmodel', tempupload.upload3D, function(req,res){
     allfiles.push(body.modelfile);
   }
   if(typeof(req.files.newthumbnail) != 'undefined'){
-    allfiles.push(req.files.newthumbnail.originalname);
+    console.log(req.files.newthumbnail[0].originalname);
+    allfiles.push(req.files.newthumbnail[0].filename);
   }
 
   console.log(allfiles);
@@ -278,11 +279,6 @@ app.get('/editpage/script', function(req, res) {
     isLoginpage: true
   });
 });
-
-
-
-
-
 
 
 app.post('/test', function(req,res){
@@ -356,23 +352,23 @@ app.get("/:user_id/dashboard/uploads", userController.showUploads)
 app.get("/:user_id/dashboard/downloads", userController.showDownloads)
 app.get("/:user_id/dashboard/enrollment", userController.showEnrollment)
 app.get("/login", userController.showlogin)
-app.get("/authentication/activate", userController.showActivateAndSetPassword)//done 
-app.get("/forgot-password", userController.showForgotPassword)//done 
-app.get("/reset-password", userController.showSetPassword)//done 
+app.get("/authentication/activate", userController.showActivateAndSetPassword)//done
+app.get("/forgot-password", userController.showForgotPassword)//done
+app.get("/reset-password", userController.showSetPassword)//done
 
 
-app.post("/:user_id/dashboard/enrollment", userController.createEnrollment, userController.emailActivation, userController.showEnrollment)//done 
+app.post("/:user_id/dashboard/enrollment", userController.createEnrollment, userController.emailActivation, userController.showEnrollment)//done
 // app.post("/:user_id/dashboard", userController.showDashboard)
 app.post("/:user_id/uploads/delete", userController.deleteUpload)
-app.post("/:user_id/uploads/edit", userController.editUpload) 
+app.post("/:user_id/uploads/edit", userController.editUpload)
 app.post("/:user_id/uploads", userController.upload)
 app.post("/reset-password-link", userController.sendResetPasswordLink)
 app.post("/authentication/activate", userController.setPassword)
-app.post("/reset-password", userController.setPassword)//done 
+app.post("/reset-password", userController.setPassword)//done
 //pass the middleware. authenticate will look into the passport.js for the verify callback, and can include options of authntication
 //with the veryfycall back ut finds the user in the dbs and
 //a passport props wil be created in the the express session
-//so there is a req.user 
+//so there is a req.user
 app.post("/login", passport.authenticate("local", { failureRedirect: '/login', failureFlash: true }), userController.login)
 app.post('/logout', userController.logout);
 
