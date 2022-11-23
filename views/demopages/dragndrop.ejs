@@ -11,6 +11,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
     }
 
     .text-center {
@@ -113,6 +114,22 @@
       text-decoration: none;
       cursor: pointer;
     }
+
+    .drop-icon{
+      font-size: 60px
+    }
+    .drag-text{
+      font-size: 30px;
+      font-weight: bold
+    }
+    .browse-btn{
+      color: aqua;
+    }
+
+    .suport-types-text{
+        font-size: 14px
+    }
+    
   </style>
 
   <!-- <div class="text-center">
@@ -124,23 +141,20 @@
       <div class="col-2">
       </div>
       <div class="col-8">
-        <div class="drop-zone">
+        <div class="drop-zone p-3">
           <div class="collected-files">
           </div>
           <div>
-            <i class="fa-solid fa-arrow-up-from-bracket font-size-30"></i>
+            <i class="fa-solid fa-arrow-up-from-bracket drop-icon"></i>
           </div>
-          <div class="text-center">
-            
-            <span class="drag-text">Drag and Drop </span><br>
-            <span class="">or <span class="browse-btn" id="browse-btn" onclick="browse()">Browse</span></span>
+          <div class="text-center mb-2">
+            <span class="drag-text">Drag and Drop <span class="browse-btn" id="browse-btn" onclick="browse()">or Browse</span></span><br>
             <input type="file" id="browse-input" name="file" value="" style="display:none;">
           </div>
           <div>
-            <p class="text-center" id="format-support-info">We support ....</p>
-            <p class="text-center" id="format-3dmodel-info">You can also upload a ZIP folder containing only your textures, materials, and mesh.</p>
-            <p class="text-center">Additional files can be added in the next step</p>
-          
+            <p class="text-center mb-0 suport-types-text" id="format-support-info">We support ....</p>
+            <p class="text-center mb-0" id="format-3dmodel-info">You can also upload a ZIP folder containing only your textures, materials, and mesh.</p>
+            <p class="text-center mb-0">Additional files can be added in the next step</p>          
           </div>
         </div>
         <div class="upload-btn-group">
