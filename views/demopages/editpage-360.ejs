@@ -30,16 +30,16 @@
         <br>
         <h5>Additional Files</h5>
         <div class="custom-file">
-          <input type="file" class="custom-file-input" id="inputGroupFile01">
+          <input type="file" class="custom-file-input" id="inputGroupFile01" accept="image/png, image/jpeg" onchange="addNewFile(this)">
           <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
         </div>
       </div>
       <div class="col-4">
         <h5>Title</h5>
-        <input type="text" class="form-control" placeholder="" aria-label="Username" aria-describedby="basic-addon1">
+        <input class="title-info form-control" type="text" placeholder="" aria-label="Username" aria-describedby="basic-addon1">
         <br>
         <h5>Description</h5>
-        <textarea class="form-control" aria-label="With textarea"></textarea>
+        <textarea class="desc-info form-control" aria-label="With textarea"></textarea>
         <br>
         <h5>Technical Details</h5>
         <div class="form-check form-check-inline">
@@ -68,30 +68,121 @@
         </div>
         <div class="col-4 d-flex  justify-content-end">
           <button type="button" class="mr-4 btn btn-lg btn-outline-primary text-white">Preview</button>
-          <button type="button" class="btn btn-lg btn-outline-primary text-white">Publish</button>
+          <button  onclick="createUploadContent()" type="button" class="btn btn-lg btn-outline-primary text-white">Publish</button>
         </div>
       </div>
     </div>
 </body>
 <script>
-  runPannellum()
+  var files = [];
+  var newfiles = [];
+  var type = '';
+  getEJScontent();
 
-  function runPannellum() {
+  function getEJScontent(){
+  <% if (format) {  %>
+    type = <%- JSON.stringify(format)%>;
+  <% } else { %>
+  console.log("does not exist");
+  <% } %>
 
-    // https://naver.github.io/egjs-view360/examples/img/equi.jpg
+  if(type == 'cubemap'){
+    files.push(<%- JSON.stringify(images.front)%>);
+    files.push(<%- JSON.stringify(images.right)%>);
+    files.push(<%- JSON.stringify(images.back)%>);
+    files.push(<%- JSON.stringify(images.left)%>);
+    files.push(<%- JSON.stringify(images.top)%>);
+    files.push(<%- JSON.stringify(images.bottom)%>);
+  } else {
+    files.push(<%- JSON.stringify(images.equi)%>);
+  }
+  runPannellum(type)
+  }
 
-    pannellum.viewer('panorama', {
-      "type": "cubemap",
-      "cubeMap": [
-        "../cubemap/nx.png",
-        "../cubemap/pz.png",
-        "../cubemap/px.png",
-        "../cubemap/nz.png",
-        "../cubemap/py.png",
-        "../cubemap/ny.png"
-      ],
+  function getTextureFromFilesArray(typename){
+    var result ="";
+    for(i=0;i<files.length;i++){
+      if(files[i].split("_")[0] == typename){
+        result = files[i];
+      }
+    }
+    return result;
+  }
+
+
+  function runPannellum(type) {
+    console.log(files);
+    if(type == 'cubemap'){
+      pannellum.viewer('panorama', {
+        "type": "cubemap",
+        "cubeMap": [
+          "../uploads/tmp/" + files[0],
+          "../uploads/tmp/" + files[1],
+          "../uploads/tmp/" + files[2],
+          "../uploads/tmp/" + files[3],
+          "../uploads/tmp/" + files[4],
+          "../uploads/tmp/" + files[5]
+        ],
+        "autoLoad": true
+      });
+    } else {
+      pannellum.viewer('panorama', {
+      "type": "equirectangular",
+      "panorama": "../uploads/tmp/" + files[0],
       "autoLoad": true
-    });
+      });
+    }
+    // https://naver.github.io/egjs-view360/examples/img/equi.jpg
+  }
+
+  async function createUploadContent() {
+    const formData = new FormData();
+    const request = new XMLHttpRequest();
+    var nextURL = "/view-360";
+    var postURL = "/savethreesixty";
+    console.log("create upload content");
+
+    var data = {
+      files : [],
+      title : document.querySelector(".title-info").value,
+      description : document.querySelector(".desc-info").value,
+      tags : []
+      }
+      var tags = document.querySelectorAll("#selected_tag_element");
+      for(i = 0; i<tags.length;i++){ data.tags.push(tags[i].innerText); }
+      data.files=files;
+      console.log(data);
+      for(i=0; i< newfiles.length;i++)
+      { formData.append('file', newfiles[i]); }
+      formData.append('data', JSON.stringify(data));
+
+
+      // request.onreadystatechange = function() { // listen for state changes
+      // if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+      // window.location = nextURL;
+      // }
+      // }
+      request.open("POST", postURL, false);
+      request.send(formData);
+  }
+
+  function addNewFile(el){
+  console.log(el.files[0].name);
+  newfiles.push(el.files[0]);
+  let p = document.querySelector('.all-files')
+  console.log(p);
+  let main = document.createElement('div');
+  main.classList.add("new-file");
+  p.appendChild(main);
+  let btn = document.createElement('button');
+  btn.innerHTML = "X";
+  let tag = document.createElement("span");
+  tag.innerHTML = el.files[0].name;
+  main.appendChild(btn);
+  main.appendChild(tag);
+  btn.onclick = function(){
+  removeNewFile(main,el.files[0]);
+  }
   }
 
   var suggestedtagelements = [];
