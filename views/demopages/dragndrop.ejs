@@ -97,7 +97,9 @@
       margin: auto;
       padding: 20px;
       border: 1px solid #888;
-      width: 80%;
+      width: 400px;
+      align-items: center;
+      display: flex;
     }
 
     /* The Close Button */
@@ -106,6 +108,7 @@
       float: right;
       font-size: 28px;
       font-weight: bold;
+      align-self: flex-end;
     }
 
     .close:hover,
@@ -229,7 +232,7 @@
     <div class="modal-content">
       <span class="close" onclick="closeModalContent()">&times;</span>
       <div class="cubemap-content">
-        <p>Assign Texture : </p>
+        <p>Assign Texture :</p>
         <div class="container">
           <div class="row" style="height: 100px;">
             <div class="col-3 texture-assign-box">
@@ -269,28 +272,30 @@
           </div>
         </div>
       </div>
-      <div class="model-content">
-        <p>Assign Texture : </p>
+      <div class="model-content d-flex flex-column mb-3 w-100">
+        <p><strong>Assign Texture : </strong></p>
         <label for="diffuse-texture-selection">Diffuse</label>
-        <select name="diffuse-texture-selection" class="model-texture-assign" id="texture-selection">
+        <select name="diffuse-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
         </select>
         <label for="normal-texture-selection">Normal</label>
-        <select name="normal-texture-selection" class="model-texture-assign" id="texture-selection">
+        <select name="normal-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
         </select>
         <label for="occlusion-texture-selection">Occlusion</label>
-        <select name="occlusion-texture-selection" class="model-texture-assign" id="texture-selection">
+        <select name="occlusion-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
         </select>
         <label for="height-texture-selection">Height</label>
-        <select name="height-texture-selection" class="model-texture-assign" id="texture-selection">
+        <select name="height-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
         </select>
         <label for="emissive-texture-selection">Emissive</label>
-        <select name="emissive-texture-selection" class="model-texture-assign" id="texture-selection">
+        <select name="emissive-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
         </select>
         <label for="thumbnail">Thumbnail</label>
-        <select name="thumbnail" class="model-texture-assign" id="texture-selection">
+        <select name="thumbnail" class="model-texture-assign mb-1" id="texture-selection">
         </select>
       </div>
-      <button class="page-btn left" type="button" name="button" onclick="createuploadcontent()">Next</button>
+      <!-- <button class="page-btn left" type="button" name="button" onclick="createuploadcontent()">Next</button> -->
+      <button class="btn btn-size theme-color btn-rounded upload-page-btn" type="button" onclick="createuploadcontent()" name="button"> Next
+      </button>
 
       <!-- <form class="upload-form" id="upload-form" action="/uploadcontent" method="post" enctype="multipart/form-data" onkeydown="return event.key != 'Enter';">
         <div class="upload-btn-group">
@@ -431,11 +436,11 @@
         // });
 
         
-        // //create image for the card
-        // var img = document.createElement('img');
-        // img.src = '';
-        // img.classList.add("img-top");
-        // card.appendChild(img);
+        //create image for the card
+        var img = document.createElement('img');
+        img.src = '';
+        img.classList.add("img-top");
+        card.appendChild(img);
 
 
         //create file info
@@ -577,12 +582,12 @@
           case "360image":
             options = ["cubemap", "equirectangular"];
             supportformat = "JPG, JPEG, PNG.";
-            enableModelInfo(false);
+            enableModelInfo(true);
             break;
           case "script":
             options = ["c#", "javascript", "python"];
             supportformat = "c#, javascript, python.";
-            enableModelInfo(false);
+            enableModelInfo(true);
             break;
           case "3dmodel":
             supportformat = "obj, fbx.";
