@@ -1,31 +1,36 @@
 <%- include('../partials/header') %>
 
-<link rel="stylesheet" href="../modellist.css">
+<!-- <link rel="stylesheet" href="./public/edit-page.css"> -->
 <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 <script type="text/javascript" src="/datamuse.js"></script>
 
-<body>
-  <h2 class="Title text-center">Edit Properties</h2><br>
+<section class="d-flex flex-column m-auto mt-5">
 
-  <div class="container-fluid">
+
+  <!-- <div class="container-fluid">
     <div class="row">
       <div class="col-6 d-flex align-items-end flex-column">
         <h5 class="asset-name">cyberpunk shiba inu</h5>
       </div>
     </div>
-  </div>
+  </div> -->
   <div class="container-fluid">
+    <h2 class="Title">Edit Properties</h2><br>
     <div class="row justify-content-center">
-      <div class="col-4">
-        <model-viewer id="model-viewer" alt="" src='../uploads/shiba/gltf/scene.gltf' ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
-        <br>
+      <div class="col-6">
+        <div class="row">
+          <h5 class="asset-name">cyberpunk shiba inu</h5>
+        </div>
+        <div class="mb-3 ">
+          <model-viewer class="model-viewer-dimensions border border-secondary rounded-4"id="model-viewer" alt="" src='../uploads/shiba/gltf/scene.gltf' ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
+        </div>
         <h5>Additional Files</h5>
         <div class="all-files">
           <% for(var i=0; i<content.imagefiles.length; i++) {%>
           <div class="current-file">
-            <button class="remove-file" onclick="removeExistingFile(this,'<%-content.imagefiles[i]%>')">X</button>
             <span><%=content.imagefiles[i]%></span>
-            <br>
+            <button class="remove-file bg-transparent border-0" onclick="removeExistingFile(this,'<%-content.imagefiles[i]%>')"><i class="fa-regular fa-trash-can trash-btn"></i
+              ></button>
           </div>
           <%}%>
         </div>
@@ -35,52 +40,60 @@
           <label class="custom-file-label" for="inputGroupFile01" >Choose file</label>
         </div>
       </div>
-      <div class="col-4">
-        <h5>Title</h5>
-        <input class="title-info" type="text" class="form-control" placeholder="" aria-label="Username" aria-describedby="basic-addon1">
-        <br>
-        <h5>Description</h5>
-        <textarea class="desc-info form-control" aria-label="With textarea"></textarea>
-        <br>
+      <div class="col-6 d-flex flew-wrap gap-2 flex-column">
+      <div>
+          <h5>Title</h5>
+          <input class="title-info w-100" type="text" class="form-control" placeholder="" aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+        <div>
+          <h5>Description</h5>
+          <textarea class="desc-info desc-info-dimension form-control" aria-label="With textarea"></textarea>
+        </div>
+      <div>
+     
+      <div class="d-flex justify-content-between">
         <h5>Technical Details</h5>
-        <div class="form-check form-check-inline">
+        <div class="form-check form-check-inline p-0">
           <input class="low-poly-info" name="optradio" class="form-check-input" type="checkbox" id="detail-lowpoly" value="lowpoly" />
           <label class="form-check-label" for="detail-lowpoly">Low-poly</label>
         </div>
-        <div class="form-check form-check-inline">
+        <div class="form-check form-check-inline p-0">
           <input class="rigged-info" name="optradio" class="form-check-input" type="checkbox" id="detail-rigged" checked value="rigged" />
           <label class="form-check-label" for="detail-rigged" checked>Rigged</label>
         </div>
-        <div class="form-check form-check-inline">
+        <div class="form-check form-check-inline p-0">
           <input class="animated-info" name="optradio" class="form-check-input" type="checkbox" id="detail-animated" checked value="animated" />
           <label class="form-check-label" for="detail-animated" checked>Animated</label>
         </div>
-        <div class="form-check form-check-inline">
+        <div class="form-check form-check-inline p-0">
           <input class="textured-info" name="optradio" class="form-check-input" type="checkbox" id="detail-texture" checked value="textures" />
           <label class="form-check-label" for="detail-texture" checked>Textured</label>
         </div>
-        <br><br>
-        <h5>Tags</h5>
-        <input type="text" id="tag_input_content" name="tag_input_content" value="" readonly>
-        <p id="selected_tags_group"></p>
-        <input type="text" class="form-control" type="text" id='tag_create' value="" placeholder="" aria-label="Username" aria-describedby="basic-addon1">
-        <div class="row justify-content-sm-start" id="tag_suggest">
-        </div>
       </div>
+    </div>     
+
+    <div>
+      <h5>Tags</h5>
+      <input type="text" id="tag_input_content" name="tag_input_content" value="" readonly>
+      <div id="selected_tags_group" class="selected-tags"></div>
+      <input type="text" class="form-control" type="text" id='tag_create' value="" placeholder="" aria-label="Username" aria-describedby="basic-addon1">
+      <div class="d-flex flex-wrap gap-2 justify-content-sm-start" id="tag_suggest">
+      </div>
+      
     </div>
-    <br><br>
     <div class="container-fluid">
-      <div class="row justify-content-center">
+      <div class="row justify-content-between">
         <div class="col-4">
-          <button type="button" class="btn btn-lg btn-outline-primary text-white">Delete</button>
+          <button type="button" class="btn btn-outline-info rounded-8">Delete</button>
         </div>
         <div class="col-4 d-flex  justify-content-end">
-          <button type="button" class="mr-4 btn btn-lg btn-outline-primary text-white">Preview</button>
-          <button onclick="createUploadContent()" type="button" class="publish-btn btn btn-lg btn-outline-primary text-white" >Publish</button>
+          <!-- <button type="button" class="mr-4 btn btn-lg btn-outline-primary text-white">Preview</button> -->
+      
+          <button onclick="createUploadContent()" type="button" class="publish-btn btn theme-color btn-rounded" >Publish</button>
         </div>
       </div>
-    </div>
-</body>
+</div>
+  </section>
 <script>
   var suggestedtagelements = [];
   var selectedtagelements = [];
@@ -204,11 +217,12 @@
   main.classList.add("new-file");
   p.appendChild(main);
   let btn = document.createElement('button');
-  btn.innerHTML = "X";
+  btn.innerHTML = '<i id ="trash-icon" class="trash-btn fa-regular fa-trash-can"></i>';
+  btn.className="remove-file bg-transparent border-0"
   let tag = document.createElement("span");
   tag.innerHTML = el.files[0].name;
-  main.appendChild(btn);
   main.appendChild(tag);
+  main.appendChild(btn);
   btn.onclick = function(){
   removeNewFile(main,el.files[0]);
   }
@@ -253,13 +267,16 @@
 
   function createSuggestElement(tagname) {
   let col = document.createElement('div');
-  col.classList.add('col-auto');
+  col.classList = 'suggested-tag border-secondary border rounded-2 px-1';
   document.getElementById('tag_suggest').appendChild(col);
-  let tag = document.createElement("p");
+  let tag = document.createElement("div");
   tag.innerHTML = tagname;
-  col.appendChild(tag);
-  tag.classList.add('tag_element');
-  tag.onclick = function() {
+  let addBtn = document.createElement("button")
+  addBtn.innerHTML= '<i class="fa-solid fa-plus"></i>';
+  addBtn.classList="bg-transparent border-0 ms-2 p-0"
+  col.append(tag,addBtn);
+  //tag.classList.add('tag_element');
+  addBtn.onclick = function() {
   if (selectedtagelements.includes(tagname)) return;
   addTag(tagname);
   createTagSuggestion(tagname);
@@ -269,17 +286,25 @@
   }
 
   function addTag(tagname) {
-  //get paragraph child from group
-  var paragraph = document.getElementById('selected_tags_group');
+  //get div child from group
+  var div = document.getElementById('selected_tags_group');
+  //create div to inclde tag + cross btn
+  var tagDiv= document.createElement('div');
+  tagDiv.classList="tag border border-secondary rounded-2 px-1 text-white"
+  //create x button
+  var tagBtn = document.createElement('button');
+  tagBtn.innerHTML="x"
+  tagBtn.classList="bg-transparent border-0 ms-2 p-0 text-white"
   //create span element with id of selected_tag_element
   var tag = document.createElement('span');
+  tagDiv.append(tag,tagBtn)
   tag.innerText = " " + tagname;
   tag.setAttribute("class", "selected_tag_element");
-  tag.onclick = function() {
-  paragraph.removeChild(tag);
+  tagBtn.onclick = function() {
+  div.removeChild(tagDiv);
   selectedtagelements = selectedtagelements.filter(e => e !== tagname);
   };
-  paragraph.appendChild(tag);
+  div.appendChild(tagDiv);
   let taginput = document.getElementById("tag_input_content");
   taginput.value = selectedtagelements.toString();
   selectedtagelements.push(tagname);
