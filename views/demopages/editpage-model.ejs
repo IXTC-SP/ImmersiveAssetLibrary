@@ -10,78 +10,97 @@
   <!-- <div class="container-fluid">
     <div class="row">
       <div class="col-6 d-flex align-items-end flex-column">
-        <h5 class="asset-name">cyberpunk shiba inu</h5>
+        <h6 class="asset-name">cyberpunk shiba inu</h6>
       </div>
     </div>
   </div> -->
   <div class="container-fluid">
     <h2 class="Title">Edit Properties</h2><br>
     <div class="row justify-content-center">
-      <div class="col-6">
-        <div class="row">
-          <h5 class="asset-name">cyberpunk shiba inu</h5>
-        </div>
-        <div class="mb-3 ">
+      <div class="col-6 d-flex flex-column gap-2">
+        <div >
+          <h6 class="asset-name">cyberpunk shiba inu</h6>
           <model-viewer class="model-viewer-dimensions border border-secondary rounded-4"id="model-viewer" alt="" src='../uploads/shiba/gltf/scene.gltf' ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
         </div>
-        <h5>Additional Files</h5>
-        <div class="all-files">
-          <% for(var i=0; i<content.imagefiles.length; i++) {%>
-          <div class="current-file">
-            <span><%=content.imagefiles[i]%></span>
-            <button class="remove-file bg-transparent border-0" onclick="removeExistingFile(this,'<%-content.imagefiles[i]%>')"><i class="fa-regular fa-trash-can trash-btn"></i
-              ></button>
-          </div>
-          <%}%>
-        </div>
-        <br>
+      
         <div class="custom-file">
-          <input type="file" class="custom-file-input" id="inputGroupFile01" accept="image/png, image/jpeg" onchange="addNewFile(this)">
-          <label class="custom-file-label" for="inputGroupFile01" >Choose file</label>
+          <h6>Add Files</h6>
+          <!-- <input type="file" class="custom-file-input form-control" id="inputGroupFile01" accept="image/png, image/jpeg" onchange="addNewFile(this)"> -->
+          <span class="btn btn-primary btn-file">
+            Browse <input type="file" class="custom-file-input form-control" id="inputGroupFile01" accept="image/png, image/jpeg" onchange="addNewFile(this)">
+        </span>
         </div>
+        <div class="accordion" id="accordionExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+              <button class="accordion-button p-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                View Attached Files
+              </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+              <div class="accordion-body p-2">
+                <div class="all-files">
+                  <% for(var i=0; i<content.imagefiles.length; i++) {%>
+                  <div class="current-file d-flex justify-content-between w-100">
+                    <span class="p-0 text-muted"><%=content.imagefiles[i]%></span>
+                    <button class="remove-file bg-transparent border-0" onclick="removeExistingFile(this,'<%-content.imagefiles[i]%>')"><i class="fa-regular fa-trash-can trash-btn"></i
+                      ></button>
+                    
+                  </div>
+                  <hr class="m-0">
+                  <%}%>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
       </div>
-      <div class="col-6 d-flex flew-wrap gap-2 flex-column">
+      <div class="col-5 d-flex flew-wrap gap-4 flex-column">
       <div>
-          <h5>Title</h5>
+          <h6>Title</h6>
           <input class="title-info w-100" type="text" class="form-control" placeholder="" aria-label="Username" aria-describedby="basic-addon1">
         </div>
         <div>
-          <h5>Description</h5>
+          <h6>Description</h6>
           <textarea class="desc-info desc-info-dimension form-control" aria-label="With textarea"></textarea>
         </div>
       <div>
      
-      <div class="d-flex justify-content-between">
-        <h5>Technical Details</h5>
-        <div class="form-check form-check-inline p-0">
-          <input class="low-poly-info" name="optradio" class="form-check-input" type="checkbox" id="detail-lowpoly" value="lowpoly" />
-          <label class="form-check-label" for="detail-lowpoly">Low-poly</label>
+      <div class="d-flex justify-content-between flex-wrap">
+        <h6 class="w-100">Technical Details</h6>
+        <div class="d-flex flex-wrap">
+          <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
+            <input class="low-poly-info" name="optradio" class="form-check-input" type="checkbox" id="detail-lowpoly" value="lowpoly" />
+            <label class="form-check-label" for="detail-lowpoly">Low-poly</label>
+          </div>
+          <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
+            <input class="rigged-info" name="optradio" class="form-check-input" type="checkbox" id="detail-rigged" checked value="rigged" />
+            <label class="form-check-label" for="detail-rigged" checked>Rigged</label>
+          </div>
+          <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
+            <input class="animated-info" name="optradio" class="form-check-input" type="checkbox" id="detail-animated" checked value="animated" />
+            <label class="form-check-label" for="detail-animated" checked>Animated</label>
+          </div>
+          <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
+            <input class="textured-info" name="optradio" class="form-check-input" type="checkbox" id="detail-texture" checked value="textures" />
+            <label class="form-check-label" for="detail-texture" checked>Textured</label>
+          </div>
         </div>
-        <div class="form-check form-check-inline p-0">
-          <input class="rigged-info" name="optradio" class="form-check-input" type="checkbox" id="detail-rigged" checked value="rigged" />
-          <label class="form-check-label" for="detail-rigged" checked>Rigged</label>
-        </div>
-        <div class="form-check form-check-inline p-0">
-          <input class="animated-info" name="optradio" class="form-check-input" type="checkbox" id="detail-animated" checked value="animated" />
-          <label class="form-check-label" for="detail-animated" checked>Animated</label>
-        </div>
-        <div class="form-check form-check-inline p-0">
-          <input class="textured-info" name="optradio" class="form-check-input" type="checkbox" id="detail-texture" checked value="textures" />
-          <label class="form-check-label" for="detail-texture" checked>Textured</label>
-        </div>
+       
       </div>
     </div>     
 
     <div>
-      <h5>Tags</h5>
+      <h6>Tags</h6>
       <input type="text" id="tag_input_content" name="tag_input_content" value="" readonly>
       <div id="selected_tags_group" class="selected-tags"></div>
       <input type="text" class="form-control" type="text" id='tag_create' value="" placeholder="" aria-label="Username" aria-describedby="basic-addon1">
-      <div class="d-flex flex-wrap gap-2 justify-content-sm-start" id="tag_suggest">
+      <div class="d-flex flex-wrap gap-1.8 justify-content-sm-start mt-1" id="tag_suggest">
       </div>
       
     </div>
-    <div class="container-fluid">
+    <div >
       <div class="row justify-content-between">
         <div class="col-4">
           <button type="button" class="btn btn-outline-info rounded-8">Delete</button>

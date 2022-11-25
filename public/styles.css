@@ -10,12 +10,16 @@
   height: 60px; /* Height of the footer */
 }
 
-.trash-btn{
+.trash-btn {
   cursor: pointer;
   color: red;
   padding-left: 1em;
-  margin: auto 0
+  margin: auto 0;
 }
+
+/* .current-file-text {
+  font-size: 12px;
+} */
 
 @media (min-width: 1200px) {
 }
@@ -48,4 +52,3 @@
 #tag_input_content:hover {
   background-color: #ffff66;
 }
-
