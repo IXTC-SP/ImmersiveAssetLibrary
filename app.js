@@ -180,34 +180,11 @@ app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile',
 app.get('/dragndrop', function(req, res) {
   res.render('demopages/dragndrop', {
     isLoginpage: true
-
   });
 });
 const tempupload = require('./scripts/uploadsmanager');
 var tmpContent = [];
-app.post("/uploadtmp3dmodel", tempupload.uploadtmp3D, function(req, res) {
-  tmpContent = req.files;
-  let result = tmpContent.image.map(a => a.originalname);
-  gltfmodel.Create(req.files.model[0], function(gltfresult){
-    // Include fs module
-    var fs = require('fs');
-    if(gltfresult != ''){
-      tmpContent["modelviewerpath"] = '../uploads/tmp/gltf/model.gltf';
-    } else {
-      tmpContent['modelviewerpath'] = '.' + tmpContent.model[0].destination +  tmpContent.model[0].originalname;
-    }
-    console.log(tmpContent);
-    res.end("complete");
-
-  });
-  // let files = tmpContent.image.map(a => a.originalname);
-  // files.push(tmpContent.model[0].originalname);
-  // console.log(files);
-  // let folderpath = req.files.model[0].originalname.split('.')[0];
-  // console.log(folderpath);
-  // tempupload.publish(req.files.model[0].originalname.split('.')[0], files, req.files.model[0].destination)
-
-});
+app.post("/uploadtmp3dmodel", tempupload.uploadtmp3D, tempupload.;
 
 app.get('/editpage/model', function(req, res) {
   if(tmpContent){
