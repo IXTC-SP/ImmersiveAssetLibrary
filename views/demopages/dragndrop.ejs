@@ -243,8 +243,6 @@
   }
   var fileObjs = [];
 
-
-
   nextpagebtn.addEventListener('click', function(event) {
     processUploads();
     event.preventDefault();
@@ -285,16 +283,20 @@
     }
     //decide asset type
     formData.append("type", currenttype);
+    if(currentformat != "") formData.append("format", currentformat);
     //set file names
-
     fileObjs.forEach((fileObj, i) => {
-      var savedName = fileObj.filename + "_" + fileObj.file.name.split("/")[1];
+      var savedName = fileObj.filename;
+      if(fileObj.file.name.split("/")[1]){
+        savedName += "_" + fileObj.file.name.split("/")[1];
+      } else {
+        savedName += "_" + fileObj.file.name;
+      }
       if(fileObj.filename == 'thumbnail') {
         formData.append('thumbnail', fileObj.file, savedName);
       }
       else formData.append(fileObj.type, fileObj.file, savedName);
     });
-
     request.onreadystatechange = function() { // listen for state changes
       if (request.readyState == 4 && request.status == 200) { // when completed we can move away
         window.location = nextURL;
@@ -324,8 +326,16 @@
       changeModalContent("model");
     }
     //if cubemap file, process and popup to assign textures
-    if (currenttype == "360image" && currentformat == "cubemap") {
-      changeModalContent("cubemap");
+    if (currenttype == "360image") {
+      if(currentformat == 'cubemap') changeModalContent("cubemap");
+      else createuploadcontent();
+    }
+    // if (currenttype == "360image") {
+    //   createuploadcontent();
+    // }
+
+    if (currenttype == "script") {
+      createuploadcontent();
     }
   }
 
@@ -387,42 +397,78 @@
   }
 
   function readFiles(files) {
-    for (let file of files) {
+    for(i = 0;i< files.length;i++){
       readFile(file);
     }
   }
 
   function readFile(file) {
     let correctfiletype = false;
+    if(currentformat == 'equirectangular' && files.length == 1) return;
     switch (currenttype) {
       case "3dmodel":
         correctfiletype = isObj(file.name) || isImage(file.name);
         break;
       case "script":
-        correctfiletype = isScript(file.name);
+        switch(currentformat){
+          case 'csharp':
+          correctfiletype = isCsharp(file.name);
+          break;
+          case 'javascript':
+          correctfiletype = isJavascript(file.name);
+          break;
+          case 'python':
+          correctfiletype = isPython(file.name);
+          break;
+        }
         break;
-      case "image":
+      case "360image":
         correctfiletype = isImage(file.name);
         break;
     }
     if (correctfiletype) {
       createFileCard(file.name);
       files.push(file);
+      console.log(files + " currently added file");
     }
   }
 
   function setupFileObjs(){
     fileObjs = [];
-    files.forEach((file,i)=>{
-      var f;
-      if(isObj(file.name)){
-        f = new fileObj("model","model", file)
-      } else {
-        f = new fileObj("image","other", file)
-      }
-      fileObjs.push(f);
-    });
-    console.log(fileObjs);
+    if (currenttype == "3dmodel") {
+      files.forEach((file,i)=>{
+        var f;
+        if(isObj(file.name)){
+          f = new fileObj("model","model", file)
+        } else {
+          f = new fileObj("image","other", file)
+        }
+        fileObjs.push(f);
+      });
+      return;
+    }
+    if (currenttype == "script") {
+      console.log(currentformat);
+      files.forEach((file,i)=>{
+        fileObjs.push(new fileObj("script", currentformat, file));
+      });
+      console.log(fileObjs);
+      return;
+    }
+    //if cubemap file, process and popup to assign textures
+    if (currenttype == "360image" && currentformat == "cubemap") {
+      files.forEach((file,i)=>{
+        fileObjs.push(new fileObj("image","other", file));
+      });
+      return;
+    }
+    if (currenttype == "360image" && currentformat == "equirectangular") {
+      files.forEach((file,i)=>{
+        fileObjs.push(new fileObj("image","equi", file));
+      });
+      return;
+    }
+
   }
 
   let files = [];
@@ -440,8 +486,6 @@
         if (isZip(file.name)) {
           await convertziptofile(file)
         } else {
-          console.log("not zip");
-          console.log(file);
           readFile(file);
         }
       });
@@ -514,7 +558,8 @@
       opts.forEach((o) => {
         createoption(o, o, x);
       });
-      currentformat = x.value;
+      if(x.value == "c#") currentformat = "csharp";
+      else currentformat = x.value;
     }
 
   }

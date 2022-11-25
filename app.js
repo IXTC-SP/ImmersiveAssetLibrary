@@ -93,18 +93,10 @@ app.post('/asset/:modelid', function(req, res) {
   });
 });
 
-app.get('/view/360', function(req, res) {
-  res.render('demopages/view-360', {
-    isLoginpage: true
-  });
-});
 
 
-app.get('/view/script', function(req, res) {
-  res.render('demopages/view-script', {
-    isLoginpage: true
-  });
-});
+
+
 
 app.get('/', function(req, res) {
   res.render('main', {
@@ -182,6 +174,8 @@ app.get('/dragndrop', function(req, res) {
     isLoginpage: true
   });
 });
+
+// ----- model upload to publish ------ START
 const tempupload = require('./scripts/uploadsmanager');
 var tmpContent = [];
 app.post("/uploadtmp3dmodel", tempupload.uploadtmp3D, tempupload.;
@@ -234,28 +228,118 @@ app.get('/view/model', function(req, res) {
     isLoginpage: true
   });
 });
+// ----- model upload to publish ------ END
 
-app.post("/uploadtmp360", tempupload.uploadtmp360, function(req, res) {
-  tmpContent = req.files;
+
+// ----- 360 upload to publish ------ START
+const threesixtymanager_upload = require('./scripts/360manager_upload');
+
+app.post("/uploadtmp360", threesixtymanager_upload.uploadtmp360, function(req, res) {
+  console.log(req.body);
+  console.log(req.files);
+  tmpContent['image'] = []
+  tmpContent['destination'] = req.files.image[0].destination;
+  if(req.body.format == 'cubemap') {
+    tmpContent['image']['top'] = req.files.image.find(element => element.originalname.split('_')[0] == 'top').originalname
+    tmpContent['image']['front'] = req.files.image.find(element => element.originalname.split('_')[0] == 'front').originalname
+    tmpContent['image']['bottom'] = req.files.image.find(element => element.originalname.split('_')[0] == 'bottom').originalname
+    tmpContent['image']['right'] = req.files.image.find(element => element.originalname.split('_')[0] == 'right').originalname
+    tmpContent['image']['back'] = req.files.image.find(element => element.originalname.split('_')[0] == 'back').originalname
+    tmpContent['image']['left'] = req.files.image.find(element => element.originalname.split('_')[0] == 'left').originalname
+  } else {
+    tmpContent['image']['equi'] = req.files.image[0].originalname;
+  }
+  tmpContent['format'] = req.body.format;
+  console.log(tmpContent);
   res.end("complete");
 });
 
 app.get('/editpage/360', function(req, res) {
   res.render('demopages/editpage-360', {
-    tmpfileContent : tmpContent,
+    format: tmpContent.format,
+    images : tmpContent.image,
     isLoginpage: true
   });
 });
-app.post("/uploadtmpscript", tempupload.uploadtmpscript, function(req, res) {
+
+app.post('/savethreesixty', threesixtymanager_upload.upload360, function(req,res){
+  console.log(req.files);
+  console.log(req.body);
+
+  //create list with all files required to save
+  let body = JSON.parse(req.body.data);
+  let allfiles = [];
+  if(req.files.file){
+    console.log('running req files');
+    if(req.files.file.length > 0){
+      let newfiles = req.files.file.map(a=> a.originalname);
+      allfiles = body.files.concat(newfiles);
+    }
+  }
+
+
+  threesixtymanager_upload.publish(body.title, allfiles, tmpContent.destination);
+
+});
+
+app.get('/view/360', function(req, res) {
+  res.render('demopages/view-360', {
+    isLoginpage: true
+  });
+});
+// ----- 360 upload to publish ------ END
+
+
+// ----- script upload to publish ------ START
+const scriptmanager_upload = require('./scripts/scriptmanager_upload');
+app.post("/uploadtmpscript", scriptmanager_upload.uploadtmpscript, function(req, res) {
   tmpContent = req.files;
+  tmpContent['destination'] = req.files.script[0].destination;
   res.end("complete");
 });
+
 app.get('/editpage/script', function(req, res) {
-  res.render('demopages/editpage-script', {
-    tmpfileContent : tmpContent,
+  if(tmpContent){
+    console.log(tmpContent);
+      let scripts = tmpContent.script.map(a => a.originalname);
+      console.log(scripts);
+    res.render('demopages/editpage-script', {
+      scripts : scripts,
+      isLoginpage: true
+    });
+  }
+});
+
+app.get('/view/script', function(req, res) {
+  res.render('demopages/view-script', {
     isLoginpage: true
   });
 });
+
+app.post('/savescript', scriptmanager_upload.uploadscript, function(req,res){
+  console.log(req.files);
+  console.log(req.body);
+
+  //create list with all files required to save
+  let body = JSON.parse(req.body.data);
+  let allfiles = body.files;
+  if(req.files){
+    if(req.files.file.length > 0){
+      let newfiles = req.files.file.map(a=> a.originalname);
+      allfiles = body.files.concat(newfiles);
+    }
+  }
+  scriptmanager_upload.publish(body.title, allfiles, tmpContent.destination);
+
+});
+
+app.get('/view/360', function(req, res) {
+  res.render('demopages/view-360', {
+    isLoginpage: true
+  });
+});
+// ----- script upload to publish ------ END
+
 
 
 app.post('/test', function(req,res){
