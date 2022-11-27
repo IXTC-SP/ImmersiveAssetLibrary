@@ -103,9 +103,13 @@
       rigged : document.querySelector(".rigged-info").checked,
       animated : document.querySelector(".animated-info").checked,
       textured : document.querySelector(".textured-info").checked,
+      folderpath: <%- JSON.stringify(content.folderpath)%>,
+      diffusepath : getTextureFromFilesArray('diffuse'),
+      emissivepath : getTextureFromFilesArray('emissive'),
+      thumbnail: <%- JSON.stringify(content.thumbnail)%>,
       tags : []
       }
-      var tags = document.querySelectorAll("#selected_tag_element");
+      var tags = document.querySelectorAll(".selected_tag_element");
       for(i = 0; i<tags.length;i++){ data.tags.push(tags[i].innerText); }
       data.files=files;
       console.log(data);
