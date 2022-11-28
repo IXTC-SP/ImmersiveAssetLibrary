@@ -92,23 +92,14 @@ app.listen(port, async () => {
 //     });
 //   });
 // });
-app.get('/asset/1', function(req, res) {
-const result = {
-  name: "model name",
-  description: "model description"
-
-}
-  res.render('view_asset', {
-      model: result,
+app.get('/asset/:modelid', function(req, res) {
+  modeldatabase.FindModelById(req.params.modelid, (result) => {
+    console.log(result);
+    res.render('view_asset', {
+      data: result,
       isLoginpage: true
     });
-  // modeldatabase.FindModelById(req.params.modelid, (result) => {
-  //   console.log(result);
-  //   res.render('single_asset', {
-  //     model: result,
-  //     isLoginpage: true
-  //   });
-  // });
+  });
 });
 
 
