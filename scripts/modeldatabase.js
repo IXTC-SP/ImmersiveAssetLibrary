@@ -22,7 +22,7 @@ const modelSchema = new mongoose.Schema({
   downloadby: [String],
   tags: [String]
 })
-const Model = mongoose.model('Model', modelSchema);
+// const Model = mongoose.model('Model', modelSchema);
 
 class ModelPaths {
   folderpath = "";

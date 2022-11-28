@@ -176,9 +176,34 @@ app.get('/dragndrop', function(req, res) {
 });
 
 // ----- model upload to publish ------ START
-const tempupload = require('./scripts/uploadsmanager');
+const uploadsmanager_model = require('./scripts/uploadsmanager_model');
+const databasemanager_model = require('./scripts/databasemanager_model');
 var tmpContent = [];
-app.post("/uploadtmp3dmodel", tempupload.uploadtmp3D, tempupload.;
+
+app.post("/uploadtmp3dmodel", uploadsmanager_model.uploadtmp3D, function(req, res) {
+  tmpContent = req.files;
+  let result = tmpContent.image.map(a => a.originalname);
+  gltfmodel.Create(req.files.model[0], function(gltfresult){
+    // Include fs module
+    var fs = require('fs');
+    if(gltfresult != ''){
+      tmpContent["modelviewerpath"] = '../uploads/tmp/gltf/model.gltf';
+    } else {
+      tmpContent['modelviewerpath'] = '.' + tmpContent.model[0].destination +  tmpContent.model[0].originalname;
+    }
+    tmpContent['folderpath'] = tmpContent.model[0].originalname.split('.')[0];
+    console.log(tmpContent);
+    res.end("complete");
+
+  });
+  // let files = tmpContent.image.map(a => a.originalname);
+  // files.push(tmpContent.model[0].originalname);
+  // console.log(files);
+  // let folderpath = req.files.model[0].originalname.split('.')[0];
+  // console.log(folderpath);
+  // tempupload.publish(req.files.model[0].originalname.split('.')[0], files, req.files.model[0].destination)
+
+});
 
 app.get('/editpage/model', function(req, res) {
   if(tmpContent){
@@ -186,6 +211,7 @@ app.get('/editpage/model', function(req, res) {
     console.log(images);
     res.render('demopages/editpage-model', {
       content : {
+        folderpath : tmpContent.folderpath,
         modelviewerpath : tmpContent.modelviewerpath,
         modelfile: tmpContent.model[0].originalname,
         thumbnail: typeof(tmpContent.thumbnail) == 'undefined' ? '' : tmpContent.thumbnail[0].originalname,
@@ -197,16 +223,18 @@ app.get('/editpage/model', function(req, res) {
 
 });
 
-app.post('/save3dmodel', tempupload.upload3D, function(req,res){
+app.post('/save3dmodel', uploadsmanager_model.upload3D, function(req,res){
   console.log(req.files);
   console.log(req.body);
 
   //create list with all files required to save
   let body = JSON.parse(req.body.data);
   let allfiles = body.files;
-  if(req.files.file.length > 0){
-    let newfiles = req.files.file.map(a=> a.originalname);
-    allfiles = body.files.concat(newfiles);
+  if(req.files.file){
+    if(req.files.file.length > 0){
+      let newfiles = req.files.file.map(a=> a.originalname);
+      allfiles = body.files.concat(newfiles);
+    }
   }
   if(typeof(body.modelfile) != 'undefined'){
     allfiles.push(body.modelfile);
@@ -217,9 +245,9 @@ app.post('/save3dmodel', tempupload.upload3D, function(req,res){
   }
 
   console.log(allfiles);
-  tempupload.publish(tmpContent.model[0].originalname.split('.')[0], allfiles, tmpContent.model[0].destination);
+  uploadsmanager_model.publish(body.folderpath, allfiles, tmpContent.model[0].destination);
   //save model database
-
+  databasemanager_model.save(req,res);
 });
 
 app.get('/view/model', function(req, res) {
@@ -232,9 +260,9 @@ app.get('/view/model', function(req, res) {
 
 
 // ----- 360 upload to publish ------ START
-const threesixtymanager_upload = require('./scripts/360manager_upload');
+const uploadmanager_360 = require('./scripts/uploadmanager_360');
 
-app.post("/uploadtmp360", threesixtymanager_upload.uploadtmp360, function(req, res) {
+app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function(req, res) {
   console.log(req.body);
   console.log(req.files);
   tmpContent['image'] = []
@@ -262,13 +290,13 @@ app.get('/editpage/360', function(req, res) {
   });
 });
 
-app.post('/savethreesixty', threesixtymanager_upload.upload360, function(req,res){
+app.post('/savethreesixty', uploadmanager_360.upload360, function(req,res){
   console.log(req.files);
   console.log(req.body);
 
   //create list with all files required to save
   let body = JSON.parse(req.body.data);
-  let allfiles = [];
+  let allfiles = body.files;
   if(req.files.file){
     console.log('running req files');
     if(req.files.file.length > 0){
@@ -276,9 +304,13 @@ app.post('/savethreesixty', threesixtymanager_upload.upload360, function(req,res
       allfiles = body.files.concat(newfiles);
     }
   }
+  let foldername = body.title == "" ? "default_foldername" : body.title.replace(/\s/g, '');
+  console.log(allfiles);
+  console.log(foldername);
+  console.log(tmpContent.destination);
 
 
-  threesixtymanager_upload.publish(body.title, allfiles, tmpContent.destination);
+  uploadmanager_360.publish(body.title, allfiles, tmpContent.destination);
 
 });
 
@@ -291,8 +323,8 @@ app.get('/view/360', function(req, res) {
 
 
 // ----- script upload to publish ------ START
-const scriptmanager_upload = require('./scripts/scriptmanager_upload');
-app.post("/uploadtmpscript", scriptmanager_upload.uploadtmpscript, function(req, res) {
+const uploadmanager_script = require('./scripts/uploadmanager_script');
+app.post("/uploadtmpscript", uploadmanager_script.uploadtmpscript, function(req, res) {
   tmpContent = req.files;
   tmpContent['destination'] = req.files.script[0].destination;
   res.end("complete");
@@ -316,7 +348,7 @@ app.get('/view/script', function(req, res) {
   });
 });
 
-app.post('/savescript', scriptmanager_upload.uploadscript, function(req,res){
+app.post('/savescript', uploadmanager_script.uploadscript, function(req,res){
   console.log(req.files);
   console.log(req.body);
 
@@ -329,7 +361,7 @@ app.post('/savescript', scriptmanager_upload.uploadscript, function(req,res){
       allfiles = body.files.concat(newfiles);
     }
   }
-  scriptmanager_upload.publish(body.title, allfiles, tmpContent.destination);
+  uploadmanager_script.publish(body.title, allfiles, tmpContent.destination);
 
 });
 
@@ -356,7 +388,7 @@ process.on('SIGINT', function() {
 });
 
 process.on('exit',() => {
-  tempupload.closeTmpFolder();
+  uploadsmanager_model.closeTmpFolder();
   console.log("process.exit() method is fired")
 });
 

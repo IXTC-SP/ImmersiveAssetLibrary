@@ -52,33 +52,7 @@ const upload3D = upload.fields([
     maxCount:1
   }
 ]);
-const uploadtmp360 = upload.fields([
-  {
-    name: 'top',
-    maxCount: 1
-  }, {
-    name: 'front',
-    maxCount: 1
-  }, {
-    name: 'left',
-    maxCount: 1
-  },
-  {
-    name: 'right',
-    maxCount: 1
-  }, {
-    name: 'back',
-    maxCount: 1
-  }, {
-    name: 'bottom',
-    maxCount: 1
-  }
-]);
-const uploadtmpscript = upload.fields([
-  {
-  name: 'scripts',
-  maxCount: 10
-}]);
+
 
 const publishfile = async function(foldername, files){
   var filesizetotal = 0;
@@ -156,5 +130,3 @@ module.exports.publish = publishfile;
 module.exports.closeTmpFolder = closeTmpFolder;
 module.exports.uploadtmp3D = uploadtmp3D;
 module.exports.upload3D = upload3D;
-module.exports.uploadtmp360 = uploadtmp360;
-module.exports.uploadtmpscript = uploadtmpscript;
