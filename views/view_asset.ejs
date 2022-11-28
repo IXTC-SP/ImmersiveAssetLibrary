@@ -1,0 +1,354 @@
+<%- include('./partials/header') %>
+
+<!-- <link rel="stylesheet" href="./public/edit-page.css"> -->
+<script
+  type="module"
+  src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+></script>
+<script type="text/javascript" src="/datamuse.js"></script>
+
+<section class="d-flex flex-column m-auto mt-5">
+  <div class="row justify-content-center">
+    <div class="col-7 d-flex flex-column flex-wrap">
+      <!-- Carousel wrapper -->
+      <div
+        id="carouselExampleIndicators"
+        class="carousel slide carousel-model-view"
+        data-bs-interval="false"
+      >
+        <!-- Slides -->
+        <div
+          class="carousel-inner shadow-1-strong rounded-3 carousel-model-view"
+        >
+          <div class="carousel-item active" data-bs-interval="false">
+            <model-viewer
+              class="model-viewer-dimensions"
+              id="model-viewer"
+              alt=""
+              src="../uploads/shiba/gltf/scene.gltf"
+              ar
+              ar-modes="webxr scene-viewer quick-look"
+              seamless-poster
+              shadow-intensity="1"
+              camera-controls
+              enable-pan
+            ></model-viewer>
+          </div>
+          <div class="carousel-item" data-bs-interval="false">
+            <img
+              src="https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(121).webp"
+              class="d-block w-100 carousel-image"
+              alt="..."
+            />
+          </div>
+          <div class="carousel-item" data-bs-interval="false">
+            <img
+              src="https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(31).webp"
+              class="d-block w-100 carousel-image"
+              alt="..."
+            />
+          </div>
+        </div>
+        <!-- Slides -->
+
+        <!-- Controls -->
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-mdb-target="#carouselExampleIndicators"
+          data-mdb-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-mdb-target="#carouselExampleIndicators"
+          data-mdb-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+        <!-- Controls -->
+
+        <!-- Thumbnails -->
+        <div class="carousel-indicators" style="margin-bottom: -20px">
+          <button
+            type="button"
+            data-mdb-target="#carouselExampleIndicators"
+            data-mdb-slide-to="0"
+            class="active"
+            aria-current="true"
+            aria-label="Slide 1"
+            style="width: 100px"
+          >
+            <img
+              class="d-block w-100 shadow-1-strong rounded carousel-size"
+              src="../uploads/shiba/thumbnail.png"
+              class="img-fluid"
+            />
+          </button>
+          <button
+            type="button"
+            data-mdb-target="#carouselExampleIndicators"
+            data-mdb-slide-to="1"
+            aria-label="Slide 2"
+            style="width: 100px"
+          >
+            <img
+              class="d-block w-100 shadow-1-strong rounded carousel-size"
+              src="https://mdbcdn.b-cdn.net/img/Photos/Others/Carousel-thumbs/img%20(121).webp"
+              class="img-fluid"
+            />
+          </button>
+          <button
+            type="button"
+            data-mdb-target="#carouselExampleIndicators"
+            data-mdb-slide-to="2"
+            aria-label="Slide 3"
+            style="width: 100px"
+          >
+            <img
+              class="d-block w-100 shadow-1-strong rounded carousel-size"
+              src="https://mdbcdn.b-cdn.net/img/Photos/Others/Carousel-thumbs/img%20(31).webp"
+              class="img-fluid"
+            />
+          </button>
+        
+        </div>
+        <!-- Thumbnails -->
+    
+      </div>
+      <!-- <div>
+        <model-viewer
+          class="model-viewer-dimensions border border-secondary rounded-4"
+          id="model-viewer"
+          alt=""
+          src="../uploads/shiba/gltf/scene.gltf"
+          ar
+          ar-modes="webxr scene-viewer quick-look"
+          seamless-poster
+          shadow-intensity="1"
+          camera-controls
+          enable-pan
+        ></model-viewer>
+      </div> -->
+      <div>
+        <div>
+          <h6>Title</h6>
+        </div>
+        <hr />
+        <div>
+          <h6>Description</h6>
+          <p>
+            Ready for Virtual Reality (VR), and other real-time apps, PBR
+            Materials / Textures ready. Add a professional touch to your SciFi
+            VideoGame project with this original low poly model. No animated
+            parts, script or LOD, Not Rigged. Separated parts (Landing gears,
+            weapons, hatch, engines), can be animated, properly linked (see
+            preview) Total Polycount with no duplicated parts: Polys/10.417 -
+            Verts/11.006- Tris/19.424
+          </p>
+        </div>
+
+        <div id="selected_tags_group" class="selected-tags">
+          <i class="fa-solid fa-tag icon-size"></i>
+          <div
+            class="tag border border-secondary rounded-2 px-1 text-muted bg-transparent"
+          >
+            <span class="selected_tag_element"> dog</span>
+          </div>
+          <div
+            class="tag border border-secondary rounded-2 px-1 text-muted bg-transparent"
+          >
+            <span class="selected_tag_element">cat</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-3 d-flex flew-wrap gap-4 flex-column">
+      <div>
+        <h6>3D Model Details</h6>
+      </div>
+      <div class="border border-secondary rounded-2 p-2">
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Uploaded By</p>
+          <p class="m-0">Sandra Fong</p>
+        </div>
+        <hr class="m-0" />
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Uploaded By</p>
+          <p class="m-0">Sandra Fong</p>
+        </div>
+        <hr class="m-0" />
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Uploaded By</p>
+          <p class="m-0">Sandra Fong</p>
+        </div>
+        <hr class="m-0" />
+      </div>
+      <div class="w-100">
+        <button type="button" class="w-100 btn theme-color btn-rounded">
+          Download
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  var suggestedtagelements = [];
+  var selectedtagelements = [];
+  var files = [];
+  var newfiles = [];
+  var modelviewer = document.getElementById("model-viewer");
+  function getTextureFromFilesArray(typename) {
+    var result = "";
+    for (i = 0; i < files.length; i++) {
+      if (files[i].split("_")[0] == typename) {
+        result = files[i];
+      }
+    }
+    return result;
+  }
+
+  modelviewer.addEventListener("load", () => {
+    const material = modelviewer.model.materials[0];
+    const createAndApplyTexture = async (channel) => {
+      // Applies the new texture to the specified channel.
+      var diffusepath = getTextureFromFilesArray("diffuse");
+      if (diffusepath != "") {
+        var diffuse = await modelviewer.createTexture(
+          "." + assetPath.folderpath + "/" + assetPath.diffusepath
+        );
+        material.pbrMetallicRoughness["baseColorTexture"].setTexture(diffuse);
+      }
+      var emissivepath = getTextureFromFilesArray("emissive");
+      if (emissivepath != "") {
+        var emission = await modelviewer.createTexture(
+          "../uploads/tmp/" + emissivepath
+        );
+        material["emissiveTexture"].setTexture(emission);
+      }
+    };
+    createAndApplyTexture("baseColorTexture");
+  });
+
+  function saveThumbnail(callback) {
+    console.log("running save thumbnail 2");
+    //create thumbnail via canvas then save in formdata afterwards
+    // var image = modelviewer.toDataURL("image/png", 0.5).replace("image/png", "image/octet-stream"); // here is the most important part because if you dont replace you will get a DOM 18 exception.
+    modelviewer.toBlob((result) => {
+      console.log(result);
+      callback(result);
+    }, "image/jpeg");
+  }
+
+  function removeExistingFile(el, filename) {
+    files = files.filter((i) => i !== filename);
+    console.log(files);
+    var element = el;
+    element.parentElement.remove();
+  }
+
+  function addNewFile(el) {
+    console.log(el.files[0].name);
+    newfiles.push(el.files[0]);
+    let p = document.querySelector(".all-files");
+    console.log(p);
+    let main = document.createElement("div");
+    main.classList.add("new-file");
+    p.appendChild(main);
+    let btn = document.createElement("button");
+    btn.innerHTML =
+      '<i id ="trash-icon" class="trash-btn fa-regular fa-trash-can"></i>';
+    btn.className = "remove-file bg-transparent border-0";
+    let tag = document.createElement("span");
+    tag.innerHTML = el.files[0].name;
+    main.appendChild(tag);
+    main.appendChild(btn);
+    btn.onclick = function () {
+      removeNewFile(main, el.files[0]);
+    };
+  }
+
+  function removeNewFile(el, file) {
+    newfiles = newfiles.filter((i) => i !== file);
+    var element = el;
+    element.remove();
+  }
+
+  const node = document.getElementById("tag_create");
+  node.addEventListener("keyup", function (event) {
+    if (event.key === "Enter") {
+      // Do work
+      if (selectedtagelements.includes(node.value)) return;
+      addTag(node.value);
+      createTagSuggestion(node.value);
+      node.value = "";
+    }
+  });
+
+  function clearsuggestedtagelements() {
+    if (suggestedtagelements.length === 0) return;
+    suggestedtagelements.forEach((e) => {
+      e.remove();
+    });
+  }
+
+  function createTagSuggestion(tagname) {
+    clearsuggestedtagelements();
+    suggestionsFromDatamuse(tagname).then((result) => {
+      result.forEach((a) => {
+        createSuggestElement(a.word);
+      });
+    });
+  }
+
+  function createSuggestElement(tagname) {
+    let col = document.createElement("div");
+    col.classList = "suggested-tag border-secondary border rounded-2 px-1";
+    document.getElementById("tag_suggest").appendChild(col);
+    let tag = document.createElement("div");
+    tag.innerHTML = tagname;
+    let addBtn = document.createElement("button");
+    addBtn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+    addBtn.classList = "bg-transparent border-0 ms-2 p-0";
+    col.append(tag, addBtn);
+    //tag.classList.add('tag_element');
+    addBtn.onclick = function () {
+      if (selectedtagelements.includes(tagname)) return;
+      addTag(tagname);
+      createTagSuggestion(tagname);
+    };
+    //add to suggested tag element array
+    suggestedtagelements.push(col);
+  }
+
+  function addTag(tagname) {
+    //get div child from group
+    var div = document.getElementById("selected_tags_group");
+    //create div to inclde tag + cross btn
+    var tagDiv = document.createElement("div");
+    tagDiv.classList = "tag border border-secondary rounded-2 px-1 text-white";
+    //create x button
+    var tagBtn = document.createElement("button");
+    tagBtn.innerHTML = "x";
+    tagBtn.classList = "bg-transparent border-0 ms-2 p-0 text-white";
+    //create span element with id of selected_tag_element
+    var tag = document.createElement("span");
+    tagDiv.append(tag, tagBtn);
+    tag.innerText = " " + tagname;
+    tag.setAttribute("class", "selected_tag_element");
+    tagBtn.onclick = function () {
+      div.removeChild(tagDiv);
+      selectedtagelements = selectedtagelements.filter((e) => e !== tagname);
+    };
+    div.appendChild(tagDiv);
+    let taginput = document.getElementById("tag_input_content");
+    taginput.value = selectedtagelements.toString();
+    selectedtagelements.push(tagname);
+  }
+</script>
+
+<%- include('./partials/footer') %>

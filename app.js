@@ -83,15 +83,34 @@ app.listen(port, async () => {
   job.start()
 })
 
-app.post('/asset/:modelid', function(req, res) {
-  modeldatabase.FindModelById(req.params.modelid, (result) => {
-    console.log(result);
-    res.render('single_asset', {
+// app.post('/asset/:modelid', function(req, res) {
+//   modeldatabase.FindModelById(req.params.modelid, (result) => {
+//     console.log(result);
+//     res.render('single_asset', {
+//       model: result,
+//       isLoginpage: true
+//     });
+//   });
+// });
+app.get('/asset/1', function(req, res) {
+const result = {
+  name: "model name",
+  description: "model description"
+
+}
+  res.render('view_asset', {
       model: result,
       isLoginpage: true
     });
-  });
+  // modeldatabase.FindModelById(req.params.modelid, (result) => {
+  //   console.log(result);
+  //   res.render('single_asset', {
+  //     model: result,
+  //     isLoginpage: true
+  //   });
+  // });
 });
+
 
 app.get('/view/360', function(req, res) {
   res.render('demopages/view-360', {
