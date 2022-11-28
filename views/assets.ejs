@@ -33,22 +33,24 @@
     <label class="px-3" for="lowpoly">Low Poly</label>
     <input type="checkbox" name="rigged" value="rigged">
     <label class="px-3" for="rigged">Rigged</label>
+    <input type="checkbox" name="textured" value="textured">
+    <label class="px-3" for="textured">Textured</label>
   </div>
   <hr>
 </div>
 <br><br>
 <div class="container-fluid px-5">
   <div class="row" id="asset-row">
-    <div class="col-md-2" id="asset-card">
+    <div class="col-md-2" id="asset-card" style="display:none">
       <div class="card mb-4 box-shadow">
-        <img class="card-img-top" id='asset-img' alt="" style="height: 200px; width:100%; display: block;" src="<%= data.models[0].paths.thumbnail %>" data-holder-rendered="true">
+        <img class="card-img-top" id='asset-img' alt="" style="height: 200px; width:100%; display: block;" src="" data-holder-rendered="true">
         <div class="card-body">
-          <h4 class="card-title" id="asset-name"><%= data.models[0].name %></h4>
-          <p class="card-text" id="asset-desc"><%= data.models[0].description %></p>
+          <h4 class="card-title" id="asset-name"></h4>
+          <p class="card-text" id="asset-desc"></p>
           <div class="d-flex flex-row align-content-stretch" id="asset-tag-list">
           </div>
           <div class="d-flex justify-content-between align-items-center">
-            <form class="font-italic text-muted mb-0 small" id="asset-id-action" action="asset/<%= data.models[0].id %>" method="post">
+            <form class="font-italic text-muted mb-0 small" id="asset-id-action" action="" method="post">
               <button>Open</button>
             </form>
             <small class="text-muted" id="asset-upload-date">upload date</small>
@@ -65,8 +67,9 @@
 
 <script type="text/javascript">
   var fulldatamodels = <%-JSON.stringify(data.models) %>;
+  console.log(fulldatamodels);
   var loadamt = 3;
-  var beforelen = 1;
+  var beforelen = 0;
   var afterlen = 0;
   var currentloaddatamodels = [];
   const cardmain = document.getElementById("asset-card");
@@ -78,7 +81,7 @@
     if (afterlen > fulldatamodels.length) return;
     afterlen = beforelen + loadamt;
     currentloaddatamodels = fulldatamodels.slice(beforelen, afterlen)
-    for (var i = 0; i < currentloaddatamodels.length; i++) {
+    for (i = 0; i < currentloaddatamodels.length; i++) {
       CreateAssetCard(currentloaddatamodels[i])
     }
     beforelen = afterlen;
@@ -86,15 +89,14 @@
 
   function CreateAssetCard(data) {
     let clone = cardmain.cloneNode(true);
+    clone.style.display = 'block';
     let assetimg = clone.querySelector("#asset-img");
-    assetimg.src = data.paths.thumbnail;
+    assetimg.src = data.assetPath.folderpath.slice(1) + "/"+ data.assetPath.thumbnail;
     console.log(assetimg.src);
     let assetname = clone.querySelector("#asset-name");
-    assetname.innerHTML = data.name;
-    console.log(assetname.innerHTML);
+    assetname.innerHTML = data.title;
     let assetdesc = clone.querySelector("#asset-desc");
-    assetdesc.innerHTML = data.description;
-    console.log(assetdesc.innerHTML);
+    assetdesc.innerHTML = data.description.substring(0,25) + "...";
     let assettaglist = clone.querySelector("#asset-tag-list");
     for(var i = 0; i<data.tags.length;i++){
       let assettag = document.createElement('h6');

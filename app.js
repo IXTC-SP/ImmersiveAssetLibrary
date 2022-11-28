@@ -5,7 +5,7 @@ const express = require('express');
 const ejs = require('ejs');
 const app = express();
 // const multer = require('multer');
-// const fs = require('fs');
+const fs = require('fs');
 const bodyParser = require('body-parser');
 
 const session = require('express-session');
@@ -15,7 +15,7 @@ const path = require('path');
 const url = require('url');
 
 const gltfmodel = require('./scripts/gltfmodel');
-const modeldatabase = require('./scripts/modeldatabase');
+const modeldatabase = require('./scripts/databasemanager_model');
 //const usermanagement = require('./scripts/usermanagement');
 const modeldisplay = require('./scripts/modeldisplay');
 const storagemanagement = require('./scripts/storagemanagement');
@@ -83,18 +83,6 @@ app.listen(port, async () => {
   job.start()
 })
 
-app.post('/asset/:modelid', function(req, res) {
-  modeldatabase.FindModelById(req.params.modelid, (result) => {
-    console.log(result);
-    res.render('single_asset', {
-      model: result,
-      isLoginpage: true
-    });
-  });
-});
-
-
-
 
 
 
@@ -129,8 +117,6 @@ app.get("/assets", function(req, res) {
   }
 });
 
-
-
 app.post('/search', function(req, res) {
   res.redirect(url.format({
     pathname: "/assets",
@@ -140,7 +126,17 @@ app.post('/search', function(req, res) {
   }));
 });
 
+app.post('/asset/:modelid', function(req, res) {
+  modeldatabase.FindModelById(req.params.modelid, (result) => {
+    console.log(result);
+    res.render('single_asset', {
+      model: result,
+      isLoginpage: true
+    });
+  });
+});
 
+//OLD
 app.get("/single_asset_edit/:modelid", function(req, res) {
   var tmpid = '62d7b3de10351866025affb7'
   // modeldatabase.FindModelById(req.params.modelid, (result) => {
@@ -152,12 +148,14 @@ app.get("/single_asset_edit/:modelid", function(req, res) {
   });
 });
 
+//OLD
 app.get("/single_asset_create", function(req, res) {
   res.render('single_asset_create', {
     isLoginpage: true
   });
 });
 
+//OLD
 app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile', maxCount: 1}, {name: 'diffuse', maxCount: 1},{name: 'metallicroughness', maxCount: 1},{name: 'normal', maxCount: 1},
 {name: 'occlusion', maxCount: 1},{name: 'emission', maxCount: 1}]), function(req, res) {
   console.log(req.body);
@@ -169,7 +167,9 @@ app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile',
 });
 
 //WORKING (UPLOAD PAGE)
+const uploadsmanager = require('./scripts/uploadsmanager_model');
 app.get('/dragndrop', function(req, res) {
+  uploadsmanager.closeTmpFolder();
   res.render('demopages/dragndrop', {
     isLoginpage: true
   });
@@ -182,12 +182,15 @@ var tmpContent = [];
 
 app.post("/uploadtmp3dmodel", uploadsmanager_model.uploadtmp3D, function(req, res) {
   tmpContent = req.files;
-  let result = tmpContent.image.map(a => a.originalname);
+  let result;
+  if(tmpContent.image){
+    result = tmpContent.image.map(a => a.originalname);
+  }
   gltfmodel.Create(req.files.model[0], function(gltfresult){
     // Include fs module
     var fs = require('fs');
     if(gltfresult != ''){
-      tmpContent["modelviewerpath"] = '../uploads/tmp/gltf/model.gltf';
+      tmpContent["modelviewerpath"] = '../uploads/tmp/model.gltf';
     } else {
       tmpContent['modelviewerpath'] = '.' + tmpContent.model[0].destination +  tmpContent.model[0].originalname;
     }
@@ -207,8 +210,12 @@ app.post("/uploadtmp3dmodel", uploadsmanager_model.uploadtmp3D, function(req, re
 
 app.get('/editpage/model', function(req, res) {
   if(tmpContent){
-    let images = tmpContent.image.map(a => a.originalname);
-    console.log(images);
+    let images;
+    if(tmpContent.image){
+      images = tmpContent.image.map(a => a.originalname);
+      console.log(images);
+    }
+
     res.render('demopages/editpage-model', {
       content : {
         folderpath : tmpContent.folderpath,
@@ -251,7 +258,7 @@ app.post('/save3dmodel', uploadsmanager_model.upload3D, function(req,res){
 });
 
 app.get('/view/model', function(req, res) {
-
+  
   res.render('demopages/view-model', {
     isLoginpage: true
   });
@@ -374,13 +381,10 @@ app.get('/view/360', function(req, res) {
 
 
 
-app.post('/test', function(req,res){
-  console.log("post test form");
-  res.redirect('/editpage/model')
-})
 
 
 // Begin reading from stdin so the process does not exit imidiately
+//DELETE TEMP FOLDERS WHEN NODE APP.JS ClOSE
 process.stdin.resume();
 process.on('SIGINT', function() {
   console.log('Interrupted');
@@ -392,6 +396,14 @@ process.on('exit',() => {
   console.log("process.exit() method is fired")
 });
 
+
+//OLD
+app.post('/test', function(req,res){
+  console.log("post test form");
+  res.redirect('/editpage/model')
+})
+
+//OLD
 app.post("/update/:modelid", function(req, res) {
   modeldatabase.UpdateModelFromEditPage(req.params.modelid, req, (result) => {
     modeldatabase.FindModelById(req.params.modelid, (doc) => {
@@ -405,13 +417,11 @@ app.post("/update/:modelid", function(req, res) {
 });
 
 
-const fs = require('fs');
-
+//WORKING DOWNLOAD ASSET POST
 app.post("/downloadasset/:modelid", function(req, res) {
   modeldatabase.GetModel(req.params.modelid, (result)=> {
-    var downloadpath = __dirname + result.paths.folderpath + "/model";
-    console.log(downloadpath);
-    filedownloader.CreateZipArchive(result.name, downloadpath, (tmppath)=> {
+    var downloadpath = __dirname + result.assetPath.folderpath.slice(1) + "/model";
+    filedownloader.CreateZipArchive(result.title, downloadpath, (tmppath)=> {
       res.download(tmppath, req.param('file'), function(err){
       //CHECK FOR ERROR
       fs.unlink(tmppath, (err)=> {

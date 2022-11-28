@@ -84,6 +84,7 @@ const publishfile = async function(foldername, files){
     //data required -> folderpath, totalfilesize, publish date,  assettype, ownedby, main asset type, main asset path, download count
     console.log('getting file size ' + filesizetotal);
     // getfilesize(publishpath);
+    closeTmpFolder();
 
 };
 
@@ -109,14 +110,6 @@ const getAllFiles = function(dirPath, arrayOfFiles) {
   return arrayOfFiles
 }
 
-function setPublishDate(){
-  var today = new Date();
-  var dd = String(today.getDate()).padStart(2, '0');
-  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-  var yyyy = today.getFullYear();
-  today = mm + '/' + dd + '/' + yyyy;
-  return today
-}
 
 function getDirectories(srcpath) {
   return fs.readdirSync(srcpath)

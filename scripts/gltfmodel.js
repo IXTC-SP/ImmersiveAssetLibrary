@@ -45,8 +45,8 @@ const Create = (objectfile, callback) => {
         const convert = require('fbx2gltf');
         convert(modelfilepath, gltfpath, ['--embed']).then(
           destPath => {
-            let oldDirName = modelfolderpath + "/model_out";
-            let newDirName = modelfolderpath + "/gltf";
+            let oldDirName = modelfolderpath + "/model_out/model.gltf";
+            let newDirName = modelfolderpath + "/model.gltf";
             // rename the directory
             fs.rename(oldDirName, newDirName, (err) => {
                 if(err) {
@@ -55,7 +55,7 @@ const Create = (objectfile, callback) => {
 
                 console.log("Directory renamed successfully.");
             });
-            gltfpath = modelfolderpath + "\\gltf\\model.gltf"
+            gltfpath = modelfolderpath + "\\model.gltf"
             console.log(gltfpath);
             // yay, do what we will with our shiny new GLB file!
             console.log("completed fbx to gltf conversion");

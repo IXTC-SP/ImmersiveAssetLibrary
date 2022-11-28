@@ -23,6 +23,13 @@ const modelSchema = new mongoose.Schema({
     },
     atrribute: {
       type: mongoose.Schema.Types.Mixed,
+    },
+    uploaddate: {
+      type: Date,
+      default: Date.now
+    },
+    filesize: {
+      type: Number
     }
    },
 );

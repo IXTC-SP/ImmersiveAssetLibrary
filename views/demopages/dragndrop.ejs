@@ -286,6 +286,7 @@
     if(currentformat != "") formData.append("format", currentformat);
     //set file names
     fileObjs.forEach((fileObj, i) => {
+      console.log(fileObj.type + " " + fileObj.filename + " " + fileObj.file.name);
       var savedName = fileObj.filename;
       if(fileObj.file.name.split("/")[1]){
         savedName += "_" + fileObj.file.name.split("/")[1];
@@ -302,6 +303,7 @@
         window.location = nextURL;
       }
     }
+
     request.open("POST", postURL, false);
     request.send(formData);
   }
@@ -536,7 +538,7 @@
         enableModelInfo(false);
         break;
       case "3dmodel":
-        supportformat = "We support obj, fbx.";
+        supportformat = "We support obj, fbx, blend.";
         enableModelInfo(true);
         break;
     }

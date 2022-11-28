@@ -1,6 +1,6 @@
 const fs = require('fs')
 const modeldb = require('../models/model');
-
+const fastFolderSize = require('fast-folder-size')
 
 class AssetPath {
   folderpath = "";
@@ -17,7 +17,7 @@ class Attribute {
   textured = false;
 }
 
-const Save = function(req,res){
+const Save = async function(req,res){
   //create list with all files required to save
   let body = JSON.parse(req.body.data);
 
@@ -34,13 +34,17 @@ const Save = function(req,res){
   assetpath.emission = body.emissivepath;
   assetpath.thumbnail = body.thumbnail;
 
+  let foldersize = await fastFolderSize(assetpath.folderpath);
+  console.log(foldersize);
+
+
   var model = new modeldb({
     title: body.title,
     description: body.description,
     uploadedby : "sample_user",
     tags: body.tags,
     assetPath: assetpath,
-    atrribute: attribute,
+    atrribute: attribute
   });
 
   model.save(function(err){
@@ -49,10 +53,25 @@ const Save = function(req,res){
 
 }
 
+
+ss();
+async function ss (){
+  fastFolderSize('./uploads/model_capstan', (err, bytes) => {
+  if (err) {
+    throw err
+  }
+
+  console.log(bytes/(1024*1024))
+})
+  // const size = await getFolderSize.loose('./uploads/model_capstan');
+  // console.log(size);
+}
+
+
 module.exports.save = Save;
 
 const GetModel = (id,callback) =>{
-  Model.findOne({_id: id}, (err,result)=>{
+  modeldb.findOne({_id: id}, (err,result)=>{
     if(err) console.log(err);
     else {
       callback(result);
@@ -63,7 +82,7 @@ module.exports.GetModel = GetModel;
 
 const GetAllModels = (callback) =>{
   var arr = [];
-  Model.find({}, (err,result)=>{
+  modeldb.find({}, (err,result)=>{
     if(err) console.log(err);
     else {
       arr = result;
@@ -75,7 +94,7 @@ const GetAllModels = (callback) =>{
 module.exports.GetAllModels = GetAllModels;
 
 function FindModelsByTags(tags){
-  Model.find({tags: tags}, (err,result)=> {
+  modeldb.find({tags: tags}, (err,result)=> {
     console.log(result);
   });
 }
@@ -83,10 +102,10 @@ function FindModelsByTags(tags){
 const SearchBar = (searchterm, callback) => {
   var arr = [];
   console.log('start mongoose search');
-  Model.find({title: searchterm}).then(function(nameresult){
+  modeldb.find({title: searchterm}).then(function(nameresult){
     arr.push(nameresult);
     console.log('finish search name', nameresult);
-    Model.find({tags: searchterm}).then(function(tagresult){
+    modeldb.find({tags: searchterm}).then(function(tagresult){
       // arr.push(tagresult);
       arr = [...new Set(tagresult)]
       console.log('finish search tag', tagresult);
@@ -98,7 +117,7 @@ module.exports.SearchBar = SearchBar;
 
 
  const FindModelById = (id, callback) =>{
-  Model.findOne({ _id: id}, (err,result)=> {
+  modeldb.findOne({ _id: id}, (err,result)=> {
     if(err) console.log(err);
     else {
       callback(result);

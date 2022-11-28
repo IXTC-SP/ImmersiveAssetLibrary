@@ -17,16 +17,18 @@
   <div class="container-fluid">
     <div class="row justify-content-center">
       <div class="col-4">
-        <model-viewer id="model-viewer" alt="" src='../uploads/shiba/gltf/scene.gltf' ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
+        <model-viewer id="model-viewer" alt="" src='' ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
         <br>
         <h5>Additional Files</h5>
         <div class="all-files">
+          <% if(content.imagefiles) {%>
           <% for(var i=0; i<content.imagefiles.length; i++) {%>
           <div class="current-file">
             <button class="remove-file" onclick="removeExistingFile(this,'<%-content.imagefiles[i]%>')">X</button>
             <span><%=content.imagefiles[i]%></span>
             <br>
           </div>
+          <%}%>
           <%}%>
         </div>
         <br>
@@ -127,11 +129,11 @@
       }
 
 
-      // request.onreadystatechange = function() { // listen for state changes
-      // if (request.readyState == 4 && request.status == 200) { // when completed we can move away
-      // window.location = nextURL;
-      // }
-      // }
+      request.onreadystatechange = function() { // listen for state changes
+      if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+      window.location = nextURL;
+      }
+      }
       request.open("POST", postURL, false);
       request.send(formData);
   }
@@ -141,8 +143,11 @@
 
   function getEJScontent(){
   <% if (content) {  %>
+    <% if (content.imagefiles) {  %>
   files = <%- JSON.stringify(content.imagefiles)%>;
+  <% }  %>
   let modelpath = '<%- content.modelviewerpath %>';
+  console.log(modelpath);
   modelviewer.src = modelpath;
   console.log(getTextureFromFilesArray('diffuse'));
   <% } else { %>
