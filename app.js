@@ -94,7 +94,7 @@ app.listen(port, async () => {
 // });
 app.get('/asset/:modelid', function(req, res) {
   modeldatabase.FindModelById(req.params.modelid, (result) => {
-    console.log(result);
+    console.log("---->", result);
     res.render('view_asset', {
       data: result,
       isLoginpage: true
