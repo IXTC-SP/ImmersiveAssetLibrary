@@ -89,6 +89,7 @@
   var files = [];
   var newfiles = [];
   var modelviewer = document.getElementById('model-viewer');
+  var modelpath = '';
   async function createUploadContent() {
     const formData = new FormData();
     const request = new XMLHttpRequest();
@@ -99,6 +100,7 @@
     var data = {
       files : [],
       modelfile: <%- JSON.stringify(content.modelfile)%>,
+      gltfmodelpath: modelpath,
       title : document.querySelector(".title-info").value,
       description : document.querySelector(".desc-info").value,
       lowpoly : document.querySelector(".low-poly-info").checked,
@@ -146,7 +148,7 @@
     <% if (content.imagefiles) {  %>
   files = <%- JSON.stringify(content.imagefiles)%>;
   <% }  %>
-  let modelpath = '<%- content.modelviewerpath %>';
+  modelpath = '<%- content.modelviewerpath %>';
   console.log(modelpath);
   modelviewer.src = modelpath;
   console.log(getTextureFromFilesArray('diffuse'));

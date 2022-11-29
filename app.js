@@ -246,6 +246,9 @@ app.post('/save3dmodel', uploadsmanager_model.upload3D, function(req,res){
   if(typeof(body.modelfile) != 'undefined'){
     allfiles.push(body.modelfile);
   }
+  if(typeof(body.modelviewerpath) != 'undefined'){
+    allfiles.push(body.modelviewerpath);
+  }
   if(typeof(req.files.newthumbnail) != 'undefined'){
     console.log(req.files.newthumbnail[0].originalname);
     allfiles.push(req.files.newthumbnail[0].filename);
@@ -254,11 +257,11 @@ app.post('/save3dmodel', uploadsmanager_model.upload3D, function(req,res){
   console.log(allfiles);
   uploadsmanager_model.publish(body.folderpath, allfiles, tmpContent.model[0].destination);
   //save model database
-  databasemanager_model.save(req,res);
+  databasemanager_model.save(req,res, allfiles);
 });
 
 app.get('/view/model', function(req, res) {
-  
+
   res.render('demopages/view-model', {
     isLoginpage: true
   });

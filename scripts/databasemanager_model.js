@@ -17,7 +17,7 @@ class Attribute {
   textured = false;
 }
 
-const Save = async function(req, res) {
+const Save = async function(req, res, files) {
   //create list with all files required to save
   let body = JSON.parse(req.body.data);
 
@@ -29,30 +29,45 @@ const Save = async function(req, res) {
 
   let assetpath = new AssetPath();
   assetpath.folderpath = './uploads/' + body.folderpath;
-  assetpath.gltfmodelpath = body.modelfile.replace('tmp', body.folderpath);
+  assetpath.gltfmodelpath = body.gltfmodelpath.replace('tmp', body.folderpath);
   assetpath.diffuse = body.diffusepath;
   assetpath.emission = body.emissivepath;
   assetpath.thumbnail = body.thumbnail;
 
-  let foldersize = await fastFolderSize(assetpath.folderpath);
-  console.log(foldersize);
+  // console.log(assetpath.gltfmodelpath);
+  // let foldersize = await fastFolderSize(assetpath.folderpath);
+  // console.log(foldersize);
 
+  fastFolderSize(assetpath.folderpath, (err, bytes) => {
+    if (err) {
+      throw err
+    }
+    var foldersize = (Math.round((bytes / (1024 * 1024)) * 10) / 10).toString() + 'mb';
+    var model = new modeldb({
+      title: body.title,
+      description: body.description,
+      uploadedby: "sample_user",
+      tags: body.tags,
+      assetPath: assetpath,
+      atrribute: attribute,
+      filesize: foldersize
+    });
 
-  var model = new modeldb({
-    title: body.title,
-    description: body.description,
-    uploadedby: "sample_user",
-    tags: body.tags,
-    assetPath: assetpath,
-    atrribute: attribute
+    model.save(function(err) {
+      if (err) return console.log(err);
+    });
   });
 
-  model.save(function(err) {
-    if (err) return console.log(err);
-  });
+
 
 }
 
+
+function getFilesizeInBytes(filename) {
+    var stats = fs.statSync(filename);
+    var fileSizeInMegabytes = stats.size / (1024*1024);
+    return fileSizeInMegabytes ;
+}
 
 async function getFolderSize(path) {
   return await new Promise((resolve, reject) => {
@@ -61,7 +76,6 @@ async function getFolderSize(path) {
         throw err
       }
       var result = (Math.round((bytes / (1024 * 1024)) * 10) / 10).toString() + 'mb';
-      console.log(result + ':result')
       resolve(result);
       return result;
     })

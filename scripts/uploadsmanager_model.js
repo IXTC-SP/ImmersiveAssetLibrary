@@ -70,15 +70,17 @@ const publishfile = async function(foldername, files){
     }
     console.log('move complete');
 
-    if (fs.existsSync('./uploads/tmp/gltf')){
-      if (!fs.existsSync(publishpath + '/gltf/')){
-      fs.mkdirSync(publishpath + '/gltf/');
+    try {
+      if (fs.existsSync('./uploads/tmp/model.gltf')) {
+        //file exists
+        var oldPath = './uploads/tmp/model.gltf'
+        var newPath = (publishpath + '/model.gltf');
+        fs.renameSync(oldPath, newPath);
+        console.log('add gltf folder');
+        filesizetotal += getFilesizeInBytes(newPath);
       }
-      var oldPath = './uploads/tmp/gltf/model.gltf'
-      var newPath = (publishpath + '/gltf/model.gltf');
-      fs.renameSync(oldPath, newPath);
-      console.log('add gltf folder');
-      filesizetotal += getFilesizeInBytes(newPath);
+    } catch(err) {
+      console.error(err)
     }
 
     //data required -> folderpath, totalfilesize, publish date,  assettype, ownedby, main asset type, main asset path, download count
