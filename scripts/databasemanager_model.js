@@ -17,7 +17,7 @@ class Attribute {
   textured = false;
 }
 
-const Save = async function(req,res){
+const Save = async function(req, res) {
   //create list with all files required to save
   let body = JSON.parse(req.body.data);
 
@@ -41,38 +41,43 @@ const Save = async function(req,res){
   var model = new modeldb({
     title: body.title,
     description: body.description,
-    uploadedby : "sample_user",
+    uploadedby: "sample_user",
     tags: body.tags,
     assetPath: assetpath,
     atrribute: attribute
   });
 
-  model.save(function(err){
-    if(err) return console.log(err);
+  model.save(function(err) {
+    if (err) return console.log(err);
   });
 
 }
 
 
-ss();
-async function ss (){
-  fastFolderSize('./uploads/model_capstan', (err, bytes) => {
-  if (err) {
-    throw err
-  }
-
-  console.log(bytes/(1024*1024))
-})
-  // const size = await getFolderSize.loose('./uploads/model_capstan');
-  // console.log(size);
+async function getFolderSize(path) {
+  return await new Promise((resolve, reject) => {
+    fastFolderSize(path, (err, bytes) => {
+      if (err) {
+        throw err
+      }
+      var result = (Math.round((bytes / (1024 * 1024)) * 10) / 10).toString() + 'mb';
+      console.log(result + ':result')
+      resolve(result);
+      return result;
+    })
+  });
 }
+
+
 
 
 module.exports.save = Save;
 
-const GetModel = (id,callback) =>{
-  modeldb.findOne({_id: id}, (err,result)=>{
-    if(err) console.log(err);
+const GetModel = (id, callback) => {
+  modeldb.findOne({
+    _id: id
+  }, (err, result) => {
+    if (err) console.log(err);
     else {
       callback(result);
     }
@@ -80,10 +85,10 @@ const GetModel = (id,callback) =>{
 }
 module.exports.GetModel = GetModel;
 
-const GetAllModels = (callback) =>{
+const GetAllModels = (callback) => {
   var arr = [];
-  modeldb.find({}, (err,result)=>{
-    if(err) console.log(err);
+  modeldb.find({}, (err, result) => {
+    if (err) console.log(err);
     else {
       arr = result;
     }
@@ -93,8 +98,10 @@ const GetAllModels = (callback) =>{
 }
 module.exports.GetAllModels = GetAllModels;
 
-function FindModelsByTags(tags){
-  modeldb.find({tags: tags}, (err,result)=> {
+function FindModelsByTags(tags) {
+  modeldb.find({
+    tags: tags
+  }, (err, result) => {
     console.log(result);
   });
 }
@@ -102,10 +109,14 @@ function FindModelsByTags(tags){
 const SearchBar = (searchterm, callback) => {
   var arr = [];
   console.log('start mongoose search');
-  modeldb.find({title: searchterm}).then(function(nameresult){
+  modeldb.find({
+    title: searchterm
+  }).then(function(nameresult) {
     arr.push(nameresult);
     console.log('finish search name', nameresult);
-    modeldb.find({tags: searchterm}).then(function(tagresult){
+    modeldb.find({
+      tags: searchterm
+    }).then(function(tagresult) {
       // arr.push(tagresult);
       arr = [...new Set(tagresult)]
       console.log('finish search tag', tagresult);
@@ -116,9 +127,11 @@ const SearchBar = (searchterm, callback) => {
 module.exports.SearchBar = SearchBar;
 
 
- const FindModelById = (id, callback) =>{
-  modeldb.findOne({ _id: id}, (err,result)=> {
-    if(err) console.log(err);
+const FindModelById = (id, callback) => {
+  modeldb.findOne({
+    _id: id
+  }, (err, result) => {
+    if (err) console.log(err);
     else {
       callback(result);
     }
@@ -128,19 +141,28 @@ module.exports.FindModelById = FindModelById;
 
 
 //FUNCTIONS ------- for development stage ---------
+function updateallsize() {
+  modeldb.find({}, function(err, docs) {
+    docs.forEach(async doc => {
+      let size = await getFolderSize(doc.assetPath.folderpath);
+      console.log(size);
+      await modeldb.updateOne(doc, { filesize: size });
+    });
+  });
+}
 
 //manually assign userid to modelDB
-const AssignUserToModel = function(userid, modelid){
+const AssignUserToModel = function(userid, modelid) {
 
 }
 
 //search through model db and check if model asset path is valid.
 // if Invalid, remove model from modelDB.
 // If model asset path is not found in modelDB, return them as a list
-const ReconstructModelDB = function(){
+const ReconstructModelDB = function() {
 
 }
 
-const SetupSampleDB = function(){
+const SetupSampleDB = function() {
 
 }

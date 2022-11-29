@@ -26,10 +26,10 @@ const modelSchema = new mongoose.Schema({
     },
     uploaddate: {
       type: Date,
-      default: Date.now
+      default: () => Date.now()
     },
     filesize: {
-      type: Number
+      type: String
     }
    },
 );
