@@ -53,7 +53,10 @@ const emailValidation = (emailInput) => {
 };
 const controller = {
   login: async (req, res) => {
-    return res.send("Route to homepage");
+    // return res.send("Route to homepage");
+    
+    res.redirect(`/assets`);
+    //res.redirect("/assets/req.params.userId");
   },
   logout: async (req, res) => {
     try {
@@ -384,6 +387,15 @@ const controller = {
       showDownloads: false,
       showEnrollment: false,
     });
+  },
+  getUser: async(input)=>{
+    let user = null
+    user = await userModel.findById({ _id: input });
+    if (!user) {
+      return res.status(401).send({ error: "no such user" });
+    }else{
+      return user._id
+    }
   },
   showEnrollment: async (req, res) => {
     let accounts = [];

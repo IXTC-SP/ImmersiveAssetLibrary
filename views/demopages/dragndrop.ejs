@@ -171,7 +171,7 @@
       <div class="col-2">
       </div>
       <div class="col-8">
-        <div class="p-3 drop-zone-border" id="drop-zone">
+        <div class="p-3 drop-zone-border drop-zone" id="drop-zone">
           <div class="collected-files">
           </div>
           <i id ="trash-icon" class="trash-btn fa-regular fa-trash-can" style="display: none"></i>
@@ -460,7 +460,7 @@
       if (files[i].name === filename) {
         files.splice(i, 1);
       }
-
+    }}
   function readFiles(files) {
     for(i = 0;i< files.length;i++){
       readFile(files[i]);
@@ -554,6 +554,8 @@
           readFile(file);
         }
       })
+    }
+  })
 
       function readFile(file) {
         let correctfiletype = false;
@@ -588,13 +590,13 @@
         console.log(fileObjs);
       }
 
-      let files = [];
-      dragArea.addEventListener('dragover', (event) => {
-        event.preventDefault();
-        dragText.textContent = "Release to Upload"
-      });
-    }
-  });
+      // let files = [];
+      // dragArea.addEventListener('dragover', (event) => {
+      //   event.preventDefault();
+      //   dragText.textContent = "Release to Upload"
+      // });
+  //   }
+  // });
 
 
   async function convertziptofile(file) {
@@ -620,51 +622,52 @@
     i.click();
   }
 
-  //updating page based on selected asset
-  triggerChangeWithAssetSelect();
+  // //updating page based on selected asset
+  // triggerChangeWithAssetSelect();
 
-  function triggerChangeWithAssetSelect() {
-    var e = document.getElementById("asset-select");
-    var value = e.value;
-    var options = [];
-    var supportformat = "";
-    switch (value) {
-      case "360image":
-        options = ["cubemap", "equirectangular"];
-        supportformat = "We support JPG, JPEG, PNG.";
-        enableModelInfo(false);
-        break;
-      case "script":
-        options = ["c#", "javascript", "python"];
-        supportformat = "We support c#, javascript, python.";
-        enableModelInfo(false);
-        break;
-      case "3dmodel":
-        supportformat = "We support obj, fbx, blend.";
-        enableModelInfo(true);
-        break;
-    }
-    clearFilesIfNewType(value);
-    createAssetFormat(options);
-    updateSupportFormatText(supportformat);
-  }
+  // function triggerChangeWithAssetSelect() {
+  //   var e = document.getElementById("asset-select");
+  //   var value = e.value;
+  //   var options = [];
+  //   var supportformat = "";
+  //   switch (value) {
+  //     case "360image":
+  //       options = ["cubemap", "equirectangular"];
+  //       supportformat = "We support JPG, JPEG, PNG.";
+  //       enableModelInfo(false);
+  //       break;
+  //     case "script":
+  //       options = ["c#", "javascript", "python"];
+  //       supportformat = "We support c#, javascript, python.";
+  //       enableModelInfo(false);
+  //       break;
+  //     case "3dmodel":
+  //       supportformat = "We support obj, fbx, blend.";
+  //       enableModelInfo(true);
+  //       break;
+  //   }
+  //   clearFilesIfNewType(value);
+  //   createAssetFormat(options);
+  //   updateSupportFormatText(supportformat);
+  // }
 
-  function createAssetFormat(opts) {
-    var x = document.getElementById("asset-format");
-    var y = document.getElementById("asset-format-id");
-    if (opts.length == 0) {
-      x.style.display = "none";
-      y.style.display = "none";
-    } else {
-      x.style.display = "inline-block"
-      y.style.display = "inline-block"
-      x.options.length = 0;
-      opts.forEach((o) => {
-        createoption(o, o, x);
-      });
-      if(x.value == "c#") currentformat = "csharp";
-      else currentformat = x.value;
-    }
+  // function createAssetFormat(opts) {
+  //   var x = document.getElementById("asset-format");
+  //   var y = document.getElementById("asset-format-id");
+  //   if (opts.length == 0) {
+  //     x.style.display = "none";
+  //     y.style.display = "none";
+  //   } else {
+  //     x.style.display = "inline-block"
+  //     y.style.display = "inline-block"
+  //     x.options.length = 0;
+  //     opts.forEach((o) => {
+  //       createoption(o, o, x);
+  //     });
+  //     if(x.value == "c#") currentformat = "csharp";
+  //     else currentformat = x.value;
+  //   }
+  // }
 
 
       async function convertziptofile(file) {

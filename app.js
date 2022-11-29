@@ -7,7 +7,7 @@ const app = express();
 // const multer = require('multer');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-
+const userModel = require("./models/user");
 const session = require('express-session');
 
 // const passportLocalMongoose = require('passport-local-mongoose');
@@ -92,15 +92,28 @@ app.listen(port, async () => {
 //     });
 //   });
 // });
-app.get('/asset/:modelid', function(req, res) {
+app.get('/asset/:modelid', function (req, res) {
+  var ObjectId = require('mongoose').Types.ObjectId; 
   modeldatabase.FindModelById(req.params.modelid, (result) => {
-    console.log("---->", result);
+    // console.log(result);
+    // console.log(result.owner);
+    // console.log(typeof(result.owner));
+    // user = await userModel.findOne({
+    //   _id: new ObjectId(result.owner.toString()),
+    // })
+    // console.log("---->", user);
+    // userModel.findOne( {_id : result.owner}, (owner)=>{
+    //   console.log(owner)
     res.render('view_asset', {
       data: result,
-      isLoginpage: true
+      isLoginpage: true,
+      user: req.session.passport.user,
+      // owner: owner.email
     });
+   })
+   
   });
-});
+
 
 
 
@@ -121,7 +134,9 @@ app.get("/assets", function(req, res) {
       res.render('assets', {
         data: {
           models: result
+       
         },
+        user: req.session.passport.user,
         isLoginpage: true
       });
     });
@@ -576,7 +591,7 @@ process.on('SIGINT', function() {
 });
 
 process.on('exit',() => {
-  tempupload.closeTmpFolder();
+  uploadsmanager_model.closeTmpFolder();
   console.log("process.exit() method is fired")
 });
 
@@ -594,30 +609,10 @@ app.post("/update/:modelid", function(req, res) {
 
 
 
-
-app.post("/downloadasset/:modelid", function(req, res) {
-  modeldatabase.GetModel(req.params.modelid, (result)=> {
-    var downloadpath = __dirname + result.paths.folderpath + "/model";
-    console.log(downloadpath);
-    filedownloader.CreateZipArchive(result.name, downloadpath, (tmppath)=> {
-      res.download(tmppath, req.param('file'), function(err){
-      //CHECK FOR ERROR
-      fs.unlink(tmppath, (err)=> {
-        if(err) console.log(err);
-        else {
-          console.log("complete fs delete tmp file");
-        }
-      });
-      });
-    });
-  });
-});
-
-
 //WORKING DOWNLOAD ASSET POST
 app.post("/downloadasset/:modelid", function(req, res) {
   modeldatabase.GetModel(req.params.modelid, (result)=> {
-    var downloadpath = __dirname + result.assetPath.folderpath.slice(1) + "/model";
+    var downloadpath = __dirname + result.assetPath.folderpath.slice(1);
     filedownloader.CreateZipArchive(result.title, downloadpath, (tmppath)=> {
       res.download(tmppath, req.param('file'), function(err){
       //CHECK FOR ERROR
@@ -631,7 +626,6 @@ app.post("/downloadasset/:modelid", function(req, res) {
     });
   });
 });
-
 
 // app.locals.use(function(req, res) {
 //   // Expose "error" and "message" to all views that are rendered.

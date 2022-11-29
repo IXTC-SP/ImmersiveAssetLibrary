@@ -38,13 +38,13 @@
               enable-pan
             ></model-viewer>
           </div>
-          <div class="carousel-item" data-bs-interval="false">
+          <!-- <div class="carousel-item" data-bs-interval="false">
             <img
               src=""
               class="thumbnail-img d-block w-100 carousel-image"
               alt="..."
             />
-          </div>
+          </div> -->
         </div>
         <!-- Slides -->
 
@@ -93,7 +93,7 @@
             </ul>
           </div>
         </section> -->
-        <div class="carousel-indicators" style="margin-bottom: -20px">
+        <div class="carousel-indicators" style="margin-bottom: -20px; margin-left: 0; right: auto;">
           <button
             type="button"
             data-mdb-target="#carouselExampleIndicators"
@@ -109,7 +109,7 @@
               class="img-fluid"
             />
           </button>
-          <button
+          <!-- <button
             type="button"
             data-mdb-target="#carouselExampleIndicators"
             data-mdb-slide-to="1"
@@ -121,7 +121,7 @@
               src=""
               class="img-fluid"
             />
-          </button>
+          </button> -->
         </div>
         <!-- Thumbnails -->
       </div>
@@ -141,28 +141,24 @@
       </div> -->
       <div>
         <div>
-          <h6><%= data.title %>/h6>
+          <h5><%= data.title %></h5>
         </div>
         <hr />
         <div>
           <h6>Description</h6>
-          <p>
-           <%= data.description %> 
-          </p>
+          <p><%= data.description %></p>
         </div>
 
         <div id="selected_tags_group" class="selected-tags">
           <i class="fa-solid fa-tag icon-size"></i>
+          <%data.tags.forEach(tag=>{%>
           <div
             class="tag border border-secondary rounded-2 px-1 text-muted bg-transparent"
           >
-            <span class="selected_tag_element"> dog</span>
+            <span class="selected_tag_element"><%= tag %></span>
           </div>
-          <div
-            class="tag border border-secondary rounded-2 px-1 text-muted bg-transparent"
-          >
-            <span class="selected_tag_element">cat</span>
-          </div>
+
+          <%})%>
         </div>
       </div>
     </div>
@@ -173,96 +169,119 @@
       <div class="border border-secondary rounded-2 p-2">
         <div class="d-flex justify-content-between align-items-center p-1">
           <p class="m-0">Uploaded By</p>
-          <p class="m-0"><%= data.uploadedby %></p>
+          
         </div>
         <hr class="m-0" />
         <div class="d-flex justify-content-between align-items-center p-1">
           <p class="m-0">Published</p>
-          <p class="m-0"><%= data.uploadedby %></p>
+          <p class="m-0"><%= data.uploaddate.toLocaleString().split(",")[0] %></p>
         </div>
         <hr class="m-0" />
         <div class="d-flex justify-content-between align-items-center p-1">
           <p class="m-0">Low Poly</p>
           <%if(data.atrribute.lowpoly){%>
-            <i class="fa-regular fa-circle-check"></i>
-            <%}else{%>
-                <i class="fa-regular fa-circle-xmark"></i>
-            <%}%>
-        
+          <i class="fa-regular fa-circle-check"></i>
+          <%}else{%>
+          <i class="fa-regular fa-circle-xmark"></i>
+          <%}%>
         </div>
         <hr class="m-0" />
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Low Poly</p>
+          <%if(data.atrribute.lowpoly){%>
+          <i class="fa-regular fa-circle-check"></i>
+          <%}else{%>
+          <i class="fa-regular fa-circle-xmark"></i>
+          <%}%>
+        </div>
+        <hr class="m-0" />
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Rigged</p>
+          <%if(data.atrribute.rigged){%>
+          <i class="fa-regular fa-circle-check"></i>
+          <%}else{%>
+          <i class="fa-regular fa-circle-xmark"></i>
+          <%}%>
+        </div>
+        <hr class="m-0" />
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Animated</p>
+          <%if(data.atrribute.animated){%>
+          <i class="fa-regular fa-circle-check"></i>
+          <%}else{%>
+          <i class="fa-regular fa-circle-xmark"></i>
+          <%}%>
+        </div>
+        <hr class="m-0" />
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Textured</p>
+          <%if(data.atrribute.textured){%>
+          <i class="fa-regular fa-circle-check"></i>
+          <%}else{%>
+          <i class="fa-regular fa-circle-xmark"></i>
+          <%}%>
+        </div>
+        <hr class="m-0" />
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Download Size</p>
+          <p class="m-0"><%= data.filesize %></p>
+        </div>
       </div>
       <div class="w-100">
-        <button type="button" class="w-100 btn theme-color btn-rounded">
-          Download
-        </button>
+        <form class="" action="/downloadasset/<%= data._id %>" method="post">
+            <!-- <input type="submit" id='submit-btn' value="download"> -->
+            <button type="submit" id='submit-btn' value="download" class="w-100 btn theme-color btn-rounded">
+                Download
+            </button>
+          </form>
       </div>
     </div>
   </div>
 </section>
 <script type="text/javascript">
-    var data = <%-JSON.stringify(data) %>;
-    console.log(data);
-    var modelviewer = document.getElementById("model-viewer");
-    var thumbnails = document.getElementsByClassName("thumbnail-img");
-    console.log(thumbnails)
-    console.log(modelviewer);
-      function getTextureFromFilesArray(typename) {
-        var result = "";
-        for (i = 0; i < files.length; i++) {
-          if (files[i].split("_")[0] == typename) {
-            result = files[i];
-          }
-        }
-        return result;
-      }
+  var data = <%-JSON.stringify(data) %>;
+  var files = [];
+  console.log(data);
+  var modelviewer = document.getElementById("model-viewer");
+  var thumbnails = document.getElementsByClassName("thumbnail-img");
+  console.log(thumbnails);
+  console.log(modelviewer);
+  getEJScontent(data);
 
-    getEJScontent(data);
-
-    function getEJScontent(data) {
-        Array.from(thumbnails).forEach(element => {
-            element.src = "."+data.assetPath.folderpath + "/" + data.assetPath.thumbnail
-        });
-
-      console.log(modelviewer.src)
-       modelviewer.src =
-       "."+ data.assetPath.folderpath + "/" + data.assetPath.gltfmodelpath;
-    }
-
-    // document.addEventListener("DOMContentLoaded", function () {
-    //   var splide = new Splide(".splide", {
-    //     type: "fade",
-    //     perPage: 3,
-    //     perMove: 1,
-    //     pagination: false,
-    //     gap: 1,
-    //     autoWidth: true,
-    //   });
-
-    //   splide.mount();
-    // });
-
-    modelviewer.addEventListener("load", (data) => {
-      const material = modelviewer.model.materials[0];
-      const createAndApplyTexture = async (channel) => {
-        // Applies the new texture to the specified channel.
-         var diffusepath = getTextureFromFilesArray("diffuse");
-        if (diffusepath != "") {
-          var diffuse = await modelviewer.createTexture(
-            "." + data.assetPath.folderpath + "/" + data.assetPath.diffuse
-          );
-          material.pbrMetallicRoughness["baseColorTexture"].setTexture(diffuse);
-        }
-        var emissivepath = getTextureFromFilesArray("emissive");
-        if (emissivepath != "") {
-          var emission = await modelviewer.createTexture(
-            "." + data.assetPath.folderpath + "/" + data.assetPath.emission
-          );
-          material["emissiveTexture"].setTexture(emission);
-        }
-      };
-      createAndApplyTexture("baseColorTexture");
+  function getEJScontent(data) {
+    Array.from(thumbnails).forEach((element) => {
+      element.src =
+        "." + data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
     });
+    console.log(data.assetPath.gltfmodelpath);
+    modelviewer.src = data.assetPath.gltfmodelpath;
+  }
+
+  modelviewer.addEventListener("load", () => {
+    const material = modelviewer.model.materials[0];
+    const createAndApplyTexture = async (channel) => {
+      // Applies the new texture to the specified channel.
+      var diffusepath = data.assetPath.folderpath.diffuse;
+      console.log("---->", data.assetPath.folderpath);
+      console.log(
+        "." + data.assetPath.folderpath + "/" + data.assetPath.diffuse
+      );
+      if (diffusepath != "") {
+        var diffuse = await modelviewer.createTexture(
+          "." + data.assetPath.folderpath + "/" + data.assetPath.diffuse
+        );
+        material.pbrMetallicRoughness["baseColorTexture"].setTexture(diffuse);
+      }
+      var emissivepath = data.assetPath.folderpath.emission;
+      if (emissivepath != "") {
+        var emission = await modelviewer.createTexture(
+          "." + data.assetPath.folderpath + "/" + data.assetPath.emission
+        );
+        material["emissiveTexture"].setTexture(emission);
+      }
+    };
+    createAndApplyTexture("baseColorTexture");
+  });
 </script>
 
 <%- include('./partials/footer') %>
