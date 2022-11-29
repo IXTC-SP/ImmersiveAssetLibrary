@@ -386,6 +386,7 @@ app.get('/dragndrop', function(req, res) {
   });
 });
 
+
 // ----- model upload to publish ------ START
 const tempupload = require('./scripts/uploadsmanager');
 var tmpContent = [];
