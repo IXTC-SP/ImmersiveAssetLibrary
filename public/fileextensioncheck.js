@@ -10,6 +10,7 @@ switch (ext.toLowerCase()) {
   case 'jpg':
   case 'png':
   case 'jpeg':
+  case 'tif':
     //etc
     return true;
 }
@@ -33,6 +34,7 @@ switch (ext.toLowerCase()) {
   case 'obj':
   case 'gltf':
   case 'glb':
+  case 'blend':
     //etc
     return true;
 }
@@ -49,4 +51,22 @@ switch (ext.toLowerCase()) {
     return true;
 }
 return false;
+}
+
+function isPython(filename){
+  var ext = getExtension(filename);
+  if(ext.toLowerCase() == 'py') return true;
+  else return false;
+}
+
+function isJavascript(filename){
+  var ext = getExtension(filename);
+  if(ext.toLowerCase() == 'js') return true;
+  else return false;
+}
+
+function isCsharp(filename){
+  var ext = getExtension(filename);
+  if(ext.toLowerCase() == 'cs') return true;
+  else return false;
 }
