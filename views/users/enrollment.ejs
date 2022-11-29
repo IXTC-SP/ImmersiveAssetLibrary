@@ -1,13 +1,4 @@
 <!-- Add button -->
-<%if(isSuccess.alert){%>
-<div class="alert alert-success d-flex align-items-center" role="alert">
-  <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Success:">
-    <use xlink:href="#check-circle-fill" />
-  </svg>
-  <div><%= isSuccess.message %></div>
-</div>
-<%}%>
-
 <form action="/<%= user._id %>/dashboard/enrollment" method="post">
   <div class="md-form d-flex justify-content-between align-items-end">
     <div class="d-flex gap-4">

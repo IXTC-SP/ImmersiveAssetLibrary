@@ -1,15 +1,20 @@
 <%- include('../partials/header') %>
-<script type="text/javascript" src="jszip.min.js"></script>
+  <script type="text/javascript" src="jszip.min.js"></script>
 
-<body>
+
+  <section class="w-75 d-flex flex-column m-auto mt-5"></section>
   <style>
     .drop-zone {
       border: 2px dotted gray;
       width: auto;
       height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    .horizontal-middle {
+    .text-center {
       text-align: center;
     }
 
@@ -20,6 +25,8 @@
 
     .upload-btn-group {
       padding-top: 2em;
+      display: flex;
+      justify-content: space-between;
     }
 
     .page-btn {
@@ -27,8 +34,8 @@
       background-color: white;
       /* border-radius: 30%; */
       color: black;
-      padding: 14px 48px;
-      margin: auto;
+      /* padding: 14px 48px;
+      margin: auto; */
     }
 
 
@@ -62,7 +69,7 @@
 
     /* The Modal (background) */
     .modal {
-      display: block;
+      display: none;
       /* Hidden by default */
       position: fixed;
       /* Stay in place */
@@ -90,7 +97,9 @@
       margin: auto;
       padding: 20px;
       border: 1px solid #888;
-      width: 80%;
+      width: 400px;
+      align-items: center;
+      display: flex;
     }
 
     /* The Close Button */
@@ -99,6 +108,7 @@
       float: right;
       font-size: 28px;
       font-weight: bold;
+      align-self: flex-end;
     }
 
     .close:hover,
@@ -107,44 +117,103 @@
       text-decoration: none;
       cursor: pointer;
     }
+
+    .drop-icon {
+      font-size: 60px;
+      color: #0092FF;
+    }
+
+    .drag-text {
+      font-size: 28px;
+      font-weight: bold
+    }
+
+    .browse-btn {
+      color: #0092FF;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .support-types-text {
+      font-size: 14px;
+      font-weight: 300
+    }
+    .title-upload{
+      font-weight: 300
+    }
+
+    .btn-size {
+      width: 100px;
+    }
+
+    .drop-zone-border {
+      border: 0px;
+      text-align: center;
+      background: linear-gradient(to right,#2b7a9e 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(#2b7a9e 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(to right, #2b7a9e 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(#2b7a9e 50%, rgba(255, 255, 255, 0) 0%);
+      background-position: top, right, bottom, left;
+      background-repeat: repeat-x, repeat-y;
+      background-size: 30px 2px, 2px 30px;
+      width: auto;
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
   </style>
 
-  <div class="horizontal-middle">
+  <!-- <div class="text-center">
     <h2>Upload a new asset</h2>
-  </div>
-  <div class="container">
-    <div class="row">
-      <div class="col">
+  </div> -->
+  <div class="card-body w-100 p-0">
+    <h2 class="pb-2 text-center title-upload">Upload a new asset</h2>
+    <div class="row ">
+      <div class="col-2">
       </div>
-      <div class="col-9">
-        <div class="drop-zone">
+      <div class="col-8">
+        <div class="p-3 drop-zone-border" id="drop-zone">
           <div class="collected-files">
           </div>
-          <div class="horizontal-middle">
-            <span class="drag-text">Drag and Drop </span><br>
-            <span class="">or <span class="browse-btn" id="browse-btn" onclick="browse()">Browse</span></span>
+          <i id ="trash-icon" class="trash-btn fa-regular fa-trash-can" style="display: none"></i>
+          <div class="text-center mb-2 d-flex flex-column">
+            <i class="fa-solid fa-arrow-up-from-bracket drop-icon" ></i>
+            <span class="drag-text">Drag and Drop <span class="browse-btn" id="browse-btn" onclick="browse()">or
+                Browse</span></span><br>
             <input type="file" id="browse-input" name="file" value="" style="display:none;">
           </div>
-          <p class="horizontal-middle" id="format-support-info">We support ....</p>
-          <p class="horizontal-middle" id="format-3dmodel-info">You can also upload a ZIP folder containing only your textures, materials, and mesh.</p>
-          <p class="horizontal-middle">Additional files can be added in the next step</p>
+          <div>
+            <p class="text-center mb-0 " id="format-support-info"><span class="support-types-text">We support </span><span id="span-format"></span>
+            </p>
+            <p class="text-center mb-0 support-types-text" id="format-3dmodel-info">You can also upload a
+              <strong>ZIP</strong> folder containing only your textures, materials, and mesh.</p>
+            <p class="text-center mb-0 support-types-text">Additional files can be added in the next step</p>
+          </div>
         </div>
         <div class="upload-btn-group">
-          <button class="cancel-page-btn page-btn left" type="button" name="button">Cancel</button>
-          <button class="upload-page-btn page-btn right" type="button" name="button">Next</button>
+          <!-- <button type="submit" class="btn theme-color btn-rounded">
+            <i class="fa fa-plus me-2" aria-hidden="true"></i>Cancel
+          </button>
+
+          <button type="submit" class="btn theme-color btn-rounded">
+            <i class="fa fa-plus me-2" aria-hidden="true"></i>Cancel
+          </button> -->
+          <button class="btn btn-size btn-outline-info rounded-8 cancel-page-btn" type="button"
+            name="button">Cancel</button>
+          <button class="btn btn-size theme-color btn-rounded upload-page-btn" type="button" name="button"> Next
+          </button>
         </div>
 
       </div>
-      <div class="col">
-        <label for="asset-select">Select Asset Type:</label>
-        <select name="assets" id="asset-select" onchange="triggerChangeWithAssetSelect()">
+      <div class="col-2">
+        <label for="asset-select" class="support-types-text">Select Asset Type:</label>
+        <select class="admin-input rounded-2 p-1 w-100"name="assets" id="asset-select" onchange="triggerChangeWithAssetSelect()">
           <option value="3dmodel">3D Model</option>
           <option value="script">Script</option>
           <option value="360image">360 Image</option>
         </select>
 
-        <label id="asset-format-id" for="asset-format">Select Format:</label>
-        <select name="format" id="asset-format" onchange="onChangeFormatType(this)">
+        <label class= " mt-2"id="asset-format-id" for="asset-format">Select Format:</label>
+        <select class="admin-input rounded-2 p-1 w-100"name="format" id="asset-format" onchange="onChangeFormatType(this)">
         </select>
       </div>
     </div>
@@ -156,7 +225,7 @@
     <div class="modal-content">
       <span class="close" onclick="closeModalContent()">&times;</span>
       <div class="cubemap-content">
-        <p>Assign Texture : </p>
+        <p>Assign Texture :</p>
         <div class="container">
           <div class="row" style="height: 100px;">
             <div class="col-3 texture-assign-box">
@@ -196,28 +265,30 @@
           </div>
         </div>
       </div>
-      <div class="model-content">
-        <p>Assign Texture : </p>
+      <div class="model-content d-flex flex-column mb-3 w-100">
+        <p><strong>Assign Texture : </strong></p>
         <label for="diffuse-texture-selection">Diffuse</label>
-        <select name="diffuse-texture-selection" class="model-texture-assign" id="texture-selection">
+        <select name="diffuse-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
         </select>
         <label for="normal-texture-selection">Normal</label>
-        <select name="normal-texture-selection" class="model-texture-assign" id="texture-selection">
+        <select name="normal-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
         </select>
         <label for="occlusion-texture-selection">Occlusion</label>
-        <select name="occlusion-texture-selection" class="model-texture-assign" id="texture-selection">
+        <select name="occlusion-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
         </select>
         <label for="height-texture-selection">Height</label>
-        <select name="height-texture-selection" class="model-texture-assign" id="texture-selection">
+        <select name="height-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
         </select>
         <label for="emissive-texture-selection">Emissive</label>
-        <select name="emissive-texture-selection" class="model-texture-assign" id="texture-selection">
+        <select name="emissive-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
         </select>
         <label for="thumbnail">Thumbnail</label>
-        <select name="thumbnail" class="model-texture-assign" id="texture-selection">
+        <select name="thumbnail" class="model-texture-assign mb-1" id="texture-selection">
         </select>
       </div>
-      <button class="page-btn left" type="button" name="button" onclick="createuploadcontent()">Next</button>
+      <!-- <button class="page-btn left" type="button" name="button" onclick="createuploadcontent()">Next</button> -->
+      <button class="btn btn-size theme-color btn-rounded upload-page-btn" type="button" onclick="createuploadcontent()" name="button"> Next
+      </button>
 
       <!-- <form class="upload-form" id="upload-form" action="/uploadcontent" method="post" enctype="multipart/form-data" onkeydown="return event.key != 'Enter';">
         <div class="upload-btn-group">
@@ -256,16 +327,10 @@
       if(f.file.name == e.target.value){
         f.filename = filename;
         return;
-      }
-    })
-  }
+      }})
+      var fileObjs = [];
 
 
-  function createuploadcontent() {
-    const formData = new FormData();
-    const request = new XMLHttpRequest();
-    var nextURL = "";
-    var postURL = "";
 
     switch (currenttype){
       case "3dmodel":
@@ -395,8 +460,6 @@
       if (files[i].name === filename) {
         files.splice(i, 1);
       }
-    }
-  }
 
   function readFiles(files) {
     for(i = 0;i< files.length;i++){
@@ -490,6 +553,45 @@
         } else {
           readFile(file);
         }
+      })
+
+      function readFile(file) {
+        let correctfiletype = false;
+        switch (currenttype) {
+          case "3dmodel":
+            correctfiletype = isObj(file.name) || isImage(file.name);
+            break;
+          case "script":
+            correctfiletype = isScript(file.name);
+            break;
+          case "image":
+            correctfiletype = isImage(file.name);
+            break;
+        }
+        if (correctfiletype) {
+          createFileCard(file.name);
+          files.push(file);
+        }
+      }
+
+      function setupFileObjs() {
+        fileObjs = [];
+        files.forEach((file, i) => {
+          var f;
+          if (isObj(file.name)) {
+            f = new fileObj("model", "model", file)
+          } else {
+            f = new fileObj("image", "other", file)
+          }
+          fileObjs.push(f);
+        });
+        console.log(fileObjs);
+      }
+
+      let files = [];
+      dragArea.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dragText.textContent = "Release to Upload"
       });
     }
   });
@@ -564,93 +666,164 @@
       else currentformat = x.value;
     }
 
-  }
 
-  function updateSupportFormatText(t) {
-    var i = document.getElementById("format-support-info");
-    i.innerHTML = t;
-  }
-
-  function enableModelInfo(b) {
-    var i = document.getElementById("format-3dmodel-info");
-    if (b) {
-      i.style.display = "inline-block";
-    } else {
-      i.style.display = "none";
-    }
-  }
-
-  function onChangeFormatType(e) {
-    clearAllFileContent();
-    currentformat = e.value;
-  }
-
-  //modal content selection
-  const modelmodalcontent = document.querySelector(".model-content");
-  const cubemapmodalcontent = document.querySelector(".cubemap-content")
-  const cubemaptextureassignselect = document.querySelectorAll('.cubemap-texture-assign');
-  const modeltextureassignselect = document.querySelectorAll('.model-texture-assign');
-  const modalcontent = document.querySelector(".modal")
-  modalcontent.style = "display:none;"
-  modelmodalcontent.style = "display:none;"
-  cubemapmodalcontent.style = "display:none;"
-
-  function setupTextureAssignOptions(selects) {
-
-    let textureassignarray = [];
-    files.forEach((item, i) => {
-      if (isImage(item.name)) {
-        textureassignarray.push(item);
+      async function convertziptofile(file) {
+        var collectedfiles = [];
+        var jszip = new JSZip();
+        var zip = await jszip.loadAsync(file);
+        var foldername = '';
+        var zipfiles = Object.keys(zip.files);
+        for (var i in zipfiles) {
+          var zipfile = zip.files[zipfiles[i]];
+          var fileData = await zipfile.async('blob');
+          var filename = zipfiles[i].replace(foldername, "");
+          var file = new File([fileData], filename);
+          collectedfiles.push(file);
+        }
+        console.log("complete");
+        readFiles(collectedfiles);
       }
-    });
-    let currenttextureassignselect = selects;
 
-    if (selects[0].options.length - 1 == textureassignarray.length) return;
-    for (var i = 0; i < selects.length; i++) {
-      selects[i].onchange = function(e) {
-        allowOnlySingleTextureAssigning(selects,e);
-        assigntexture(e);
+      //browse button
+      function browse() {
+        var i = document.getElementById("browse-input");
+        i.click();
       }
-      createoption("none", "none", selects[i]);
-      for (var j = 0; j < textureassignarray.length; j++) {
-        createoption(textureassignarray[j].name, textureassignarray[j].name, selects[i]);
+
+      //updating page based on selected asset
+      triggerChangeWithAssetSelect();
+
+      function triggerChangeWithAssetSelect() {
+        console.log("update")
+        var e = document.getElementById("asset-select");
+        var value = e.value;
+        var options = [];
+        var supportformat = "";
+        switch (value) {
+          case "360image":
+            options = ["cubemap", "equirectangular"];
+            supportformat = "JPG, JPEG, PNG.";
+            enableModelInfo(true);
+            break;
+          case "script":
+            options = ["c#", "javascript", "python"];
+            supportformat = "c#, javascript, python.";
+            enableModelInfo(true);
+            break;
+          case "3dmodel":
+            supportformat = "obj, fbx.";
+            enableModelInfo(true);
+            break;
+        }
+        clearFilesIfNewType(value);
+        createAssetFormat(options);
+        updateSupportFormatText(supportformat);
       }
-    }
-  }
 
-  function allowOnlySingleTextureAssigning(selects,e) {
-    for (var i = 0; i < selects.length; i++) {
-      if (selects[i] != e.target && selects[i].value == e.target.value) {
-        selects[i].value = "none";
+      function createAssetFormat(opts) {
+        var x = document.getElementById("asset-format");
+        var y = document.getElementById("asset-format-id");
+        if (opts.length == 0) {
+          x.style.display = "none";
+          y.style.display = "none";
+        } else {
+          x.style.display = "inline-block"
+          y.style.display = "inline-block"
+          x.options.length = 0;
+          opts.forEach((o) => {
+            createoption(o, o, x);
+          });
+          currentformat = x.value;
+        }
+
       }
-    }
-  }
 
-  function closeModalContent() {
-    modalcontent.style = "display:none;"
-    modelmodalcontent.style = "display:none;"
-    cubemapmodalcontent.style = "display:none;"
-  }
+      function updateSupportFormatText(t) {
+        var i = document.getElementById("format-support-info");
+        var spanText = document.getElementById("span-format");
+        spanText.innerText = t;
+      }
 
-  function changeModalContent(condition) {
-    switch (condition) {
-      case "model":
-        //show model content
-        modalcontent.style = "display:block;"
-        modelmodalcontent.style = "display:block;"
-        cubemapmodalcontent.style = "display:none;"
-        setupTextureAssignOptions(modeltextureassignselect);
-        break;
-      case "cubemap":
-        //show cubemap content
-        modalcontent.style = "display:block;"
+      function enableModelInfo(b) {
+        var i = document.getElementById("format-3dmodel-info");
+        if (b) {
+          i.style.display = "inline-block";
+        } else {
+          i.style.display = "none";
+        }
+      }
+
+      function onChangeFormatType(e) {
+        clearAllFileContent();
+        currentformat = e.value;
+      }
+
+      //modal content selection
+      const modelmodalcontent = document.querySelector(".model-content");
+      const cubemapmodalcontent = document.querySelector(".cubemap-content")
+      const cubemaptextureassignselect = document.querySelectorAll('.cubemap-texture-assign');
+      const modeltextureassignselect = document.querySelectorAll('.model-texture-assign');
+      const modalcontent = document.querySelector(".modal")
+      modalcontent.style = "display:none;"
+      modelmodalcontent.style = "display:none;"
+      cubemapmodalcontent.style = "display:none;"
+
+      function setupTextureAssignOptions(selects) {
+
+        let textureassignarray = [];
+        files.forEach((item, i) => {
+          if (isImage(item.name)) {
+            textureassignarray.push(item);
+          }
+        });
+        let currenttextureassignselect = selects;
+
+        if (selects[0].options.length - 1 == textureassignarray.length) return;
+        for (var i = 0; i < selects.length; i++) {
+          selects[i].onchange = function (e) {
+            allowOnlySingleTextureAssigning(selects, e);
+            assigntexture(e);
+          }
+          createoption("none", "none", selects[i]);
+          for (var j = 0; j < textureassignarray.length; j++) {
+            createoption(textureassignarray[j].name, textureassignarray[j].name, selects[i]);
+          }
+        }
+      }
+
+      function allowOnlySingleTextureAssigning(selects, e) {
+        for (var i = 0; i < selects.length; i++) {
+          if (selects[i] != e.target && selects[i].value == e.target.value) {
+            selects[i].value = "none";
+          }
+        }
+      }
+
+      function closeModalContent() {
+        modalcontent.style = "display:none;"
         modelmodalcontent.style = "display:none;"
-        cubemapmodalcontent.style = "display:block;"
-        setupTextureAssignOptions(cubemaptextureassignselect);
-        break;
-    }
-  }
-</script>
+        cubemapmodalcontent.style = "display:none;"
+      }
+
+      function changeModalContent(condition) {
+        switch (condition) {
+          case "model":
+            //show model content
+            modalcontent.style = "display:block;"
+            modelmodalcontent.style = "display:block;"
+            cubemapmodalcontent.style = "display:none;"
+            setupTextureAssignOptions(modeltextureassignselect);
+            break;
+          case "cubemap":
+            //show cubemap content
+            modalcontent.style = "display:block;"
+            modelmodalcontent.style = "display:none;"
+            cubemapmodalcontent.style = "display:block;"
+            setupTextureAssignOptions(cubemaptextureassignselect);
+            break;
+        }
+      }
+    </script>
 
 
-<%- include('../partials/footer') %>
+    <%- include('../partials/footer') %>

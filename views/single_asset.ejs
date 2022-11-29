@@ -10,7 +10,11 @@
     <br>
     <hr class="solid">
     <br>
-    <model-viewer id="model-viewer" alt="<%= model.description %>" src="<%= model.paths.modelviewerfilepath %>" ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
+   
+    <model-viewer id="model-viewer" alt="<%= model.description %>" src='../uploads/shiba/gltf/scene.gltf' ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
+    <!-- <form class="" action="/downloadasset/<%= model._id %>" method="post">
+      <input type="submit" id='submit-btn' value="download">
+    </form> -->
     <form class="" action="/downloadasset/<%= model._id %>" method="post">
       <input type="submit" id='submit-btn' value="download">
     </form>
@@ -18,20 +22,6 @@
     <script type="module">
     const modelViewerTexture = document.querySelector("model-viewer");
 
-    modelViewerTexture.addEventListener("load", () => {
-
-      const material = modelViewerTexture.model.materials[0];
-      console.log(material);
-      const createAndApplyTexture = async (channel) => {
-        // Applies the new texture to the specified channel.
-        var diffuse = await modelViewerTexture.createTexture('<%= model.paths.diffuse %>');
-        material.pbrMetallicRoughness['baseColorTexture'].setTexture(diffuse);
-
-        var emission = await modelViewerTexture.createTexture('<%= model.paths.emission %>');
-        material['emissiveTexture'].setTexture(emission);
-      }
-      createAndApplyTexture('baseColorTexture');
-    });
 
     </script>
 

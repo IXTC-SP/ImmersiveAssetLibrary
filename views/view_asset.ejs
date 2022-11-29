@@ -1,0 +1,268 @@
+<%- include('./partials/header') %>
+
+<!-- <link rel="stylesheet" href="./public/edit-page.css"> -->
+<script
+  type="module"
+  src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+></script>
+<script type="text/javascript" src="/datamuse.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.3/dist/js/splide.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.3/dist/css/splide.min.css"
+/>
+<section class="d-flex flex-column m-auto mt-5">
+  <div class="row justify-content-center">
+    <div class="col-7 d-flex flex-column flex-wrap">
+      <!-- Carousel wrapper -->
+      <div
+        id="carouselExampleIndicators"
+        class="carousel slide carousel-model-view"
+        data-bs-interval="false"
+      >
+        <!-- Slides -->
+        <div
+          class="carousel-inner shadow-1-strong rounded-3 carousel-model-view"
+        >
+          <div class="carousel-item active" data-bs-interval="false">
+            <model-viewer
+              class="model-viewer-dimensions"
+              id="model-viewer"
+              alt=""
+              src=""
+              ar
+              ar-modes="webxr scene-viewer quick-look"
+              seamless-poster
+              shadow-intensity="1"
+              camera-controls
+              enable-pan
+            ></model-viewer>
+          </div>
+          <div class="carousel-item" data-bs-interval="false">
+            <img
+              src=""
+              class="thumbnail-img d-block w-100 carousel-image"
+              alt="..."
+            />
+          </div>
+        </div>
+        <!-- Slides -->
+
+        <!-- Controls -->
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-mdb-target="#carouselExampleIndicators"
+          data-mdb-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-mdb-target="#carouselExampleIndicators"
+          data-mdb-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+        <!-- Controls -->
+
+        <!-- Thumbnails -->
+        <!-- <section class="splide w-75" aria-labelledby="carousel-heading">
+          <div class="splide__track">
+            <ul class="splide__list">
+              <li class="splide__slide">
+                <button
+                  type="button"
+                  data-mdb-target="#carouselExampleIndicators"
+                  data-mdb-slide-to="2"
+                  class="active"
+                  aria-current="true"
+                  aria-label="Slide 2"
+                  style="width: 100px"
+                >
+                  <img
+                    class="d-block w-100 shadow-1-strong rounded carousel-size"
+                    src="../uploads/shiba/thumbnail.png"
+                    class="img-fluid"
+                  />
+                </button>
+              </li>
+            </ul>
+          </div>
+        </section> -->
+        <div class="carousel-indicators" style="margin-bottom: -20px">
+          <button
+            type="button"
+            data-mdb-target="#carouselExampleIndicators"
+            data-mdb-slide-to="0"
+            class="active"
+            aria-current="true"
+            aria-label="Slide 1"
+            style="width: 100px"
+          >
+            <img
+              class="thumbnail-img d-block w-100 shadow-1-strong rounded carousel-size"
+              src="../uploads/shiba/thumbnail.png"
+              class="img-fluid"
+            />
+          </button>
+          <button
+            type="button"
+            data-mdb-target="#carouselExampleIndicators"
+            data-mdb-slide-to="1"
+            aria-label="Slide 2"
+            style="width: 100px"
+          >
+            <img
+              class="thumbnail-img d-block w-100 shadow-1-strong rounded carousel-size"
+              src=""
+              class="img-fluid"
+            />
+          </button>
+        </div>
+        <!-- Thumbnails -->
+      </div>
+      <!-- <div>
+        <model-viewer
+          class="model-viewer-dimensions border border-secondary rounded-4"
+          id="model-viewer"
+          alt=""
+          src="../uploads/shiba/gltf/scene.gltf"
+          ar
+          ar-modes="webxr scene-viewer quick-look"
+          seamless-poster
+          shadow-intensity="1"
+          camera-controls
+          enable-pan
+        ></model-viewer>
+      </div> -->
+      <div>
+        <div>
+          <h6><%= data.title %>/h6>
+        </div>
+        <hr />
+        <div>
+          <h6>Description</h6>
+          <p>
+           <%= data.description %> 
+          </p>
+        </div>
+
+        <div id="selected_tags_group" class="selected-tags">
+          <i class="fa-solid fa-tag icon-size"></i>
+          <div
+            class="tag border border-secondary rounded-2 px-1 text-muted bg-transparent"
+          >
+            <span class="selected_tag_element"> dog</span>
+          </div>
+          <div
+            class="tag border border-secondary rounded-2 px-1 text-muted bg-transparent"
+          >
+            <span class="selected_tag_element">cat</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-3 d-flex flew-wrap gap-4 flex-column">
+      <div>
+        <h6>3D Model Details</h6>
+      </div>
+      <div class="border border-secondary rounded-2 p-2">
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Uploaded By</p>
+          <p class="m-0"><%= data.uploadedby %></p>
+        </div>
+        <hr class="m-0" />
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Published</p>
+          <p class="m-0"><%= data.uploadedby %></p>
+        </div>
+        <hr class="m-0" />
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Low Poly</p>
+          <%if(data.atrribute.lowpoly){%>
+            <i class="fa-regular fa-circle-check"></i>
+            <%}else{%>
+                <i class="fa-regular fa-circle-xmark"></i>
+            <%}%>
+        
+        </div>
+        <hr class="m-0" />
+      </div>
+      <div class="w-100">
+        <button type="button" class="w-100 btn theme-color btn-rounded">
+          Download
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<script type="text/javascript">
+    var data = <%-JSON.stringify(data) %>;
+    console.log(data);
+    var modelviewer = document.getElementById("model-viewer");
+    var thumbnails = document.getElementsByClassName("thumbnail-img");
+    console.log(thumbnails)
+    console.log(modelviewer);
+      function getTextureFromFilesArray(typename) {
+        var result = "";
+        for (i = 0; i < files.length; i++) {
+          if (files[i].split("_")[0] == typename) {
+            result = files[i];
+          }
+        }
+        return result;
+      }
+
+    getEJScontent(data);
+
+    function getEJScontent(data) {
+        Array.from(thumbnails).forEach(element => {
+            element.src = "."+data.assetPath.folderpath + "/" + data.assetPath.thumbnail
+        });
+
+      console.log(modelviewer.src)
+       modelviewer.src =
+       "."+ data.assetPath.folderpath + "/" + data.assetPath.gltfmodelpath;
+    }
+
+    // document.addEventListener("DOMContentLoaded", function () {
+    //   var splide = new Splide(".splide", {
+    //     type: "fade",
+    //     perPage: 3,
+    //     perMove: 1,
+    //     pagination: false,
+    //     gap: 1,
+    //     autoWidth: true,
+    //   });
+
+    //   splide.mount();
+    // });
+
+    modelviewer.addEventListener("load", (data) => {
+      const material = modelviewer.model.materials[0];
+      const createAndApplyTexture = async (channel) => {
+        // Applies the new texture to the specified channel.
+         var diffusepath = getTextureFromFilesArray("diffuse");
+        if (diffusepath != "") {
+          var diffuse = await modelviewer.createTexture(
+            "." + data.assetPath.folderpath + "/" + data.assetPath.diffuse
+          );
+          material.pbrMetallicRoughness["baseColorTexture"].setTexture(diffuse);
+        }
+        var emissivepath = getTextureFromFilesArray("emissive");
+        if (emissivepath != "") {
+          var emission = await modelviewer.createTexture(
+            "." + data.assetPath.folderpath + "/" + data.assetPath.emission
+          );
+          material["emissiveTexture"].setTexture(emission);
+        }
+      };
+      createAndApplyTexture("baseColorTexture");
+    });
+</script>
+
+<%- include('./partials/footer') %>
