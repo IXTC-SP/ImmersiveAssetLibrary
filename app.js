@@ -83,6 +83,18 @@ app.listen(port, async () => {
   job.start()
 })
 
+app.post('/asset/:modelid', function(req, res) {
+  modeldatabase.FindModelById(req.params.modelid, (result) => {
+    console.log(result);
+    res.render('single_asset', {
+      model: result,
+      isLoginpage: true
+    });
+  });
+});
+
+
+
 
 
 
@@ -227,7 +239,6 @@ app.get('/editpage/model', function(req, res) {
       isLoginpage: true
     });
   }
-
 });
 
 app.post('/save3dmodel', uploadsmanager_model.upload3D, function(req,res){
@@ -358,7 +369,165 @@ app.get('/view/script', function(req, res) {
   });
 });
 
-app.post('/savescript', uploadmanager_script.uploadscript, function(req,res){
+app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile', maxCount: 1}, {name: 'diffuse', maxCount: 1},{name: 'metallicroughness', maxCount: 1},{name: 'normal', maxCount: 1},
+{name: 'occlusion', maxCount: 1},{name: 'emission', maxCount: 1}]), function(req, res) {
+  console.log(req.body);
+  var modelfolderpath = req.files.objectfile[0].destination.split("/model")[0];
+  gltfmodel.Create(req.files.objectfile, function(gltfresult){
+    console.log(gltfresult);
+      res.send("done");
+  })
+});
+
+//WORKING (UPLOAD PAGE)
+app.get('/dragndrop', function(req, res) {
+  res.render('demopages/dragndrop', {
+    isLoginpage: true
+  });
+});
+
+// ----- model upload to publish ------ START
+const tempupload = require('./scripts/uploadsmanager');
+var tmpContent = [];
+app.post("/uploadtmp3dmodel", tempupload.uploadtmp3D, tempupload.;
+
+app.get('/editpage/model', function(req, res) {
+  if(tmpContent){
+    let images = tmpContent.image.map(a => a.originalname);
+    console.log(images);
+    res.render('demopages/editpage-model', {
+      content : {
+        modelviewerpath : tmpContent.modelviewerpath,
+        modelfile: tmpContent.model[0].originalname,
+        thumbnail: typeof(tmpContent.thumbnail) == 'undefined' ? '' : tmpContent.thumbnail[0].originalname,
+        imagefiles: images
+      },
+      isLoginpage: true
+    });
+  }
+
+});
+
+app.post('/save3dmodel', tempupload.upload3D, function(req,res){
+  console.log(req.files);
+  console.log(req.body);
+
+  //create list with all files required to save
+  let body = JSON.parse(req.body.data);
+  let allfiles = body.files;
+  if(req.files.file.length > 0){
+    let newfiles = req.files.file.map(a=> a.originalname);
+    allfiles = body.files.concat(newfiles);
+  }
+  if(typeof(body.modelfile) != 'undefined'){
+    allfiles.push(body.modelfile);
+  }
+  if(typeof(req.files.newthumbnail) != 'undefined'){
+    console.log(req.files.newthumbnail[0].originalname);
+    allfiles.push(req.files.newthumbnail[0].filename);
+  }
+
+  console.log(allfiles);
+  tempupload.publish(tmpContent.model[0].originalname.split('.')[0], allfiles, tmpContent.model[0].destination);
+  //save model database
+
+});
+
+app.get('/view/model', function(req, res) {
+
+  res.render('demopages/view-model', {
+    isLoginpage: true
+  });
+});
+// ----- model upload to publish ------ END
+
+
+// ----- 360 upload to publish ------ START
+const threesixtymanager_upload = require('./scripts/360manager_upload');
+
+app.post("/uploadtmp360", threesixtymanager_upload.uploadtmp360, function(req, res) {
+  console.log(req.body);
+  console.log(req.files);
+  tmpContent['image'] = []
+  tmpContent['destination'] = req.files.image[0].destination;
+  if(req.body.format == 'cubemap') {
+    tmpContent['image']['top'] = req.files.image.find(element => element.originalname.split('_')[0] == 'top').originalname
+    tmpContent['image']['front'] = req.files.image.find(element => element.originalname.split('_')[0] == 'front').originalname
+    tmpContent['image']['bottom'] = req.files.image.find(element => element.originalname.split('_')[0] == 'bottom').originalname
+    tmpContent['image']['right'] = req.files.image.find(element => element.originalname.split('_')[0] == 'right').originalname
+    tmpContent['image']['back'] = req.files.image.find(element => element.originalname.split('_')[0] == 'back').originalname
+    tmpContent['image']['left'] = req.files.image.find(element => element.originalname.split('_')[0] == 'left').originalname
+  } else {
+    tmpContent['image']['equi'] = req.files.image[0].originalname;
+  }
+  tmpContent['format'] = req.body.format;
+  console.log(tmpContent);
+  res.end("complete");
+});
+
+app.get('/editpage/360', function(req, res) {
+  res.render('demopages/editpage-360', {
+    format: tmpContent.format,
+    images : tmpContent.image,
+    isLoginpage: true
+  });
+});
+
+app.post('/savethreesixty', threesixtymanager_upload.upload360, function(req,res){
+  console.log(req.files);
+  console.log(req.body);
+
+  //create list with all files required to save
+  let body = JSON.parse(req.body.data);
+  let allfiles = [];
+  if(req.files.file){
+    console.log('running req files');
+    if(req.files.file.length > 0){
+      let newfiles = req.files.file.map(a=> a.originalname);
+      allfiles = body.files.concat(newfiles);
+    }
+  }
+
+
+  threesixtymanager_upload.publish(body.title, allfiles, tmpContent.destination);
+
+});
+
+app.get('/view/360', function(req, res) {
+  res.render('demopages/view-360', {
+    isLoginpage: true
+  });
+});
+// ----- 360 upload to publish ------ END
+
+
+// ----- script upload to publish ------ START
+const scriptmanager_upload = require('./scripts/scriptmanager_upload');
+app.post("/uploadtmpscript", scriptmanager_upload.uploadtmpscript, function(req, res) {
+  tmpContent = req.files;
+  tmpContent['destination'] = req.files.script[0].destination;
+  res.end("complete");
+});
+
+app.get('/editpage/script', function(req, res) {
+  if(tmpContent){
+    console.log(tmpContent);
+      let scripts = tmpContent.script.map(a => a.originalname);
+      console.log(scripts);
+    res.render('demopages/editpage-script', {
+      scripts : scripts,
+      isLoginpage: true
+    });
+  }
+});
+
+app.get('/view/script', function(req, res) {
+  res.render('demopages/view-script', {
+    isLoginpage: true
+  });
+});
+
+app.post('/savescript', scriptmanager_upload.uploadscript, function(req,res){
   console.log(req.files);
   console.log(req.body);
 
@@ -371,7 +540,7 @@ app.post('/savescript', uploadmanager_script.uploadscript, function(req,res){
       allfiles = body.files.concat(newfiles);
     }
   }
-  uploadmanager_script.publish(body.title, allfiles, tmpContent.destination);
+  scriptmanager_upload.publish(body.title, allfiles, tmpContent.destination);
 
 });
 
@@ -384,10 +553,13 @@ app.get('/view/360', function(req, res) {
 
 
 
+app.post('/test', function(req,res){
+  console.log("post test form");
+  res.redirect('/editpage/model')
+})
 
 
 // Begin reading from stdin so the process does not exit imidiately
-//DELETE TEMP FOLDERS WHEN NODE APP.JS ClOSE
 process.stdin.resume();
 process.on('SIGINT', function() {
   console.log('Interrupted');
@@ -395,18 +567,10 @@ process.on('SIGINT', function() {
 });
 
 process.on('exit',() => {
-  uploadsmanager_model.closeTmpFolder();
+  tempupload.closeTmpFolder();
   console.log("process.exit() method is fired")
 });
 
-
-//OLD
-app.post('/test', function(req,res){
-  console.log("post test form");
-  res.redirect('/editpage/model')
-})
-
-//OLD
 app.post("/update/:modelid", function(req, res) {
   modeldatabase.UpdateModelFromEditPage(req.params.modelid, req, (result) => {
     modeldatabase.FindModelById(req.params.modelid, (doc) => {
@@ -414,6 +578,27 @@ app.post("/update/:modelid", function(req, res) {
       res.render('single_asset', {
         model: doc,
         isLoginpage: true
+      });
+    });
+  });
+});
+
+
+const fs = require('fs');
+
+app.post("/downloadasset/:modelid", function(req, res) {
+  modeldatabase.GetModel(req.params.modelid, (result)=> {
+    var downloadpath = __dirname + result.paths.folderpath + "/model";
+    console.log(downloadpath);
+    filedownloader.CreateZipArchive(result.name, downloadpath, (tmppath)=> {
+      res.download(tmppath, req.param('file'), function(err){
+      //CHECK FOR ERROR
+      fs.unlink(tmppath, (err)=> {
+        if(err) console.log(err);
+        else {
+          console.log("complete fs delete tmp file");
+        }
+      });
       });
     });
   });
