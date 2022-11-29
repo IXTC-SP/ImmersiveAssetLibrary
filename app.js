@@ -209,7 +209,7 @@ app.post("/uploadtmp3dmodel", uploadsmanager_model.uploadtmp3D, function(req, re
   }
   gltfmodel.Create(req.files.model[0], function(gltfresult){
     // Include fs module
-    var fs = require('fs');
+    // var fs = require('fs');
     if(gltfresult != ''){
       tmpContent["modelviewerpath"] = '../uploads/tmp/model.gltf';
     } else {
@@ -396,58 +396,58 @@ app.get('/dragndrop', function(req, res) {
 });
 
 // ----- model upload to publish ------ START
-const tempupload = require('./scripts/uploadsmanager');
-var tmpContent = [];
-app.post("/uploadtmp3dmodel", tempupload.uploadtmp3D, tempupload);
+// const tempupload = require('./scripts/uploadsmanager');
+// var tmpContent = [];
+// app.post("/uploadtmp3dmodel", tempupload.uploadtmp3D, tempupload.;
 
-app.get('/editpage/model', function(req, res) {
-  if(tmpContent){
-    let images = tmpContent.image.map(a => a.originalname);
-    console.log(images);
-    res.render('demopages/editpage-model', {
-      content : {
-        modelviewerpath : tmpContent.modelviewerpath,
-        modelfile: tmpContent.model[0].originalname,
-        thumbnail: typeof(tmpContent.thumbnail) == 'undefined' ? '' : tmpContent.thumbnail[0].originalname,
-        imagefiles: images
-      },
-      isLoginpage: true
-    });
-  }
+// app.get('/editpage/model', function(req, res) {
+//   if(tmpContent){
+//     let images = tmpContent.image.map(a => a.originalname);
+//     console.log(images);
+//     res.render('demopages/editpage-model', {
+//       content : {
+//         modelviewerpath : tmpContent.modelviewerpath,
+//         modelfile: tmpContent.model[0].originalname,
+//         thumbnail: typeof(tmpContent.thumbnail) == 'undefined' ? '' : tmpContent.thumbnail[0].originalname,
+//         imagefiles: images
+//       },
+//       isLoginpage: true
+//     });
+//   }
 
-});
+// });
 
-app.post('/save3dmodel', tempupload.upload3D, function(req,res){
-  console.log(req.files);
-  console.log(req.body);
+// app.post('/save3dmodel', tempupload.upload3D, function(req,res){
+//   console.log(req.files);
+//   console.log(req.body);
 
-  //create list with all files required to save
-  let body = JSON.parse(req.body.data);
-  let allfiles = body.files;
-  if(req.files.file.length > 0){
-    let newfiles = req.files.file.map(a=> a.originalname);
-    allfiles = body.files.concat(newfiles);
-  }
-  if(typeof(body.modelfile) != 'undefined'){
-    allfiles.push(body.modelfile);
-  }
-  if(typeof(req.files.newthumbnail) != 'undefined'){
-    console.log(req.files.newthumbnail[0].originalname);
-    allfiles.push(req.files.newthumbnail[0].filename);
-  }
+//   //create list with all files required to save
+//   let body = JSON.parse(req.body.data);
+//   let allfiles = body.files;
+//   if(req.files.file.length > 0){
+//     let newfiles = req.files.file.map(a=> a.originalname);
+//     allfiles = body.files.concat(newfiles);
+//   }
+//   if(typeof(body.modelfile) != 'undefined'){
+//     allfiles.push(body.modelfile);
+//   }
+//   if(typeof(req.files.newthumbnail) != 'undefined'){
+//     console.log(req.files.newthumbnail[0].originalname);
+//     allfiles.push(req.files.newthumbnail[0].filename);
+//   }
 
-  console.log(allfiles);
-  tempupload.publish(tmpContent.model[0].originalname.split('.')[0], allfiles, tmpContent.model[0].destination);
-  //save model database
+//   console.log(allfiles);
+//   tempupload.publish(tmpContent.model[0].originalname.split('.')[0], allfiles, tmpContent.model[0].destination);
+//   //save model database
 
-});
+// });
 
-app.get('/view/model', function(req, res) {
+// app.get('/view/model', function(req, res) {
 
-  res.render('demopages/view-model', {
-    isLoginpage: true
-  });
-});
+//   res.render('demopages/view-model', {
+//     isLoginpage: true
+//   });
+// });
 // ----- model upload to publish ------ END
 
 
@@ -593,7 +593,7 @@ app.post("/update/:modelid", function(req, res) {
 });
 
 
-const fs = require('fs');
+
 
 app.post("/downloadasset/:modelid", function(req, res) {
   modeldatabase.GetModel(req.params.modelid, (result)=> {
