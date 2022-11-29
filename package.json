@@ -30,6 +30,7 @@
     "fbx2gltf": "^0.9.7-p1",
     "formidable": "^2.0.1",
     "get-folder-size": "^4.0.0",
+    "git-filter-repo": "^0.0.30",
     "glob-all": "^3.3.1",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^3.1.2",
