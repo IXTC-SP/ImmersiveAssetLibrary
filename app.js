@@ -141,6 +141,7 @@ app.get("/assets", function(req, res) {
         data: {
           models: result
         },
+        user: req.session.passport.user,
         isLoginpage: true
       });
     });
