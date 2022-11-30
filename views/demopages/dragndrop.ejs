@@ -328,50 +328,47 @@
         f.filename = filename;
         return;
       }})
-      var fileObjs = [];
-
-
-
-    switch (currenttype){
-      case "3dmodel":
-        nextURL = "/editpage/model";
-        postURL = "/uploadtmp3dmodel";
-        break;
-      case "360image":
-        nextURL = "/editpage/360";
-        postURL = "/uploadtmp360";
-      break;
-      case "script":
-        nextURL = "/editpage/script";
-        postURL = "/uploadtmpscript";
-        break;
     }
-    //decide asset type
-    formData.append("type", currenttype);
-    if(currentformat != "") formData.append("format", currentformat);
-    //set file names
-    fileObjs.forEach((fileObj, i) => {
-      console.log(fileObj.type + " " + fileObj.filename + " " + fileObj.file.name);
-      var savedName = fileObj.filename;
-      if(fileObj.file.name.split("/")[1]){
-        savedName += "_" + fileObj.file.name.split("/")[1];
-      } else {
-        savedName += "_" + fileObj.file.name;
-      }
-      if(fileObj.filename == 'thumbnail') {
-        formData.append('thumbnail', fileObj.file, savedName);
-      }
-      else formData.append(fileObj.type, fileObj.file, savedName);
-    });
-    request.onreadystatechange = function() { // listen for state changes
-      if (request.readyState == 4 && request.status == 200) { // when completed we can move away
-        window.location = nextURL;
-      }
-    }
+  function createuploadcontent() {
+        const formData = new FormData();
+        const request = new XMLHttpRequest();
+        var nextURL = "";
+        var postURL = "";
 
-    request.open("POST", postURL, false);
-    request.send(formData);
-  }
+        switch (currenttype) {
+          case "3dmodel":
+            nextURL = "/editpage/model";
+            postURL = "/uploadtmp3dmodel";
+            break;
+          case "360image":
+            nextURL = "/editpage/360";
+            postURL = "/uploadtmp360";
+            break;
+          case "script":
+            nextURL = "/editpage/script";
+            postURL = "/uploadtmpscript";
+            break;
+        }
+        //decide asset type
+        formData.append("type", currenttype);
+        //set file names
+
+        fileObjs.forEach((fileObj, i) => {
+          var savedName = fileObj.filename + "_" + fileObj.file.name.split("/")[1];
+          if (fileObj.filename == 'thumbnail') {
+            formData.append('thumbnail', fileObj.file, savedName);
+          }
+          else formData.append(fileObj.type, fileObj.file, savedName);
+        });
+
+        request.onreadystatechange = function () { // listen for state changes
+          if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+            window.location = nextURL;
+          }
+        }
+        request.open("POST", postURL, false);
+        request.send(formData);
+      }
 
   //create option for select element
   function createoption(text, value, parent) {
