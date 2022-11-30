@@ -1,40 +1,78 @@
-  <!-- site bar -->
-  <nav id="page-header" class="navbar navbar-expand-lg bg-light fixed-top theme-color">
-    <div class="container">
-        <div>
-          <a href="/assets">               
-            <h2 class="navbar-brand text-secondary my-auto">Immersive Asset Library</h2>
-          </a>                
-        </div>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-              
-                    <li class="nav-item">
-                      <div class="dropdown ">
-                        <a href="/single_asset_create" type="button" 
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <%= user.email.split("@")[0] %>
-                        </a>
-                        <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
-                          <a type="button" href="/<%= user._id %>/dashboard/profile" class="dropdown-item">Profile</a>
-                          <a type="button" href="/<%= user._id %>/dashboard/uploads" class="dropdown-item">Uploads</a>
-                          <a type="button" href="/<%= user._id %>/dashboard/downloads" class="dropdown-item">Download</a>
-                          <a type="button" href="/<%= user._id %>/dashboard/enrollment" class="dropdown-item">Enrollment</a>
-                          <a type="button" href="/<%= user._id %>/dashboard/logout" class="dropdown-item">Logout</a>
-                        </div>
-                    </div>
-                  </li>
-               
-            </ul>
-        </div>
+<!-- site bar -->
+<nav
+  id="page-header"
+  class="navbar navbar-expand-lg bg-light fixed-top theme-color"
+>
+  <div class="container">
+    <div>
+      <a href="/assets">
+        <h2 class="navbar-brand text-secondary my-auto">
+          Immersive Asset Library
+        </h2>
+      </a>
     </div>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <div class="dropdown">
+            <a
+              href="/single_asset_create"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <%= user.email.split("@")[0] %>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a
+                type="button"
+                href="/<%= user._id %>/dashboard/profile"
+                class="dropdown-item"
+                >Profile</a
+              >
+              <a
+                type="button"
+                href="/<%= user._id %>/dashboard/uploads"
+                class="dropdown-item"
+                >Uploads</a
+              >
+              <a
+                type="button"
+                href="/<%= user._id %>/dashboard/downloads"
+                class="dropdown-item"
+                >Download</a
+              >
+              <a
+                type="button"
+                href="/<%= user._id %>/dashboard/enrollment"
+                class="dropdown-item"
+                >Enrollment</a
+              >
+              <a
+                type="button"
+                href="/logout"
+                class="dropdown-item"
+                >Logout</a
+              >
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
 </nav>
 
-<main class="mt-5">
+<main class="mt-5"></main>

@@ -15,7 +15,7 @@ const bcrypt = require("bcrypt");
 const verifyCallback = async (req, username, password, done) => {
   let user = null;
   console.log("verify callback");
-  console.log(req.session);
+  //console.log(req.session);
  
   //passport use promise, .then and .catch, async and awaits wrapping the promise
   try {

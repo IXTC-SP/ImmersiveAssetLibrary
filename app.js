@@ -7,7 +7,7 @@ const app = express();
 // const multer = require('multer');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const userModel = require("./models/user");
+
 const session = require('express-session');
 
 // const passportLocalMongoose = require('passport-local-mongoose');
@@ -92,31 +92,25 @@ app.listen(port, async () => {
 //     });
 //   });
 // });
-app.get('/asset/:modelid', function (req, res) {
-  var ObjectId = require('mongoose').Types.ObjectId; 
+
+const userModel = require("./models/user");
+
+app.get('/asset/:modelid', function(req, res) {
   modeldatabase.FindModelById(req.params.modelid, (result) => {
-    // console.log(result);
-    // console.log(result.owner);
-    // console.log(typeof(result.owner));
-    // user = await userModel.findOne({
-    //   _id: new ObjectId(result.owner.toString()),
-    // })
-    // console.log("---->", user);
-    // userModel.findOne( {_id : result.owner}, (owner)=>{
-    //   console.log(owner)
-    res.render('view_asset', {
-      data: result,
-      isLoginpage: true,
-      user: req.session.passport.user,
-      // owner: owner.email
+    console.log("---->", result);
+    console.log(result.owner);
+    userModel.findById(result.owner, function(err,doc){
+      console.log(doc.email);
+      res.render('view_asset', {
+        data: result,
+        owner: doc.email,
+        isLoginpage: true,
+        user: req.session.passport.user,
+      });
     });
-   })
-   
+
   });
-
-
-
-
+});
 
 
 
@@ -653,6 +647,7 @@ app.get("/login", userController.showlogin)
 app.get("/authentication/activate", userController.showActivateAndSetPassword)//done
 app.get("/forgot-password", userController.showForgotPassword)//done
 app.get("/reset-password", userController.showSetPassword)//done
+app.get('/logout', userController.logout);
 
 
 app.post("/:user_id/dashboard/enrollment", userController.createEnrollment, userController.emailActivation, userController.showEnrollment)//done

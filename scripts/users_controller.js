@@ -63,7 +63,7 @@ const controller = {
       //paspport function, clears session, but not cookie
       //but if session is cleared no more id can be found it wont pop req.user,
 
-      req.logout();
+      //req.logout();
       res.redirect("/login");
     } catch (err) {
       return res.send("error:", err.message);
