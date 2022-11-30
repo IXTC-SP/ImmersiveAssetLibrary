@@ -32,31 +32,31 @@ const Save = async function(req, res, files) {
   assetpath.gltfmodelpath = body.gltfmodelpath.replace('tmp', body.folderpath);
   assetpath.diffuse = body.diffusepath;
   assetpath.emission = body.emissivepath;
-  assetpath.thumbnail = body.thumbnail;
+  assetpath.thumbnail = body.thumbnail == '' ? req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath) : body.thumbnail;
 
   // console.log(assetpath.gltfmodelpath);
   // let foldersize = await fastFolderSize(assetpath.folderpath);
   // console.log(foldersize);
 
-  fastFolderSize(assetpath.folderpath, (err, bytes) => {
-    if (err) {
-      throw err
-    }
-    var foldersize = (Math.round((bytes / (1024 * 1024)) * 10) / 10).toString() + 'mb';
-    var model = new modeldb({
-      title: body.title,
-      description: body.description,
-      uploadedby: "sample_user",
-      tags: body.tags,
-      assetPath: assetpath,
-      atrribute: attribute,
-      filesize: foldersize
-    });
-
-    model.save(function(err) {
-      if (err) return console.log(err);
-    });
-  });
+  // fastFolderSize(assetpath.folderpath, (err, bytes) => {
+  //   if (err) {
+  //     throw err
+  //   }
+  //   var foldersize = (Math.round((bytes / (1024 * 1024)) * 10) / 10).toString() + 'mb';
+  //   var model = new modeldb({
+  //     title: body.title,
+  //     description: body.description,
+  //     uploadedby: "sample_user",
+  //     tags: body.tags,
+  //     assetPath: assetpath,
+  //     atrribute: attribute,
+  //     filesize: foldersize
+  //   });
+  //
+  //   model.save(function(err) {
+  //     if (err) return console.log(err);
+  //   });
+  // });
 
 
 
@@ -81,6 +81,8 @@ async function getFolderSize(path) {
     })
   });
 }
+
+
 
 
 
@@ -164,6 +166,7 @@ function updateallsize() {
     });
   });
 }
+
 
 //manually assign userid to modelDB
 const AssignUserToModel = function(userid, modelid) {
