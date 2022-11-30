@@ -147,7 +147,7 @@
         <div>
           <h6>Description</h6>
           <p>
-           <%= data.description %> 
+           <%= data.description %>
           </p>
         </div>
 
@@ -178,7 +178,7 @@
         <hr class="m-0" />
         <div class="d-flex justify-content-between align-items-center p-1">
           <p class="m-0">Published</p>
-          <p class="m-0"><%= data.uploadedby %></p>
+          <p class="m-0"><%= data.uploaddate.toLocaleString().split(',')[0] %></p>
         </div>
         <hr class="m-0" />
         <div class="d-flex justify-content-between align-items-center p-1">
@@ -188,14 +188,17 @@
             <%}else{%>
                 <i class="fa-regular fa-circle-xmark"></i>
             <%}%>
-        
+
         </div>
         <hr class="m-0" />
       </div>
       <div class="w-100">
-        <button type="button" class="w-100 btn theme-color btn-rounded">
-          Download
-        </button>
+        <form class="" action="/downloadasset/<%= data._id %>" method="post">
+          <!-- <input type="submit" id='submit-btn' value="download"> -->
+          <button type="button" id='submit-btn' value="download" class="w-100 btn theme-color btn-rounded">
+            Download
+          </button>
+        </form>
       </div>
     </div>
   </div>
@@ -221,12 +224,12 @@
 
     function getEJScontent(data) {
         Array.from(thumbnails).forEach(element => {
-            element.src = "."+data.assetPath.folderpath + "/" + data.assetPath.thumbnail
+            element.src = "." + data.assetPath.folderpath + "/" + data.assetPath.thumbnail
         });
 
-      console.log(modelviewer.src)
-       modelviewer.src =
-       "."+ data.assetPath.folderpath + "/" + data.assetPath.gltfmodelpath;
+       modelviewer.src = data.assetPath.gltfmodelpath;
+       console.log(modelviewer.src)
+
     }
 
     // document.addEventListener("DOMContentLoaded", function () {
@@ -242,27 +245,31 @@
     //   splide.mount();
     // });
 
-    modelviewer.addEventListener("load", (data) => {
-      const material = modelviewer.model.materials[0];
-      const createAndApplyTexture = async (channel) => {
-        // Applies the new texture to the specified channel.
-         var diffusepath = getTextureFromFilesArray("diffuse");
-        if (diffusepath != "") {
-          var diffuse = await modelviewer.createTexture(
-            "." + data.assetPath.folderpath + "/" + data.assetPath.diffuse
-          );
-          material.pbrMetallicRoughness["baseColorTexture"].setTexture(diffuse);
-        }
-        var emissivepath = getTextureFromFilesArray("emissive");
-        if (emissivepath != "") {
-          var emission = await modelviewer.createTexture(
-            "." + data.assetPath.folderpath + "/" + data.assetPath.emission
-          );
-          material["emissiveTexture"].setTexture(emission);
-        }
-      };
-      createAndApplyTexture("baseColorTexture");
-    });
+    modelviewer.addEventListener("load", () => {
+    const material = modelviewer.model.materials[0];
+    const createAndApplyTexture = async (channel) => {
+      // Applies the new texture to the specified channel.
+      var diffusepath = data.assetPath.folderpath.diffuse;
+      console.log("---->", data.assetPath.folderpath);
+      console.log(
+        "." + data.assetPath.folderpath + "/" + data.assetPath.diffuse
+      );
+      if (diffusepath != "") {
+        var diffuse = await modelviewer.createTexture(
+          "." + data.assetPath.folderpath + "/" + data.assetPath.diffuse
+        );
+        material.pbrMetallicRoughness["baseColorTexture"].setTexture(diffuse);
+      }
+      var emissivepath = data.assetPath.folderpath.emission;
+      if (emissivepath != "") {
+        var emission = await modelviewer.createTexture(
+          "." + data.assetPath.folderpath + "/" + data.assetPath.emission
+        );
+        material["emissiveTexture"].setTexture(emission);
+      }
+    };
+    createAndApplyTexture("baseColorTexture");
+  });
 </script>
 
 <%- include('./partials/footer') %>

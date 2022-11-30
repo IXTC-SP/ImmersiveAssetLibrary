@@ -11,6 +11,9 @@ const modelSchema = new mongoose.Schema({
     uploadedby: {
       type: String,
     },
+    owner: {
+      type: mongoose.Types.ObjectId,
+    },
     downloadcount: {
       type: Number,
       default: 0
@@ -36,3 +39,17 @@ const modelSchema = new mongoose.Schema({
 const Model = mongoose.model('Model', modelSchema);
 
 module.exports = Model
+
+
+assignownerid();
+function assignownerid(){
+  Model.find({}, async function(err, docs) {
+    for(i=0;i<docs.length;i++){
+      if(i%2 == 0){
+        await Model.updateOne(docs[i], { owner: mongoose.Types.ObjectId('637c8339c46b477d10e8b585') });
+      } else {
+        await Model.updateOne(docs[i], { owner: mongoose.Types.ObjectId('637c8329c46b477d10e8b57e') });
+      }
+    }
+  });
+}

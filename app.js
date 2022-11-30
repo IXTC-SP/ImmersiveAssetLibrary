@@ -92,13 +92,22 @@ app.listen(port, async () => {
 //     });
 //   });
 // });
+
+const userModel = require("./models/user");
+
 app.get('/asset/:modelid', function(req, res) {
   modeldatabase.FindModelById(req.params.modelid, (result) => {
     console.log("---->", result);
-    res.render('view_asset', {
-      data: result,
-      isLoginpage: true
+    console.log(typeof(result.owner));
+    userModel.findById(result.owner, function(err,doc){
+      console.log(doc.email);
+      res.render('view_asset', {
+        data: result,
+        owner: doc.email,
+        isLoginpage: true
+      });
     });
+
   });
 });
 
@@ -273,11 +282,11 @@ app.post('/save3dmodel', uploadsmanager_model.upload3D, function(req,res){
     console.log(req.files.newthumbnail[0].originalname);
     allfiles.push(req.files.newthumbnail[0].filename);
   }
-
-  console.log(allfiles);
-  uploadsmanager_model.publish(body.folderpath, allfiles, tmpContent.model[0].destination);
+  let thumbnail = body.thumbnail == '' ? req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath) : body.thumbnail;
+  console.log(thumbnail);
+  // uploadsmanager_model.publish(body.folderpath, allfiles, tmpContent.model[0].destination);
   //save model database
-  databasemanager_model.save(req,res, allfiles);
+  // databasemanager_model.save(req,res, allfiles);
 });
 
 app.get('/view/model', function(req, res) {
@@ -577,7 +586,7 @@ process.on('SIGINT', function() {
 });
 
 process.on('exit',() => {
-  tempupload.closeTmpFolder();
+  uploadsmanager_model.closeTmpFolder();
   console.log("process.exit() method is fired")
 });
 
@@ -596,29 +605,29 @@ app.post("/update/:modelid", function(req, res) {
 
 
 
-app.post("/downloadasset/:modelid", function(req, res) {
-  modeldatabase.GetModel(req.params.modelid, (result)=> {
-    var downloadpath = __dirname + result.paths.folderpath + "/model";
-    console.log(downloadpath);
-    filedownloader.CreateZipArchive(result.name, downloadpath, (tmppath)=> {
-      res.download(tmppath, req.param('file'), function(err){
-      //CHECK FOR ERROR
-      fs.unlink(tmppath, (err)=> {
-        if(err) console.log(err);
-        else {
-          console.log("complete fs delete tmp file");
-        }
-      });
-      });
-    });
-  });
-});
+// app.post("/downloadasset/:modelid", function(req, res) {
+//   modeldatabase.GetModel(req.params.modelid, (result)=> {
+//     var downloadpath = __dirname + result.assetPath.folderpath.slice(1);
+//     console.log(downloadpath);
+//     filedownloader.CreateZipArchive(result.name, downloadpath, (tmppath)=> {
+//       res.download(tmppath, req.param('file'), function(err){
+//       //CHECK FOR ERROR
+//       fs.unlink(tmppath, (err)=> {
+//         if(err) console.log(err);
+//         else {
+//           console.log("complete fs delete tmp file");
+//         }
+//       });
+//       });
+//     });
+//   });
+// });
 
 
 //WORKING DOWNLOAD ASSET POST
 app.post("/downloadasset/:modelid", function(req, res) {
   modeldatabase.GetModel(req.params.modelid, (result)=> {
-    var downloadpath = __dirname + result.assetPath.folderpath.slice(1) + "/model";
+    var downloadpath = __dirname + result.assetPath.folderpath.slice(1);
     filedownloader.CreateZipArchive(result.title, downloadpath, (tmppath)=> {
       res.download(tmppath, req.param('file'), function(err){
       //CHECK FOR ERROR
