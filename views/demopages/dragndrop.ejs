@@ -265,26 +265,28 @@
           </div>
         </div>
       </div>
-      <div class="model-content d-flex flex-column mb-3 w-100">
-        <p><strong>Assign Texture : </strong></p>
-        <label for="diffuse-texture-selection">Diffuse</label>
-        <select name="diffuse-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
-        </select>
-        <label for="normal-texture-selection">Normal</label>
-        <select name="normal-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
-        </select>
-        <label for="occlusion-texture-selection">Occlusion</label>
-        <select name="occlusion-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
-        </select>
-        <label for="height-texture-selection">Height</label>
-        <select name="height-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
-        </select>
-        <label for="emissive-texture-selection">Emissive</label>
-        <select name="emissive-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
-        </select>
-        <label for="thumbnail">Thumbnail</label>
-        <select name="thumbnail" class="model-texture-assign mb-1" id="texture-selection">
-        </select>
+      <div class="model-content ">
+        <div class="d-flex flex-column mb-3 w-100">
+          <p><strong>Assign Texture : </strong></p>
+          <label for="diffuse-texture-selection">Diffuse</label>
+          <select name="diffuse-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
+          </select>
+          <label for="normal-texture-selection">Normal</label>
+          <select name="normal-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
+          </select>
+          <label for="occlusion-texture-selection">Occlusion</label>
+          <select name="occlusion-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
+          </select>
+          <label for="height-texture-selection">Height</label>
+          <select name="height-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
+          </select>
+          <label for="emissive-texture-selection">Emissive</label>
+          <select name="emissive-texture-selection" class="model-texture-assign mb-1 w-100" id="texture-selection">
+          </select>
+          <label for="thumbnail">Thumbnail</label>
+          <select name="thumbnail" class="model-texture-assign mb-1" id="texture-selection">
+          </select>
+        </div>
       </div>
       <!-- <button class="page-btn left" type="button" name="button" onclick="createuploadcontent()">Next</button> -->
       <button class="btn btn-size theme-color btn-rounded upload-page-btn" type="button" onclick="createuploadcontent()" name="button"> Next
@@ -351,16 +353,23 @@
         }
         //decide asset type
         formData.append("type", currenttype);
+        formData.append("format", currentformat);
         //set file names
-
+        console.log(fileObjs);
         fileObjs.forEach((fileObj, i) => {
-          var savedName = fileObj.filename + "_" + fileObj.file.name.split("/")[1];
+          var savedName = '';
+          if(fileObj.file.name.split("/")[1]){
+            savedName = fileObj.filename + "_" + fileObj.file.name.split("/")[1];
+          } else {
+            savedName = fileObj.filename + "_" + fileObj.file.name;
+          }
+          console.log(savedName);
           if (fileObj.filename == 'thumbnail') {
             formData.append('thumbnail', fileObj.file, savedName);
           }
           else formData.append(fileObj.type, fileObj.file, savedName);
         });
-
+        console.log(formData.get('image'));
         request.onreadystatechange = function () { // listen for state changes
           if (request.readyState == 4 && request.status == 200) { // when completed we can move away
             window.location = nextURL;

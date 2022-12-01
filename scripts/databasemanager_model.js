@@ -28,7 +28,7 @@ const Save = async function(req, res, files) {
   attribute.textured = body.textured;
 
   let assetpath = new AssetPath();
-  assetpath.folderpath = './uploads/' + body.folderpath;
+  assetpath.folderpath = './uploads/' + body.folderpath.replaceAll(' ', '_');
   assetpath.gltfmodelpath = body.gltfmodelpath.replace('tmp', body.folderpath);
   assetpath.diffuse = body.diffusepath;
   assetpath.emission = body.emissivepath;
@@ -55,31 +55,6 @@ const Save = async function(req, res, files) {
   });
 
 }
-
-
-function getFilesizeInBytes(filename) {
-    var stats = fs.statSync(filename);
-    var fileSizeInMegabytes = stats.size / (1024*1024);
-    return fileSizeInMegabytes ;
-}
-
-async function getFolderSize(path) {
-  return await new Promise((resolve, reject) => {
-    fastFolderSize(path, (err, bytes) => {
-      if (err) {
-        throw err
-      }
-      var result = (Math.round((bytes / (1024 * 1024)) * 10) / 10).toString() + 'mb';
-      resolve(result);
-      return result;
-    })
-  });
-}
-
-
-
-
-
 
 module.exports.save = Save;
 

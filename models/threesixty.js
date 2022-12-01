@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 
-const modelSchema = new mongoose.Schema({
+const threeSixtySchema = new mongoose.Schema({
     title: {
       type: String,
     },
@@ -33,6 +33,6 @@ const modelSchema = new mongoose.Schema({
     }
    }
 );
-const Model = mongoose.model('Model', modelSchema);
+const ThreeSixty = mongoose.model('ThreeSixty', threeSixtySchema);
 
-module.exports = Model
+module.exports = ThreeSixty;
