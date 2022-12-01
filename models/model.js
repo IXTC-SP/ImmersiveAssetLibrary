@@ -8,9 +8,6 @@ const modelSchema = new mongoose.Schema({
     description: {
       type: String,
     },
-    uploadedby: {
-      type: String,
-    },
     owner: {
       type: mongoose.Types.ObjectId,
     },

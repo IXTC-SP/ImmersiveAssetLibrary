@@ -79,16 +79,6 @@ app.listen(port, async () => {
   job.start()
 })
 
-// app.post('/asset/:modelid', function(req, res) {
-//   modeldatabase.FindModelById(req.params.modelid, (result) => {
-//     console.log(result);
-//     res.render('single_asset', {
-//       model: result,
-//       isLoginpage: true
-//     });
-//   });
-// });
-
 const userModel = require("./models/user");
 
 app.get('/asset/:modelid', function(req, res) {
@@ -110,12 +100,6 @@ app.get('/asset/:modelid', function(req, res) {
 
 
 
-app.get('/', function(req, res) {
-  res.render('main', {
-    isLoginpage: true
-  });
-});
-
 //WORKING (ASSET LIST PAGE)
 app.get("/assets", function(req, res) {
   if(typeof req.query.search === 'undefined' || req.query.search == ""){
@@ -124,7 +108,7 @@ app.get("/assets", function(req, res) {
       res.render('assets', {
         data: {
           models: result
-       
+
         },
         user: req.session.passport.user,
         isLoginpage: true
@@ -153,50 +137,11 @@ app.post('/search', function(req, res) {
   }));
 });
 
-app.post('/asset/:modelid', function(req, res) {
-  modeldatabase.FindModelById(req.params.modelid, (result) => {
-    console.log(result);
-    res.render('single_asset', {
-      model: result,
-      isLoginpage: true
-    });
-  });
-});
-
-//OLD
-app.get("/single_asset_edit/:modelid", function(req, res) {
-  var tmpid = '62d7b3de10351866025affb7'
-  // modeldatabase.FindModelById(req.params.modelid, (result) => {
-  modeldatabase.FindModelById(tmpid, (result) => {
-    res.render('single_asset_edit', {
-      model: result,
-      isLoginpage: true
-    });
-  });
-});
-
-//OLD
-app.get("/single_asset_create", function(req, res) {
-  res.render('single_asset_create', {
-    isLoginpage: true
-  });
-});
-
-//OLD
-app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile', maxCount: 1}, {name: 'diffuse', maxCount: 1},{name: 'metallicroughness', maxCount: 1},{name: 'normal', maxCount: 1},
-{name: 'occlusion', maxCount: 1},{name: 'emission', maxCount: 1}]), function(req, res) {
-  console.log(req.body);
-  var modelfolderpath = req.files.objectfile[0].destination.split("/model")[0];
-  gltfmodel.Create(req.files.objectfile, function(gltfresult){
-    console.log(gltfresult);
-      res.send("done");
-  })
-});
 
 //WORKING (UPLOAD PAGE)
-const uploadsmanager = require('./scripts/uploadsmanager_model');
+const uploadmanager = require('./scripts/uploadsmanager_model');
 app.get('/dragndrop', function(req, res) {
-  uploadsmanager.closeTmpFolder();
+  uploadmanager.closeTmpFolder();
   res.render('demopages/dragndrop', {
     isLoginpage: true,
     user: req.session.passport.user,
@@ -227,12 +172,6 @@ app.post("/uploadtmp3dmodel", uploadsmanager_model.uploadtmp3D, function(req, re
     res.end("complete");
 
   });
-  // let files = tmpContent.image.map(a => a.originalname);
-  // files.push(tmpContent.model[0].originalname);
-  // console.log(files);
-  // let folderpath = req.files.model[0].originalname.split('.')[0];
-  // console.log(folderpath);
-  // tempupload.publish(req.files.model[0].originalname.split('.')[0], files, req.files.model[0].destination)
 
 });
 
@@ -282,13 +221,10 @@ app.post('/save3dmodel', uploadsmanager_model.upload3D, function(req,res){
     allfiles.push(req.files.newthumbnail[0].filename);
   }
   let thumbnail = body.thumbnail == '' ? req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath) : body.thumbnail;
-  console.log(thumbnail);
-  // uploadsmanager_model.publish(body.folderpath, allfiles, tmpContent.model[0].destination);
+  uploadsmanager_model.publish(body.folderpath, allfiles, tmpContent.model[0].destination);
   //save model database
-  // databasemanager_model.save(req,res, allfiles);
+  databasemanager_model.save(req,res, allfiles);
 });
-
-
 // ----- model upload to publish ------ END
 
 
@@ -392,115 +328,6 @@ app.post("/upload", storagemanagement.uploadHandler.fields([{name: 'objectfile',
       res.send("done");
   })
 });
-
-// ----- 360 upload to publish ------ START
-const threesixtymanager_upload = require('./scripts/360manager_upload');
-
-app.post("/uploadtmp360", threesixtymanager_upload.uploadtmp360, function(req, res) {
-  console.log(req.body);
-  console.log(req.files);
-  tmpContent['image'] = []
-  tmpContent['destination'] = req.files.image[0].destination;
-  if(req.body.format == 'cubemap') {
-    tmpContent['image']['top'] = req.files.image.find(element => element.originalname.split('_')[0] == 'top').originalname
-    tmpContent['image']['front'] = req.files.image.find(element => element.originalname.split('_')[0] == 'front').originalname
-    tmpContent['image']['bottom'] = req.files.image.find(element => element.originalname.split('_')[0] == 'bottom').originalname
-    tmpContent['image']['right'] = req.files.image.find(element => element.originalname.split('_')[0] == 'right').originalname
-    tmpContent['image']['back'] = req.files.image.find(element => element.originalname.split('_')[0] == 'back').originalname
-    tmpContent['image']['left'] = req.files.image.find(element => element.originalname.split('_')[0] == 'left').originalname
-  } else {
-    tmpContent['image']['equi'] = req.files.image[0].originalname;
-  }
-  tmpContent['format'] = req.body.format;
-  console.log(tmpContent);
-  res.end("complete");
- });
-
-// app.get('/editpage/360', function(req, res) {
-//   res.render('demopages/editpage-360', {
-//     format: tmpContent.format,
-//     images : tmpContent.image,
-//     isLoginpage: true
-//   });
-// });
-
-// app.post('/savethreesixty', threesixtymanager_upload.upload360, function(req,res){
-//   console.log(req.files);
-//   console.log(req.body);
-
-//   //create list with all files required to save
-//   let body = JSON.parse(req.body.data);
-//   let allfiles = [];
-//   if(req.files.file){
-//     console.log('running req files');
-//     if(req.files.file.length > 0){
-//       let newfiles = req.files.file.map(a=> a.originalname);
-//       allfiles = body.files.concat(newfiles);
-//     }
-//   }
-
-
-//   threesixtymanager_upload.publish(body.title, allfiles, tmpContent.destination);
-
-// });
-
-// app.get('/view/360', function(req, res) {
-//   res.render('demopages/view-360', {
-//     isLoginpage: true
-//   });
-// });
-// ----- 360 upload to publish ------ END
-
-
-// ----- script upload to publish ------ START
-// const scriptmanager_upload = require('./scripts/scriptmanager_upload');
-// app.post("/uploadtmpscript", scriptmanager_upload.uploadtmpscript, function(req, res) {
-//   tmpContent = req.files;
-//   tmpContent['destination'] = req.files.script[0].destination;
-//   res.end("complete");
-// });
-
-// app.get('/editpage/script', function(req, res) {
-//   if(tmpContent){
-//     console.log(tmpContent);
-//       let scripts = tmpContent.script.map(a => a.originalname);
-//       console.log(scripts);
-//     res.render('demopages/editpage-script', {
-//       scripts : scripts,
-//       isLoginpage: true
-//     });
-//   }
-// });
-
-// app.get('/view/script', function(req, res) {
-//   res.render('demopages/view-script', {
-//     isLoginpage: true
-//   });
-// });
-
-// app.post('/savescript', scriptmanager_upload.uploadscript, function(req,res){
-//   console.log(req.files);
-//   console.log(req.body);
-
-//   //create list with all files required to save
-//   let body = JSON.parse(req.body.data);
-//   let allfiles = body.files;
-//   if(req.files){
-//     if(req.files.file.length > 0){
-//       let newfiles = req.files.file.map(a=> a.originalname);
-//       allfiles = body.files.concat(newfiles);
-//     }
-//   }
-//   scriptmanager_upload.publish(body.title, allfiles, tmpContent.destination);
-
-// });
-
-// app.get('/view/360', function(req, res) {
-//   res.render('demopages/view-360', {
-//     isLoginpage: true
-//   });
-// });
-// ----- script upload to publish ------ END
 
 
 
