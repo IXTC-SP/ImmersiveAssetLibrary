@@ -63,6 +63,10 @@ transform: translateX(0);
 .icon-size {
   font-size: 25px;
 }
+
+.small-icon-size {
+  font-size: 12px;
+}
 .carousel-size {
   height: 50px;
   object-fit: cover;

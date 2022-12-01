@@ -25,10 +25,10 @@
       
         <div class="custom-file">
           <h6>Add Files</h6>
-          <!-- <input type="file" class="custom-file-input form-control" id="inputGroupFile01" accept="image/png, image/jpeg" onchange="addNewFile(this)"> -->
+          <input type="file" class="custom-file-input form-control" id="inputGroupFile01" accept="image/png, image/jpeg" onchange="addNewFile(this)">
           <span class="btn btn-primary btn-file">
-            Browse <input type="file" class="custom-file-input form-control" id="inputGroupFile01" accept="image/png, image/jpeg" onchange="addNewFile(this)">
-        </span>
+            Browse
+          </span>
         </div>
         <div class="accordion" id="accordionExample">
           <div class="accordion-item">
@@ -37,7 +37,7 @@
                 View Attached Files
               </button>
             </h2>
-            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
               <div class="accordion-body p-2">
                 <div class="all-files">
                   <% for(var i=0; i<content.imagefiles.length; i++) {%>
@@ -71,7 +71,7 @@
         <h6 class="w-100">Technical Details</h6>
         <div class="d-flex flex-wrap">
           <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
-            <input class="low-poly-info" name="optradio" class="form-check-input" type="checkbox" id="detail-lowpoly" value="lowpoly" />
+            <input class="low-poly-info" name="optradio" class="main form-check-input" type="checkbox" id="detail-lowpoly" value="lowpoly" />
             <label class="form-check-label" for="detail-lowpoly">Low-poly</label>
           </div>
           <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
@@ -96,7 +96,7 @@
       <input type="text" id="tag_input_content" name="tag_input_content" value="" readonly>
       <div id="selected_tags_group" class="selected-tags"></div>
       <input type="text" class="form-control" type="text" id='tag_create' value="" placeholder="" aria-label="Username" aria-describedby="basic-addon1">
-      <div class="d-flex flex-wrap gap-1.8 justify-content-sm-start mt-1" id="tag_suggest">
+      <div class="selected-tags" id="tag_suggest">
       </div>
       
     </div>
@@ -294,15 +294,18 @@
   }
 
   function createSuggestElement(tagname) {
-  let col = document.createElement('div');
-  col.classList = 'suggested-tag border-secondary border rounded-2 px-1';
-  document.getElementById('tag_suggest').appendChild(col);
+  // let col = document.createElement('div');
+  // col.classList = 'suggested-tag border-secondary border rounded-5 px-1';
+  // document.getElementById('tag_suggest').appendChild(col);
+  // col.innerHTML = '<i class="fa-solid fa-plus icon small-icon-size"></i>'
   let tag = document.createElement("div");
   tag.innerHTML = tagname;
   let addBtn = document.createElement("button")
-  addBtn.innerHTML= '<i class="fa-solid fa-plus"></i>';
-  addBtn.classList="bg-transparent border-0 ms-2 p-0"
-  col.append(tag,addBtn);
+  addBtn.setAttribute('id', 'tag_suggest');
+  // addBtn.append(tag);
+  addBtn.innerHTML= `<div>${tagname}</div><i class="fa-solid fa-plus icon small-icon-size  ms-2 "></i>`;
+  addBtn.classList="d-flex align-items-center bg-transparent suggested-tag border-secondary border rounded-2 p-1 btn"
+  document.getElementById('tag_suggest').appendChild(addBtn);
   //tag.classList.add('tag_element');
   addBtn.onclick = function() {
   if (selectedtagelements.includes(tagname)) return;
@@ -317,22 +320,23 @@
   //get div child from group
   var div = document.getElementById('selected_tags_group');
   //create div to inclde tag + cross btn
-  var tagDiv= document.createElement('div');
-  tagDiv.classList="tag border border-secondary rounded-2 px-1 text-white"
+  // var tagDiv= document.createElement('div');
+  //tagDiv.classList="tag border border-secondary rounded-2 px-1 text-white"
   //create x button
   var tagBtn = document.createElement('button');
-  tagBtn.innerHTML="x"
-  tagBtn.classList="bg-transparent border-0 ms-2 p-0 text-white"
+  tagBtn.innerHTML = `<span class= "selected_tag_element">${tagname}</span><i class="fa-solid fa-xmark small-icon-size  ms-2 "></i>`;
+  // tagBtn.innerHTML="x"
+  tagBtn.classList="p-0 text-white p-1 btn tag rounded-2 px-2"
   //create span element with id of selected_tag_element
-  var tag = document.createElement('span');
-  tagDiv.append(tag,tagBtn)
-  tag.innerText = " " + tagname;
-  tag.setAttribute("class", "selected_tag_element");
+  // var tag = document.createElement('span');
+  // tagBtn.append(tag)
+  // tag.innerText = " " + tagname;
+  // tag.setAttribute("class", "selected_tag_element");
   tagBtn.onclick = function() {
-  div.removeChild(tagDiv);
+  div.removeChild(tagBtn);
   selectedtagelements = selectedtagelements.filter(e => e !== tagname);
   };
-  div.appendChild(tagDiv);
+  div.appendChild(tagBtn);
   let taginput = document.getElementById("tag_input_content");
   taginput.value = selectedtagelements.toString();
   selectedtagelements.push(tagname);

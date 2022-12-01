@@ -7,6 +7,8 @@
   display: flex;
   gap: 10px;
   margin-bottom: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
   }
 
 .tag{
@@ -21,6 +23,9 @@
 
 .desc-info-dimension{
   height: 205px
+}
+.main input:checked{
+  background-color: green;
 }
 
 .btn-file {
