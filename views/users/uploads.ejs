@@ -1,5 +1,32 @@
-<div class="row gap-3 upload-row">
-  <div class="card upload-card col-md-3 p-0">
+<div class="row gap-3 upload-row justify-content-evenly">
+  <%uploads.forEach(card =>{%>
+    <div class="card upload-card col-md-3 p-0">
+      <div class="upload-card-img">
+        <img
+          href=""
+          src="../uploads/model_cones1/new_thumbnail.png"
+          class="card-img-top"
+          alt="<%= card._id %>"
+        />
+      </div>
+      <div class="card-body upload-card-body p-3">    
+        <h6 class="card-title m-0"><%= card.title %></h6>
+        <p class="card-text"><small><%= card.tags[0] %></small></p>
+      <%if(showUploads){%>
+        <div class="d-flex justify-content-between">
+          <!-- <a href="#!" class="upload-btn btn btn-outline-info rounded-8">
+            <i class="fa-solid fa-pen"></i> Edit</a
+          > -->
+          <a href="#!" class="upload-btn btn btn-outline-danger rounded-8"
+            ><i class="fa fa-trash"></i> Delete</a
+          >
+        </div>
+      <%}%>
+       
+      </div>
+    </div>
+   <%})%>
+  <!-- <div class="card upload-card col-md-3 p-0">
     <div class="upload-card-img">
       <img
         src="https://mdbcdn.b-cdn.net/img/new/standard/nature/184.webp"
@@ -70,7 +97,7 @@
     <%}%>
      
     </div>
-  </div>
+  </div> -->
 
   
 </div>

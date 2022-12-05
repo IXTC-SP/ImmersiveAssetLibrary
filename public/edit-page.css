@@ -24,9 +24,9 @@
 .desc-info-dimension{
   height: 205px
 }
-.main input:checked{
+/* .main input:checked{
   background-color: green;
-}
+} */
 
 .btn-file {
   position: relative;

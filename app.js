@@ -192,6 +192,7 @@ app.get('/editpage/model', function(req, res) {
         imagefiles: images
       },
       isLoginpage: true,
+      isModel: true,
       user: req.session.passport.user,
     });
   }
@@ -256,6 +257,7 @@ app.get('/editpage/360', function(req, res) {
     format: tmpContent.format,
     images : tmpContent.image,
     isLoginpage: true,
+    isModel: false,
     user: req.session.passport.user,
   });
 });

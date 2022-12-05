@@ -2,6 +2,7 @@
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const userModel = require("../models/user");
+const modelModel = require("../models/model");
 const tokenModel = require("../models/token");
 // const mailgun = require("mailgun-js");
 // const DOMAIN = "sandbox5c0f43edfce94ab7b5552e3de5598fae.mailgun.org";
@@ -326,6 +327,7 @@ const controller = {
   },
   showProfile: async (req, res) => {
     let accounts = [];
+    let uploads = [];
     let isSuccess = (false, "");
     let profile = "";
     let errorObj = errorMessage(false, "");
@@ -378,6 +380,7 @@ const controller = {
     res.render("users/dashboard", {
       isLoginpage: true,
       isSuccess,
+      uploads,
       accounts,
       errorObj,
       profile,
@@ -399,6 +402,7 @@ const controller = {
   },
   showEnrollment: async (req, res) => {
     let accounts = [];
+    let uploads = [];
     let profile = "";
     let isSuccess = alertMessage(false, "");
     let errorObj = errorMessage(false, "");
@@ -428,6 +432,7 @@ const controller = {
     return res.render("users/dashboard", {
       isLoginpage: true,
       isSuccess: req.isSuccess || isSuccess,
+      uploads,
       accounts,
       errorObj: req.errorObj || errorObj,
       profile,
@@ -440,6 +445,7 @@ const controller = {
   },
   showDownloads: async (req, res, next) => {
     let accounts = [];
+    let uploads = [];
     let profile = "";
     // let isSuccess = alertMessage(false, "");
     // let errorObj = errorMessage(false, "")
@@ -469,6 +475,7 @@ const controller = {
     res.render("users/dashboard", {
       isLoginpage: true,
       isSuccess: req.isSuccess || alertMessage(false, ""),
+      uploads,
       accounts,
       errorObj: req.errorObj || errorMessage(false, ""),
       profile,
@@ -482,38 +489,24 @@ const controller = {
   showUploads: async (req, res, next) => {
     let profile = "";
     let accounts = [];
-    // let isSuccess = alertMessage(false, "");
-    // let errorObj = errorMessage(false, "")
+    let uploads = [];
     console.log("-->", req.errorObj);
-    // req.errorObj? errorObj = errorMessage(false, "") : errorObj =  req.errorObj
-
     let user = [];
     try {
-      user = await userModel.findById({ _id: req.params.user_id });
-      if (!user) {
-        return res.status(401).send({ error: "no such user" });
-      }
-      //find all accts
-      accounts = await userModel.find();
-      // admins = await userModel.find({ isAdmin: true });
-
-      console.log(user);
-      console.log("Get the accounts");
+      uploads = await modelModel.find({owner:req.session.passport.user._id});
     } catch (err) {
       console.log(err);
-      //return res.status(401).send({ error: "Failed to get users" });
-      //res.redirect("/login");
+      req.errorObj = errorMessage(true, err)
     }
-    // req.errorObj.errorObj
-    // req.isSuccess = isSuccess
-    // return next()
     res.render("users/dashboard", {
       isLoginpage: true,
       isSuccess: req.isSuccess || alertMessage(false, ""),
+      uploads,
+      uploads,
       accounts,
       errorObj: req.errorObj || errorMessage(false, ""),
       profile,
-      user,
+      user : req.session.passport.user,
       showProfile: false,
       showUploads: true,
       showDownloads: false,
@@ -545,6 +538,7 @@ const controller = {
     let students = [];
     let isSuccess = alertMessage(false, " ");
     let errorObj = errorMessage(false, " ");
+    let uploads = [];
     let profile = ""
     let user = null;
     let adminUser = null;
@@ -661,6 +655,7 @@ const controller = {
     return res.render("users/dashboard", {
       isLoginpage: true,
       isSuccess: req.isSuccess || isSuccess,
+      uploads,
       accounts,
       errorObj: req.errorObj || errorObj,
       profile,
