@@ -544,12 +544,17 @@
   }
 
   let files = [];
-  dragArea.addEventListener('dragover', (event) => {
+  dragcounter = 0;
+  dragArea.addEventListener('dragenter', (event) => {
     event.preventDefault();
     dragText.textContent = "Release to Upload"
+    dragcounter++;
   });
-  dragArea.addEventListener('dragleave', () => {
-    dragText.textContent = "Drag & Drop"
+  dragArea.addEventListener('dragleave', (event) => {
+    dragcounter--;
+    if(dragcounter === 0){
+      dragText.textContent = "Drag & Drop"
+    }
   });
   dragArea.addEventListener('drop', async (event) => {
     event.preventDefault();
