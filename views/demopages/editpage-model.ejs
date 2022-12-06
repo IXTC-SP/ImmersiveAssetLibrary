@@ -22,7 +22,7 @@
           <h6 class="asset-name">cyberpunk shiba inu</h6>
           <model-viewer class="model-viewer-dimensions border border-secondary rounded-4"id="model-viewer" alt="" src='../uploads/shiba/gltf/scene.gltf' ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls enable-pan></model-viewer>
         </div>
-      
+
         <div class="custom-file">
           <h6>Add Files</h6>
           <!-- <input type="file" class="custom-file-input form-control" id="inputGroupFile01" accept="image/png, image/jpeg" onchange="addNewFile(this)"> -->
@@ -45,7 +45,7 @@
                     <span class="p-0 text-muted"><%=content.imagefiles[i]%></span>
                     <button class="remove-file bg-transparent border-0" onclick="removeExistingFile(this,'<%-content.imagefiles[i]%>')"><i class="fa-regular fa-trash-can trash-btn"></i
                       ></button>
-                    
+
                   </div>
                   <hr class="m-0">
                   <%}%>
@@ -54,7 +54,7 @@
             </div>
           </div>
         </div>
-        
+
       </div>
       <div class="col-5 d-flex flew-wrap gap-4 flex-column">
       <div>
@@ -66,7 +66,7 @@
           <textarea class="desc-info desc-info-dimension form-control" aria-label="With textarea"></textarea>
         </div>
       <div>
-     
+
       <div class="d-flex justify-content-between flex-wrap">
         <h6 class="w-100">Technical Details</h6>
         <div class="d-flex flex-wrap">
@@ -87,9 +87,9 @@
             <label class="form-check-label" for="detail-texture" checked>Textured</label>
           </div>
         </div>
-       
+
       </div>
-    </div>     
+    </div>
 
     <div>
       <h6>Tags</h6>
@@ -98,7 +98,7 @@
       <input type="text" class="form-control" type="text" id='tag_create' value="" placeholder="" aria-label="Username" aria-describedby="basic-addon1">
       <div class="d-flex flex-wrap gap-1.8 justify-content-sm-start mt-1" id="tag_suggest">
       </div>
-      
+
     </div>
     <div >
       <div class="row justify-content-between">
@@ -107,7 +107,7 @@
         </div>
         <div class="col-4 d-flex  justify-content-end">
           <!-- <button type="button" class="mr-4 btn btn-lg btn-outline-primary text-white">Preview</button> -->
-      
+
           <button onclick="createUploadContent()" type="button" class="publish-btn btn theme-color btn-rounded" >Publish</button>
         </div>
       </div>
@@ -120,6 +120,17 @@
   var newfiles = [];
   var modelviewer = document.getElementById('model-viewer');
   var modelpath = '';
+  //reload page when back button on browser is pressed
+  window.addEventListener( "pageshow", function ( event ) {
+    var historyTraversal = event.persisted ||
+                           ( typeof window.performance != "undefined" &&
+                                window.performance.navigation.type === 2 );
+    if ( historyTraversal ) {
+      // Handle page restore.
+      window.location.reload();
+    }
+  });
+  
   async function createUploadContent() {
     const formData = new FormData();
     const request = new XMLHttpRequest();

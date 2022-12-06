@@ -307,9 +307,17 @@
   const dragText = document.querySelector(".drag-text");
   const collectedfiles = document.querySelector(".collected-files");
   const nextpagebtn = document.querySelector(".upload-page-btn");
- //  if(performance.navigation.type == 2){
- //   location.reload(true);
- // }
+
+  //reload page when back button on browser is pressed
+  window.addEventListener( "pageshow", function ( event ) {
+    var historyTraversal = event.persisted ||
+                           ( typeof window.performance != "undefined" &&
+                                window.performance.navigation.type === 2 );
+    if ( historyTraversal ) {
+      // Handle page restore.
+      window.location.reload();
+    }
+  });
 
   class fileObj {
     constructor(type,filename,file) {
