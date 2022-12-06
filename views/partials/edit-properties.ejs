@@ -7,10 +7,10 @@
           <h2 class="Title">Edit Properties</h2>
         </div>
         <div class="row justify-content-between">
-          <div class="col-7 d-flex flex-column gap-2">
+          <div class="col-7 d-flex flex-column gap-2 asset-view flex-grow-1 py-1">
             <%if(isModel){%>
                 <div>
-                    <h6 class="asset-name">cyberpunk shiba inu</h6>
+                    <!-- <h6 class="asset-name">cyberpunk shiba inu</h6> -->
                     <model-viewer class="model-viewer-dimensions border border-secondary rounded-4" id="model-viewer" alt=""
                       src='../uploads/shiba/gltf/scene.gltf' ar ar-modes="webxr scene-viewer quick-look" seamless-poster
                       shadow-intensity="1" camera-controls enable-pan></model-viewer>
@@ -28,7 +28,7 @@
             Browse
           </span> -->
             </div>
-            <%if(isModel){%>
+           
             <div class="accordion" id="accordionExample">
               <div class="accordion-item">
                 <h2 class="accordion-header" id="headingOne">
@@ -40,6 +40,7 @@
                 <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
                   data-bs-parent="#accordionExample">
                   <div class="accordion-body p-2">
+                    <%if(isModel){%>
                     <div class="all-files">
                       <% for(var i=0; i < content.imagefiles.length; i++) {%>
                         <div class="current-file">
@@ -57,15 +58,18 @@
 
                         <%}%>
                     </div>
+                    <%}else{%>
+                      <div class="all-files">
+                        </div>
+                    <%}%>
                   </div>
                 </div>
               </div>
             </div>
-            <%}else{%>
-            <%}%>
+           
 
           </div>
-          <div class="col-5 d-flex flew-wrap gap-4 flex-column">
+          <div class="col-5 d-flex flew-wrap gap-4 flex-column flex-grow-1 py-1">
             <div>
               <h6>Title</h6>
               <input class="title-info w-100 form-control" type="text" class="form-control" placeholder="Add a title..."
@@ -111,12 +115,12 @@
                   <h6 class="w-100">Technical Details</h6>
                   <div class="d-flex flex-wrap">
                     <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
-                      <input name="optradio" type="checkbox"
+                      <input name="optradio" type="radio"
                         id="inlineCheckbox1" value="option1" />
                       <label class="form-check-label" for="inlineCheckbox1">Equirectangular</label>
                     </div>
                     <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
-                      <input name="optradio" type="checkbox"
+                      <input name="optradio" type="radio"
                         id="inlineCheckbox2" checked value="option2" />
                       <label class="form-check-label" for="inlineCheckbox2" checked>Cubemap</label>
                     </div>

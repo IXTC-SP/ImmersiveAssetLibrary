@@ -18,9 +18,7 @@ p {
   overflow: hidden;
 }
 
-.section-content{
-  padding: 50px 100px 50px 100px
-}
+
 
 .footer {
   /* position: fixed; */
@@ -34,6 +32,13 @@ p {
   }
   .carousel-inner .carousel-item > div:first-child {
       display: block;
+  }
+  #panorama {
+    width: 100%;
+    height: 200px;
+  }
+  .section-content{
+    padding: 50px 15px 50px 15px
   }
 }
 
@@ -55,7 +60,21 @@ p {
   .carousel-inner .carousel-item-prev {
     transform: translateX(-25%);
   }
+  .section-content{
+    padding: 50px 100px 50px 100px
+  }
+  #panorama {
+    width: 100%;
+    height: 400px;
+  }
 }
+/* 1250 and up screens
+@media (min-width: 1248px) {
+  .section-content{
+    padding: 50px 100px 50px 100px
+  }
+} */
+
 
 .carousel-inner .carousel-item-end,
 .carousel-inner .carousel-item-start { 

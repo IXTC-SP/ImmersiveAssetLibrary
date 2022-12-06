@@ -46,3 +46,8 @@
   cursor: inherit;
   display: block;
 }
+
+.asset-view{
+  width: 600px;
+
+}
