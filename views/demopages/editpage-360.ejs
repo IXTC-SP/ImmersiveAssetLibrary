@@ -21,6 +21,18 @@
   var type = '';
   getEJScontent();
 
+  //reload page when back button on browser is pressed
+  window.addEventListener( "pageshow", function ( event ) {
+    var historyTraversal = event.persisted ||
+                           ( typeof window.performance != "undefined" &&
+                                window.performance.navigation.type === 2 );
+    if ( historyTraversal ) {
+      // Handle page restore.
+      window.location.reload();
+    }
+  });
+  
+
   function getEJScontent(){
   <% if (format) {  %>
     type = <%- JSON.stringify(format)%>;
@@ -88,11 +100,12 @@
       files : [],
       title : document.querySelector(".title-info").value,
       description : document.querySelector(".desc-info").value,
-      tags : []
+      tags : [],
+      type : type,
       }
       var tags = document.querySelectorAll("#selected_tag_element");
       for(i = 0; i<tags.length;i++){ data.tags.push(tags[i].innerText); }
-      data.files=files;
+      data.files =files;
       console.log(data);
       for(i=0; i< newfiles.length;i++)
       { formData.append('file', newfiles[i]); }

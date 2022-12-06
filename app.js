@@ -231,6 +231,7 @@ app.post('/save3dmodel', uploadsmanager_model.upload3D, function(req,res){
 
 // ----- 360 upload to publish ------ START
 const uploadmanager_360 = require('./scripts/uploadmanager_360');
+const databasemanager_360 = require('./scripts/databasemanager_360');
 
 app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function(req, res) {
   console.log(req.body);
@@ -276,13 +277,11 @@ app.post('/savethreesixty', uploadmanager_360.upload360, function(req,res){
       allfiles = body.files.concat(newfiles);
     }
   }
-  let foldername = body.title == "" ? "default_foldername" : body.title.replace(/\s/g, '');
   console.log(allfiles);
-  console.log(foldername);
-  console.log(tmpContent.destination);
+  let foldername = body.title == "" ? "default_foldername" : body.title.replaceAll(' ', '_');
 
-
-  uploadmanager_360.publish(body.title, allfiles, tmpContent.destination);
+  uploadmanager_360.publish(foldername, allfiles, tmpContent.destination);
+  databasemanager_360.save(req,res, allfiles);
 
 });
 

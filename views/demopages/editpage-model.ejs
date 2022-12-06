@@ -12,13 +12,23 @@
     var newfiles = [];
     var modelviewer = document.getElementById('model-viewer');
     var modelpath = '';
+     //reload page when back button on browser is pressed
+  window.addEventListener( "pageshow", function ( event ) {
+    var historyTraversal = event.persisted ||
+                           ( typeof window.performance != "undefined" &&
+                                window.performance.navigation.type === 2 );
+    if ( historyTraversal ) {
+      // Handle page restore.
+      window.location.reload();
+    }
+  });
     async function createUploadContent() {
       const formData = new FormData();
       const request = new XMLHttpRequest();
       var nextURL = "/view-model";
       var postURL = "/save3dmodel";
       console.log("create upload content");
-
+    
       var data = {
         files: [],
         modelfile: <%- JSON.stringify(content.modelfile)%>,

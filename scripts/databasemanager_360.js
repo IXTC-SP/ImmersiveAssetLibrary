@@ -1,20 +1,23 @@
 const fs = require('fs')
-const modeldb = require('../models/model');
+const threesixtydb = require('../models/threesixty');
 const fastFolderSize = require('fast-folder-size')
 
 class AssetPath {
   folderpath = "";
-  gltfmodelpath = "";
-  diffuse = "";
-  emission = "";
-  thumbnail = "";
+  equirectangular = "";
+  cubemap = {
+    front: "",
+    right: "",
+    back: "",
+    left: "",
+    top: "",
+    bottom: ""
+  }
 }
 
+//either cubemap or equirectangular
 class Attribute {
-  lowpoly = false;
-  animated = false;
-  rigged = false;
-  textured = false;
+  type = 'default';
 }
 
 const Save = async function(req, res, files) {
@@ -22,24 +25,28 @@ const Save = async function(req, res, files) {
   let body = JSON.parse(req.body.data);
 
   let attribute = new Attribute();
-  attribute.lowpoly = body.lowpoly;
-  attribute.rigged = body.rigged;
-  attribute.animated = body.animated;
-  attribute.textured = body.textured;
+  attribute.type = body.type;
 
   let assetpath = new AssetPath();
-  assetpath.folderpath = './uploads/' + body.folderpath;
-  assetpath.gltfmodelpath = body.gltfmodelpath.replace('tmp', body.folderpath);
-  assetpath.diffuse = body.diffusepath;
-  assetpath.emission = body.emissivepath;
-  assetpath.thumbnail = body.thumbnail == '' ? req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath) : body.thumbnail;
+  assetpath.folderpath = './uploads/' + body.title.replaceAll(' ', '_');
+  if(attribute.type == 'cubemap'){
+    assetpath.cubemap.front = body.files[0];
+    assetpath.cubemap.right = body.files[1];
+    assetpath.cubemap.back = body.files[2];
+    assetpath.cubemap.left = body.files[3];
+    assetpath.cubemap.top = body.files[4];
+    assetpath.cubemap.bottom = body.files[5];
+  } else {
+    assetpath.equirectangular = body.files[0];
+  }
 
+  console.log(assetpath.folderpath);
   fastFolderSize(assetpath.folderpath, (err, bytes) => {
     if (err) {
       throw err
     }
     var foldersize = (Math.round((bytes / (1024 * 1024)) * 10) / 10).toString() + 'mb';
-    var model = new modeldb({
+    var asset = new threesixtydb({
       title: body.title,
       description: body.description,
       owner: req.session.passport.user._id,
@@ -49,42 +56,17 @@ const Save = async function(req, res, files) {
       filesize: foldersize
     });
 
-    model.save(function(err) {
+    asset.save(function(err) {
       if (err) return console.log(err);
     });
   });
 
 }
 
-
-function getFilesizeInBytes(filename) {
-    var stats = fs.statSync(filename);
-    var fileSizeInMegabytes = stats.size / (1024*1024);
-    return fileSizeInMegabytes ;
-}
-
-async function getFolderSize(path) {
-  return await new Promise((resolve, reject) => {
-    fastFolderSize(path, (err, bytes) => {
-      if (err) {
-        throw err
-      }
-      var result = (Math.round((bytes / (1024 * 1024)) * 10) / 10).toString() + 'mb';
-      resolve(result);
-      return result;
-    })
-  });
-}
-
-
-
-
-
-
 module.exports.save = Save;
 
 const GetModel = (id, callback) => {
-  modeldb.findOne({
+  threesixtydb.findOne({
     _id: id
   }, (err, result) => {
     if (err) console.log(err);
@@ -97,7 +79,7 @@ module.exports.GetModel = GetModel;
 
 const GetAllModels = (callback) => {
   var arr = [];
-  modeldb.find({}, (err, result) => {
+  threesixtydb.find({}, (err, result) => {
     if (err) console.log(err);
     else {
       arr = result;
@@ -109,7 +91,7 @@ const GetAllModels = (callback) => {
 module.exports.GetAllModels = GetAllModels;
 
 function FindModelsByTags(tags) {
-  modeldb.find({
+  threesixtydb.find({
     tags: tags
   }, (err, result) => {
     console.log(result);
@@ -119,12 +101,12 @@ function FindModelsByTags(tags) {
 const SearchBar = (searchterm, callback) => {
   var arr = [];
   console.log('start mongoose search');
-  modeldb.find({
+  threesixtydb.find({
     title: searchterm
   }).then(function(nameresult) {
     arr.push(nameresult);
     console.log('finish search name', nameresult);
-    modeldb.find({
+    threesixtydb.find({
       tags: searchterm
     }).then(function(tagresult) {
       // arr.push(tagresult);
@@ -138,7 +120,7 @@ module.exports.SearchBar = SearchBar;
 
 
 const FindModelById = (id, callback) => {
-  modeldb.findOne({
+  threesixtydb.findOne({
     _id: id
   }, (err, result) => {
     if (err) console.log(err);
@@ -152,11 +134,11 @@ module.exports.FindModelById = FindModelById;
 
 //FUNCTIONS ------- for development stage ---------
 function updateallsize() {
-  modeldb.find({}, function(err, docs) {
+  threesixtydb.find({}, function(err, docs) {
     docs.forEach(async doc => {
       let size = await getFolderSize(doc.assetPath.folderpath);
       console.log(size);
-      await modeldb.updateOne(doc, { filesize: size });
+      await threesixtydb.updateOne(doc, { filesize: size });
     });
   });
 }
