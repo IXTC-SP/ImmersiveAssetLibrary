@@ -66,8 +66,9 @@
 
   function runPannellum(type) {
     console.log(files);
+    var viewer;
     if(type == 'cubemap'){
-      pannellum.viewer('panorama', {
+      viewer = pannellum.viewer('panorama', {
         "type": "cubemap",
         "cubeMap": [
           "../uploads/tmp/" + files[0],
@@ -80,13 +81,33 @@
         "autoLoad": true
       });
     } else {
-      pannellum.viewer('panorama', {
+      viewer = pannellum.viewer('panorama', {
       "type": "equirectangular",
       "panorama": "../uploads/tmp/" + files[0],
       "autoLoad": true
       });
     }
+    console.log(viewer);
+    viewer.on('load', function(){
+      console.log('running viewer');
+      saveThumbnail(viewer);
+
+    });
     // https://naver.github.io/egjs-view360/examples/img/equi.jpg
+  }
+
+
+  function saveThumbnail(viewer){
+    var img = viewer.getRenderer().render(
+      viewer.getPitch() / 180 * Math.PI,
+      viewer.getYaw() / 180 * Math.PI,
+      viewer.getHfov() / 180 * Math.PI,
+      {'returnImage': true});
+    const anchor = document.createElement('a');
+    anchor.download = 'my-file-name.png'; // optional, but you can give the file a name
+    anchor.href = img;
+    anchor.click(); // ✨ magic!
+    URL.revokeObjectURL(anchor.href);
   }
 
   async function createUploadContent() {
@@ -110,6 +131,7 @@
       for(i=0; i< newfiles.length;i++)
       { formData.append('file', newfiles[i]); }
       formData.append('data', JSON.stringify(data));
+
 
 
       request.onreadystatechange = function() { // listen for state changes

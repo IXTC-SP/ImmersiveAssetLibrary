@@ -285,7 +285,7 @@ app.post('/savethreesixty', uploadmanager_360.upload360, function(req,res){
   uploadmanager_360.publish(foldername, allfiles, tmpContent.destination);
   databasemanager_360.save(req,res, allfiles, function(result){
     res.send(result);
-
+});
 });
 
 app.get('/view/360', function(req, res) {
