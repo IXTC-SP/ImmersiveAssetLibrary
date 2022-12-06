@@ -20,7 +20,7 @@ class Attribute {
   type = 'default';
 }
 
-const Save = async function(req, res, files) {
+const Save = async function(req, res, files, callback) {
   //create list with all files required to save
   let body = JSON.parse(req.body.data);
 
@@ -58,6 +58,7 @@ const Save = async function(req, res, files) {
 
     asset.save(function(err) {
       if (err) return console.log(err);
+      else callback(obj.id);
     });
   });
 

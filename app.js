@@ -224,7 +224,9 @@ app.post('/save3dmodel', uploadsmanager_model.upload3D, function(req,res){
   let thumbnail = body.thumbnail == '' ? req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath) : body.thumbnail;
   uploadsmanager_model.publish(body.folderpath, allfiles, tmpContent.model[0].destination);
   //save model database
-  databasemanager_model.save(req,res, allfiles);
+  databasemanager_model.save(req,res, allfiles, function(result){
+    res.send(result);
+  });
 });
 // ----- model upload to publish ------ END
 
@@ -281,7 +283,8 @@ app.post('/savethreesixty', uploadmanager_360.upload360, function(req,res){
   let foldername = body.title == "" ? "default_foldername" : body.title.replaceAll(' ', '_');
 
   uploadmanager_360.publish(foldername, allfiles, tmpContent.destination);
-  databasemanager_360.save(req,res, allfiles);
+  databasemanager_360.save(req,res, allfiles, function(result){
+    res.send(result);
 
 });
 

@@ -17,7 +17,7 @@ class Attribute {
   textured = false;
 }
 
-const Save = async function(req, res, files) {
+const Save = async function(req, res, files, callback) {
   //create list with all files required to save
   let body = JSON.parse(req.body.data);
 
@@ -33,7 +33,6 @@ const Save = async function(req, res, files) {
   assetpath.diffuse = body.diffusepath;
   assetpath.emission = body.emissivepath;
   assetpath.thumbnail = body.thumbnail == '' ? req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath) : body.thumbnail;
-
   fastFolderSize(assetpath.folderpath, (err, bytes) => {
     if (err) {
       throw err
@@ -49,11 +48,13 @@ const Save = async function(req, res, files) {
       filesize: foldersize
     });
 
-    model.save(function(err) {
+    model.save(function(err, obj) {
       if (err) return console.log(err);
+      else callback(obj.id);
     });
-  });
 
+
+  });
 }
 
 module.exports.save = Save;

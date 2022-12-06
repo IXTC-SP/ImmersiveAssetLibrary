@@ -31,7 +31,7 @@
       window.location.reload();
     }
   });
-  
+
 
   function getEJScontent(){
   <% if (format) {  %>
@@ -92,7 +92,7 @@
   async function createUploadContent() {
     const formData = new FormData();
     const request = new XMLHttpRequest();
-    var nextURL = "/view-360";
+    var nextURL = "/asset/";
     var postURL = "/savethreesixty";
     console.log("create upload content");
 
@@ -114,7 +114,8 @@
 
       request.onreadystatechange = function() { // listen for state changes
       if (request.readyState == 4 && request.status == 200) { // when completed we can move away
-      window.location = nextURL;
+        nextURL += request.responseText;
+        window.location = nextURL;
       }
       }
       request.open("POST", postURL, false);

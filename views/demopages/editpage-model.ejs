@@ -25,10 +25,10 @@
     async function createUploadContent() {
       const formData = new FormData();
       const request = new XMLHttpRequest();
-      var nextURL = "/view-model";
+      var nextURL = "/asset/";
       var postURL = "/save3dmodel";
       console.log("create upload content");
-    
+
       var data = {
         files: [],
         modelfile: <%- JSON.stringify(content.modelfile)%>,
@@ -63,6 +63,7 @@
 
       request.onreadystatechange = function () { // listen for state changes
         if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+          nextURL += request.responseText;
           window.location = nextURL;
         }
       }
