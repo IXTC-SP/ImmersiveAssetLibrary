@@ -307,6 +307,10 @@
   const dragText = document.querySelector(".drag-text");
   const collectedfiles = document.querySelector(".collected-files");
   const nextpagebtn = document.querySelector(".upload-page-btn");
+ //  if(performance.navigation.type == 2){
+ //   location.reload(true);
+ // }
+
   class fileObj {
     constructor(type,filename,file) {
       this.type = type
@@ -545,6 +549,10 @@
 
   let files = [];
   dragcounter = 0;
+  dragArea.addEventListener("dragover", (event) => {
+  // prevent default to allow drop
+  event.preventDefault();
+  });
   dragArea.addEventListener('dragenter', (event) => {
     event.preventDefault();
     dragText.textContent = "Release to Upload"
@@ -557,6 +565,9 @@
     }
   });
   dragArea.addEventListener('drop', async (event) => {
+    console.log("drop")
+    dragcounter = 0;
+    dragText.textContent = "Drag & Drop";
     event.preventDefault();
     if (event.dataTransfer.items) {
       [...event.dataTransfer.files].forEach(async (file, i) => {
