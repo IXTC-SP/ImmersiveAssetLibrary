@@ -87,7 +87,7 @@ function FindModelsByTags(tags) {
   modeldb.find({
     tags: tags
   }, (err, result) => {
-    console.log(result);
+    //console.log(result);
   });
 }
 

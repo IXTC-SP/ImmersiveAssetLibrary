@@ -4,20 +4,23 @@
   <div class="container-fluid px-5" id="top-bar">
     <div class="mx-auto d-flex justify-content-between">
       <form
-        class=""
         style="width: 400px"
-        action="changeAssetType"
+        action="filter"
         method="post"
+        id="filter-type-form"
       >
         <label style="font-size: 1.5em" for="search">Download Assets : </label>
         <select
-          class=""
+          id="filter-type"
           style="font-size: 1.2em; background: none; border: none"
-          name="type"
+          name="filter"
+          onchange='storeSelectedFilter("filter-type","selectedFilter")'
         >
-          <option value="3dmodel">3D Model</option>
-          <option value="script">Script</option>
-          <option value="360">360 Image</option>
+          <option class="filter" type="button" value="3dmodel" selected>
+            3D Model
+          </option>
+          <option class="filter" type="button" value="script">Script</option>
+          <option class="filter" type="button" value="360">360 Image</option>
         </select>
       </form>
       <!-- <form
@@ -39,15 +42,16 @@
     <hr />
     <div class="d-flex flex-wrap align-items-center">
       <div class="form-check form-check-inline text-muted d-flex ps-0">
-        <form style="width: 120px" action="changeAssetType" method="post">
+        <form style="width: 120px" action="changeAssetType" method="post" id="format-type-form">
           <select
             class="form-select"
-            id="floatingSelect"
+            id="format-type"
             aria-label="Floating label select example"
+            onchange='storeSelectedFilter("format-type","selectedFormat")'
           >
-            <option selected>Format</option>
-            <option value="obj">.obj</option>
-            <option value="fbx">.fbx</option>
+            <option type="button" value="format" selected >Format</option>
+            <option type="button" value="obj">.obj</option>
+            <option type="button" value="fbx">.fbx</option>
           </select>
         </form>
       </div>
@@ -77,6 +81,15 @@
           value="rigged"
         />
         <label class="form-check-label" for="rigged">Rigged</label>
+      </div>
+      <div class="form-check form-check-inline text-muted d-flex">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          name="textured"
+          value="textured"
+        />
+        <label class="form-check-label" for="textured">Textured</label>
       </div>
     </div>
     <hr />
@@ -140,29 +153,16 @@
   function CreateAssetCard(data) {
     let clone = cardmain.cloneNode(true);
     clone.style.display = "block";
-    let link = clone.querySelector("#asset-link")
-    console.log(data._id)
-    link.href = `/asset/${data._id}`
+    let link = clone.querySelector("#asset-link");
+    //console.log(data._id)
+    link.href = `/asset/${data._id}`;
     let assetimg = clone.querySelector("#asset-img");
-    console.log(assetimg);
+    //console.log(assetimg);
     assetimg.src =
-      data.assetPath.folderpath.slice(1) +
-      "/" +
-      data.assetPath.thumbnail;
-    console.log(assetimg.src);
+      data.assetPath.folderpath.slice(1) + "/" + data.assetPath.thumbnail;
+    //console.log(assetimg.src);
     let assetname = clone.querySelector("#asset-name");
     assetname.innerHTML = data.title;
-    console.log(assetname.innerHTML);
-    // let assetdesc = clone.querySelector("#asset-desc");
-    // assetdesc.innerHTML = data.description;
-    // console.log(assetdesc.innerHTML);
-    // let assettaglist = clone.querySelector("#asset-tag-list");
-    // for (var i = 0; i < data.tags.length; i++) {
-    //   let assettag = document.createElement("h6");
-    //   assettag.innerHTML = data.tags[i];
-    //   assettag.className = "font-weight-light pr-2";
-    //   assettaglist.appendChild(assettag);
-    // }
     assetrow.appendChild(clone);
   }
 
@@ -176,6 +176,46 @@
     });
   }
   addButtonToCard();
+
+  const submitFilterForm = (elementId) => {
+    let form = document.getElementById(elementId);
+    form.submit();
+  };
+
+  const storeSelectedFilter = (elementId, keyName) => {
+    let el = document.getElementById(elementId);
+    localStorage.setItem(keyName, JSON.stringify(el.value));
+    //invoke the submit
+    submitFilterForm(`${elementId}-form`);
+  };
+
+  const setSelectedOption = (elementId, elementClass, elementValue) => {
+    let form = document.getElementById(elementId);
+    const options = form.querySelectorAll(`#${elementClass} option`);
+    options.forEach((element) => {
+      element.selected = false;
+      if (element.value === `${elementValue}`) {
+        element.selected = true;
+      }
+    });
+  }
+  const showPreviousSelectedFilter = () => {
+    console.log("show Selected Filter");
+    const selectedFilter = JSON.parse(localStorage.getItem("selectedFilter"));
+    const selectedFormat = JSON.parse(localStorage.getItem("selectedFormat"));
+    setSelectedOption("filter-type", "filter", selectedFilter)
+    setSelectedOption("format-type", "format", selectedFormat)
+    console.log("------->", selectedFilter, selectedFormat);
+    // let filterForm = document.getElementById("filter-type");
+    // const options = filterForm.querySelectorAll("#filter option");
+    // options.forEach((element) => {
+    //   element.selected = false;
+    //   if (element.value === `${selectedFilter}`) {
+    //     element.selected = true;
+    //   }
+    // });
+  };
+  showPreviousSelectedFilter();
 </script>
 
 <%- include('partials/footer') %>
