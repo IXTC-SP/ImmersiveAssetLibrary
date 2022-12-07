@@ -105,7 +105,7 @@ app.get("/asset/:modelid", function (req, res) {
 
 //WORKING (ASSET LIST PAGE)
 app.get("/assets", async function (req, res) {
-  console.log(req.query.fiter)
+  console.log(req.query.filter)
   if (req.query.filter === "360") {
     console.log("get all result on 360 list");
     const result = await threeSixtiesModel.find();
@@ -120,7 +120,12 @@ app.get("/assets", async function (req, res) {
     // })
   } else if (typeof req.query.search === "undefined" || req.query.search == "") {
     console.log("get all result on model list");
+    const format = ""
+    if(req.query.format !== "format" ){
+      format = req.query.format
+    }
     modeldatabase.GetAllModels((result) => {
+      result.filter(doc => doc.assetPath.folderpath.split("/")[1] )
       res.render("assets", {
         data: {
           models: result,
