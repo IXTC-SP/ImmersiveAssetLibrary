@@ -14,6 +14,7 @@ const url = require("url");
 const gltfmodel = require("./scripts/gltfmodel");
 const modeldatabase = require("./scripts/databasemanager_model");
 const threeSixtiesModel = require("./models/threesixty");
+const modelModel = require("./models/model")
 const modeldisplay = require("./scripts/modeldisplay");
 const storagemanagement = require("./scripts/storagemanagement");
 const filedownloader = require("./scripts/filedownloader");
@@ -120,12 +121,19 @@ app.get("/assets", async function (req, res) {
     // })
   } else if (typeof req.query.search === "undefined" || req.query.search == "") {
     console.log("get all result on model list");
-    const format = ""
-    if(req.query.format !== "format" ){
-      format = req.query.format
+    // let format = ""
+    // if(req.query.format !== "format" ){
+    //   format = req.query.format
+    // }
+    if(req.query.attributes ){
+      console.log(req.query.attributes)
+      modelModel.find({...req.query.attributes})
     }
+
+
     modeldatabase.GetAllModels((result) => {
-      result.filter(doc => doc.assetPath.folderpath.split("/")[1] )
+      //console.log("=>", result.filter(doc => doc.assetPath.folderpath.split("/")[1] ))
+      result.filter(doc => doc.attr)
       res.render("assets", {
         data: {
           models: result,
@@ -173,6 +181,16 @@ app.post("/format", function (req, res) {
       pathname: "/assets",
       query: {
         format: req.body.format,
+      },
+    })
+  );
+});
+app.post("/attributes", function (req, res) {
+  res.redirect(
+    url.format({
+      pathname: "/assets",
+      query: {
+        format: req.body.attributes,
       },
     })
   );

@@ -42,7 +42,7 @@
     <hr />
     <div class="d-flex flex-wrap align-items-center">
       <div class="form-check form-check-inline text-muted d-flex ps-0">
-        <form style="width: 120px" action="changeAssetType" method="post" id="format-type-form">
+        <form style="width: 120px" action="format" method="post" id="format-type-form">
           <select
             class="form-select"
             id="format-type"
@@ -55,42 +55,48 @@
           </select>
         </form>
       </div>
-      <div class="form-check form-check-inline text-muted d-flex">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          name="animated"
-          value="animated"
-        />
-        <label class="form-check-label" for="animated">Animated</label>
-      </div>
-      <div class="form-check form-check-inline text-muted d-flex">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          name="low-poly"
-          value="lowpoly"
-        />
-        <label class="form-check-label" for="lowpoly">Low Poly</label>
-      </div>
-      <div class="form-check form-check-inline text-muted d-flex">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          name="rigged"
-          value="rigged"
-        />
-        <label class="form-check-label" for="rigged">Rigged</label>
-      </div>
-      <div class="form-check form-check-inline text-muted d-flex">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          name="textured"
-          value="textured"
-        />
-        <label class="form-check-label" for="textured">Textured</label>
-      </div>
+      <form action="attributes" method="post" id="attributes-type-form">       
+        <div class="form-check form-check-inline text-muted d-flex">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="attributes"
+            value="animated"
+            onChange='submitFilterForm("attributes-type-form")'
+          />
+          <label class="form-check-label" for="animated">Animated</label>
+        </div>
+        <div class="form-check form-check-inline text-muted d-flex">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="attributes"
+            value="lowpoly"
+            onChange='submitFilterForm("attributes-type-form")'
+          />
+          <label class="form-check-label" for="lowpoly">Low Poly</label>
+        </div>
+        <div class="form-check form-check-inline text-muted d-flex">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="attributes"
+            value="rigged"
+            onChange='submitFilterForm("attributes-type-form")'
+          />
+          <label class="form-check-label" for="rigged">Rigged</label>
+        </div>
+        <div class="form-check form-check-inline text-muted d-flex">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="attributes"
+            value="textured"
+            onChange='submitFilterForm("attributes-type-form")'
+          />
+          <label class="form-check-label" for="textured">Textured</label>
+        </div>
+      </form>
     </div>
     <hr />
   </div>
@@ -189,6 +195,30 @@
     submitFilterForm(`${elementId}-form`);
   };
 
+  const storeCheckedItems = () => {
+  const checkedValues = [];
+  const checkedItems = document.querySelectorAll(
+    
+    "input[class='studio-filters-options mx-1']:checked"
+  );
+  if (checkedItems.length > 0) {
+    checkedItems.forEach((item) => {
+      checkedValues.push(item.value);
+      console.log(item.value);
+    });
+    console.log("theres checked boxes");
+    localStorage.setItem("checkedValues", JSON.stringify(checkedValues));
+  } else {
+    console.log("theres no checked boxes");
+    localStorage.setItem("checkedValues", JSON.stringify([]));
+  }
+  console.log(checkedValues);
+
+  //invoke the submit
+  submitForm();
+  //fetchDataAsync ("http://localhost:3000/studios", options)
+};
+
   const setSelectedOption = (elementId, elementClass, elementValue) => {
     let form = document.getElementById(elementId);
     const options = form.querySelectorAll(`#${elementClass} option`);
@@ -203,8 +233,10 @@
     console.log("show Selected Filter");
     const selectedFilter = JSON.parse(localStorage.getItem("selectedFilter"));
     const selectedFormat = JSON.parse(localStorage.getItem("selectedFormat"));
+    const selectedAttributes = JSON.parse(localStorage.getItem("selectedAttributes"));
     setSelectedOption("filter-type", "filter", selectedFilter)
     setSelectedOption("format-type", "format", selectedFormat)
+    setSelectedOption("format-type", "format", selectedAttributes)
     console.log("------->", selectedFilter, selectedFormat);
     // let filterForm = document.getElementById("filter-type");
     // const options = filterForm.querySelectorAll("#filter option");
