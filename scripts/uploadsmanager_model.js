@@ -119,9 +119,20 @@ function getDirectories(srcpath) {
     .filter(path => fs.statSync(path).isDirectory());
 }
 
+const changepath = function changepath(oldpath,newpath){
+  fs.rename(oldpath, newpath, function(err) {
+  if (err) {
+    console.log(err)
+  } else {
+    console.log("Successfully renamed the directory.")
+  }
+});
+}
+
 
 module.exports.uploadHandler = upload;
 module.exports.publish = publishfile;
+module.exports.changepath = changepath;
 module.exports.closeTmpFolder = closeTmpFolder;
 module.exports.uploadtmp3D = uploadtmp3D;
 module.exports.upload3D = upload3D;

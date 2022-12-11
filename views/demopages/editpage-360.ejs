@@ -91,29 +91,45 @@
     viewer.on('load', function(){
       console.log('running viewer');
       saveThumbnail(viewer);
-
     });
     // https://naver.github.io/egjs-view360/examples/img/equi.jpg
   }
 
-
+  let thumbnailblob = '';
   function saveThumbnail(viewer){
     var img = viewer.getRenderer().render(
       viewer.getPitch() / 180 * Math.PI,
       viewer.getYaw() / 180 * Math.PI,
       viewer.getHfov() / 180 * Math.PI,
       {'returnImage': true});
-    const anchor = document.createElement('a');
-    anchor.download = 'my-file-name.png'; // optional, but you can give the file a name
-    anchor.href = img;
-    anchor.click(); // ✨ magic!
-    URL.revokeObjectURL(anchor.href);
+    var imgblob = dataURItoBlob(img);
+    console.log(imgblob);
+    console.log(typeof(imgblob));
+    thumbnailblob = imgblob;
   }
+
+  function dataURItoBlob(dataURI) {
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    var byteString = atob(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+    // write the bytes of the string to an ArrayBuffer
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    //New Code
+    return new Blob([ab], {type: mimeString});
+}
 
   async function createUploadContent() {
     const formData = new FormData();
     const request = new XMLHttpRequest();
-    var nextURL = "/asset/";
+    var nextURL = "/asset/threesixty/";
     var postURL = "/savethreesixty";
     console.log("create upload content");
 
@@ -126,11 +142,17 @@
       }
       var tags = document.querySelectorAll("#selected_tag_element");
       for(i = 0; i<tags.length;i++){ data.tags.push(tags[i].innerText); }
-      data.files =files;
+      data.files = files;
       console.log(data);
       for(i=0; i< newfiles.length;i++)
       { formData.append('file', newfiles[i]); }
       formData.append('data', JSON.stringify(data));
+
+      if(thumbnailblob){
+        var file = new File([thumbnailblob], 'new_thumbnail.png');
+        console.log(file);
+        formData.append('newthumbnail', file);
+      }
 
 
 

@@ -33,8 +33,10 @@ const Save = async function(req, res, files, callback) {
   assetpath.diffuse = body.diffusepath;
   assetpath.emission = body.emissivepath;
   assetpath.thumbnail = body.thumbnail == '' ? req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath) : body.thumbnail;
+  console.log(  assetpath.folderpath,"before fast folder size");
   fastFolderSize(assetpath.folderpath, (err, bytes) => {
     if (err) {
+      console.log("fast folder fail");
       throw err
     }
     var foldersize = (Math.round((bytes / (1024 * 1024)) * 10) / 10).toString() + 'mb';
@@ -47,14 +49,22 @@ const Save = async function(req, res, files, callback) {
       atrribute: attribute,
       filesize: foldersize
     });
-
     model.save(function(err, obj) {
       if (err) return console.log(err);
-      else callback(obj.id);
+      else {
+        var newassetpath = assetpath;
+        newassetpath.folderpath = './uploads/' + obj._id.toString();
+        changePath(obj._id, newassetpath);
+        callback(obj._id.toString());
+      }
     });
-
-
   });
+}
+
+ async function changePath(objid, newassetpath) {
+  await modeldb.updateOne({ _id: objid }, {
+  assetPath: newassetpath
+});
 }
 
 module.exports.save = Save;

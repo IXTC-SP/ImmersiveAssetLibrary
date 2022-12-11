@@ -142,7 +142,7 @@
     clone.style.display = "block";
     let link = clone.querySelector("#asset-link")
     console.log(data._id)
-    link.href = `/asset/${data._id}`
+    link.href = `/asset/<%- assettype %>/${data._id}`
     let assetimg = clone.querySelector("#asset-img");
     console.log(assetimg);
     assetimg.src =

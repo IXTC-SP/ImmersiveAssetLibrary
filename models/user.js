@@ -34,6 +34,12 @@ const userSchema = new mongoose.Schema(
         ref: "Model",
       },
     ],
+    downloadedThreeSixty: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "ThreeSixty",
+      },
+    ],
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",

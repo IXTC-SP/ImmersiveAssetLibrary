@@ -56,12 +56,22 @@ const Save = async function(req, res, files, callback) {
       filesize: foldersize
     });
 
-    asset.save(function(err) {
+    asset.save(function(err, obj) {
       if (err) return console.log(err);
-      else callback(obj.id);
+      else {
+        var newassetpath = assetpath;
+        newassetpath.folderpath = './uploads/' + obj._id.toString();
+        changePath(obj._id, newassetpath);
+        callback(obj._id.toString());
+      }
     });
-  });
+});
+}
 
+async function changePath(objid, newassetpath) {
+ await threesixtydb.updateOne({ _id: objid }, {
+ assetPath: newassetpath
+});
 }
 
 module.exports.save = Save;

@@ -12,7 +12,11 @@ const path = require('path');
 const url = require('url');
 
 const gltfmodel = require('./scripts/gltfmodel');
-const modeldatabase = require('./scripts/databasemanager_model');
+const uploadsmanager_model = require('./scripts/uploadsmanager_model');
+const databasemanager_model = require('./scripts/databasemanager_model');
+const uploadmanager_360 = require('./scripts/uploadmanager_360');
+const databasemanager_360 = require('./scripts/databasemanager_360');
+// const modeldatabase = require('./scripts/databasemanager_model');
 const modeldisplay = require('./scripts/modeldisplay');
 const storagemanagement = require('./scripts/storagemanagement');
 const filedownloader = require('./scripts/filedownloader');
@@ -81,46 +85,67 @@ app.listen(port, async () => {
 
 const userModel = require("./models/user");
 
-app.get('/asset/:modelid', function(req, res) {
-  modeldatabase.FindModelById(req.params.modelid, (result) => {
+app.get('/asset/:type/:modelid', function(req, res) {
+  var dbmanager;
+  switch (req.params.type){
+    case 'model':
+      console.log('model asset type');
+      dbmanager = databasemanager_model;
+      break;
+    case 'threesixty':
+      console.log('model asset type');
+      dbmanager = databasemanager_360;
+      break;
+  }
+  dbmanager.FindModelById(req.params.modelid, (result) => {
     console.log("---->", result);
     console.log(result.owner);
     userModel.findById(result.owner, function(err,doc){
       console.log(doc.email);
       res.render('view_asset', {
         data: result,
+        assettype : req.params.type,
         owner: doc.email,
         isLoginpage: true,
         user: req.session.passport.user,
       });
     });
-
   });
 });
 
 
 
 //WORKING (ASSET LIST PAGE)
-app.get("/assets", function(req, res) {
+app.get("/assets/:type", function(req, res) {
+  var dbmanager = databasemanager_model;
+  switch(req.params.type){
+    case 'model':
+      dbmanager = databasemanager_model;
+      break;
+    case 'threesixty':
+      dbmanager = databasemanager_360;
+      break;
+  }
   if(typeof req.query.search === 'undefined' || req.query.search == ""){
     console.log("get all result on model list");
-    modeldatabase.GetAllModels((result) => {
+    dbmanager.GetAllModels((result) => {
       res.render('assets', {
         data: {
           models: result
-
         },
+        assettype: req.params.type,
         user: req.session.passport.user,
         isLoginpage: true
       });
     });
   } else {
-    modeldatabase.SearchBar(req.query.search, (result) => {
+    dbmanager.SearchBar(req.query.search, (result) => {
       console.log("running result on model list" , result);
       res.render('assets', {
         data: {
           models: result
         },
+        assettype: req.params.type,
         user: req.session.passport.user,
         isLoginpage: true
       });
@@ -128,9 +153,13 @@ app.get("/assets", function(req, res) {
   }
 });
 
-app.post('/search', function(req, res) {
+app.get("/assets", function(req, res) {
+  res.redirect('/assets/model')
+});
+
+app.post('/:type/search', function(req, res) {
   res.redirect(url.format({
-    pathname: "/assets",
+    pathname: "/assets" + req.params.type,
     query: {
       search: req.body.searchterm
     }
@@ -149,8 +178,7 @@ app.get('/dragndrop', function(req, res) {
 });
 
 // ----- model upload to publish ------ START
-const uploadsmanager_model = require('./scripts/uploadsmanager_model');
-const databasemanager_model = require('./scripts/databasemanager_model');
+
 var tmpContent = [];
 
 app.post("/uploadtmp3dmodel", uploadsmanager_model.uploadtmp3D, function(req, res) {
@@ -226,14 +254,16 @@ app.post('/save3dmodel', uploadsmanager_model.upload3D, function(req,res){
   //save model database
   databasemanager_model.save(req,res, allfiles, function(result){
     res.send(result);
+    var oldpath = './uploads/' + body.folderpath.replaceAll(' ', '_');
+    var newpath = './uploads/' + result;
+    uploadsmanager_model.changepath(oldpath, newpath);
   });
 });
 // ----- model upload to publish ------ END
 
 
 // ----- 360 upload to publish ------ START
-const uploadmanager_360 = require('./scripts/uploadmanager_360');
-const databasemanager_360 = require('./scripts/databasemanager_360');
+
 
 app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function(req, res) {
   console.log(req.body);
@@ -283,9 +313,14 @@ app.post('/savethreesixty', uploadmanager_360.upload360, function(req,res){
   let foldername = body.title == "" ? "default_foldername" : body.title.replaceAll(' ', '_');
 
   uploadmanager_360.publish(foldername, allfiles, tmpContent.destination);
+
   databasemanager_360.save(req,res, allfiles, function(result){
     res.send(result);
-});
+    var oldpath = './uploads/' + foldername;
+    var newpath = './uploads/' + result;
+    uploadmanager_360.changepath(oldpath, newpath);
+  });
+
 });
 
 app.get('/view/360', function(req, res) {
@@ -348,10 +383,22 @@ process.on('exit',() => {
 });
 
 
-
 //WORKING DOWNLOAD ASSET POST
-app.post("/downloadasset/:modelid", function(req, res) {
-  modeldatabase.GetModel(req.params.modelid, (result)=> {
+app.post("/downloadasset/:type/:modelid", function(req, res) {
+  var dbmanager = databasemanager_model;
+  var update;
+  switch(req.params.type){
+    case 'model':
+      dbmanager = databasemanager_model;
+      update = { $push: {downloadedModels: mongoose.Types.ObjectId(req.param.modelid)}}
+      break;
+    case 'threesixty':
+      dbmanager = databasemanager_360;
+      update = { $push: {downloadedThreeSixty:  mongoose.Types.ObjectId(req.param.modelid)}}
+      break;
+  }
+  //get userid and add modelid into userid database
+  dbmanager.GetModel(req.params.modelid, (result)=> {
     var downloadpath = __dirname + result.assetPath.folderpath.slice(1);
     filedownloader.CreateZipArchive(result.title, downloadpath, (tmppath)=> {
       res.download(tmppath, req.param('file'), function(err){
@@ -359,7 +406,13 @@ app.post("/downloadasset/:modelid", function(req, res) {
       fs.unlink(tmppath, (err)=> {
         if(err) console.log(err);
         else {
-          console.log("complete fs delete tmp file");
+          console.log("complete fs delete tmp file", req.session.passport.user);
+          //save asset id into user downloaded array
+          var filter = { _id: req.session.passport.user._id };
+          userModel.findOneAndUpdate(filter, update, function(err,doc){
+            if(err) console.log(err);
+            console.log('updated', doc);
+          })
         }
       });
       });

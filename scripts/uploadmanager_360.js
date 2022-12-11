@@ -39,6 +39,14 @@ const upload360 = upload.fields([
   {
     name: 'image',
     maxCount: 6
+  },
+  {
+    name: 'file',
+    maxCount: 10
+  },
+  {
+    name: 'newthumbnail',
+    maxCount:1
   }
 ]);
 
@@ -57,11 +65,32 @@ const publishfile = async function(foldername, files){
       filesizetotal += getFilesizeInBytes(newPath);
     }
 
+    try {
+      if (fs.existsSync('./uploads/tmp/new_thumbnail.png')) {
+        //file exists
+        var oldPath = './uploads/tmp/new_thumbnail.png'
+        var newPath = (publishpath + '/new_thumbnail.png');
+        fs.renameSync(oldPath, newPath);
+      }
+    } catch(err) {
+      console.error(err)
+    }
+
     //data required -> folderpath, totalfilesize, publish date,  assettype, ownedby, main asset type, main asset path, download count
     console.log('getting file size ' + filesizetotal);
     // getfilesize(publishpath);
 
 };
+
+const changepath = function changepath(oldpath,newpath){
+  fs.rename(oldpath, newpath, function(err) {
+  if (err) {
+    console.log(err)
+  } else {
+    console.log("Successfully renamed the directory.")
+  }
+});
+}
 
 function getFilesizeInBytes(filename) {
     var stats = fs.statSync(filename);
@@ -103,6 +132,7 @@ function getDirectories(srcpath) {
 
 module.exports.uploadHandler = upload;
 module.exports.publish = publishfile;
+module.exports.changepath = changepath;
 module.exports.closeTmpFolder = closeTmpFolder;
 module.exports.uploadtmp360 = uploadtmp360;
 module.exports.upload360 = upload360;
