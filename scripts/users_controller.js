@@ -56,7 +56,7 @@ const controller = {
   login: async (req, res) => {
     // return res.send("Route to homepage");
     
-    res.redirect(`/assets`);
+    res.redirect(`/assets/models`);
     //res.redirect("/assets/req.params.userId");
   },
   logout: async (req, res) => {

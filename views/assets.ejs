@@ -33,16 +33,16 @@
         <input class="large" type="text" name="searchterm" value="" />
         <button class="font-italic large" name="button">Search</button>
       </form> -->
-      <form class="" action="search" method="post">
+      <form class="" action="/assets/models" method="post" id="model-filter-form">
         <label for="search"></label>
         <input class="large" type="text" name="searchterm" value="" />
         <button class="font-italic large" name="button">Search</button>
-      </form>
+     
     </div>
     <hr />
     <div class="d-flex flex-wrap align-items-center">
       <div class="form-check form-check-inline text-muted d-flex ps-0">
-        <form style="width: 120px" action="format" method="post" id="format-type-form">
+        
           <select
             class="form-select"
             id="format-type"
@@ -53,9 +53,9 @@
             <option type="button" value="obj">.obj</option>
             <option type="button" value="fbx">.fbx</option>
           </select>
-        </form>
+        
       </div>
-      <form action="attributes" method="post" id="attributes-type-form">       
+           
         <div class="form-check form-check-inline text-muted d-flex">
           <input
             class="form-check-input"
@@ -193,7 +193,7 @@
     let el = document.getElementById(elementId);
     localStorage.setItem(keyName, JSON.stringify(el.value));
     //invoke the submit
-    submitFilterForm(`${elementId}-form`);
+    submitFilterForm(`model-filter-form`);
   };
 
   const storeCheckedItems = () => {
@@ -212,7 +212,7 @@
     localStorage.setItem("selectedAttributes", JSON.stringify([]));
   }
   //invoke the submit
-  submitFilterForm(`attributes-type-form`);
+  submitFilterForm(`model-filter-form`);
 };
 
   const setSelectedOption = (elementId, elementClass, elementValue) => {

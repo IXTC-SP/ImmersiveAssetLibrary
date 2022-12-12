@@ -105,7 +105,7 @@ app.get("/asset/:modelid", function (req, res) {
 });
 
 //WORKING (ASSET LIST PAGE)
-app.get("/assets", async function (req, res) {
+app.get("/assets/models", async function (req, res) {
   console.log(req.query.filter)
   if (req.query.filter === "360") {
     console.log("get all result on 360 list");
@@ -199,42 +199,55 @@ app.get("/assets", async function (req, res) {
     });
   }
 });
-app.post("/search", function (req, res) {
+// app.post("/search", function (req, res) {
+
+//   res.redirect(
+//     url.format({
+//       pathname: "/assets",
+//       query: {
+//         search: req.body.searchterm,
+//       },
+//     })
+//   );
+// });
+// app.post("/filter", function (req, res) {
+//   res.redirect(
+//     url.format({
+//       pathname: "/assets",
+//       query: {
+//         filter: req.body.filter,
+//       },
+//     })
+//   );
+// });
+// app.post("/format", function (req, res) {
+//   res.redirect(
+//     url.format({
+//       pathname: "/assets",
+//       query: {
+//         format: req.body.format,
+//       },
+//     })
+//   );
+// });
+// app.post("/attributes", function (req, res) {
+//   res.redirect(
+//     url.format({
+//       pathname: "/assets",
+//       query: {
+//         attributes: req.body.attributes,
+//       },
+//     })
+//   );
+// });
+app.post("/assets/models", function (req, res) {
   res.redirect(
     url.format({
-      pathname: "/assets",
-      query: {
-        search: req.body.searchterm,
-      },
-    })
-  );
-});
-app.post("/filter", function (req, res) {
-  res.redirect(
-    url.format({
-      pathname: "/assets",
-      query: {
-        filter: req.body.filter,
-      },
-    })
-  );
-});
-app.post("/format", function (req, res) {
-  res.redirect(
-    url.format({
-      pathname: "/assets",
-      query: {
-        format: req.body.format,
-      },
-    })
-  );
-});
-app.post("/attributes", function (req, res) {
-  res.redirect(
-    url.format({
-      pathname: "/assets",
+      pathname: "/assets/models",
       query: {
         attributes: req.body.attributes,
+        filter: req.body.filter,
+        search: req.body.searchterm,
       },
     })
   );
