@@ -58,11 +58,11 @@ app.use(passport.session()); //so that can tap into the express sessions data
 require("./config/passport");
 app.use(authMiddleware.setAuthUserVar);
 
-app.use((req, res, next) => {
-  console.log(req.session);
+// app.use((req, res, next) => {
+//   console.log(req.session);
 
-  next();
-});
+//   next();
+// });
 
 //sandra connection
 const mongoose = require("mongoose");
@@ -110,7 +110,7 @@ app.get("/assets", async function (req, res) {
   if (req.query.filter === "360") {
     console.log("get all result on 360 list");
     const result = await threeSixtiesModel.find();
-    console.log(result)
+    //console.log(result)
     res.send("360 page")
     // res.render("assets", {
     //   data: {
@@ -125,29 +125,73 @@ app.get("/assets", async function (req, res) {
     // if(req.query.format !== "format" ){
     //   format = req.query.format
     // }
-    if(req.query.attributes ){
-      console.log(req.query.attributes)
-      modelModel.find({...req.query.attributes})
-    }
-
-
+    // if(req.query.attributes ){
+    //   console.log(req.query.attributes)
+    //   modelModel.find({"atrributes": { $all: req.query.attributes}})
+    // }
     modeldatabase.GetAllModels((result) => {
       //console.log("=>", result.filter(doc => doc.assetPath.folderpath.split("/")[1] ))
-      result.filter(doc => doc.attr)
+      let filteredResult = result
+      if(req.query.attributes){   
+        filteredResult = result.filter((item)=>{
+          let allAttrSelected = true
+          if(typeof req.query.attributes === "string"){
+            item.atrribute[req.query.attributes]? null :  allAttrSelected = false 
+          }else{           
+            Object.values(req.query.attributes).forEach((attr)=>{
+              item.atrribute[attr]? null :  allAttrSelected = false 
+            })
+          }      
+          if(allAttrSelected){
+            return item
+          }
+        })
+       console.log( filteredResult)
+      }
+      //result.filter(doc => doc.attr)
       res.render("assets", {
         data: {
-          models: result,
+          models: filteredResult,
         },
         user: req.session.passport.user,
         isLoginpage: true,
       });
     });
+
+    // modeldatabase.GetAllModels((result) => {
+    //   //console.log("=>", result.filter(doc => doc.assetPath.folderpath.split("/")[1] ))
+    //   result.filter(doc => doc.attr)
+    //   res.render("assets", {
+    //     data: {
+    //       models: result,
+    //     },
+    //     user: req.session.passport.user,
+    //     isLoginpage: true,
+    //   });
+    // });
   } else {
     modeldatabase.SearchBar(req.query.search, (result) => {
-      console.log("running result on model list", result);
+      //console.log("running result on model list", result);
+      let filteredResult = result
+      if(req.query.attributes){   
+        filteredResult = result.filter((item)=>{
+          let allAttrSelected = true
+          if(typeof req.query.attributes === "string"){
+            item.atrribute[req.query.attributes]? null :  allAttrSelected = false 
+          }else{           
+            Object.values(req.query.attributes).forEach((attr)=>{
+              item.atrribute[attr]? null :  allAttrSelected = false 
+            })
+          }      
+          if(allAttrSelected){
+            return item
+          }
+        })
+       console.log( filteredResult)
+      }
       res.render("assets", {
         data: {
-          models: result,
+          models: filteredResult,
         },
         user: req.session.passport.user,
         isLoginpage: true,
@@ -190,7 +234,7 @@ app.post("/attributes", function (req, res) {
     url.format({
       pathname: "/assets",
       query: {
-        format: req.body.attributes,
+        attributes: req.body.attributes,
       },
     })
   );

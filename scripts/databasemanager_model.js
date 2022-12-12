@@ -77,7 +77,7 @@ const GetAllModels = (callback) => {
     else {
       arr = result;
     }
-    console.log(arr)
+    //console.log(arr)
     callback(arr);
   });
 }
