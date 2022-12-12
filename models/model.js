@@ -30,6 +30,9 @@ const modelSchema = new mongoose.Schema({
     },
     filesize: {
       type: String
+    },
+    format: {
+      type: String
     }
    }
 );

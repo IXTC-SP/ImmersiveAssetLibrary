@@ -34,6 +34,7 @@ const Save = async function(req, res, files, callback) {
   assetpath.emission = body.emissivepath;
   assetpath.thumbnail = body.thumbnail == '' ? req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath) : body.thumbnail;
   console.log(  assetpath.folderpath,"before fast folder size");
+  console.log(body.format);
   fastFolderSize(assetpath.folderpath, (err, bytes) => {
     if (err) {
       console.log("fast folder fail");
@@ -47,7 +48,8 @@ const Save = async function(req, res, files, callback) {
       tags: body.tags,
       assetPath: assetpath,
       atrribute: attribute,
-      filesize: foldersize
+      filesize: foldersize,
+      format: body.format
     });
     model.save(function(err, obj) {
       if (err) return console.log(err);

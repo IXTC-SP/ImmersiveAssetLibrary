@@ -196,6 +196,7 @@ app.post("/uploadtmp3dmodel", uploadsmanager_model.uploadtmp3D, function(req, re
       tmpContent['modelviewerpath'] = '.' + tmpContent.model[0].destination +  tmpContent.model[0].originalname;
     }
     tmpContent['folderpath'] = tmpContent.model[0].originalname.split('.')[0];
+    tmpContent['format'] = tmpContent.model[0].originalname.split('.')[1];
     console.log(tmpContent);
     res.end("complete");
 
@@ -217,7 +218,8 @@ app.get('/editpage/model', function(req, res) {
         modelviewerpath : tmpContent.modelviewerpath,
         modelfile: tmpContent.model[0].originalname,
         thumbnail: typeof(tmpContent.thumbnail) == 'undefined' ? '' : tmpContent.thumbnail[0].originalname,
-        imagefiles: images
+        imagefiles: images,
+        format: tmpContent.format,
       },
       isLoginpage: true,
       isModel: true,

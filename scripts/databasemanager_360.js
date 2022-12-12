@@ -53,7 +53,8 @@ const Save = async function(req, res, files, callback) {
       tags: body.tags,
       assetPath: assetpath,
       atrribute: attribute,
-      filesize: foldersize
+      filesize: foldersize,
+      format: body.format
     });
 
     asset.save(function(err, obj) {

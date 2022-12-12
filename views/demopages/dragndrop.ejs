@@ -524,6 +524,7 @@
         var f;
         if(isObj(file.name)){
           f = new fileObj("model","model", file)
+          currentformat = getExtension(file.name);
         } else {
           f = new fileObj("image","other", file)
         }

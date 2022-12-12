@@ -43,7 +43,8 @@
         diffusepath : getTextureFromFilesArray('diffuse'),
         emissivepath : getTextureFromFilesArray('emissive'),
         thumbnail: <%- JSON.stringify(content.thumbnail)%>,
-        tags: []
+        tags: [],
+        format: <%- JSON.stringify(content.format) %>,
       }
       var tags = document.querySelectorAll(".selected_tag_element");
       for (i = 0; i < tags.length; i++) { data.tags.push(tags[i].innerText); }
