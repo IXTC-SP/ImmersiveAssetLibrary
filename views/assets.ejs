@@ -14,7 +14,7 @@
           id="filter-type"
           style="font-size: 1.2em; background: none; border: none"
           name="filter"
-          onchange='storeSelectedFilter("filter-type","selectedFilter")'
+          onchange='submitFilterForm(`model-filter-form`);'
         >
           <option class="filter" type="button" value="3dmodel" selected>
             3D Model
@@ -23,20 +23,10 @@
           <option class="filter" type="button" value="360">360 Image</option>
         </select>
       </form>
-      <!-- <form
-        class=""
-        style="margin: auto; width: 400px"
-        action="search"
-        method="post"
-      >
-        <label for="search"></label>
-        <input class="large" type="text" name="searchterm" value="" />
-        <button class="font-italic large" name="button">Search</button>
-      </form> -->
       <form class="" action="/assets/models" method="post" id="model-filter-form">
         <label for="search"></label>
-        <input class="large" type="text" name="searchterm" value="" />
-        <button class="font-italic large" name="button">Search</button>
+        <input class="large" type="text" name="searchterm" id="search-text"/>
+        <button class="font-italic large" type="submit" onclick="submitFilterForm(`model-filter-form`)">Search</button>
      
     </div>
     <hr />
@@ -46,12 +36,13 @@
           <select
             class="form-select"
             id="format-type"
+            name="format"
             aria-label="Floating label select example"
-            onchange='storeSelectedFilter("format-type","selectedFormat")'
+            onchange='submitFilterForm(`model-filter-form`);'
           >
-            <option type="button" value="format" selected >Format</option>
-            <option type="button" value="obj">.obj</option>
-            <option type="button" value="fbx">.fbx</option>
+            <option class="format" type="button" value="format" selected >Format</option>
+            <option class="format" type="button" value="obj">.obj</option>
+            <option class="format" type="button" value="fbx">.fbx</option>
           </select>
         
       </div>
@@ -185,29 +176,30 @@
   addButtonToCard();
 
   const submitFilterForm = (elementId) => {
+    console.log("submit filter form")
+    storeInlocalStorage("search-text", "searchTerm")
+    storeInlocalStorage("format-type","selectedFormat")
     let form = document.getElementById(elementId);
     form.submit();
   };
 
-  const storeSelectedFilter = (elementId, keyName) => {
+  const storeInlocalStorage = (elementId, keyName) => {
     let el = document.getElementById(elementId);
+    console.log("store", el.value)
     localStorage.setItem(keyName, JSON.stringify(el.value));
-    //invoke the submit
-    submitFilterForm(`model-filter-form`);
   };
 
   const storeCheckedItems = () => {
   // const checkedValues = [];
   const checkedItems =  document.querySelectorAll('input[type=checkbox]:checked'); 
   const arrayCheckedItems = [...checkedItems]
-  if (checkedItems.length > 0) {
+  if(checkedItems !== null){
     const selectedAttributes = arrayCheckedItems.map((item)=>{
       return item.value
     })
-
     console.log("theres checked boxes");
     localStorage.setItem("selectedAttributes", JSON.stringify(selectedAttributes));
-  } else {
+  }else{
     console.log("theres no checked boxes");
     localStorage.setItem("selectedAttributes", JSON.stringify([]));
   }
@@ -217,20 +209,27 @@
 
   const setSelectedOption = (elementId, elementClass, elementValue) => {
     let form = document.getElementById(elementId);
-    const options = form.querySelectorAll(`#${elementClass} option`);
-    options.forEach((element) => {
+    const options = document.getElementsByClassName("format")
+    const arrayOptions = [...options]
+    arrayOptions.forEach((element) => {
       element.selected = false;
       if (element.value === `${elementValue}`) {
         element.selected = true;
       }
     });
   }
+
+  const setSeachString = (searchText) => {
+    let searchInput = document.getElementById("search-text");
+    searchInput.value = searchText
+  }
+
   const showPreviousCheckedItems = () => {
   console.log("show checked items");
   const selectedAttributes = JSON.parse(localStorage.getItem("selectedAttributes"));
   console.log("------->", selectedAttributes);
   //iff theres previous checked items, the clear btn should enabled
-  if (selectedAttributes.length > 0) {
+  if(selectedAttributes !== null && selectedAttributes.length > 0){
     selectedAttributes.forEach((item) => {
       document.querySelector(`input[value=${item}]`).checked = true;
     });
@@ -239,9 +238,10 @@
   const showPreviousSelectedFilter = () => {
     console.log("show Selected Filter");
     const selectedFilter = JSON.parse(localStorage.getItem("selectedFilter"));
-    const selectedFormat = JSON.parse(localStorage.getItem("selectedFormat"));
-   
-    setSelectedOption("filter-type", "filter", selectedFilter)
+    const selectedFormat = JSON.parse(localStorage.getItem("selectedFormat"));   
+    const searchTerm = JSON.parse(localStorage.getItem("searchTerm"));   
+    setSeachString(searchTerm )
+    //setSelectedOption("filter-type", "filter", selectedFilter)
     setSelectedOption("format-type", "format", selectedFormat)
     console.log("------->", selectedFilter, selectedFormat);
   };
@@ -249,6 +249,10 @@
     showPreviousSelectedFilter();
     showPreviousCheckedItems ();
   }
+  const submitButtonClick = () => {
+		event.preventDefault();
+		//other stuff you want to do instead...
+} 
 
   init()
  

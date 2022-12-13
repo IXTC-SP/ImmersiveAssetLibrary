@@ -14,7 +14,7 @@ const url = require("url");
 const gltfmodel = require("./scripts/gltfmodel");
 const modeldatabase = require("./scripts/databasemanager_model");
 const threeSixtiesModel = require("./models/threesixty");
-const modelModel = require("./models/model")
+const modelModel = require("./models/model");
 const modeldisplay = require("./scripts/modeldisplay");
 const storagemanagement = require("./scripts/storagemanagement");
 const filedownloader = require("./scripts/filedownloader");
@@ -105,50 +105,140 @@ app.get("/asset/:modelid", function (req, res) {
 });
 
 //WORKING (ASSET LIST PAGE)
+// app.get("/assets/models", async function (req, res) {
+//   console.log(req.query.filter)
+//   if (req.query.filter === "360") {
+//     console.log("get all result on 360 list");
+//     const result = await threeSixtiesModel.find();
+//     //console.log(result)
+//     res.send("360 page")
+//     // res.render("assets", {
+//     //   data: {
+//     //     models: result,
+//     //   },
+//     //   user: req.session.passport.user,
+//     //   isLoginpage: true,
+//     // })
+//   } else if (typeof req.query.search === "undefined" || req.query.search == "") {
+//     console.log("get all result on model list");
+//     // let format = ""
+//     // if(req.query.format !== "format" ){
+//     //   format = req.query.format
+//     // }
+//     // if(req.query.attributes ){
+//     //   console.log(req.query.attributes)
+//     //   modelModel.find({"atrributes": { $all: req.query.attributes}})
+//     // }
+//     modeldatabase.GetAllModels((result) => {
+//       //console.log("=>", result.filter(doc => doc.assetPath.folderpath.split("/")[1] ))
+//       let filteredResult = result
+//       if(req.query.attributes){
+//         filteredResult = result.filter((item)=>{
+//           let allAttrSelected = true
+//           if(typeof req.query.attributes === "string"){
+//             item.atrribute[req.query.attributes]? null :  allAttrSelected = false
+//           }else{
+//             Object.values(req.query.attributes).forEach((attr)=>{
+//               item.atrribute[attr]? null :  allAttrSelected = false
+//             })
+//           }
+//           if(allAttrSelected){
+//             return item
+//           }
+//         })
+//        console.log( filteredResult)
+//       }
+//       //result.filter(doc => doc.attr)
+//       res.render("assets", {
+//         data: {
+//           models: filteredResult,
+//         },
+//         user: req.session.passport.user,
+//         isLoginpage: true,
+//       });
+//     });
+
+//     // modeldatabase.GetAllModels((result) => {
+//     //   //console.log("=>", result.filter(doc => doc.assetPath.folderpath.split("/")[1] ))
+//     //   result.filter(doc => doc.attr)
+//     //   res.render("assets", {
+//     //     data: {
+//     //       models: result,
+//     //     },
+//     //     user: req.session.passport.user,
+//     //     isLoginpage: true,
+//     //   });
+//     // });
+//   } else {
+//     modeldatabase.SearchBar(req.query.search, (result) => {
+//       //console.log("running result on model list", result);
+//       let filteredResult = result
+//       if(req.query.attributes){
+//         filteredResult = result.filter((item)=>{
+//           let allAttrSelected = true
+//           if(typeof req.query.attributes === "string"){
+//             item.atrribute[req.query.attributes]? null :  allAttrSelected = false
+//           }else{
+//             Object.values(req.query.attributes).forEach((attr)=>{
+//               item.atrribute[attr]? null :  allAttrSelected = false
+//             })
+//           }
+//           if(allAttrSelected){
+//             return item
+//           }
+//         })
+//        console.log( filteredResult)
+//       }
+//       res.render("assets", {
+//         data: {
+//           models: filteredResult,
+//         },
+//         user: req.session.passport.user,
+//         isLoginpage: true,
+//       });
+//     });
+//   }
+// });
 app.get("/assets/models", async function (req, res) {
-  console.log(req.query.filter)
-  if (req.query.filter === "360") {
-    console.log("get all result on 360 list");
-    const result = await threeSixtiesModel.find();
-    //console.log(result)
-    res.send("360 page")
-    // res.render("assets", {
-    //   data: {
-    //     models: result,
-    //   },
-    //   user: req.session.passport.user,
-    //   isLoginpage: true,
-    // })
-  } else if (typeof req.query.search === "undefined" || req.query.search == "") {
-    console.log("get all result on model list");
-    // let format = ""
-    // if(req.query.format !== "format" ){
-    //   format = req.query.format
-    // }
-    // if(req.query.attributes ){
-    //   console.log(req.query.attributes)
-    //   modelModel.find({"atrributes": { $all: req.query.attributes}})
-    // }
+  console.log(req.query);
+  console.log(typeof req.query.search);
+  console.log(req.query.format);
+  if (typeof req.query.search === "undefined" || req.query.search === "") {
+    console.log("no search");
     modeldatabase.GetAllModels((result) => {
       //console.log("=>", result.filter(doc => doc.assetPath.folderpath.split("/")[1] ))
-      let filteredResult = result
-      if(req.query.attributes){   
-        filteredResult = result.filter((item)=>{
-          let allAttrSelected = true
-          if(typeof req.query.attributes === "string"){
-            item.atrribute[req.query.attributes]? null :  allAttrSelected = false 
-          }else{           
-            Object.values(req.query.attributes).forEach((attr)=>{
-              item.atrribute[attr]? null :  allAttrSelected = false 
-            })
-          }      
-          if(allAttrSelected){
-            return item
+      let filteredResult = result;
+      if (
+        typeof req.query.attributes !== "undefined" &&
+        req.query.attributes !== ""
+      ) {
+        console.log("here");
+        filteredResult = result.filter((item) => {
+          let allAttrSelected = true;
+          if (typeof req.query.attributes === "string") {
+            item.atrribute[req.query.attributes]
+              ? null
+              : (allAttrSelected = false);
+          } else {
+            Object.values(req.query.attributes).forEach((attr) => {
+              item.atrribute[attr] ? null : (allAttrSelected = false);
+            });
           }
-        })
-       console.log( filteredResult)
+          if (allAttrSelected) {
+            return item;
+          }
+        });
       }
-      //result.filter(doc => doc.attr)
+      if (req.query.format !== "format") {
+        filteredResult = filteredResult.filter((item) => {
+          let isSameFormat = true;
+          if (item.format === req.query.format)
+            if (isSameFormat) {
+              return item;
+            }
+        });
+      }
+
       res.render("assets", {
         data: {
           models: filteredResult,
@@ -157,37 +247,31 @@ app.get("/assets/models", async function (req, res) {
         isLoginpage: true,
       });
     });
-
-    // modeldatabase.GetAllModels((result) => {
-    //   //console.log("=>", result.filter(doc => doc.assetPath.folderpath.split("/")[1] ))
-    //   result.filter(doc => doc.attr)
-    //   res.render("assets", {
-    //     data: {
-    //       models: result,
-    //     },
-    //     user: req.session.passport.user,
-    //     isLoginpage: true,
-    //   });
-    // });
   } else {
+    console.log("search");
     modeldatabase.SearchBar(req.query.search, (result) => {
       //console.log("running result on model list", result);
-      let filteredResult = result
-      if(req.query.attributes){   
-        filteredResult = result.filter((item)=>{
-          let allAttrSelected = true
-          if(typeof req.query.attributes === "string"){
-            item.atrribute[req.query.attributes]? null :  allAttrSelected = false 
-          }else{           
-            Object.values(req.query.attributes).forEach((attr)=>{
-              item.atrribute[attr]? null :  allAttrSelected = false 
-            })
-          }      
-          if(allAttrSelected){
-            return item
+      let filteredResult = result;
+      if (req.query.attributes !== "") {
+        filteredResult = result.filter((item) => {
+          let allAttrSelected = true;
+          if (typeof req.query.attributes === "string") {
+            item.atrribute[req.query.attributes]
+              ? null
+              : (allAttrSelected = false);
+          } else {
+            Object.values(req.query.attributes).forEach((attr) => {
+              item.atrribute[attr] ? null : (allAttrSelected = false);
+            });
           }
-        })
-       console.log( filteredResult)
+          if (allAttrSelected) {
+            return item;
+          }
+        });
+        console.log(filteredResult);
+      }
+      if (req.query.format !== "format") {
+        filteredResult = modeldatabase.FindByFormat(filteredResult, req.query.format)
       }
       res.render("assets", {
         data: {
@@ -241,12 +325,13 @@ app.get("/assets/models", async function (req, res) {
 //   );
 // });
 app.post("/assets/models", function (req, res) {
+  console.log(req.body)
   res.redirect(
     url.format({
       pathname: "/assets/models",
       query: {
         attributes: req.body.attributes,
-        filter: req.body.filter,
+        format: req.body.format,
         search: req.body.searchterm,
       },
     })

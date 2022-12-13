@@ -93,14 +93,15 @@ function FindModelsByTags(tags) {
 
 const SearchBar = (searchterm, callback) => {
   var arr = [];
+  const searchTermLowerCase = searchterm.toLowerCase()
   console.log('start mongoose search');
   modeldb.find({
-    title: searchterm
+    title: searchTermLowerCase
   }).then(function(nameresult) {
     arr.push(nameresult);
     console.log('finish search name', nameresult);
     modeldb.find({
-      tags: searchterm
+      tags: searchTermLowerCase
     }).then(function(tagresult) {
       // arr.push(tagresult);
       arr = [...new Set(tagresult)]
@@ -123,6 +124,40 @@ const FindModelById = (id, callback) => {
   });
 }
 module.exports.FindModelById = FindModelById;
+
+
+
+const FindByFilter = (results, attributes) => {
+  filteredResult = results.filter((item) => {
+    let allAttrSelected = true;
+    if (typeof attributes === "string") {
+      item.atrribute[attributes]
+        ? null
+        : (allAttrSelected = false);
+    } else {
+      Object.values(attributes).forEach((attr) => {
+        item.atrribute[attr] ? null : (allAttrSelected = false);
+      });
+    }
+    if (allAttrSelected) {
+      return item;
+    }
+  })
+  return filteredResult
+}
+module.exports.FindByFilter = FindByFilter;
+
+const FindByFormat =  async (results, format) => {
+  results = await results.filter(async (item) => {
+    let isSameFormat = true;
+    if (item.format === format)
+      if (isSameFormat) {
+        return item;
+      }
+  });
+  return results
+}
+module.exports.FindByFormat = FindByFormat;
 
 
 //FUNCTIONS ------- for development stage ---------
