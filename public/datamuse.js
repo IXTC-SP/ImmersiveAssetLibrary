@@ -23,7 +23,6 @@ async function suggest(word) {
 
 
 async function suggestionsFromDatamuse(word){
-  console.log(word);
   let url = 'https://api.datamuse.com/words?ml=' + word + '&md=f'
 
   let response = await fetch(url)
@@ -54,7 +53,6 @@ function createTagSuggestion(tagname){
       }
     });
     suggestedtagarray = new Array(arr);
-    console.log(arr);
     suggestedtagarray.forEach((a) => {
       addSuggest(a.word);
     });
@@ -66,9 +64,7 @@ function addSuggest(tagname){
   tag.innerHTML = tagname;
   document.body.appendChild(tag);
   document.getElementById('tag_suggest').appendChild(tag);
-  console.log(tag);
   // tag.onclick = function(){ console.log(this); this.parentNode.removeChild(this); };
-  console.log(document.activeElement.id);
 }
 
 function addTag(tagname){
@@ -78,5 +74,4 @@ function addTag(tagname){
   document.getElementById('tag_input').appendChild(tag);
   console.log(tag);
   tag.onclick = function(){ console.log(this); this.parentNode.removeChild(this); };
-  console.log(document.activeElement.id);
 }

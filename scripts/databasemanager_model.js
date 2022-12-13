@@ -40,6 +40,9 @@ const Save = async function(req, res, files, callback) {
       console.log("fast folder fail");
       throw err
     }
+
+    console.log(typeof(body.tags[0]));
+
     var foldersize = (Math.round((bytes / (1024 * 1024)) * 10) / 10).toString() + 'mb';
     var model = new modeldb({
       title: body.title,
