@@ -98,6 +98,21 @@ function FindModelsByTags(tags) {
   });
 }
 
+const FindByFormat = async (results, format) => {
+  let newResults = []
+  newResults = results.filter((item) => {
+    if (item.atrribute.type === format) {
+      console.log("items");
+      return item;
+    }
+  });
+  console.log("2");
+  return await newResults;
+};
+
+
+module.exports.FindByFormat = FindByFormat;
+
 const SearchBar = (searchterm, callback) => {
   var arr = [];
   console.log('start mongoose search');

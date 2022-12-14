@@ -13,7 +13,7 @@ const url = require("url");
 
 const gltfmodel = require("./scripts/gltfmodel");
 const modeldatabase = require("./scripts/databasemanager_model");
-const threeSixtiesModel = require("./models/threesixty");
+const threeSixtiesDatabase = require("./scripts/databasemanager_360");
 const modelModel = require("./models/model");
 const modeldisplay = require("./scripts/modeldisplay");
 const storagemanagement = require("./scripts/storagemanagement");
@@ -103,6 +103,51 @@ app.get("/asset/:modelid", function (req, res) {
     });
   });
 });
+
+const check3dModelFilters = async (result, query) => {
+  const attributesPromise = async () => {
+    if (typeof query.attributes !== "undefined" && query.attributes !== "") {
+      console.log("here");
+
+      const list = await modeldatabase.FindByAttribute(
+        result,
+        query.attributes
+      );
+      return list;
+    } else {
+      return result;
+    }
+  };
+  filteredResult = await attributesPromise();
+  const formatPromise = async () => {
+    if (query.format !== "format") {
+      const list = await modeldatabase.FindByFormat(
+        filteredResult,
+        query.format
+      );
+      return list;
+    } else {
+      return filteredResult;
+    }
+  };
+  filteredResult = await formatPromise();
+  return filteredResult;
+};
+const check360Filters = async (result, query) => {
+  const formatPromise = async () => {
+    if (query.format !== "format") {
+      const list = await threeSixtiesDatabase.FindByFormat(
+        result,
+        query.format
+      );
+      return list;
+    } else {
+      return result;
+    }
+  };
+  filteredResult = await formatPromise();
+  return filteredResult;
+};
 
 //WORKING (ASSET LIST PAGE)
 // app.get("/assets/models", async function (req, res) {
@@ -200,143 +245,94 @@ app.get("/asset/:modelid", function (req, res) {
 //   }
 // });
 app.get("/assets/models", async function (req, res) {
-  console.log(req.query);
-  console.log(typeof req.query.search);
-  console.log(req.query.format);
+  let filteredResult = [];
   if (typeof req.query.search === "undefined" || req.query.search === "") {
     console.log("no search");
-    modeldatabase.GetAllModels((result) => {
-      //console.log("=>", result.filter(doc => doc.assetPath.folderpath.split("/")[1] ))
-      let filteredResult = result;
-      if (
-        typeof req.query.attributes !== "undefined" &&
-        req.query.attributes !== ""
-      ) {
-        console.log("here");
-        filteredResult = result.filter((item) => {
-          let allAttrSelected = true;
-          if (typeof req.query.attributes === "string") {
-            item.atrribute[req.query.attributes]
-              ? null
-              : (allAttrSelected = false);
-          } else {
-            Object.values(req.query.attributes).forEach((attr) => {
-              item.atrribute[attr] ? null : (allAttrSelected = false);
-            });
-          }
-          if (allAttrSelected) {
-            return item;
-          }
-        });
-      }
-      if (req.query.format !== "format") {
-        filteredResult = filteredResult.filter((item) => {
-          let isSameFormat = true;
-          if (item.format === req.query.format)
-            if (isSameFormat) {
-              return item;
-            }
-        });
-      }
-
+    modeldatabase.GetAllModels(async (result) => {
+      filteredResult = await check3dModelFilters (result, req.query);
+      console.log(filteredResult.length)
       res.render("assets", {
         data: {
           models: filteredResult,
         },
         user: req.session.passport.user,
         isLoginpage: true,
+        is3dmodelPage: true,
       });
     });
   } else {
     console.log("search");
-    modeldatabase.SearchBar(req.query.search, (result) => {
-      //console.log("running result on model list", result);
-      let filteredResult = result;
-      if (req.query.attributes !== "") {
-        filteredResult = result.filter((item) => {
-          let allAttrSelected = true;
-          if (typeof req.query.attributes === "string") {
-            item.atrribute[req.query.attributes]
-              ? null
-              : (allAttrSelected = false);
-          } else {
-            Object.values(req.query.attributes).forEach((attr) => {
-              item.atrribute[attr] ? null : (allAttrSelected = false);
-            });
-          }
-          if (allAttrSelected) {
-            return item;
-          }
-        });
-        console.log(filteredResult);
-      }
-      if (req.query.format !== "format") {
-        filteredResult = modeldatabase.FindByFormat(filteredResult, req.query.format)
-      }
+    modeldatabase.SearchBar(req.query.search, async (result) => {
+      filteredResult = await check3dModelFilters (result, req.query);
       res.render("assets", {
         data: {
           models: filteredResult,
         },
         user: req.session.passport.user,
         isLoginpage: true,
+        is3dmodelPage: true,
       });
     });
   }
 });
-// app.post("/search", function (req, res) {
-
-//   res.redirect(
-//     url.format({
-//       pathname: "/assets",
-//       query: {
-//         search: req.body.searchterm,
-//       },
-//     })
-//   );
-// });
-// app.post("/filter", function (req, res) {
-//   res.redirect(
-//     url.format({
-//       pathname: "/assets",
-//       query: {
-//         filter: req.body.filter,
-//       },
-//     })
-//   );
-// });
-// app.post("/format", function (req, res) {
-//   res.redirect(
-//     url.format({
-//       pathname: "/assets",
-//       query: {
-//         format: req.body.format,
-//       },
-//     })
-//   );
-// });
-// app.post("/attributes", function (req, res) {
-//   res.redirect(
-//     url.format({
-//       pathname: "/assets",
-//       query: {
-//         attributes: req.body.attributes,
-//       },
-//     })
-//   );
-// });
-app.post("/assets/models", function (req, res) {
+app.post("/assets", function (req, res) {
   console.log(req.body)
-  res.redirect(
-    url.format({
-      pathname: "/assets/models",
-      query: {
-        attributes: req.body.attributes,
-        format: req.body.format,
-        search: req.body.searchterm,
-      },
-    })
-  );
+  if(req.body.asset === "360"){
+    res.redirect(
+      url.format({
+        pathname: "/assets/360",
+        query: {
+          attributes: req.body.attributes,
+          format: req.body.format,
+          search: req.body.searchterm,
+        },
+      })
+    );
+  }else{
+    res.redirect(
+      url.format({
+        pathname: "/assets/models",
+        query: {
+          attributes: req.body.attributes,
+          format: req.body.format,
+          search: req.body.searchterm,
+        },
+      })
+    );
+  }
+ 
 });
+app.get("/assets/360", async function (req, res) {
+  let filteredResult = [];
+  if (typeof req.query.search === "undefined" || req.query.search === "") {
+    console.log("no search");
+    threeSixtiesDatabase.GetAllModels(async (result) => {
+      filteredResult = await check360Filters(result, req.query);
+      res.render("assets", {
+        data: {
+          models: result,
+        },
+        user: req.session.passport.user,
+        isLoginpage: true,
+        is3dmodelPage: false,
+      });
+    });
+  } else {
+    console.log("search");
+    threeSixtiesDatabase.SearchBar(req.query.search, async (result) => {
+      filteredResult = await check360Filters(result, req.query);
+      res.render("assets", {
+        data: {
+          models: filteredResult,
+        },
+        user: req.session.passport.user,
+        isLoginpage: true,
+        is3dmodelPage: false,
+      });
+    });
+  }
+});
+
 
 //WORKING (UPLOAD PAGE)
 const uploadmanager = require("./scripts/uploadsmanager_model");

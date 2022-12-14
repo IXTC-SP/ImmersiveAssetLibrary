@@ -5,25 +5,25 @@
     <div class="mx-auto d-flex justify-content-between">
       <form
         style="width: 400px"
-        action="filter"
+        action="/assets"
         method="post"
-        id="filter-type-form"
+        id="asset-type-form"
       >
         <label style="font-size: 1.5em" for="search">Download Assets : </label>
         <select
-          id="filter-type"
+          id="asset-type"
           style="font-size: 1.2em; background: none; border: none"
-          name="filter"
-          onchange='submitFilterForm(`model-filter-form`);'
+          name="asset"
+          onchange='submitFilterForm(`asset-type-form`);' 
         >
-          <option class="filter" type="button" value="3dmodel" selected>
+          <option class="asset" type="button" value="3dmodel" selected>
             3D Model
           </option>
-          <option class="filter" type="button" value="script">Script</option>
-          <option class="filter" type="button" value="360">360 Image</option>
+          <option class="asset" type="button" value="script">Script</option>
+          <option class="asset" type="button" value="360">360 Image</option>
         </select>
       </form>
-      <form class="" action="/assets/models" method="post" id="model-filter-form">
+      <form class="" action="/assets" method="post" id="model-filter-form">
         <label for="search"></label>
         <input class="large" type="text" name="searchterm" id="search-text"/>
         <button class="font-italic large" type="submit" onclick="submitFilterForm(`model-filter-form`)">Search</button>
@@ -41,8 +41,14 @@
             onchange='submitFilterForm(`model-filter-form`);'
           >
             <option class="format" type="button" value="format" selected >Format</option>
-            <option class="format" type="button" value="obj">.obj</option>
-            <option class="format" type="button" value="fbx">.fbx</option>
+            <%if(is3dmodelPage){%>
+              <option class="format" type="button" value="obj">.obj</option>
+              <option class="format" type="button" value="fbx">.fbx</option>
+              <%}else{%>
+                <option class="format" type="button" value="equirectangular">Equirectangular</option>
+                <option class="format" type="button" value="cubemap">Cubemap</option>
+            <%}%>
+           
           </select>
         
       </div>
@@ -139,13 +145,16 @@
   LoadMore();
 
   function LoadMore() {
-    if (afterlen > fulldatamodels.length) return;
+    if(fulldatamodels.length > 0){
+      if (afterlen > fulldatamodels.length) return;
     afterlen = beforelen + loadamt;
     currentloaddatamodels = fulldatamodels.slice(beforelen, afterlen);
     for (var i = 0; i < currentloaddatamodels.length; i++) {
       CreateAssetCard(currentloaddatamodels[i]);
     }
     beforelen = afterlen;
+    }
+   
   }
 
   function CreateAssetCard(data) {
@@ -179,9 +188,16 @@
     console.log("submit filter form")
     storeInlocalStorage("search-text", "searchTerm")
     storeInlocalStorage("format-type","selectedFormat")
+    storeInlocalStorage("asset-type","selectedAssetType")
     let form = document.getElementById(elementId);
     form.submit();
   };
+
+  // const submitAssetForm = () => {
+  //   storeInlocalStorage("asset-type","selectedAssetType")
+  //   let form = document.getElementById(elementId);
+  //   form.submit();
+  // };
 
   const storeInlocalStorage = (elementId, keyName) => {
     let el = document.getElementById(elementId);
@@ -207,9 +223,9 @@
   submitFilterForm(`model-filter-form`);
 };
 
-  const setSelectedOption = (elementId, elementClass, elementValue) => {
-    let form = document.getElementById(elementId);
-    const options = document.getElementsByClassName("format")
+  const setSelectedOption = (elementClass, elementValue) => {
+    //let form = document.getElementById(elementId);
+    const options = document.getElementsByClassName(elementClass)
     const arrayOptions = [...options]
     arrayOptions.forEach((element) => {
       element.selected = false;
@@ -237,13 +253,13 @@
 };
   const showPreviousSelectedFilter = () => {
     console.log("show Selected Filter");
-    const selectedFilter = JSON.parse(localStorage.getItem("selectedFilter"));
+    const selectedAssetType = JSON.parse(localStorage.getItem("selectedAssetType"));
     const selectedFormat = JSON.parse(localStorage.getItem("selectedFormat"));   
-    const searchTerm = JSON.parse(localStorage.getItem("searchTerm"));   
+    const searchTerm = JSON.parse(localStorage.getItem("searchTerm"));    
     setSeachString(searchTerm )
-    //setSelectedOption("filter-type", "filter", selectedFilter)
-    setSelectedOption("format-type", "format", selectedFormat)
-    console.log("------->", selectedFilter, selectedFormat);
+    setSelectedOption( "asset", selectedAssetType)
+    setSelectedOption("format", selectedFormat)
+    console.log("------->", selectedAssetType, selectedFormat);
   };
   const init = () => {
     showPreviousSelectedFilter();
