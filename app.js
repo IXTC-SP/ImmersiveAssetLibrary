@@ -203,7 +203,7 @@ app.post("/assets", function (req, res) {
         pathname: "/assets/360",
         query: {
           attributes: req.body.attributes,
-          format: req.body.format,
+          format: "format",
           search: req.body.searchterm,
         },
       })
@@ -214,7 +214,7 @@ app.post("/assets", function (req, res) {
         pathname: "/assets/models",
         query: {
           attributes: req.body.attributes,
-          format: req.body.format,
+          format: "format",
           search: req.body.searchterm,
         },
       })
