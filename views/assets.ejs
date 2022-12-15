@@ -2,84 +2,116 @@
 <link rel="stylesheet" href="modellist.css" />
 <section class="d-flex flex-column m-auto mt-5">
   <div class="container-fluid px-5" id="top-bar">
-    <div class="mx-auto d-flex justify-content-between">
-      <form
-        class=""
-        style="width: 400px"
-        action="changeAssetType"
-        method="post"
-      >
-        <label style="font-size: 1.5em" for="search">Download Assets : </label>
-        <select
-          class=""
-          style="font-size: 1.2em; background: none; border: none"
-          name="type"
-        >
-          <option value="3dmodel">3D Model</option>
-          <option value="script">Script</option>
-          <option value="360">360 Image</option>
-        </select>
-      </form>
-      <!-- <form
-        class=""
-        style="margin: auto; width: 400px"
-        action="search"
-        method="post"
-      >
-        <label for="search"></label>
-        <input class="large" type="text" name="searchterm" value="" />
-        <button class="font-italic large" name="button">Search</button>
-      </form> -->
-      <form class="" action="search" method="post">
-        <label for="search"></label>
-        <input class="large" type="text" name="searchterm" value="" />
-        <button class="font-italic large" name="button">Search</button>
-      </form>
-    </div>
-    <hr />
-    <div class="d-flex flex-wrap align-items-center">
-      <div class="form-check form-check-inline text-muted d-flex ps-0">
-        <form style="width: 120px" action="changeAssetType" method="post">
+    <form class="" action="/assets" method="post" id="model-filter-form">
+
+        <div class="d-flex justify-content-between">
+          <div>
+            <label style="font-size: 1.5em" for="search"
+              >Download Assets :
+            </label>
+            <select
+              id="asset-type"
+              style="font-size: 1.2em; background: none; border: none"
+              name="asset"
+              onchange="submitFilterForm(`model-filter-form`)"
+            >
+              <option class="asset" type="button" value="3dmodel" selected>
+                3D Model
+              </option>
+              <!-- <option class="asset" type="button" value="script">Script</option> -->
+              <option class="asset" type="button" value="360">360 Image</option>
+            </select>
+          </div>
+          <div>
+            <label for="search"></label>
+            <input
+              class="large"
+              type="text"
+              name="searchterm"
+              id="search-text"
+            />
+            <button
+              class="font-italic large"
+              type="submit"
+              onclick="submitFilterForm(`model-filter-form`)"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+     
+      <hr />
+      <div class="d-flex flex-wrap align-items-center">
+        <div class="form-check form-check-inline text-muted d-flex ps-0">
           <select
             class="form-select"
-            id="floatingSelect"
+            id="format-type"
+            name="format"
             aria-label="Floating label select example"
+            onchange="submitFilterForm(`model-filter-form`)"
           >
-            <option selected>Format</option>
-            <option value="obj">.obj</option>
-            <option value="fbx">.fbx</option>
+            <option class="format" type="button" value="format" selected>
+              Format
+            </option>
+            <%if(is3dmodelPage){%>
+            <option class="format" type="button" value="obj">.obj</option>
+            <option class="format" type="button" value="fbx">.fbx</option>
+            <%}else{%>
+            <option class="format" type="button" value="equirectangular">
+              Equirectangular
+            </option>
+            <option class="format" type="button" value="cubemap">
+              Cubemap
+            </option>
+            <%}%>
           </select>
-        </form>
+        </div>
+        <%if(is3dmodelPage){%>
+        <div class="form-check form-check-inline text-muted d-flex">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="attributes"
+            value="animated"
+            onChange="submitFilterForm(`model-filter-form`);"
+          />
+          <label class="form-check-label" for="animated">Animated</label>
+        </div>
+        <div class="form-check form-check-inline text-muted d-flex">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="lowpoly-type"
+            name="attributes"
+            value="lowpoly"
+            onChange="submitFilterForm(`model-filter-form`);"
+          />
+          <label class="form-check-label" for="lowpoly">Low Poly</label>
+        </div>
+        <div class="form-check form-check-inline text-muted d-flex">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="attributes"
+            value="rigged"
+            onChange="submitFilterForm(`model-filter-form`);"
+          />
+          <label class="form-check-label" for="rigged">Rigged</label>
+        </div>
+        <div class="form-check form-check-inline text-muted d-flex">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="attributes"
+            value="textured"
+            onChange="submitFilterForm(`model-filter-form`);"
+          />
+          <label class="form-check-label" for="textured">Textured</label>
+        </div>
+        <%}%> 
       </div>
-      <div class="form-check form-check-inline text-muted d-flex">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          name="animated"
-          value="animated"
-        />
-        <label class="form-check-label" for="animated">Animated</label>
-      </div>
-      <div class="form-check form-check-inline text-muted d-flex">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          name="low-poly"
-          value="lowpoly"
-        />
-        <label class="form-check-label" for="lowpoly">Low Poly</label>
-      </div>
-      <div class="form-check form-check-inline text-muted d-flex">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          name="rigged"
-          value="rigged"
-        />
-        <label class="form-check-label" for="rigged">Rigged</label>
-      </div>
-    </div>
-    <hr />
+      <hr />
+    </form>
   </div>
 
   <div class="container-fluid px-5">
@@ -106,10 +138,11 @@
           </div>
         </a>
       </div>
+
     </div>
   </div>
 
-  <div class="mx-auto mb-5" style="width: 200px">
+  <div id="load-btn" class="mx-auto mb-5" style="width: 200px">
     <button type="button" class="btn btn-warning" onclick="LoadMore()">
       Load More
     </button>
@@ -125,16 +158,25 @@
   const cardmain = document.getElementById("asset-card");
   const assetrow = document.getElementById("asset-row");
 
-  LoadMore();
-
+  if (fulldatamodels.length > 0) {
+    LoadMore();
+  }else{
+    let addMessage = document.getElementById("asset-row");
+    let message = document.createElement("h4")
+    message.innerHTML =  "We couldn't find any results base on your search filters."
+    addMessage.append(message)
+    let loadBtn = document.getElementById("load-btn");
+    loadBtn.classList += " d-none"
+  }
+  
   function LoadMore() {
-    if (afterlen > fulldatamodels.length) return;
-    afterlen = beforelen + loadamt;
-    currentloaddatamodels = fulldatamodels.slice(beforelen, afterlen);
-    for (var i = 0; i < currentloaddatamodels.length; i++) {
-      CreateAssetCard(currentloaddatamodels[i]);
-    }
-    beforelen = afterlen;
+      if (afterlen > fulldatamodels.length) return;
+      afterlen = beforelen + loadamt;
+      currentloaddatamodels = fulldatamodels.slice(beforelen, afterlen);
+      for (var i = 0; i < currentloaddatamodels.length; i++) {
+        CreateAssetCard(currentloaddatamodels[i]);
+      }
+      beforelen = afterlen;
   }
 
   function CreateAssetCard(data) {
@@ -144,25 +186,12 @@
     console.log(data._id)
     link.href = `/asset/<%- assettype %>/${data._id}`
     let assetimg = clone.querySelector("#asset-img");
-    console.log(assetimg);
+    //console.log(assetimg);
     assetimg.src =
-      data.assetPath.folderpath.slice(1) +
-      "/" +
-      data.assetPath.thumbnail;
-    console.log(assetimg.src);
+      data.assetPath.folderpath.slice(1) + "/" + data.assetPath.thumbnail;
+    //console.log(assetimg.src);
     let assetname = clone.querySelector("#asset-name");
     assetname.innerHTML = data.title;
-    console.log(assetname.innerHTML);
-    // let assetdesc = clone.querySelector("#asset-desc");
-    // assetdesc.innerHTML = data.description;
-    // console.log(assetdesc.innerHTML);
-    // let assettaglist = clone.querySelector("#asset-tag-list");
-    // for (var i = 0; i < data.tags.length; i++) {
-    //   let assettag = document.createElement("h6");
-    //   assettag.innerHTML = data.tags[i];
-    //   assettag.className = "font-weight-light pr-2";
-    //   assettaglist.appendChild(assettag);
-    // }
     assetrow.appendChild(clone);
   }
 
@@ -176,6 +205,104 @@
     });
   }
   addButtonToCard();
+
+  const submitFilterForm = (elementId) => {
+    console.log("submit filter form");
+    storeInlocalStorage("search-text", "searchTerm");
+    storeInlocalStorage("format-type", "selectedFormat");
+    storeInlocalStorage("asset-type", "selectedAssetType");
+    storeCheckedItems();
+    let form = document.getElementById(elementId);
+    form.submit();
+  };
+
+  // const submitAssetForm = () => {
+  //   storeInlocalStorage("asset-type","selectedAssetType")
+  //   let form = document.getElementById(elementId);
+  //   form.submit();
+  // };
+
+  const storeInlocalStorage = (elementId, keyName) => {
+    let el = document.getElementById(elementId);
+    console.log("store", el.value);
+    localStorage.setItem(keyName, JSON.stringify(el.value));
+  };
+
+  const storeCheckedItems = () => {
+    // const checkedValues = [];
+    const checkedItems = document.querySelectorAll(
+      "input[type=checkbox]:checked"
+    );
+    const arrayCheckedItems = [...checkedItems];
+    if (checkedItems !== null) {
+      const selectedAttributes = arrayCheckedItems.map((item) => {
+        return item.value;
+      });
+      console.log("theres checked boxes");
+      localStorage.setItem(
+        "selectedAttributes",
+        JSON.stringify(selectedAttributes)
+      );
+    } else {
+      console.log("theres no checked boxes");
+      localStorage.setItem("selectedAttributes", JSON.stringify([]));
+    }
+    // //invoke the submit
+    // submitFilterForm(`model-filter-form`);
+  };
+
+  const setSelectedOption = (elementClass, elementValue) => {
+    //let form = document.getElementById(elementId);
+    const options = document.getElementsByClassName(elementClass);
+    const arrayOptions = [...options];
+    arrayOptions.forEach((element) => {
+      element.selected = false;
+      if (element.value === `${elementValue}`) {
+        element.selected = true;
+      }
+    });
+  };
+
+  const setSeachString = (searchText) => {
+    let searchInput = document.getElementById("search-text");
+    searchInput.value = searchText;
+  };
+
+  const showPreviousCheckedItems = () => {
+    console.log("show checked items");
+    const selectedAttributes = JSON.parse(
+      localStorage.getItem("selectedAttributes")
+    );
+    console.log("------->", selectedAttributes);
+    //iff theres previous checked items, the clear btn should enabled
+    if (selectedAttributes !== null && selectedAttributes.length > 0) {
+      selectedAttributes.forEach((item) => {
+        document.querySelector(`input[value=${item}]`).checked = true;
+      });
+    }
+  };
+  const showPreviousSelectedFilter = () => {
+    console.log("show Selected Filter");
+    const selectedAssetType = JSON.parse(
+      localStorage.getItem("selectedAssetType")
+    );
+    const selectedFormat = JSON.parse(localStorage.getItem("selectedFormat"));
+    const searchTerm = JSON.parse(localStorage.getItem("searchTerm"));
+    setSeachString(searchTerm);
+    setSelectedOption("asset", selectedAssetType);
+    setSelectedOption("format", selectedFormat);
+    console.log("------->", selectedAssetType, selectedFormat);
+  };
+  const init = () => {
+    showPreviousSelectedFilter();
+    showPreviousCheckedItems();
+  };
+  const submitButtonClick = () => {
+    event.preventDefault();
+    //other stuff you want to do instead...
+  };
+
+  init();
 </script>
 
 <%- include('partials/footer') %>

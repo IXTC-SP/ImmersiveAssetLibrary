@@ -6,14 +6,6 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 <script type="text/javascript" src="/datamuse.js"></script>
 
-<!-- <style>
-  #panorama {
-    width: 100%;
-    height: 400px;
-  }
-</style> -->
-
-
 <%- include('../partials/edit-properties') %>
 <script>
   var files = [];
@@ -129,7 +121,7 @@
   async function createUploadContent() {
     const formData = new FormData();
     const request = new XMLHttpRequest();
-    var nextURL = "/asset/threesixty/";
+    var nextURL = "/asset/360/";
     var postURL = "/savethreesixty";
     console.log("create upload content");
 
@@ -165,25 +157,6 @@
       request.open("POST", postURL, false);
       request.send(formData);
   }
-
-  // function addNewFile(el){
-  // console.log(el.files[0].name);
-  // newfiles.push(el.files[0]);
-  // let p = document.querySelector('.all-files')
-  // console.log(p);
-  // let main = document.createElement('div');
-  // main.classList.add("new-file");
-  // p.appendChild(main);
-  // let btn = document.createElement('button');
-  // btn.innerHTML = "X";
-  // let tag = document.createElement("span");
-  // tag.innerHTML = el.files[0].name;
-  // main.appendChild(btn);
-  // main.appendChild(tag);
-  // btn.onclick = function(){
-  // removeNewFile(main,el.files[0]);
-  // }
-  // }
 
   function addNewFile(el) {
       console.log(el.files[0].name);
@@ -242,25 +215,6 @@
       });
     });
   }
-
-  // function createSuggestElement(tagname) {
-  //   let col = document.createElement('div');
-  //   col.classList.add('col-auto');
-  //   document.getElementById('tag_suggest').appendChild(col);
-  //   let tag = document.createElement("p");
-  //   tag.innerHTML = tagname;
-  //   col.appendChild(tag);
-  //   tag.classList.add('tag_element');
-  //   tag.onclick = function() {
-  //     if (selectedtagelements.includes(tagname)) return;
-  //     addTag(tagname);
-  //     createTagSuggestion(tagname);
-  //   };
-
-  //   //add to suggested tag element array
-  //   suggestedtagelements.push(col);
-  // }
-
   function createSuggestElement(tagname) {
       let tag = document.createElement("div");
       tag.innerHTML = tagname;
@@ -278,22 +232,6 @@
       suggestedtagelements.push(col);
     }
 
-  // function addTag(tagname) {
-  //   //get paragraph child from group
-  //   var paragraph = document.getElementById('selected_tags_group');
-  //   //create span element with id of selected_tag_element
-  //   var tag = document.createElement('span');
-  //   tag.innerText = " " + tagname;
-  //   tag.setAttribute("id", "selected_tag_element");
-  //   tag.onclick = function() {
-  //     paragraph.removeChild(tag);
-  //     selectedtagelements = selectedtagelements.filter(e => e !== tagname);
-  //   };
-  //   paragraph.appendChild(tag);
-  //   let taginput = document.getElementById("tag_input_content");
-  //   taginput.value = selectedtagelements.toString();
-  //   selectedtagelements.push(tagname);
-  // }
   function addTag(tagname) {
       //get div child from group
       var div = document.getElementById('selected_tags_group');

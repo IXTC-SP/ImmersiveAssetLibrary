@@ -12,7 +12,8 @@ class AssetPath {
     left: "",
     top: "",
     bottom: ""
-  }
+  };
+  thumbnail = "";
 }
 
 //either cubemap or equirectangular
@@ -39,8 +40,7 @@ const Save = async function(req, res, files, callback) {
   } else {
     assetpath.equirectangular = body.files[0];
   }
-
-  console.log(assetpath.folderpath);
+  assetpath.thumbnail = req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath);
   fastFolderSize(assetpath.folderpath, (err, bytes) => {
     if (err) {
       throw err
@@ -109,6 +109,23 @@ function FindModelsByTags(tags) {
     console.log(result);
   });
 }
+
+const FindByFormat = async (results, format) => {
+  let newResults = []
+ 
+  newResults = results.filter((item) => {
+    console.log(item.atrribute.type, format)
+    if (item.atrribute.type === format) {
+      console.log("items");
+      return item;
+    }
+  });
+  console.log("2");
+  return await newResults;
+};
+
+
+module.exports.FindByFormat = FindByFormat;
 
 const SearchBar = (searchterm, callback) => {
   var arr = [];

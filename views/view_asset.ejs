@@ -164,7 +164,11 @@
     </div>
     <div class="col-3 d-flex flew-wrap gap-4 flex-column">
       <div>
+        <%if(isModel){%>  
         <h6>3D Model Details</h6>
+        <%}else{%>   
+        <h6>360 Image Details</h6>        
+        <%}%>
       </div>
       <div class="border border-secondary rounded-2 p-2">
         <div class="d-flex justify-content-between align-items-center p-1">
@@ -177,51 +181,56 @@
           <p class="m-0"><%= data.uploaddate.toLocaleString().split(",")[0] %></p>
         </div>
         <hr class="m-0" />
-        <div class="d-flex justify-content-between align-items-center p-1">
-          <p class="m-0">Low Poly</p>
-          <%if(data.atrribute.lowpoly){%>
-          <i class="fa-regular fa-circle-check"></i>
-          <%}else{%>
-          <i class="fa-regular fa-circle-xmark"></i>
-          <%}%>
-        </div>
-        <hr class="m-0" />
-        <div class="d-flex justify-content-between align-items-center p-1">
-          <p class="m-0">Low Poly</p>
-          <%if(data.atrribute.lowpoly){%>
-          <i class="fa-regular fa-circle-check"></i>
-          <%}else{%>
-          <i class="fa-regular fa-circle-xmark"></i>
-          <%}%>
-        </div>
-        <hr class="m-0" />
-        <div class="d-flex justify-content-between align-items-center p-1">
-          <p class="m-0">Rigged</p>
-          <%if(data.atrribute.rigged){%>
-          <i class="fa-regular fa-circle-check"></i>
-          <%}else{%>
-          <i class="fa-regular fa-circle-xmark"></i>
-          <%}%>
-        </div>
-        <hr class="m-0" />
-        <div class="d-flex justify-content-between align-items-center p-1">
-          <p class="m-0">Animated</p>
-          <%if(data.atrribute.animated){%>
-          <i class="fa-regular fa-circle-check"></i>
-          <%}else{%>
-          <i class="fa-regular fa-circle-xmark"></i>
-          <%}%>
-        </div>
-        <hr class="m-0" />
-        <div class="d-flex justify-content-between align-items-center p-1">
-          <p class="m-0">Textured</p>
-          <%if(data.atrribute.textured){%>
-          <i class="fa-regular fa-circle-check"></i>
-          <%}else{%>
-          <i class="fa-regular fa-circle-xmark"></i>
-          <%}%>
-        </div>
-        <hr class="m-0" />
+        <!-- 3d model -->
+        <%if(isModel){%>          
+          <div class="d-flex justify-content-between align-items-center p-1">
+            <p class="m-0">Low Poly</p>
+            <%if(data.atrribute.lowpoly){%>
+            <i class="fa-regular fa-circle-check"></i>
+            <%}else{%>
+            <i class="fa-regular fa-circle-xmark"></i>
+            <%}%>
+          </div>
+          <hr class="m-0" />
+          <div class="d-flex justify-content-between align-items-center p-1">
+            <p class="m-0">Rigged</p>
+            <%if(data.atrribute.rigged){%>
+            <i class="fa-regular fa-circle-check"></i>
+            <%}else{%>
+            <i class="fa-regular fa-circle-xmark"></i>
+            <%}%>
+          </div>
+          <hr class="m-0" />
+          <div class="d-flex justify-content-between align-items-center p-1">
+            <p class="m-0">Animated</p>
+            <%if(data.atrribute.animated){%>
+            <i class="fa-regular fa-circle-check"></i>
+            <%}else{%>
+            <i class="fa-regular fa-circle-xmark"></i>
+            <%}%>
+          </div>
+          <hr class="m-0" />
+          <div class="d-flex justify-content-between align-items-center p-1">
+            <p class="m-0">Textured</p>
+            <%if(data.atrribute.textured){%>
+            <i class="fa-regular fa-circle-check"></i>
+            <%}else{%>
+            <i class="fa-regular fa-circle-xmark"></i>
+            <%}%>
+          </div>
+          <hr class="m-0" />
+        <%}else{%>            
+        <!-- 360 image -->
+          <div class="d-flex justify-content-between align-items-center p-1">           
+            <%if(data.atrribute.equirectangular){%>
+            <p class="m-0">Equirectangular</p>
+            <%}else{%>
+            <p class="m-0">Cubemap</p>
+            <%}%>
+            <i class="fa-regular fa-circle-check"></i>
+          </div>
+          <hr class="m-0" />
+        <%}%>
         <div class="d-flex justify-content-between align-items-center p-1">
           <p class="m-0">Download Size</p>
           <p class="m-0"><%= data.filesize %></p>
@@ -251,31 +260,30 @@
   function getEJScontent(data) {
     Array.from(thumbnails).forEach((element) => {
       element.src =
-        "." + data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
+       "../." + data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
     });
     console.log(data.assetPath.gltfmodelpath);
-    modelviewer.src = data.assetPath.gltfmodelpath;
+    modelviewer.src = "../" + data.assetPath.gltfmodelpath;
   }
 
   modelviewer.addEventListener("load", () => {
     const material = modelviewer.model.materials[0];
     const createAndApplyTexture = async (channel) => {
       // Applies the new texture to the specified channel.
-      var diffusepath = data.assetPath.folderpath.diffuse;
-      console.log("---->", data.assetPath.folderpath);
+      var diffusepath = "../." + data.assetPath.folderpath.diffuse;
       console.log(
-        "." + data.assetPath.folderpath + "/" + data.assetPath.diffuse
+        "../." +  data.assetPath.folderpath + "/" + data.assetPath.diffuse
       );
       if (diffusepath != "") {
         var diffuse = await modelviewer.createTexture(
-          "." + data.assetPath.folderpath + "/" + data.assetPath.diffuse
+          "../." +  data.assetPath.folderpath + "/" + data.assetPath.diffuse
         );
         material.pbrMetallicRoughness["baseColorTexture"].setTexture(diffuse);
       }
-      var emissivepath = data.assetPath.folderpath.emission;
+      var emissivepath = "../." + data.assetPath.folderpath.emission;
       if (emissivepath != "") {
         var emission = await modelviewer.createTexture(
-          "." + data.assetPath.folderpath + "/" + data.assetPath.emission
+          "../." +  data.assetPath.folderpath + "/" + data.assetPath.emission
         );
         material["emissiveTexture"].setTexture(emission);
       }
