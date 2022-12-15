@@ -100,7 +100,9 @@ function FindModelsByTags(tags) {
 
 const FindByFormat = async (results, format) => {
   let newResults = []
+ 
   newResults = results.filter((item) => {
+    console.log(item.atrribute.type, format)
     if (item.atrribute.type === format) {
       console.log("items");
       return item;

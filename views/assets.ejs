@@ -2,64 +2,78 @@
 <link rel="stylesheet" href="modellist.css" />
 <section class="d-flex flex-column m-auto mt-5">
   <div class="container-fluid px-5" id="top-bar">
-    <div class="mx-auto d-flex justify-content-between">
-      <form
-        style="width: 400px"
-        action="/assets"
-        method="post"
-        id="asset-type-form"
-      >
-        <label style="font-size: 1.5em" for="search">Download Assets : </label>
-        <select
-          id="asset-type"
-          style="font-size: 1.2em; background: none; border: none"
-          name="asset"
-          onchange='submitFilterForm(`asset-type-form`);' 
-        >
-          <option class="asset" type="button" value="3dmodel" selected>
-            3D Model
-          </option>
-          <option class="asset" type="button" value="script">Script</option>
-          <option class="asset" type="button" value="360">360 Image</option>
-        </select>
-      </form>
-      <form class="" action="/assets" method="post" id="model-filter-form">
-        <label for="search"></label>
-        <input class="large" type="text" name="searchterm" id="search-text"/>
-        <button class="font-italic large" type="submit" onclick="submitFilterForm(`model-filter-form`)">Search</button>
+    <form class="" action="/assets" method="post" id="model-filter-form">
+
+        <div class="d-flex justify-content-between">
+          <div>
+            <label style="font-size: 1.5em" for="search"
+              >Download Assets :
+            </label>
+            <select
+              id="asset-type"
+              style="font-size: 1.2em; background: none; border: none"
+              name="asset"
+              onchange="submitFilterForm(`model-filter-form`)"
+            >
+              <option class="asset" type="button" value="3dmodel" selected>
+                3D Model
+              </option>
+              <!-- <option class="asset" type="button" value="script">Script</option> -->
+              <option class="asset" type="button" value="360">360 Image</option>
+            </select>
+          </div>
+          <div>
+            <label for="search"></label>
+            <input
+              class="large"
+              type="text"
+              name="searchterm"
+              id="search-text"
+            />
+            <button
+              class="font-italic large"
+              type="submit"
+              onclick="submitFilterForm(`model-filter-form`)"
+            >
+              Search
+            </button>
+          </div>
+        </div>
      
-    </div>
-    <hr />
-    <div class="d-flex flex-wrap align-items-center">
-      <div class="form-check form-check-inline text-muted d-flex ps-0">
-        
+      <hr />
+      <div class="d-flex flex-wrap align-items-center">
+        <div class="form-check form-check-inline text-muted d-flex ps-0">
           <select
             class="form-select"
             id="format-type"
             name="format"
             aria-label="Floating label select example"
-            onchange='submitFilterForm(`model-filter-form`);'
+            onchange="submitFilterForm(`model-filter-form`)"
           >
-            <option class="format" type="button" value="format" selected >Format</option>
+            <option class="format" type="button" value="format" selected>
+              Format
+            </option>
             <%if(is3dmodelPage){%>
-              <option class="format" type="button" value="obj">.obj</option>
-              <option class="format" type="button" value="fbx">.fbx</option>
-              <%}else{%>
-                <option class="format" type="button" value="equirectangular">Equirectangular</option>
-                <option class="format" type="button" value="cubemap">Cubemap</option>
+            <option class="format" type="button" value="obj">.obj</option>
+            <option class="format" type="button" value="fbx">.fbx</option>
+            <%}else{%>
+            <option class="format" type="button" value="equirectangular">
+              Equirectangular
+            </option>
+            <option class="format" type="button" value="cubemap">
+              Cubemap
+            </option>
             <%}%>
-           
           </select>
-        
-      </div>
-           
+        </div>
+        <%if(is3dmodelPage){%>
         <div class="form-check form-check-inline text-muted d-flex">
           <input
             class="form-check-input"
             type="checkbox"
             name="attributes"
             value="animated"
-            onChange='storeCheckedItems()'
+            onChange="submitFilterForm(`model-filter-form`);"
           />
           <label class="form-check-label" for="animated">Animated</label>
         </div>
@@ -70,7 +84,7 @@
             id="lowpoly-type"
             name="attributes"
             value="lowpoly"
-            onChange='storeCheckedItems()'
+            onChange="submitFilterForm(`model-filter-form`);"
           />
           <label class="form-check-label" for="lowpoly">Low Poly</label>
         </div>
@@ -80,7 +94,7 @@
             type="checkbox"
             name="attributes"
             value="rigged"
-            onChange='storeCheckedItems()'
+            onChange="submitFilterForm(`model-filter-form`);"
           />
           <label class="form-check-label" for="rigged">Rigged</label>
         </div>
@@ -90,13 +104,14 @@
             type="checkbox"
             name="attributes"
             value="textured"
-            onChange='storeCheckedItems()'
+            onChange="submitFilterForm(`model-filter-form`);"
           />
           <label class="form-check-label" for="textured">Textured</label>
         </div>
-      </form>
-    </div>
-    <hr />
+        <%}%> 
+      </div>
+      <hr />
+    </form>
   </div>
 
   <div class="container-fluid px-5">
@@ -123,10 +138,11 @@
           </div>
         </a>
       </div>
+
     </div>
   </div>
 
-  <div class="mx-auto mb-5" style="width: 200px">
+  <div id="load-btn" class="mx-auto mb-5" style="width: 200px">
     <button type="button" class="btn btn-warning" onclick="LoadMore()">
       Load More
     </button>
@@ -142,19 +158,25 @@
   const cardmain = document.getElementById("asset-card");
   const assetrow = document.getElementById("asset-row");
 
-  LoadMore();
-
+  if (fulldatamodels.length > 0) {
+    LoadMore();
+  }else{
+    let addMessage = document.getElementById("asset-row");
+    let message = document.createElement("h4")
+    message.innerHTML =  "We couldn't find any results base on your search filters."
+    addMessage.append(message)
+    let loadBtn = document.getElementById("load-btn");
+    loadBtn.classList += " d-none"
+  }
+  
   function LoadMore() {
-    if(fulldatamodels.length > 0){
       if (afterlen > fulldatamodels.length) return;
-    afterlen = beforelen + loadamt;
-    currentloaddatamodels = fulldatamodels.slice(beforelen, afterlen);
-    for (var i = 0; i < currentloaddatamodels.length; i++) {
-      CreateAssetCard(currentloaddatamodels[i]);
-    }
-    beforelen = afterlen;
-    }
-   
+      afterlen = beforelen + loadamt;
+      currentloaddatamodels = fulldatamodels.slice(beforelen, afterlen);
+      for (var i = 0; i < currentloaddatamodels.length; i++) {
+        CreateAssetCard(currentloaddatamodels[i]);
+      }
+      beforelen = afterlen;
   }
 
   function CreateAssetCard(data) {
@@ -185,10 +207,11 @@
   addButtonToCard();
 
   const submitFilterForm = (elementId) => {
-    console.log("submit filter form")
-    storeInlocalStorage("search-text", "searchTerm")
-    storeInlocalStorage("format-type","selectedFormat")
-    storeInlocalStorage("asset-type","selectedAssetType")
+    console.log("submit filter form");
+    storeInlocalStorage("search-text", "searchTerm");
+    storeInlocalStorage("format-type", "selectedFormat");
+    storeInlocalStorage("asset-type", "selectedAssetType");
+    storeCheckedItems();
     let form = document.getElementById(elementId);
     form.submit();
   };
@@ -201,77 +224,85 @@
 
   const storeInlocalStorage = (elementId, keyName) => {
     let el = document.getElementById(elementId);
-    console.log("store", el.value)
+    console.log("store", el.value);
     localStorage.setItem(keyName, JSON.stringify(el.value));
   };
 
   const storeCheckedItems = () => {
-  // const checkedValues = [];
-  const checkedItems =  document.querySelectorAll('input[type=checkbox]:checked'); 
-  const arrayCheckedItems = [...checkedItems]
-  if(checkedItems !== null){
-    const selectedAttributes = arrayCheckedItems.map((item)=>{
-      return item.value
-    })
-    console.log("theres checked boxes");
-    localStorage.setItem("selectedAttributes", JSON.stringify(selectedAttributes));
-  }else{
-    console.log("theres no checked boxes");
-    localStorage.setItem("selectedAttributes", JSON.stringify([]));
-  }
-  //invoke the submit
-  submitFilterForm(`model-filter-form`);
-};
+    // const checkedValues = [];
+    const checkedItems = document.querySelectorAll(
+      "input[type=checkbox]:checked"
+    );
+    const arrayCheckedItems = [...checkedItems];
+    if (checkedItems !== null) {
+      const selectedAttributes = arrayCheckedItems.map((item) => {
+        return item.value;
+      });
+      console.log("theres checked boxes");
+      localStorage.setItem(
+        "selectedAttributes",
+        JSON.stringify(selectedAttributes)
+      );
+    } else {
+      console.log("theres no checked boxes");
+      localStorage.setItem("selectedAttributes", JSON.stringify([]));
+    }
+    // //invoke the submit
+    // submitFilterForm(`model-filter-form`);
+  };
 
   const setSelectedOption = (elementClass, elementValue) => {
     //let form = document.getElementById(elementId);
-    const options = document.getElementsByClassName(elementClass)
-    const arrayOptions = [...options]
+    const options = document.getElementsByClassName(elementClass);
+    const arrayOptions = [...options];
     arrayOptions.forEach((element) => {
       element.selected = false;
       if (element.value === `${elementValue}`) {
         element.selected = true;
       }
     });
-  }
+  };
 
   const setSeachString = (searchText) => {
     let searchInput = document.getElementById("search-text");
-    searchInput.value = searchText
-  }
+    searchInput.value = searchText;
+  };
 
   const showPreviousCheckedItems = () => {
-  console.log("show checked items");
-  const selectedAttributes = JSON.parse(localStorage.getItem("selectedAttributes"));
-  console.log("------->", selectedAttributes);
-  //iff theres previous checked items, the clear btn should enabled
-  if(selectedAttributes !== null && selectedAttributes.length > 0){
-    selectedAttributes.forEach((item) => {
-      document.querySelector(`input[value=${item}]`).checked = true;
-    });
-  }
-};
+    console.log("show checked items");
+    const selectedAttributes = JSON.parse(
+      localStorage.getItem("selectedAttributes")
+    );
+    console.log("------->", selectedAttributes);
+    //iff theres previous checked items, the clear btn should enabled
+    if (selectedAttributes !== null && selectedAttributes.length > 0) {
+      selectedAttributes.forEach((item) => {
+        document.querySelector(`input[value=${item}]`).checked = true;
+      });
+    }
+  };
   const showPreviousSelectedFilter = () => {
     console.log("show Selected Filter");
-    const selectedAssetType = JSON.parse(localStorage.getItem("selectedAssetType"));
-    const selectedFormat = JSON.parse(localStorage.getItem("selectedFormat"));   
-    const searchTerm = JSON.parse(localStorage.getItem("searchTerm"));    
-    setSeachString(searchTerm )
-    setSelectedOption( "asset", selectedAssetType)
-    setSelectedOption("format", selectedFormat)
+    const selectedAssetType = JSON.parse(
+      localStorage.getItem("selectedAssetType")
+    );
+    const selectedFormat = JSON.parse(localStorage.getItem("selectedFormat"));
+    const searchTerm = JSON.parse(localStorage.getItem("searchTerm"));
+    setSeachString(searchTerm);
+    setSelectedOption("asset", selectedAssetType);
+    setSelectedOption("format", selectedFormat);
     console.log("------->", selectedAssetType, selectedFormat);
   };
   const init = () => {
     showPreviousSelectedFilter();
-    showPreviousCheckedItems ();
-  }
+    showPreviousCheckedItems();
+  };
   const submitButtonClick = () => {
-		event.preventDefault();
-		//other stuff you want to do instead...
-} 
+    event.preventDefault();
+    //other stuff you want to do instead...
+  };
 
-  init()
- 
+  init();
 </script>
 
 <%- include('partials/footer') %>

@@ -105,10 +105,9 @@ app.get("/asset/:modelid", function (req, res) {
 });
 
 const check3dModelFilters = async (result, query) => {
+  let filteredResult = [];
   const attributesPromise = async () => {
-    if (typeof query.attributes !== "undefined" && query.attributes !== "") {
-      console.log("here");
-
+    if (typeof query.attributes !== "undefined" && query.attributes !== "" ) {
       const list = await modeldatabase.FindByAttribute(
         result,
         query.attributes
@@ -120,7 +119,7 @@ const check3dModelFilters = async (result, query) => {
   };
   filteredResult = await attributesPromise();
   const formatPromise = async () => {
-    if (query.format !== "format") {
+    if (query.format !== "format" && query.format !== "" && typeof query.format !== "undefined") {
       const list = await modeldatabase.FindByFormat(
         filteredResult,
         query.format
@@ -134,12 +133,14 @@ const check3dModelFilters = async (result, query) => {
   return filteredResult;
 };
 const check360Filters = async (result, query) => {
+  let filteredResult = [];
   const formatPromise = async () => {
-    if (query.format !== "format") {
+    if (query.format !== "format" && query.format !== "" && typeof query.format !== "undefined") {
       const list = await threeSixtiesDatabase.FindByFormat(
         result,
         query.format
       );
+      console.log("--->", list)
       return list;
     } else {
       return result;
@@ -310,7 +311,7 @@ app.get("/assets/360", async function (req, res) {
       filteredResult = await check360Filters(result, req.query);
       res.render("assets", {
         data: {
-          models: result,
+          models: filteredResult,
         },
         user: req.session.passport.user,
         isLoginpage: true,
