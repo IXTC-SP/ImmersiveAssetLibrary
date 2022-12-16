@@ -10,6 +10,7 @@ const session = require("express-session");
 
 const path = require("path");
 const url = require("url");
+const userObj = require("./config/userLogin");
 
 const gltfmodel = require('./scripts/gltfmodel');
 const uploadsmanager_model = require('./scripts/uploadsmanager_model');
@@ -43,13 +44,13 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24, //1 DAY
+      maxAge: 1000 * 60 * 60 * 24, //2 DAY
     },
   })
 );
 
 //every route
-//fisrt check if the req.session.passport.user is there ( on login will store)
+//fisrt check if the userObj.userObj is there ( on login will store)
 //if null, no need to get the userid, so no req.user
 //if have then, means has login, pass in the userid for the deserializer
 app.use(passport.initialize()); //refresh the passport middleware, thers a chance the session expired
@@ -77,20 +78,24 @@ app.listen(port, async () => {
 
   console.log(`Immersive Library backend listening on port ${port}`);
   job.start();
+  
 });
 
 const userModel = require("./models/user");
 
 app.get('/asset/:type/:modelid', function(req, res) {
   var dbmanager;
+  var isModel
   switch (req.params.type){
     case 'model':
       console.log('model asset type');
       dbmanager = databasemanager_model;
+      isModel = true
       break;
     case '360':
-      console.log('model asset type');
+      console.log('360 asset type');
       dbmanager = databasemanager_360;
+      isModel = false
       break;
   }
   dbmanager.FindModelById(req.params.modelid, (result) => {
@@ -103,8 +108,8 @@ app.get('/asset/:type/:modelid', function(req, res) {
         assettype : req.params.type,
         owner: doc.email,
         isLoginpage: true,
-        isModel: true,
-        user: req.session.passport.user,
+        isModel,
+        user: userObj.userObj,
       });
     });
   });
@@ -169,17 +174,12 @@ app.get("/assets/models", async function (req, res) {
           models: filteredResult,
         },
         assettype: "model",
-        user: req.session.passport.user,
+        user: userObj.userObj,
         isLoginpage: true,
         is3dmodelPage: true,
       });
     });
   } else {
-    // dbmanager.SearchBar(req.query.search, (result) => {
-
-    //   console.log("running result on model list" , result);
-    //   res.render('assets', {
-    // console.log("search");
     databasemanager_model.SearchBar(req.query.search, async (result) => {
       filteredResult = await check3dModelFilters (result, req.query);
       res.render("assets", {
@@ -187,7 +187,7 @@ app.get("/assets/models", async function (req, res) {
           models: filteredResult,
         },
         assettype: "model",
-        user: req.session.passport.user,
+        user: userObj.userObj,
         isLoginpage: true,
         is3dmodelPage: true,
       });
@@ -198,17 +198,19 @@ app.get("/assets/models", async function (req, res) {
 app.post("/assets", function (req, res) {
   console.log(req.body)
   if(req.body.asset === "360"){
+    req.body.format === "equirectangular" || req.body.format === "cubemap"?  null : req.body.format = "format" 
     res.redirect(
       url.format({
         pathname: "/assets/360",
         query: {
           attributes: req.body.attributes,
-          format: req.body.format,
+          format: req.body.format ,
           search: req.body.searchterm,
         },
       })
     );
   }else{
+    req.body.format === "obj" || req.body.format === "fbx"? null:  req.body.format = "format" 
     res.redirect(
       url.format({
         pathname: "/assets/models",
@@ -232,7 +234,7 @@ app.get("/assets/360", async function (req, res) {
         data: {
           models: filteredResult,
         },
-        user: req.session.passport.user,
+        user: userObj.userObj,
         assettype: "360",
         isLoginpage: true,
         is3dmodelPage: false,
@@ -247,7 +249,7 @@ app.get("/assets/360", async function (req, res) {
           models: filteredResult,
         },
         assettype: "360",
-        user: req.session.passport.user,
+        user: userObj.userObj,
         isLoginpage: true,
         is3dmodelPage: false,
       });
@@ -262,7 +264,7 @@ app.get("/dragndrop", function (req, res) {
   uploadmanager.closeTmpFolder();
   res.render("demopages/dragndrop", {
     isLoginpage: true,
-    user: req.session.passport.user,
+    user: userObj.userObj,
   });
 });
 
@@ -316,7 +318,7 @@ app.get("/editpage/model", function (req, res) {
       },
       isLoginpage: true,
       isModel: true,
-      user: req.session.passport.user,
+      user: userObj.userObj,
     });
   }
 });
@@ -403,7 +405,7 @@ app.get("/editpage/360", function (req, res) {
     images: tmpContent.image,
     isLoginpage: true,
     isModel: false,
-    user: req.session.passport.user,
+    user: userObj.userObj,
   });
 });
 
@@ -439,7 +441,7 @@ app.post("/savethreesixty", uploadmanager_360.upload360, function (req, res) {
 app.get("/view/360", function (req, res) {
   res.render("demopages/view-360", {
     isLoginpage: true,
-    user: req.session.passport.user,
+    user: userObj.userObj,
   });
 });
 // ----- 360 upload to publish ------ END
@@ -534,9 +536,9 @@ app.post("/downloadasset/:type/:modelid", function(req, res) {
       fs.unlink(tmppath, (err)=> {
         if(err) console.log(err);
         else {
-          console.log("complete fs delete tmp file", req.session.passport.user);
+          console.log("complete fs delete tmp file", userObj.userObj);
           //save asset id into user downloaded array
-          var filter = { _id: req.session.passport.user._id };
+          var filter = { _id: userObj.userObj._id };
           userModel.findOneAndUpdate(filter, update, function(err,doc){
             if(err) console.log(err);
             console.log('updated', doc);
