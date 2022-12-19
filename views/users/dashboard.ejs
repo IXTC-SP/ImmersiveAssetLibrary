@@ -147,7 +147,7 @@
       role="tabpanel"
       aria-labelledby="ex3-tab-3"
     >
-      <%- include('./uploads'); %>
+      <%- include('./downloads'); %>
     </div>
     <div
       class="tab-pane fade h-100 <%= showEnrollment? 'show active' :'' %>"
@@ -160,3 +160,43 @@
   </div>
 </section>
 <%- include('../partials/footer'); %>
+<script>
+  const clickAssetType = (el, loadType) => {
+    if(!el.classList.contains(`${loadType}assetActive`)){
+    console.log(el)
+    const currentActiveTab = document.querySelector(`.${loadType}assetActive`)
+    console.log(currentActiveTab);
+    currentActiveTab.classList.remove(`${loadType}assetActive`)
+    el.classList += ` ${loadType}assetActive`
+    
+    const currentDisplay= document.getElementsByClassName(`${loadType}row d-flex`)[0]
+    currentDisplay.classList.remove("d-flex")
+    currentDisplay.classList += " d-none"
+    
+    const newDisplay = document.getElementById(loadType+el.innerText)
+    console.log(newDisplay)
+    newDisplay.classList.remove("d-none")
+    newDisplay.classList += " d-flex"
+    }
+  }
+  // Change the type of input to password or text
+  const togglePassword = document.querySelector("#togglePassword");
+  const toggleConfirmPassword = document.querySelector(
+    "#toggleConfirmPassword"
+  );
+  const password = document.querySelector("#id_password");
+  const confirmPassword = document.querySelector("#id_confirmPassword");
+  toggleConfirmPassword.addEventListener("click", function () {
+    Toggle(confirmPassword, toggleConfirmPassword);
+  });
+  togglePassword.addEventListener("click", function () {
+    Toggle(password, togglePassword);
+  });
+  const Toggle = (id, icon) => {
+    // toggle the type attribute
+    const type = id.getAttribute("type") === "password" ? "text" : "password";
+    id.setAttribute("type", type);
+    // toggle the eye slash icon
+    icon.classList.toggle("fa-eye-slash");
+  };
+</script>

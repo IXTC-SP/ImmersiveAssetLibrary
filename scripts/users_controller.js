@@ -3,19 +3,16 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const userModel = require("../models/user");
 const modelModel = require("../models/model");
+const threeSixtyModel = require("../models/threesixty");
 const tokenModel = require("../models/token");
-// const mailgun = require("mailgun-js");
-// const DOMAIN = "sandbox5c0f43edfce94ab7b5552e3de5598fae.mailgun.org";
-// const mg = mailgun({ apiKey: process.env.MAILGUN_APIKEY, domain: DOMAIN });
 const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
 const crypto = require("crypto");
-// const { error } = require("console");
 const nodemailer = require("nodemailer");
-// const e = require('connect-flash')
 
 const { DateTime } = require("luxon");
 const console = require("console");
+const userObj = require("../config/userLogin");
 
 //need 2 step verfication for app password, cos google diables the less secure apps in may 2022
 let mailTransporter = nodemailer.createTransport({
@@ -84,14 +81,6 @@ const controller = {
       });
       if (password === "" || confirmPassword === "") {
         errorObj = errorMessage(true, "Please fill in the required fields");
-        // return res.render("users/setPassword", {
-        //   errorObj,
-        //   isActivated: true,
-        //   isLoginpage: false,
-        //   isInvalid: false,
-        //   token: req.query.token,
-        //   userId: req.query.id,
-        // });
       }
       if (password === confirmPassword) {
         const hash = await bcrypt.hash(password, 10);
@@ -108,14 +97,6 @@ const controller = {
         });
       } else {
         errorObj = errorMessage(true, "Confirm password does not match");
-        // return res.render("users/setPassword", {
-        //   errorObj,
-        //   isActivated: true,
-        //   isLoginpage: false,
-        //   isInvalid: false,
-        //   token: req.query.token,
-        //   userId: req.query.id,
-        // });
       }
     } catch (err) {
       console.log(err);
@@ -161,13 +142,6 @@ const controller = {
               }
               const hash = await bcrypt.hash(resetPasswordToken, 10);
               await tokenModel.create({ userId: user._id, token: hash });
-              // const token = jwt.sign(
-              //   {
-              //     data: userData,
-              //   },
-              //   resetPasswordSecret,
-              //   { expiresIn: "20s" }
-              // );
               const mailDetails = {
                 from: process.env.AUTH_EMAIL,
                 to: req.body.email,
@@ -327,7 +301,8 @@ const controller = {
   },
   showProfile: async (req, res) => {
     let accounts = [];
-    let uploads = [];
+    let uploads =  {"models":[], "360":[]};
+    let downloads =  {"models":[], "360":[]};
     let isSuccess = (false, "");
     let profile = "";
     let errorObj = errorMessage(false, "");
@@ -381,6 +356,7 @@ const controller = {
       isLoginpage: true,
       isSuccess,
       uploads,
+      downloads,
       accounts,
       errorObj,
       profile,
@@ -402,7 +378,8 @@ const controller = {
   },
   showEnrollment: async (req, res) => {
     let accounts = [];
-    let uploads = [];
+    let uploads =  {"models":[], "360":[]};
+    let downloads =  {"models":[], "360":[]};   
     let profile = "";
     let isSuccess = alertMessage(false, "");
     let errorObj = errorMessage(false, "");
@@ -433,6 +410,7 @@ const controller = {
       isLoginpage: true,
       isSuccess: req.isSuccess || isSuccess,
       uploads,
+      downloads,
       accounts,
       errorObj: req.errorObj || errorObj,
       profile,
@@ -445,7 +423,8 @@ const controller = {
   },
   showDownloads: async (req, res, next) => {
     let accounts = [];
-    let uploads = [];
+    let uploads =  {"models":[], "360":[]};
+    let downloads =  {"models":[], "360":[]};
     let profile = "";
     // let isSuccess = alertMessage(false, "");
     // let errorObj = errorMessage(false, "")
@@ -454,28 +433,22 @@ const controller = {
 
     let user = [];
     try {
-      user = await userModel.findById({ _id: req.params.user_id });
+      user = await userModel.findById({ _id: req.params.user_id }).populate("downloadedModels").populate("downloadedThreeSixty");
+      console.log(user)
       if (!user) {
         return res.status(401).send({ error: "no such user" });
       }
       //find all accts
-      accounts = await userModel.find();
-      // admins = await userModel.find({ isAdmin: true });
-
-      console.log(user);
-      console.log("Get the accounts");
+      downloads["models"] = [...user.downloadedModels]
+      downloads["360"] = [...user.downloadedThreeSixty]
     } catch (err) {
       console.log(err);
-      //return res.status(401).send({ error: "Failed to get users" });
-      //res.redirect("/login");
     }
-    // req.errorObj.errorObj
-    // req.isSuccess = isSuccess
-    // return next()
     res.render("users/dashboard", {
       isLoginpage: true,
       isSuccess: req.isSuccess || alertMessage(false, ""),
       uploads,
+      downloads,
       accounts,
       errorObj: req.errorObj || errorMessage(false, ""),
       profile,
@@ -489,11 +462,13 @@ const controller = {
   showUploads: async (req, res, next) => {
     let profile = "";
     let accounts = [];
-    let uploads = [];
+    let uploads = {"models":[], "360":[]};
+    let downloads = {"models":[], "360":[]};
     console.log("-->", req.errorObj);
     let user = [];
     try {
-      uploads = await modelModel.find({owner:req.session.passport.user._id});
+      uploads["models"] = await modelModel.find({owner:userObj.userObj._id});
+      uploads["360"] = await threeSixtyModel.find({owner:userObj.userObj._id})
     } catch (err) {
       console.log(err);
       req.errorObj = errorMessage(true, err)
@@ -502,11 +477,11 @@ const controller = {
       isLoginpage: true,
       isSuccess: req.isSuccess || alertMessage(false, ""),
       uploads,
-      uploads,
+      downloads,
       accounts,
       errorObj: req.errorObj || errorMessage(false, ""),
       profile,
-      user : req.session.passport.user,
+      user : userObj.userObj,
       showProfile: false,
       showUploads: true,
       showDownloads: false,
@@ -538,7 +513,8 @@ const controller = {
     let students = [];
     let isSuccess = alertMessage(false, " ");
     let errorObj = errorMessage(false, " ");
-    let uploads = [];
+    let uploads =  {"models":[], "360":[]};
+    let downloads =  {"models":[], "360":[]};
     let profile = ""
     let user = null;
     let adminUser = null;
@@ -656,6 +632,7 @@ const controller = {
       isLoginpage: true,
       isSuccess: req.isSuccess || isSuccess,
       uploads,
+      downloads,
       accounts,
       errorObj: req.errorObj || errorObj,
       profile,

@@ -1,3 +1,54 @@
-<%- include('../partials/header'); %>
-<%- include('../downloads); %>
-<%- include('../partials/footer'); %>
+<div class="d-flex justify-content-between w-100">
+    <nav class="nav flex-column uploads-nav">
+        <a class="nav-link p-0 ps-3 downloads-assetActive" type="button" onclick="clickAssetType(this, 'downloads-')">3d
+            Models</a>
+        <a class="nav-link p-0 ps-3" type="button" onclick="clickAssetType(this, 'downloads-')">360 Images</a>
+    </nav>
+    <div class="row gap-3 downloads-row d-flex" id="downloads-3d Models">
+        <%downloads.models.forEach(card=>{%>
+            <div class="card upload-card col-md-3 p-0">
+                <div class="upload-card-img">
+                    <img src="<%= card.assetPath.folderpath.slice(1) +
+                '/' +
+                card.assetPath.thumbnail %>" class="card-img-top" alt="<%= card._id %>" />
+                </div>
+                <div class="card-body upload-card-body p-3">
+
+                    <h6 class="card-title m-0"><strong>
+                            <%= card.title %>
+                        </strong></h6>
+
+
+                    <div class="d-flex justify-content-between">
+
+                        <a href="#!" class="upload-btn btn btn-outline-danger rounded-8"><i class="fa fa-trash"></i>
+                            Download</a>
+                    </div>
+                </div>
+            </div>
+            <%})%>
+    </div>
+    <div class="row gap-3 downloads-row d-none" id="downloads-360 Images">
+        <%downloads["360"].forEach(card=>{%>
+            <div class="card upload-card col-md-3 p-0">
+                <div class="upload-card-img">
+                    <img src="<%= card.assetPath.folderpath.slice(1) +
+                '/' +
+                card.assetPath.thumbnail %>" class="card-img-top" alt="<%= card._id %>" />
+                </div>
+                <div class="card-body upload-card-body p-3">
+
+                    <h6 class="card-title m-0"><strong>
+                            <%= card.title %>
+                        </strong></h6>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="#!" class="upload-btn btn btn-outline-danger rounded-8"><i class="fa fa-trash"></i>
+                            Download</a>
+                    </div>
+
+
+                </div>
+            </div>
+            <%})%>
+    </div>

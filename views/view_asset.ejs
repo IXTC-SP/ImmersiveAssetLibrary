@@ -266,11 +266,12 @@
   getEJScontent(data);
 
   function getEJScontent(data) {
-    if(assettype === "model"){
-      Array.from(thumbnails).forEach((element) => {
+    Array.from(thumbnails).forEach((element) => {
       element.src =
        "../." + data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
     });
+    if(assettype === "model"){
+
     console.log(data.assetPath.gltfmodelpath);
     modelviewer.src = "../" + data.assetPath.gltfmodelpath;
     modelviewer.addEventListener("load", () => {
@@ -301,8 +302,6 @@
       runPannellum(data.atrribute.type)
     }
   }
-
-  
 
   function runPannellum(type) {
     console.log(files);
