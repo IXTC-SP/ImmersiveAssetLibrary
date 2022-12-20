@@ -150,7 +150,7 @@
       <%- include('./downloads'); %>
     </div>
     <div
-      class="tab-pane fade h-100 <%= showEnrollment? 'show active' :'' %>"
+      class="tab-pane fade <%= showEnrollment? 'show active' :'' %>"
       id="ex3-tabs-4"
       role="tabpanel"
       aria-labelledby="ex3-tab-4"
@@ -181,7 +181,8 @@
   }
   // Change the type of input to password or text
   const togglePassword = document.querySelector("#togglePassword");
-  const toggleConfirmPassword = document.querySelector(
+  if(togglePassword){
+    const toggleConfirmPassword = document.querySelector(
     "#toggleConfirmPassword"
   );
   const password = document.querySelector("#id_password");
@@ -199,4 +200,6 @@
     // toggle the eye slash icon
     icon.classList.toggle("fa-eye-slash");
   };
+  }
+  
 </script>

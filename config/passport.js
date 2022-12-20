@@ -19,9 +19,12 @@ const verifyCallback = async (req, username, password, done) => {
  
   //passport use promise, .then and .catch, async and awaits wrapping the promise
   try {
-    user = await userModel.findOne({ email: username });
-    if (!user || !user.isActivated) {
-      return done(null, false, "Account not found");
+    user = await userModel.findOne({
+      email: username,
+      isActivated: true,
+    });
+    if (!user) {
+      return done(null, false, "Check that this account has been enrolled and activated.");
     }
     //use bcrypt to compare instead of passpor valid password
     // console.log(user);

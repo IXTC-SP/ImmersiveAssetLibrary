@@ -8,9 +8,9 @@
         </div>
         <div class="align-self-center">
           <div class="d-flex mb-3">
-            <%if(error){%>
+            <%if(errorObj.error){%>
               <!-- <i class="fa-solid fa-circle-exclamation error-message align-self-center px-2"></i> -->
-              <p class="error-message m-0"><%= message %></p>
+              <p class="error-message m-0"><%= errorObj.message %></p>
               <%}%>  
           </div>
         

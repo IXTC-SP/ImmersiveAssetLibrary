@@ -20,6 +20,7 @@ const databasemanager_360 = require('./scripts/databasemanager_360');
 const storagemanagement = require('./scripts/storagemanagement');
 const filedownloader = require('./scripts/filedownloader');
 const userController = require('./scripts/users_controller');
+const authController = require('./scripts/auth_controller');
 const authMiddleware = require('./middlewares/auth_middleware')// middleware for the authentication, to check if theres a session
 const passport = require("passport");
 
@@ -50,14 +51,13 @@ app.use(
 );
 
 //every route
-//fisrt check if the userObj.userObj is there ( on login will store)
+//fisrt check if the req.user is there ( on login will store)
 //if null, no need to get the userid, so no req.user
 //if have then, means has login, pass in the userid for the deserializer
 app.use(passport.initialize()); //refresh the passport middleware, thers a chance the session expired
 app.use(passport.session()); //so that can tap into the express sessions data
 // createStrategy is responsible to setup passport-local LocalStrategy with the correct options.
 require("./config/passport");
-app.use(authMiddleware.setAuthUserVar);
 
 //sandra connection
 const mongoose = require("mongoose");
@@ -109,7 +109,7 @@ app.get('/asset/:type/:modelid', function(req, res) {
         owner: doc.email,
         isLoginpage: true,
         isModel,
-        user: userObj.userObj,
+        user: req.user,
       });
     });
   });
@@ -162,7 +162,7 @@ const check360Filters = async (result, query) => {
 };
 
 //WORKING (ASSET LIST PAGE)
-app.get("/assets/models", async function (req, res) {
+app.get("/assets/models", authMiddleware.isAuthenticated, async function (req, res) {
   let filteredResult = [];
   if (typeof req.query.search === "undefined" || req.query.search === "") {
     console.log("no search");
@@ -174,7 +174,7 @@ app.get("/assets/models", async function (req, res) {
           models: filteredResult,
         },
         assettype: "model",
-        user: userObj.userObj,
+        user: req.user,
         isLoginpage: true,
         is3dmodelPage: true,
       });
@@ -187,7 +187,7 @@ app.get("/assets/models", async function (req, res) {
           models: filteredResult,
         },
         assettype: "model",
-        user: userObj.userObj,
+        user: req.user,
         isLoginpage: true,
         is3dmodelPage: true,
       });
@@ -234,7 +234,7 @@ app.get("/assets/360", async function (req, res) {
         data: {
           models: filteredResult,
         },
-        user: userObj.userObj,
+        user: req.user,
         assettype: "360",
         isLoginpage: true,
         is3dmodelPage: false,
@@ -249,7 +249,7 @@ app.get("/assets/360", async function (req, res) {
           models: filteredResult,
         },
         assettype: "360",
-        user: userObj.userObj,
+        user: req.user,
         isLoginpage: true,
         is3dmodelPage: false,
       });
@@ -264,7 +264,7 @@ app.get("/dragndrop", function (req, res) {
   uploadmanager.closeTmpFolder();
   res.render("demopages/dragndrop", {
     isLoginpage: true,
-    user: userObj.userObj,
+    user: req.user,
   });
 });
 
@@ -318,7 +318,7 @@ app.get("/editpage/model", function (req, res) {
       },
       isLoginpage: true,
       isModel: true,
-      user: userObj.userObj,
+      user: req.user,
     });
   }
 });
@@ -405,7 +405,7 @@ app.get("/editpage/360", function (req, res) {
     images: tmpContent.image,
     isLoginpage: true,
     isModel: false,
-    user: userObj.userObj,
+    user: req.user,
   });
 });
 
@@ -441,7 +441,7 @@ app.post("/savethreesixty", uploadmanager_360.upload360, function (req, res) {
 app.get("/view/360", function (req, res) {
   res.render("demopages/view-360", {
     isLoginpage: true,
-    user: userObj.userObj,
+    user: req.user,
   });
 });
 // ----- 360 upload to publish ------ END
@@ -536,9 +536,9 @@ app.post("/downloadasset/:type/:modelid", function(req, res) {
       fs.unlink(tmppath, (err)=> {
         if(err) console.log(err);
         else {
-          console.log("complete fs delete tmp file", userObj.userObj);
+          console.log("complete fs delete tmp file", req.user);
           //save asset id into user downloaded array
-          var filter = { _id: userObj.userObj._id };
+          var filter = { _id: req.user._id };
           userModel.findOneAndUpdate(filter, update, function(err,doc){
             if(err) console.log(err);
             console.log('updated', doc);
@@ -550,32 +550,32 @@ app.post("/downloadasset/:type/:modelid", function(req, res) {
   });
 });
 
-app.get("/:user_id/dashboard/profile", userController.showProfile);
-app.post("/:user_id/dashboard/profile", userController.showProfile);
-app.patch("/:user_id/dashboard/profile", userController.showProfile);
+app.get("/:user_id/dashboard/profile", authMiddleware.isAuthenticated, userController.showProfile);
+app.post("/:user_id/dashboard/profile", authMiddleware.isAuthenticated, userController.showProfile);
+app.patch("/:user_id/dashboard/profile", authMiddleware.isAuthenticated, userController.showProfile);
 
-app.get("/:user_id/dashboard/uploads", userController.showUploads);
-app.get("/:user_id/dashboard/downloads", userController.showDownloads);
-app.get("/:user_id/dashboard/enrollment", userController.showEnrollment);
-app.get("/login", userController.showlogin);
-app.get("/authentication/activate", userController.showActivateAndSetPassword); //done
-app.get("/forgot-password", userController.showForgotPassword); //done
-app.get("/reset-password", userController.showSetPassword); //done
-app.get("/logout", userController.logout);
+app.get("/:user_id/dashboard/uploads", authMiddleware.isAuthenticated, userController.showUploads);
+app.get("/:user_id/dashboard/downloads", authMiddleware.isAuthenticated, userController.showDownloads);
+app.get("/:user_id/dashboard/enrollment", authMiddleware.isAuthenticated, userController.showEnrollment);
+app.get("/login", authController.showlogin);
+app.get("/authentication/activate", authController.showActivateAndSetPassword); //done
+app.get("/forgot-password", authController.showForgotPassword); //done
+app.get("/reset-password", authController.showSetPassword); //done
+app.get("/logout", authMiddleware.isAuthenticated, userController.logout);
 
 app.post(
   "/:user_id/dashboard/enrollment",
-  userController.createEnrollment,
-  userController.emailActivation,
+  authMiddleware.isAuthenticated, userController.createEnrollment,
+  authController.emailActivation,
   userController.showEnrollment
 ); //done
 // app.post("/:user_id/dashboard", userController.showDashboard)
-app.post("/:user_id/uploads/delete", userController.deleteUpload);
-app.post("/:user_id/uploads/edit", userController.editUpload);
-app.post("/:user_id/uploads", userController.upload);
-app.post("/reset-password-link", userController.sendResetPasswordLink);
-app.post("/authentication/activate", userController.setPassword);
-app.post("/reset-password", userController.setPassword); //done
+app.post("/:user_id/uploads/delete", authMiddleware.isAuthenticated, userController.deleteUpload);
+// app.post("/:user_id/uploads/edit", userController.editUpload);
+// app.post("/:user_id/uploads", userController.upload);
+app.post("/reset-password-link", authController.sendResetPasswordLink);
+app.post("/authentication/activate", authController.setPassword);
+app.post("/reset-password", authController.setPassword); //done
 //pass the middleware. authenticate will look into the passport.js for the verify callback, and can include options of authntication
 //with the veryfycall back ut finds the user in the dbs and
 //a passport props wil be created in the the express session
@@ -586,12 +586,13 @@ app.post(
     failureRedirect: "/login",
     failureFlash: true,
   }),
-  userController.login
+  authController.login
 );
-app.post("/logout", userController.logout);
+app.post("/logout", authMiddleware.isAuthenticated, userController.logout);
 
 app.delete(
   "/:user_id/dashboard/enrollment/:acct_id/delete",
+  authMiddleware.isAuthenticated,
   userController.deleteEnrollment,
   userController.showEnrollment
 );
