@@ -92,7 +92,11 @@ transform: translateX(0);
 .icon-size {
   font-size: 25px;
 }
-
+.upload-btn{
+  color: #2b7a9e;
+  background-color: rgb(255, 255, 255);
+  border: none;
+}
 .small-icon-size {
   font-size: 12px;
 }
