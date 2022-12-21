@@ -260,7 +260,7 @@ app.get("/assets/360", async function (req, res) {
 
 //WORKING (UPLOAD PAGE)
 const uploadmanager = require("./scripts/uploadsmanager_model");
-app.get("/dragndrop", function (req, res) {
+app.get("/upload", function (req, res) {
   uploadmanager.closeTmpFolder();
   res.render("demopages/dragndrop", {
     isLoginpage: true,

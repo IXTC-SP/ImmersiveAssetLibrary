@@ -12,24 +12,6 @@ const nodemailer = require("nodemailer");
 
 const { DateTime } = require("luxon");
 const console = require("console");
-//const req.session.userObj = require("../config/userLogin");
-// let req.session.userObj = {}
-//need 2 step verfication for app password, cos google diables the less secure apps in may 2022
-// let mailTransporter = nodemailer.createTransport({
-//   service: "gmail",
-//   auth: {
-//     user: process.env.AUTH_EMAIL,
-//     pass: process.env.AUTH_PASS,
-//   },
-// });
-// mailTransporter.verify(function (error, success) {
-//   if (error) {
-//     console.log(error);
-//   } else {
-//     console.log("Server is ready to take our messages");
-//   }
-// });
-
 const errorMessage = (error, message) => {
   return { error, message };
 };
@@ -136,14 +118,6 @@ const controller = {
     }
     let renderView = new RenderView(req, renderObj)
     res.render("users/dashboard", {
-      // isLoginpage: true,
-      // isSuccess: req.isSuccess || renderObj.isSuccess,
-      // uploads : renderObj.uploads,
-      // downloads : renderObj.downloads,
-      // accounts : renderObj.accounts,
-      // errorObj: req.errorObj || renderObj.errorObj,
-      // profile : renderObj.profile,
-      // user: req.session.userObj,
       ...renderView,
       showProfile: true,
       showUploads: false,
@@ -165,14 +139,6 @@ const controller = {
     }
     let renderView = new RenderView(req, renderObj)
     return res.render("users/dashboard", {
-      // isLoginpage: true,
-      // isSuccess: req.isSuccess || renderObj.isSuccess,
-      // uploads : renderObj.uploads,
-      // downloads : renderObj.downloads,
-      //  accounts : renderObj.accounts,
-      // errorObj: req.errorObj || renderObj.errorObj,
-      // profile : renderObj.profile,
-      // user: req.session.userObj,
       ...renderView,
       showProfile: false,
       showUploads: false,
@@ -192,14 +158,6 @@ const controller = {
     }
     let renderView = new RenderView(req, renderObj)
     res.render("users/dashboard", {
-      // isLoginpage: true,
-      // isSuccess: req.isSuccess || renderObj.isSuccess,
-      // uploads : renderObj.uploads,
-      // downloads : renderObj.downloads,
-      // accounts : renderObj.accounts,
-      // errorObj: req.errorObj || renderObj.errorObj,
-      // profile : renderObj.profile,
-      // user,
       ...renderView,
       showProfile: false,
       showUploads: false,
@@ -224,14 +182,6 @@ const controller = {
     }
     let renderView = new RenderView(req, renderObj)
     res.render("users/dashboard", {
-      // isLoginpage: true,
-      // isSuccess: req.isSuccess || renderObj.isSuccess,
-      // uploads : renderObj.uploads,
-      // downloads : renderObj.downloads,
-      // accounts : renderObj.accounts,
-      // errorObj: req.errorObj || renderObj.errorObj,
-      // profile : renderObj.profile,
-      // user: req.session.userObj,
       ...renderView,
       showProfile: false,
       showUploads: true,
@@ -344,14 +294,6 @@ const controller = {
     }
     let renderView = new RenderView(req, renderObj)
     return res.render("users/dashboard", {
-      // isLoginpage: true,
-      // isSuccess: req.isSuccess || renderObj.isSuccess,
-      // uploads : renderObj.uploads,
-      // downloads : renderObj.downloads,
-      // accounts : renderObj.accounts,
-      // errorObj: req.errorObj || renderObj.errorObj,
-      // profile : renderObj.profile,
-      // user: req.session.userObj,
       ...renderView,
       showProfile: false,
       showUploads: false,

@@ -6,7 +6,7 @@
   <div class="container">
     <div>
       <a href="/assets/models">
-        <h2 class="navbar-brand text-secondary my-auto">
+        <h2 class="navbar-brand text-white my-auto">
           Immersive Asset Library
         </h2>
       </a>
@@ -26,13 +26,17 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item">
+        <li class="nav-item d-flex gap-3">
+          <div>
+          <a href="/upload"><button class="rounded-5"> <i class="fa-solid fa-arrow-up-from-bracket drop-icon me-2" ></i>Upload</button></a>
+          </div>
           <div class="dropdown">
             <a
               href="/single_asset_create"
               type="button"
               data-bs-toggle="dropdown"
               aria-expanded="false"
+              class="text-white"
             >
               <%= user.email.split("@")[0] %>
             </a>
@@ -53,13 +57,13 @@
                 type="button"
                 href="/<%= user._id %>/dashboard/downloads"
                 class="dropdown-item"
-                >Download</a
+                >Downloads</a
               >
               <a
                 type="button"
                 href="/<%= user._id %>/dashboard/enrollment"
                 class="dropdown-item"
-                >Enrollment</a
+                >Enrollments</a
               >
               <a
                 type="button"
