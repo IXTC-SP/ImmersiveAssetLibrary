@@ -172,8 +172,8 @@
       </div>
       <div class="col-8">
         <div class="p-3 drop-zone-border drop-zone" id="drop-zone">
-          <div class="collected-files">
-          </div>
+          <!-- <div class="collected-files">
+          </div> -->
           <i id ="trash-icon" class="trash-btn fa-regular fa-trash-can" style="display: none"></i>
           <div class="text-center mb-2 d-flex flex-column">
             <i class="fa-solid fa-arrow-up-from-bracket drop-icon" ></i>
@@ -188,15 +188,12 @@
               <strong>ZIP</strong> folder containing only your textures, materials, and mesh.</p>
             <p class="text-center mb-0 support-types-text">Additional files can be added in the next step</p>
           </div>
+        
+
+        </div>
+        <div class="collected-files">
         </div>
         <div class="upload-btn-group">
-          <!-- <button type="submit" class="btn theme-color btn-rounded">
-            <i class="fa fa-plus me-2" aria-hidden="true"></i>Cancel
-          </button>
-
-          <button type="submit" class="btn theme-color btn-rounded">
-            <i class="fa fa-plus me-2" aria-hidden="true"></i>Cancel
-          </button> -->
           <button class="btn btn-size btn-outline-info rounded-8 cancel-page-btn" type="button"
             name="button">Cancel</button>
           <button class="btn btn-size theme-color btn-rounded upload-page-btn" type="button" name="button"> Next
@@ -208,7 +205,7 @@
         <label for="asset-select" class="support-types-text">Select Asset Type:</label>
         <select class="admin-input rounded-2 p-1 w-100"name="assets" id="asset-select" onchange="triggerChangeWithAssetSelect()">
           <option value="3dmodel">3D Model</option>
-          <option value="script">Script</option>
+          <!-- <option value="script">Script</option> -->
           <option value="360image">360 Image</option>
         </select>
 
@@ -431,7 +428,10 @@
   function createFileCard(filename) {
     //create a card
     const card = document.createElement("div");
-    card.classList.add("card");
+    const fileName = document.createElement("p");
+    card.appendChild(fileName)
+    card.classList.add("d-flex");
+    //card.classList.add("card");
     collectedfiles.appendChild(card);
 
     //create remove-btn for the card
@@ -443,17 +443,25 @@
       event.preventDefault();
     });
 
+    //create icon trashcan
+    var trashcanBtn = document.getElementById("trash-icon")
+    trashcanBtn.style.display = "block"
+    trashcanBtn.addEventListener('click', function (event) {
+      removeFile(card, filename);
+      event.preventDefault();
+    });
+
     card.appendChild(removebtn);
     //create image for the card
-    var img = document.createElement('img');
-    img.src = '';
-    img.classList.add("img-top");
-    card.appendChild(img);
+    // var img = document.createElement('img');
+    // img.src = '';
+    // img.classList.add("img-top");
+    // card.appendChild(img);
 
 
     //create file info
     var fileinfo = document.createElement('div');
-    fileinfo.classList.add('card-file-info');
+    // fileinfo.classList.add('card-file-info');
     card.appendChild(fileinfo);
     var fileinfospan = document.createElement('span');
     fileinfospan.innerHTML = filename;
