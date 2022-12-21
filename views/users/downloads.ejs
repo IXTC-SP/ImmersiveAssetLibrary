@@ -8,6 +8,11 @@
         <%if(downloads.models.length>0){%>
             <%downloads.models.forEach(card=>{%>
                 <div class="card upload-card col-md-3 p-0">
+                    <div class="d-flex justify-content-end">
+                        <a href="#!" class="btn btn-outline-primary box-shadow-0 border-0"
+                          ><i class="fa fa-download icon-size" aria-hidden="true"></i></a
+                        >
+                    </div>
                     <div class="upload-card-img">
                         <img src="<%= card.assetPath.folderpath.slice(1) +
                     '/' +
@@ -20,11 +25,7 @@
                             </strong></h6>
     
     
-                        <div class="d-flex justify-content-between">
-    
-                            <a href="#!" class="btn btn-outline-danger rounded-8"><i class="fa fa-trash"></i>
-                                Download</a>
-                        </div>
+                    
                     </div>
                 </div>
                 <%})%>
@@ -37,6 +38,11 @@
         <%if(downloads["360"].length>0){%>
         <%downloads["360"].forEach(card=>{%>
             <div class="card upload-card col-md-3 p-0">
+                <div class="d-flex justify-content-end">
+                    <a href="#!" class="btn btn-outline-primary box-shadow-0 border-0"
+                      ><i class="fa fa-download icon-size" aria-hidden="true"></i></a
+                    >
+                </div>
                 <div class="upload-card-img">
                     <img src="<%= card.assetPath.folderpath.slice(1) +
                 '/' +
@@ -48,10 +54,10 @@
                             <%= card.title %>
                         </strong></h6>
 
-                    <div class="d-flex justify-content-between">
+                    <!-- <div class="d-flex justify-content-between">
                         <a href="#!" class="upload-btn btn btn-outline-danger rounded-8"><i class="fa fa-trash"></i>
                             Download</a>
-                    </div>
+                    </div> -->
 
 
                 </div>

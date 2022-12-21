@@ -4,28 +4,28 @@
   class="navbar navbar-expand-lg bg-light fixed-top theme-color p-3"
 >
   <div class="container">
-    <div>
-      <a href="/assets/models">
-        <h2 class="navbar-brand text-white my-auto">
-          Immersive Asset Library
-        </h2>
-      </a>
+    <div class="d-flex">
+      <div class="my-auto">
+          <h2 class="navbar-brand text-white m-0 me-2">
+            Immersive Asset Library
+          </h2>
+      </div>
+      <div class="my-auto">
+        <a href="/assets/models" class="text-white">
+          3d Models
+        </a>
+      </div>
+      <div class="my-auto mx-2">
+      |
+      </div>
+      <div class="my-auto">
+        <a href="/assets/360" class="text-white ">
+          360 Images
+        </a>
+      </div>
     </div>
-
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+    <div class="navbar" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-lg-0">
         <li class="nav-item d-flex gap-3">
           <div>
           <a href="/upload"><button class="rounded-5 upload-btn px-3 py-1"> <i class="fa-solid fa-arrow-up-from-bracket me-2" ></i><strong>UPLOAD</strong></button></a>
@@ -35,8 +35,9 @@
               href="/single_asset_create"
               type="button"
               data-bs-toggle="dropdown"
+
               aria-expanded="false"
-              class="text-white"
+              class="text-white dropdown-toggle"
             >
               <%= user.email.split("@")[0] %>
             </a>

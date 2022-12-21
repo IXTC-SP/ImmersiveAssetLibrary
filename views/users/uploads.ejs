@@ -7,6 +7,11 @@
       <%if(uploads.models.length>0){%>    
         <%uploads.models.forEach(card =>{%>
           <div class="card upload-card col-md-3 p-0">
+            <div class="d-flex justify-content-end">
+              <a href="#!" class="btn btn-outline-danger box-shadow-0 border-0"
+                ><i class="fa-solid fa-trash-can delete-icon"></i></a
+              >
+            </div>
             <div class="upload-card-img">
               <img
                 src= "<%= card.assetPath.folderpath.slice(1) +
@@ -26,14 +31,7 @@
               <span class="card-text text-overflow"><small><%= tags %></small></span>        -->
               <span class="card-text text-overflow"><small><%= card.uploaddate.toLocaleString().split(",")[0] %></small></span>       
 
-              <div class="d-flex justify-content-between">
-                <!-- <a href="#!" class="upload-btn btn btn-outline-info rounded-8">
-                  <i class="fa-solid fa-pen"></i> Edit</a
-                > -->
-                <a href="#!" class="btn btn-outline-danger rounded-8"
-                  ><i class="fa fa-trash"></i> Delete</a
-                >
-              </div>
+              
             </div>
           </div>
         <%})%>
@@ -45,6 +43,11 @@
       <%if(uploads["360"].length>0){%>   
         <%uploads["360"].forEach(card =>{%>
           <div class="card upload-card col-md-3 p-0">
+            <div class="d-flex justify-content-end">
+              <a href="#!" class="btn btn-outline-danger box-shadow-0 border-0"
+                ><i class="fa-solid fa-trash-can delete-icon"></i></a
+              >
+            </div>
             <div class="upload-card-img">
               <img
                 src= "<%= card.assetPath.folderpath.slice(1) +
@@ -63,14 +66,7 @@
               <%})%>
               <span class="card-text text-overflow"><small><%= tags %></small></span>        -->
               <span class="card-text text-overflow"><small><%= card.uploaddate.toLocaleString().split(",")[0] %></small></span>       
-              <div class="d-flex justify-content-between">
-                <!-- <a href="#!" class="upload-btn btn btn-outline-info rounded-8">
-                  <i class="fa-solid fa-pen"></i> Edit</a
-                > -->
-                <a href="#!" class="upload-btn btn btn-outline-danger rounded-8"
-                  ><i class="fa fa-trash"></i> Delete</a
-                >
-              </div>
+             
           
             
             </div>

@@ -138,7 +138,8 @@
       font-size: 14px;
       font-weight: 300
     }
-    .title-upload{
+
+    .title-upload {
       font-weight: 300
     }
 
@@ -149,7 +150,7 @@
     .drop-zone-border {
       border: 0px;
       text-align: center;
-      background: linear-gradient(to right,#2b7a9e 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(#2b7a9e 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(to right, #2b7a9e 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(#2b7a9e 50%, rgba(255, 255, 255, 0) 0%);
+      background: linear-gradient(to right, #2b7a9e 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(#2b7a9e 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(to right, #2b7a9e 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(#2b7a9e 50%, rgba(255, 255, 255, 0) 0%);
       background-position: top, right, bottom, left;
       background-repeat: repeat-x, repeat-y;
       background-size: 30px 2px, 2px 30px;
@@ -158,7 +159,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
     }
   </style>
 
@@ -174,21 +175,23 @@
         <div class="p-3 drop-zone-border drop-zone" id="drop-zone">
           <!-- <div class="collected-files">
           </div> -->
-          <i id ="trash-icon" class="trash-btn fa-regular fa-trash-can" style="display: none"></i>
+          <i id="trash-icon" class="trash-btn fa-regular fa-trash-can" style="display: none"></i>
           <div class="text-center mb-2 d-flex flex-column">
-            <i class="fa-solid fa-arrow-up-from-bracket drop-icon" ></i>
+            <i class="fa-solid fa-arrow-up-from-bracket drop-icon"></i>
             <span class="drag-text">Drag and Drop <span class="browse-btn" id="browse-btn" onclick="browse()">or
                 Browse</span></span><br>
             <input type="file" id="browse-input" name="file" value="" style="display:none;">
           </div>
           <div>
-            <p class="text-center mb-0 " id="format-support-info"><span class="support-types-text">We support </span><span id="span-format"></span>
+            <p class="text-center mb-0 " id="format-support-info"><span class="support-types-text">We support
+              </span><span id="span-format"></span>
             </p>
             <p class="text-center mb-0 support-types-text" id="format-3dmodel-info">You can also upload a
-              <strong>ZIP</strong> folder containing only your textures, materials, and mesh.</p>
+              <strong>ZIP</strong> folder containing only your textures, materials, and mesh.
+            </p>
             <p class="text-center mb-0 support-types-text">Additional files can be added in the next step</p>
           </div>
-        
+
 
         </div>
         <div class="collected-files">
@@ -203,14 +206,16 @@
       </div>
       <div class="col-2">
         <label for="asset-select" class="support-types-text">Select Asset Type:</label>
-        <select class="admin-input rounded-2 p-1 w-100"name="assets" id="asset-select" onchange="triggerChangeWithAssetSelect()">
+        <select class="admin-input rounded-2 p-1 w-100" name="assets" id="asset-select"
+          onchange="triggerChangeWithAssetSelect()">
           <option value="3dmodel">3D Model</option>
           <!-- <option value="script">Script</option> -->
           <option value="360image">360 Image</option>
         </select>
 
-        <label class= " mt-2"id="asset-format-id" for="asset-format">Select Format:</label>
-        <select class="admin-input rounded-2 p-1 w-100"name="format" id="asset-format" onchange="onChangeFormatType(this)">
+        <label class=" mt-2" id="asset-format-id" for="asset-format">Select Format:</label>
+        <select class="admin-input rounded-2 p-1 w-100" name="format" id="asset-format"
+          onchange="onChangeFormatType(this)">
         </select>
       </div>
     </div>
@@ -286,7 +291,8 @@
         </div>
       </div>
       <!-- <button class="page-btn left" type="button" name="button" onclick="createuploadcontent()">Next</button> -->
-      <button class="btn btn-size theme-color btn-rounded upload-page-btn" type="button" onclick="createuploadcontent()" name="button"> Next
+      <button class="btn btn-size theme-color btn-rounded upload-page-btn" type="button" onclick="createuploadcontent()"
+        name="button"> Next
       </button>
 
       <!-- <form class="upload-form" id="upload-form" action="/uploadcontent" method="post" enctype="multipart/form-data" onkeydown="return event.key != 'Enter';">
@@ -296,51 +302,52 @@
       </form> -->
     </div>
 
-</body>
+    </body>
 
-<script type="text/javascript" src="fileextensioncheck.js"></script>
-<script>
-  const dragArea = document.querySelector(".drop-zone");
-  const dragText = document.querySelector(".drag-text");
-  const collectedfiles = document.querySelector(".collected-files");
-  const nextpagebtn = document.querySelector(".upload-page-btn");
+    <script type="text/javascript" src="fileextensioncheck.js"></script>
+    <script>
+      const dragArea = document.querySelector(".drop-zone");
+      const dragText = document.querySelector(".drag-text");
+      const collectedfiles = document.querySelector(".collected-files");
+      const nextpagebtn = document.querySelector(".upload-page-btn");
 
-  //reload page when back button on browser is pressed
-  window.addEventListener( "pageshow", function ( event ) {
-    var historyTraversal = event.persisted ||
-                           ( typeof window.performance != "undefined" &&
-                                window.performance.navigation.type === 2 );
-    if ( historyTraversal ) {
-      // Handle page restore.
-      window.location.reload();
-    }
-  });
+      //reload page when back button on browser is pressed
+      window.addEventListener("pageshow", function (event) {
+        var historyTraversal = event.persisted ||
+          (typeof window.performance != "undefined" &&
+            window.performance.navigation.type === 2);
+        if (historyTraversal) {
+          // Handle page restore.
+          window.location.reload();
+        }
+      });
 
-  class fileObj {
-    constructor(type,filename,file) {
-      this.type = type
-      this.filename = filename;
-      this.file = file;
-    }
-  }
-  var fileObjs = [];
+      class fileObj {
+        constructor(type, filename, file) {
+          this.type = type
+          this.filename = filename;
+          this.file = file;
+        }
+      }
+      var fileObjs = [];
 
-  nextpagebtn.addEventListener('click', function(event) {
-    processUploads();
-    event.preventDefault();
-  });
+      nextpagebtn.addEventListener('click', function (event) {
+        processUploads();
+        event.preventDefault();
+      });
 
-  const uploadform = document.querySelector(".upload-form");
+      const uploadform = document.querySelector(".upload-form");
 
-  function assigntexture(e){
-    var filename = e.target.name.split("-")[0];
-    fileObjs.forEach((f,i)=>{
-      if(f.file.name == e.target.value){
-        f.filename = filename;
-        return;
-      }})
-    }
-  function createuploadcontent() {
+      function assigntexture(e) {
+        var filename = e.target.name.split("-")[0];
+        fileObjs.forEach((f, i) => {
+          if (f.file.name == e.target.value) {
+            f.filename = filename;
+            return;
+          }
+        })
+      }
+      function createuploadcontent() {
         const formData = new FormData();
         const request = new XMLHttpRequest();
         var nextURL = "";
@@ -367,7 +374,7 @@
         console.log(fileObjs);
         fileObjs.forEach((fileObj, i) => {
           var savedName = '';
-          if(fileObj.file.name.split("/")[1]){
+          if (fileObj.file.name.split("/")[1]) {
             savedName = fileObj.filename + "_" + fileObj.file.name.split("/")[1];
           } else {
             savedName = fileObj.filename + "_" + fileObj.file.name;
@@ -388,214 +395,221 @@
         request.send(formData);
       }
 
-  //create option for select element
-  function createoption(text, value, parent) {
-    var option = document.createElement("option");
-    option.text = text;
-    option.value = value;
-    parent.add(option);
-  }
-
-  //next page btn
-  function processUploads() {
-    //if no uploads added
-    if (files.length == 0)
-      alert("no uploads added");
-
-    setupFileObjs();
-    //if model file, process and popup to assign textures
-    if (currenttype == "3dmodel") {
-      changeModalContent("model");
-    }
-    //if cubemap file, process and popup to assign textures
-    if (currenttype == "360image") {
-      if(currentformat == 'cubemap') changeModalContent("cubemap");
-      else createuploadcontent();
-    }
-    // if (currenttype == "360image") {
-    //   createuploadcontent();
-    // }
-
-    if (currenttype == "script") {
-      createuploadcontent();
-    }
-  }
-
-  //creating and managing file card
-  let currenttype = "";
-  let currentformat = "";
-
-  function createFileCard(filename) {
-    //create a card
-    const card = document.createElement("div");
-    const fileName = document.createElement("p");
-    card.appendChild(fileName)
-    card.classList.add("d-flex");
-    //card.classList.add("card");
-    collectedfiles.appendChild(card);
-
-    //create remove-btn for the card
-    var removebtn = document.createElement('span');
-    removebtn.innerHTML = "&times;";
-    removebtn.classList.add("file-btn");
-    removebtn.addEventListener('click', function(event) {
-      removeFile(card, filename);
-      event.preventDefault();
-    });
-
-    //create icon trashcan
-    var trashcanBtn = document.getElementById("trash-icon")
-    trashcanBtn.style.display = "block"
-    trashcanBtn.addEventListener('click', function (event) {
-      removeFile(card, filename);
-      event.preventDefault();
-    });
-
-    card.appendChild(removebtn);
-    //create image for the card
-    // var img = document.createElement('img');
-    // img.src = '';
-    // img.classList.add("img-top");
-    // card.appendChild(img);
-
-
-    //create file info
-    var fileinfo = document.createElement('div');
-    // fileinfo.classList.add('card-file-info');
-    card.appendChild(fileinfo);
-    var fileinfospan = document.createElement('span');
-    fileinfospan.innerHTML = filename;
-    fileinfo.appendChild(fileinfospan);
-  }
-
-  function clearFilesIfNewType(newtype) {
-    if (currenttype != newtype) {
-      clearAllFileContent();
-      currenttype = newtype;
-    }
-  }
-
-  function clearAllFileContent() {
-    collectedfiles.innerHTML = '';
-    files = [];
-  }
-
-  function removeFile(card, filename) {
-    card.remove();
-    for (var i = 0; i < files.length; i++) {
-      if (files[i].name === filename) {
-        files.splice(i, 1);
+      //create option for select element
+      function createoption(text, value, parent) {
+        var option = document.createElement("option");
+        option.text = text;
+        option.value = value;
+        parent.add(option);
       }
-    }
-  }
-  function readFiles(files) {
-    for(i = 0;i< files.length;i++){
-      readFile(files[i]);
-    }
-  }
 
-  function readFile(file) {
-    let correctfiletype = false;
-    if(currentformat == 'equirectangular' && files.length == 1) return;
-    switch (currenttype) {
-      case "3dmodel":
-        correctfiletype = isObj(file.name) || isImage(file.name);
-        break;
-      case "script":
-        switch(currentformat){
-          case 'csharp':
-          correctfiletype = isCsharp(file.name);
-          break;
-          case 'javascript':
-          correctfiletype = isJavascript(file.name);
-          break;
-          case 'python':
-          correctfiletype = isPython(file.name);
-          break;
+      //next page btn
+      function processUploads() {
+        //if no uploads added
+        if (files.length == 0)
+          alert("no uploads added");
+
+        setupFileObjs();
+        //if model file, process and popup to assign textures
+        if (currenttype == "3dmodel") {
+          changeModalContent("model");
         }
-        break;
-      case "360image":
-        correctfiletype = isImage(file.name);
-        break;
-    }
-    if (correctfiletype) {
-      createFileCard(file.name);
-      files.push(file);
-      console.log(files + " currently added file");
-    }
-  }
-
-  function setupFileObjs(){
-    fileObjs = [];
-    if (currenttype == "3dmodel") {
-      files.forEach((file,i)=>{
-        var f;
-        if(isObj(file.name)){
-          f = new fileObj("model","model", file)
-          currentformat = getExtension(file.name);
-        } else {
-          f = new fileObj("image","other", file)
+        //if cubemap file, process and popup to assign textures
+        if (currenttype == "360image") {
+          if (currentformat == 'cubemap') changeModalContent("cubemap");
+          else createuploadcontent();
         }
-        fileObjs.push(f);
-      });
-      return;
-    }
-    if (currenttype == "script") {
-      console.log(currentformat);
-      files.forEach((file,i)=>{
-        fileObjs.push(new fileObj("script", currentformat, file));
-      });
-      console.log(fileObjs);
-      return;
-    }
-    //if cubemap file, process and popup to assign textures
-    if (currenttype == "360image" && currentformat == "cubemap") {
-      files.forEach((file,i)=>{
-        fileObjs.push(new fileObj("image","other", file));
-      });
-      return;
-    }
-    if (currenttype == "360image" && currentformat == "equirectangular") {
-      files.forEach((file,i)=>{
-        fileObjs.push(new fileObj("image","equi", file));
-      });
-      return;
-    }
+        // if (currenttype == "360image") {
+        //   createuploadcontent();
+        // }
 
-  }
-
-  let files = [];
-  dragcounter = 0;
-  dragArea.addEventListener("dragover", (event) => {
-  // prevent default to allow drop
-  event.preventDefault();
-  });
-  dragArea.addEventListener('dragenter', (event) => {
-    event.preventDefault();
-    dragText.textContent = "Release to Upload"
-    dragcounter++;
-  });
-  dragArea.addEventListener('dragleave', (event) => {
-    dragcounter--;
-    if(dragcounter === 0){
-      dragText.textContent = "Drag & Drop"
-    }
-  });
-  dragArea.addEventListener('drop', async (event) => {
-    console.log("drop")
-    dragcounter = 0;
-    dragText.textContent = "Drag & Drop";
-    event.preventDefault();
-    if (event.dataTransfer.items) {
-      [...event.dataTransfer.files].forEach(async (file, i) => {
-        if (isZip(file.name)) {
-          await convertziptofile(file)
-        } else {
-          readFile(file);
+        if (currenttype == "script") {
+          createuploadcontent();
         }
-      })
-    }
-  });
+      }
+
+      //creating and managing file card
+      let currenttype = "";
+      let currentformat = "";
+
+      function createFileCard(filename) {
+        //create a card
+        const card = document.createElement("div");
+        // const fileName = document.createElement("p");
+        // card.appendChild(fileName)
+        card.classList += "d-flex justify-content-between border-bottom py-2";
+        //card.classList.add("card");
+        collectedfiles.appendChild(card);
+
+        //create remove-btn for the card
+        // var removebtn = document.createElement('span');
+        // removebtn.innerHTML = "&times;";
+        // removebtn.classList.add("file-btn");
+        // removebtn.addEventListener('click', function(event) {
+        //   removeFile(card, filename);
+        //   event.preventDefault();
+        // });
+
+
+        //create image for the card
+        // var img = document.createElement('img');
+        // img.src = '';
+        // img.classList.add("img-top");
+        // card.appendChild(img);
+
+
+        //create file info
+        var fileinfo = document.createElement('div');
+        // fileinfo.classList.add('card-file-info');
+        card.appendChild(fileinfo);
+        var fileinfospan = document.createElement('span');
+        fileinfospan.innerHTML = filename;
+        fileinfo.appendChild(fileinfospan);
+
+        //create icon trashcan
+        var trashcanBtn = document.createElement("button");
+        trashcanBtn.classList += "btn btn-outline-danger border-0"
+        trashcanBtn.innerHTML = '<i class="fa fa-trash" style= "font-size :15px"></i>'
+        // var trashcanBtn = document.getElementById("trash-icon")
+        //trashcanBtn.style.display = "block"
+        trashcanBtn.addEventListener('click', function (event) {
+          removeFile(card, filename);
+          event.preventDefault();
+        });
+
+        card.appendChild(trashcanBtn);
+        // const hr = document.createElement("hr")
+        // card.appendChild(hr)
+      }
+
+      function clearFilesIfNewType(newtype) {
+        if (currenttype != newtype) {
+          clearAllFileContent();
+          currenttype = newtype;
+        }
+      }
+
+      function clearAllFileContent() {
+        collectedfiles.innerHTML = '';
+        files = [];
+      }
+
+      function removeFile(card, filename) {
+        card.remove();
+        for (var i = 0; i < files.length; i++) {
+          if (files[i].name === filename) {
+            files.splice(i, 1);
+          }
+        }
+      }
+      function readFiles(files) {
+        for (i = 0; i < files.length; i++) {
+          readFile(files[i]);
+        }
+      }
+
+      function readFile(file) {
+        let correctfiletype = false;
+        if (currentformat == 'equirectangular' && files.length == 1) return;
+        switch (currenttype) {
+          case "3dmodel":
+            correctfiletype = isObj(file.name) || isImage(file.name);
+            break;
+          case "script":
+            switch (currentformat) {
+              case 'csharp':
+                correctfiletype = isCsharp(file.name);
+                break;
+              case 'javascript':
+                correctfiletype = isJavascript(file.name);
+                break;
+              case 'python':
+                correctfiletype = isPython(file.name);
+                break;
+            }
+            break;
+          case "360image":
+            correctfiletype = isImage(file.name);
+            break;
+        }
+        if (correctfiletype) {
+          createFileCard(file.name);
+          files.push(file);
+          console.log(files + " currently added file");
+        }
+      }
+
+      function setupFileObjs() {
+        fileObjs = [];
+        if (currenttype == "3dmodel") {
+          files.forEach((file, i) => {
+            var f;
+            if (isObj(file.name)) {
+              f = new fileObj("model", "model", file)
+              currentformat = getExtension(file.name);
+            } else {
+              f = new fileObj("image", "other", file)
+            }
+            fileObjs.push(f);
+          });
+          return;
+        }
+        if (currenttype == "script") {
+          console.log(currentformat);
+          files.forEach((file, i) => {
+            fileObjs.push(new fileObj("script", currentformat, file));
+          });
+          console.log(fileObjs);
+          return;
+        }
+        //if cubemap file, process and popup to assign textures
+        if (currenttype == "360image" && currentformat == "cubemap") {
+          files.forEach((file, i) => {
+            fileObjs.push(new fileObj("image", "other", file));
+          });
+          return;
+        }
+        if (currenttype == "360image" && currentformat == "equirectangular") {
+          files.forEach((file, i) => {
+            fileObjs.push(new fileObj("image", "equi", file));
+          });
+          return;
+        }
+
+      }
+
+      let files = [];
+      dragcounter = 0;
+      dragArea.addEventListener("dragover", (event) => {
+        // prevent default to allow drop
+        event.preventDefault();
+      });
+      dragArea.addEventListener('dragenter', (event) => {
+        event.preventDefault();
+        dragText.textContent = "Release to Upload"
+        dragcounter++;
+      });
+      dragArea.addEventListener('dragleave', (event) => {
+        dragcounter--;
+        if (dragcounter === 0) {
+          dragText.textContent = "Drag & Drop"
+        }
+      });
+      dragArea.addEventListener('drop', async (event) => {
+        console.log("drop")
+        dragcounter = 0;
+        dragText.textContent = "Drag & Drop";
+        event.preventDefault();
+        if (event.dataTransfer.items) {
+          [...event.dataTransfer.files].forEach(async (file, i) => {
+            if (isZip(file.name)) {
+              await convertziptofile(file)
+            } else {
+              readFile(file);
+            }
+          })
+        }
+      });
 
       function setupFileObjs() {
         fileObjs = [];
@@ -613,28 +627,28 @@
 
 
 
-  async function convertziptofile(file) {
-    var collectedfiles = [];
-    var jszip = new JSZip();
-    var zip = await jszip.loadAsync(file);
-    var foldername = '';
-    var zipfiles = Object.keys(zip.files);
-    for (var i in zipfiles){
-      var zipfile = zip.files[zipfiles[i]];
-      var fileData = await zipfile.async('blob');
-      var filename = zipfiles[i].replace(foldername, "");
-      var file = new File([fileData], filename);
-      collectedfiles.push(file);
-    }
-    console.log("complete");
-    readFiles(collectedfiles);
-  }
+      async function convertziptofile(file) {
+        var collectedfiles = [];
+        var jszip = new JSZip();
+        var zip = await jszip.loadAsync(file);
+        var foldername = '';
+        var zipfiles = Object.keys(zip.files);
+        for (var i in zipfiles) {
+          var zipfile = zip.files[zipfiles[i]];
+          var fileData = await zipfile.async('blob');
+          var filename = zipfiles[i].replace(foldername, "");
+          var file = new File([fileData], filename);
+          collectedfiles.push(file);
+        }
+        console.log("complete");
+        readFiles(collectedfiles);
+      }
 
-  //browse button
-  function browse() {
-    var i = document.getElementById("browse-input");
-    i.click();
-  }
+      //browse button
+      function browse() {
+        var i = document.getElementById("browse-input");
+        i.click();
+      }
 
       async function convertziptofile(file) {
         var collectedfiles = [];
