@@ -1,0 +1,8 @@
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: "arn:aws:ecs:ap-southeast-1:334190236141:task-definition/my-task-definition-family-name:1"
+        LoadBalancerInfo: 
+          ContainerName: "ECS-container-name-for-your-ECS-application" 
+          ContainerPort: port-used-by-your-ECS-application
