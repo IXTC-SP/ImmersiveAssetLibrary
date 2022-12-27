@@ -3,6 +3,8 @@ os: linux
 files:
   - source: "/"
     destination: /webapps/Config
+  - source: source
+    destination: /webapps/myApp
 hooks:
   BeforeInstall:
     - location: Scripts/UnzipResourceBundle.sh
