@@ -1,10 +1,8 @@
 version: 0.0
 os: linux
 files:
-  - source: Config/config.txt
+  - source: "/"
     destination: /webapps/Config
-  - source: source
-    destination: /webapps/myApp
 hooks:
   BeforeInstall:
     - location: Scripts/UnzipResourceBundle.sh
