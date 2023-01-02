@@ -147,11 +147,10 @@
           <p class="mb-0">New Password</p>
         </div>
         <div class="col-sm-9">
-          <input type="password" name="password" required="" id="id_password" />
+          <input class="w-100" type="password" name="password" required="" id="id_password" />
           <i
-            class="far fa-eye"
+            class="far fa-eye password-eye"
             id="togglePassword"
-            style="margin-left: -30px; cursor: pointer"
           ></i>
         </div>
       </div>
@@ -162,15 +161,15 @@
         </div>
         <div class="col-sm-9">
           <input
+          class="w-100" 
             type="password"
             name="confirmPassword"
             required=""
             id="id_confirmPassword"
           />
           <i
-            class="far fa-eye"
+            class="far fa-eye password-eye"
             id="toggleConfirmPassword"
-            style="margin-left: -30px; cursor: pointer"
           ></i>
         </div>
       </div>
@@ -180,16 +179,19 @@
         <p class="error-message m-0"><%= errorObj.message %></p>
         <%}%>
       </div>
-      <div class="col-sm-9">
-        <button type="button" onclick="window.location.href='/<%= user._id %>/dashboard/profile';" class="btn theme-color btn-rounded">
-          <i class="fa-solid fa-pen me-2" aria-hidden="true"></i>cancel
-        </button>
+      <div class="d-flex justify-content-between">
+        <div >
+          <button type="button" onclick="window.location.href='/<%= user._id %>/dashboard/profile';" class="btn btn-outline-info btn-rounded">
+            Cancel
+          </button>
+        </div>
+        <div >
+          <button type="submit" class="btn theme-color btn-rounded">
+            <i class="fa-solid fas fa-save me-2" aria-hidden="true"></i>Save
+          </button>
+        </div>
       </div>
-      <div class="col-sm-9">
-        <button type="submit" class="btn theme-color btn-rounded">
-          <i class="fa-solid fa-pen me-2" aria-hidden="true"></i>Save Password
-        </button>
-      </div>
+     
     </div>
   </form>
   <%}%>

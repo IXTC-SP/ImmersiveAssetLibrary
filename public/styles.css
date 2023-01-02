@@ -84,6 +84,10 @@ p {
 transform: translateX(0);
 }
 
+.search-input{
+  padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+  width:280px;
+}
 
 .trash-btn {
   cursor: pointer;
@@ -92,7 +96,7 @@ transform: translateX(0);
   margin: auto 0;
 }
 .icon-size {
-  font-size: 25px;
+  font-size: 20px;
 }
 .upload-btn{
   color: #2b7a9e;

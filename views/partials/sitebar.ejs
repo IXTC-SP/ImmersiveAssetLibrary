@@ -6,12 +6,14 @@
   <div class="container">
     <div class="d-flex">
       <div class="my-auto">
-          <h2 class="navbar-brand text-white m-0 me-2">
+        <a href="/assets/models">
+          <h2 class="navbar-brand text-white header-title">
             Immersive Asset Library
           </h2>
+          </a>
       </div>
-      <div class="my-auto">
-        <a href="/assets/models" class="text-white">
+      <!-- <div class="my-auto">
+        <a href="/assets/models" class="text-white header-subtitle">
           3d Models
         </a>
       </div>
@@ -19,10 +21,10 @@
       |
       </div>
       <div class="my-auto">
-        <a href="/assets/360" class="text-white ">
+        <a href="/assets/360" class="text-white header-subtitle">
           360 Images
         </a>
-      </div>
+      </div> -->
     </div>
     <div class="navbar" id="navbarSupportedContent">
       <ul class="navbar-nav ms-auto mb-lg-0">
@@ -37,7 +39,7 @@
               data-bs-toggle="dropdown"
 
               aria-expanded="false"
-              class="text-white dropdown-toggle"
+              class="text-white dropdown-toggle header-subtitle"
             >
               <%= user.email.split("@")[0] %>
             </a>

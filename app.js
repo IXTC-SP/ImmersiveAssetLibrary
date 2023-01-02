@@ -568,11 +568,7 @@ app.post(
   authMiddleware.isAuthenticated, userController.createEnrollment,
   authController.emailActivation,
   userController.showEnrollment
-); //done
-// app.post("/:user_id/dashboard", userController.showDashboard)
-app.post("/:user_id/uploads/delete", authMiddleware.isAuthenticated, userController.deleteUpload);
-// app.post("/:user_id/uploads/edit", userController.editUpload);
-// app.post("/:user_id/uploads", userController.upload);
+);
 app.post("/reset-password-link", authController.sendResetPasswordLink);
 app.post("/authentication/activate", authController.setPassword);
 app.post("/reset-password", authController.setPassword); //done
@@ -595,4 +591,10 @@ app.delete(
   authMiddleware.isAuthenticated,
   userController.deleteEnrollment,
   userController.showEnrollment
+);
+
+app.delete(
+  "/:user_id/dashboard/uploads/:type/:asset_id/delete",
+  authMiddleware.isAuthenticated,
+  userController.deleteUploads,
 );

@@ -19,14 +19,8 @@
   </svg>
 
   <div class="d-flex align-items-center">
-    <img
-      src="https://mdbootstrap.com/img/new/avatars/8.jpg"
-      alt=""
-      style="width: 60px; height: 60px"
-      class="rounded-circle"
-    />
     <div class="ms-3">
-      <h3 class="fw-bold mb-1"><%= user.email %></h3>
+      <h3 class="mb-1"><%= user.email %></h3>
       <% if (user.isAdmin) { %>
       <p class="text-muted mb-0">Admin</p>
       <%}else{%>
@@ -41,16 +35,6 @@
     role="tablist"
   >
     <li class="nav-item" role="presentation">
-      <!-- <a
-        class="nav-link <%= showProfile? 'active' :'' %>"
-        id="ex3-tab-1"
-        data-mdb-toggle="tab"
-        href="/<%= user._id%>/dashboard/profile"
-        role="tab"
-        aria-controls="ex3-tabs-1"
-        aria-selected="<%= showProfile? 'true' : 'false' %>"
-        >Profile</a
-      > -->
       <a
         class="nav-link <%= showProfile? 'active' :'' %>"
         href="/<%= user._id%>/dashboard/profile"
@@ -59,16 +43,6 @@
       >
     </li>
     <li class="nav-item" role="presentation">
-      <!-- <a
-        class="nav-link <%= showUploads? 'active' :'' %>"
-        id="ex3-tab-2"
-        data-mdb-toggle="tab"
-        href="/<%= user._id%>/dashboard/uploads"
-        role="tab"
-        aria-controls="ex3-tabs-2"
-        aria-selected="<%= showUploads? 'true' : 'false' %>"
-        >Uploads</a
-      > -->
       <a
         class="nav-link <%= showUploads? 'active' :'' %>"
         href="/<%= user._id%>/dashboard/uploads"
@@ -77,16 +51,6 @@
       >
     </li>
     <li class="nav-item" role="presentation">
-      <!-- <a
-        class="nav-link <%= showDownloads? 'active' :'' %>"
-        id="ex3-tab-3"
-        data-mdb-toggle="tab"
-        href="/<%= user._id%>/dashboard/downloads"
-        role="tab"
-        aria-controls="ex3-tabs-3"
-        aria-selected="<%= showDownloads? 'true' : 'false' %>"
-        >Downloads</a
-      > -->
       <a
         class="nav-link <%= showDownloads? 'active' :'' %>"
         href="/<%= user._id%>/dashboard/downloads"
@@ -95,16 +59,6 @@
       >
     </li>
     <li class="nav-item" role="presentation">
-      <!-- <a
-        class="nav-link <%= showEnrollment? 'active' :'' %>"
-        id="ex3-tab-4"
-        data-mdb-toggle="tab"
-        href="/<%= user._id%>/dashboard/enrollment"
-        role="tab"
-        aria-controls="ex3-tabs-4"
-        aria-selected="<%= showEnrollment? 'true' :'false' %>"
-        >Enrollment</a
-      > -->
       <a
         class="nav-link <%= showEnrollment? 'active' :'' %>"
         href="/<%= user._id%>/dashboard/enrollment"
@@ -123,6 +77,13 @@
     <div><%= isSuccess.message %></div>
   </div>
   <%}%>
+  <%if(errorObj.error){%>
+    <div class="alert alert-danger d-flex align-items-center" role="alert" >
+      <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+      <div><%= errorObj.message %></div>
+    <!-- <p class="error-message m-0"><%= errorObj.message %></p> -->
+  <%}%>
+  </div>
   <!-- Tabs content -->
   <div class="tab-content tab-content-height" id="ex2-content">
     <div

@@ -21,15 +21,16 @@ const alertMessage = (alert, message) => {
 };
 
 const emailValidation = (emailInput) => {
-  return true;
-  // const mailFomat = "[a-z.]*[@]\sp.edu.sg"
-  // if (emailInput.match(mailFomat)) {
-  //   console.log("email allowed")
-  //   return true
-  // }
-  // console.log("email disallowed")
+ // return true;
+  const spMailFormat = "[a-z.]*[@]\sp.edu.sg"
+  const ichatMailFormat  = "[a-z.]*[@]\ichat.sp.edu.sg"
+  if (emailInput.match(spMailFormat) || emailInput.match(ichatMailFormat)) {
+    console.log("email allowed")
+    return true
+  }
+  console.log("email disallowed")
 
-  // return false
+  return false
 };
 
 // let isSuccess = alertMessage(false, "");
@@ -59,15 +60,20 @@ class RenderView {
 }
 const controller = {
   logout: async (req, res) => {
-    try {
-      //paspport function, clears session, but not cookie
-      //but if session is cleared no more id can be found it wont pop req.user,
-
-      //req.logout();
+    req.logout(function(err) {
       res.redirect("/login");
-    } catch (err) {
-      return res.send("error:", err.message);
-    }
+    });
+    
+    // try {
+    //   //paspport function, clears session, but not cookie
+    //   //but if session is cleared no more id can be found it wont pop req.user,
+
+     
+    // } catch (err) {
+    //   res.redirect("/login");
+    //  // return res.status(404).json("error:", err.message);
+
+    // }
   },
   showProfile: async (req, res) => {
     let renderObj = new RenderObjs()
@@ -227,7 +233,6 @@ const controller = {
     try {
       console.log("---->", req.body);
       renderObj.accounts = await userModel.find();
-      console.log(user);
       console.log("Get the accounts");
       if (req.body.email !== "") {
         //check is the sp email
@@ -313,11 +318,33 @@ const controller = {
     }
     req.isSuccess = isSuccess;
     req.errorObj = errorObj;
-    return next();
+    return redirect(`/${req.params.user_id}/dashboard/enrollment`)
+   // return next();
   },
-  deleteUpload: async (req, res, next) => {
-    //get the id of the selecetd upload
-    //dont delet eth upload, but siable view of upload
+  deleteUploads: async (req, res, next) => {
+    let dbmanager;
+    switch (req.params.type){
+      case 'model':
+        console.log('model asset type');
+        dbmanager = modelModel;
+        break;
+      case '360':
+        console.log('360 asset type');
+        dbmanager = threeSixtyModel;
+        break;
+    }
+    console.log("delete uploads");
+    let isSuccess = alertMessage(false, " ");
+    let errorObj = errorMessage(false, " ");
+    try {
+      await dbmanager.deleteOne({ _id: req.params.asset_id });
+      isSuccess = alertMessage(true, "Asset successfully deleted");
+    } catch (error) {
+      errorObj = errorMessage(true, error.message);
+    }
+    req.isSuccess = isSuccess;
+    req.errorObj = errorObj;
+    return redirect(`/${req.params.user_id}/dashboard/uploads`)
   },
 };
 
