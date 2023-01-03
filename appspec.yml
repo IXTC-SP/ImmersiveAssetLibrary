@@ -2,20 +2,18 @@ version: 0.0
 os: linux
 files:
   - source: "/"
-    destination: /webapps/Config
-  - source: source
-    destination: /webapps/myApp
+    destination: /var/www/html/
+file_exists_behavior: OVERWRITE
 hooks:
   BeforeInstall:
-    - location: Scripts/UnzipResourceBundle.sh
-    - location: Scripts/UnzipDataBundle.sh
-  AfterInstall:
-    - location: Scripts/RunResourceTests.sh
-      timeout: 180
+    - location: scripts/install_dependencies.sh
+      timeout: 300
+      runas: root
   ApplicationStart:
-    - location: Scripts/RunFunctionalTests.sh
-      timeout: 3600
-  ValidateService:
-    - location: Scripts/MonitorService.sh
-      timeout: 3600
-      runas: codedeployuser
+    - location: scripts/start_server.sh
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: scripts/stop_server.sh
+      timeout: 300
+      runas: root
