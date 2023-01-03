@@ -23,11 +23,11 @@
     }
 
 
-    .upload-btn-group {
+    /* .upload-btn-group {
       padding-top: 2em;
       display: flex;
       justify-content: space-between;
-    }
+    } */
 
     .page-btn {
       border: 1px solid black;
@@ -171,7 +171,7 @@
     <div class="row ">
       <div class="col-2">
       </div>
-      <div class="col-8">
+      <div class="col-6">
         <div class="p-3 drop-zone-border drop-zone" id="drop-zone">
           <!-- <div class="collected-files">
           </div> -->
@@ -196,27 +196,34 @@
         </div>
         <div class="collected-files">
         </div>
-        <div class="upload-btn-group">
-          <button class="btn btn-size btn-outline-info rounded-8 cancel-page-btn" type="button"
-            name="button">Cancel</button>
-          <button class="btn btn-size theme-color btn-rounded upload-page-btn" type="button" name="button"> Next
+      </div>
+      <div class="col-2 d-flex flex-column justify-content-between">
+        <div>
+          <label for="asset-select" class="support-types-text">Select Asset Type:</label>
+          <select class="admin-input rounded-2 p-1 w-100" name="assets" id="asset-select"
+            onchange="triggerChangeWithAssetSelect()">
+            <option value="3dmodel">3D Model</option>
+            <!-- <option value="script">Script</option> -->
+            <option value="360image">360 Image</option>
+          </select>
+        </div>
+
+        <div>
+        
+          <label class=" mt-2" id="asset-format-id" for="asset-format">Select Format:</label>
+          <select class="admin-input rounded-2 p-1 w-100" name="format" id="asset-format"
+            onchange="onChangeFormatType(this)">
+          </select>
+        </div>
+        <div class="mt-auto">
+          <!-- <button class="btn btn-size btn-outline-info rounded-8 cancel-page-btn" type="button"
+            name="button">Cancel</button> -->
+          <button class="btn btn-size theme-color btn-rounded upload-page-btn w-100" type="button" name="button"> Next
           </button>
         </div>
 
       </div>
       <div class="col-2">
-        <label for="asset-select" class="support-types-text">Select Asset Type:</label>
-        <select class="admin-input rounded-2 p-1 w-100" name="assets" id="asset-select"
-          onchange="triggerChangeWithAssetSelect()">
-          <option value="3dmodel">3D Model</option>
-          <!-- <option value="script">Script</option> -->
-          <option value="360image">360 Image</option>
-        </select>
-
-        <label class=" mt-2" id="asset-format-id" for="asset-format">Select Format:</label>
-        <select class="admin-input rounded-2 p-1 w-100" name="format" id="asset-format"
-          onchange="onChangeFormatType(this)">
-        </select>
       </div>
     </div>
   </div>
@@ -407,9 +414,9 @@
       function processUploads() {
         //if no uploads added
         if (files.length == 0)
-          alert("no uploads added");
-
-        setupFileObjs();
+          {alert("No uploads added");}
+        else{
+          setupFileObjs();
         //if model file, process and popup to assign textures
         if (currenttype == "3dmodel") {
           changeModalContent("model");
@@ -426,6 +433,9 @@
         if (currenttype == "script") {
           createuploadcontent();
         }
+        }
+
+       
       }
 
       //creating and managing file card
@@ -469,7 +479,7 @@
         //create icon trashcan
         var trashcanBtn = document.createElement("button");
         trashcanBtn.classList += "btn btn-outline-danger border-0"
-        trashcanBtn.innerHTML = '<i class="fa fa-trash" style= "font-size :15px"></i>'
+        trashcanBtn.innerHTML = '<i class="fa-solid fa-trash-can" style= "font-size :15px"></i>'
         // var trashcanBtn = document.getElementById("trash-icon")
         //trashcanBtn.style.display = "block"
         trashcanBtn.addEventListener('click', function (event) {

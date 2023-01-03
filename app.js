@@ -12,16 +12,16 @@ const path = require("path");
 const url = require("url");
 const userObj = require("./config/userLogin");
 
-const gltfmodel = require('./scripts/gltfmodel');
-const uploadsmanager_model = require('./scripts/uploadsmanager_model');
-const databasemanager_model = require('./scripts/databasemanager_model');
-const uploadmanager_360 = require('./scripts/uploadmanager_360');
-const databasemanager_360 = require('./scripts/databasemanager_360');
-const storagemanagement = require('./scripts/storagemanagement');
-const filedownloader = require('./scripts/filedownloader');
-const userController = require('./scripts/users_controller');
-const authController = require('./scripts/auth_controller');
-const authMiddleware = require('./middlewares/auth_middleware')// middleware for the authentication, to check if theres a session
+const gltfmodel = require("./scripts/gltfmodel");
+const uploadsmanager_model = require("./scripts/uploadsmanager_model");
+const databasemanager_model = require("./scripts/databasemanager_model");
+const uploadmanager_360 = require("./scripts/uploadmanager_360");
+const databasemanager_360 = require("./scripts/databasemanager_360");
+const storagemanagement = require("./scripts/storagemanagement");
+const filedownloader = require("./scripts/filedownloader");
+const userController = require("./scripts/users_controller");
+const authController = require("./scripts/auth_controller");
+const authMiddleware = require("./middlewares/auth_middleware"); // middleware for the authentication, to check if theres a session
 const passport = require("passport");
 
 const flash = require("connect-flash");
@@ -78,47 +78,50 @@ app.listen(port, async () => {
 
   console.log(`Immersive Library backend listening on port ${port}`);
   job.start();
-  
 });
 
 const userModel = require("./models/user");
 
-app.get('/asset/:type/:modelid', function(req, res) {
-  var dbmanager;
-  var isModel
-  switch (req.params.type){
-    case 'model':
-      console.log('model asset type');
-      dbmanager = databasemanager_model;
-      isModel = true
-      break;
-    case '360':
-      console.log('360 asset type');
-      dbmanager = databasemanager_360;
-      isModel = false
-      break;
-  }
-  dbmanager.FindModelById(req.params.modelid, (result) => {
-    console.log("---->", result);
-    console.log(result.owner);
-    userModel.findById(result.owner, function (err, doc) {
-      console.log(doc.email);
-      res.render("view_asset", {
-        data: result,
-        assettype : req.params.type,
-        owner: doc.email,
-        isLoginpage: true,
-        isModel,
-        user: req.user,
+app.get(
+  "/asset/:type/:modelid",
+  authMiddleware.isAuthenticated,
+  function (req, res) {
+    var dbmanager;
+    var isModel;
+    switch (req.params.type) {
+      case "model":
+        console.log("model asset type");
+        dbmanager = databasemanager_model;
+        isModel = true;
+        break;
+      case "360":
+        console.log("360 asset type");
+        dbmanager = databasemanager_360;
+        isModel = false;
+        break;
+    }
+    dbmanager.FindModelById(req.params.modelid, (result) => {
+      console.log("---->", result);
+      console.log(result.owner);
+      userModel.findById(result.owner, function (err, doc) {
+        console.log(doc.email);
+        res.render("view_asset", {
+          data: result,
+          assettype: req.params.type,
+          owner: doc.email,
+          isLoginpage: true,
+          isModel,
+          user: req.user,
+        });
       });
     });
-  });
-});
+  }
+);
 
 const check3dModelFilters = async (result, query) => {
   let filteredResult = [];
   const attributesPromise = async () => {
-    if (typeof query.attributes !== "undefined" && query.attributes !== "" ) {
+    if (typeof query.attributes !== "undefined" && query.attributes !== "") {
       const list = await databasemanager_model.FindByAttribute(
         result,
         query.attributes
@@ -130,7 +133,11 @@ const check3dModelFilters = async (result, query) => {
   };
   filteredResult = await attributesPromise();
   const formatPromise = async () => {
-    if (query.format !== "format" && query.format !== "" && typeof query.format !== "undefined") {
+    if (
+      query.format !== "format" &&
+      query.format !== "" &&
+      typeof query.format !== "undefined"
+    ) {
       const list = await databasemanager_model.FindByFormat(
         filteredResult,
         query.format
@@ -146,12 +153,13 @@ const check3dModelFilters = async (result, query) => {
 const check360Filters = async (result, query) => {
   let filteredResult = [];
   const formatPromise = async () => {
-    if (query.format !== "format" && query.format !== "" && typeof query.format !== "undefined") {
-      const list = await databasemanager_360.FindByFormat(
-        result,
-        query.format
-      );
-      console.log("--->", list)
+    if (
+      query.format !== "format" &&
+      query.format !== "" &&
+      typeof query.format !== "undefined"
+    ) {
+      const list = await databasemanager_360.FindByFormat(result, query.format);
+      console.log("--->", list);
       return list;
     } else {
       return result;
@@ -162,55 +170,63 @@ const check360Filters = async (result, query) => {
 };
 
 //WORKING (ASSET LIST PAGE)
-app.get("/assets/models", authMiddleware.isAuthenticated, async function (req, res) {
-  let filteredResult = [];
-  if (typeof req.query.search === "undefined" || req.query.search === "") {
-    console.log("no search");
-    databasemanager_model.GetAllModels(async (result) => {
-      filteredResult = await check3dModelFilters (result, req.query);
-      console.log(filteredResult.length)
-      res.render("assets", {
-        data: {
-          models: filteredResult,
-        },
-        assettype: "model",
-        user: req.user,
-        isLoginpage: true,
-        is3dmodelPage: true,
+app.get(
+  "/assets/models",
+  authMiddleware.isAuthenticated,
+  async function (req, res) {
+    let filteredResult = [];
+    if (typeof req.query.search === "undefined" || req.query.search === "") {
+      console.log("no search");
+      databasemanager_model.GetAllModels(async (result) => {
+        filteredResult = await check3dModelFilters(result, req.query);
+        console.log(filteredResult.length);
+        res.render("assets", {
+          data: {
+            models: filteredResult,
+          },
+          assettype: "model",
+          user: req.user,
+          isLoginpage: true,
+          is3dmodelPage: true,
+        });
       });
-    });
-  } else {
-    databasemanager_model.SearchBar(req.query.search, async (result) => {
-      filteredResult = await check3dModelFilters (result, req.query);
-      res.render("assets", {
-        data: {
-          models: filteredResult,
-        },
-        assettype: "model",
-        user: req.user,
-        isLoginpage: true,
-        is3dmodelPage: true,
+    } else {
+      databasemanager_model.SearchBar(req.query.search, async (result) => {
+        filteredResult = await check3dModelFilters(result, req.query);
+        res.render("assets", {
+          data: {
+            models: filteredResult,
+          },
+          assettype: "model",
+          user: req.user,
+          isLoginpage: true,
+          is3dmodelPage: true,
+        });
       });
-    });
+    }
   }
-});
+);
 
 app.post("/assets", function (req, res) {
-  console.log(req.body)
-  if(req.body.asset === "360"){
-    req.body.format === "equirectangular" || req.body.format === "cubemap"?  null : req.body.format = "format" 
+  console.log(req.body);
+  if (req.body.asset === "360") {
+    req.body.format === "equirectangular" || req.body.format === "cubemap"
+      ? null
+      : (req.body.format = "format");
     res.redirect(
       url.format({
         pathname: "/assets/360",
         query: {
           attributes: req.body.attributes,
-          format: req.body.format ,
+          format: req.body.format,
           search: req.body.searchterm,
         },
       })
     );
-  }else{
-    req.body.format === "obj" || req.body.format === "fbx"? null:  req.body.format = "format" 
+  } else {
+    req.body.format === "obj" || req.body.format === "fbx"
+      ? null
+      : (req.body.format = "format");
     res.redirect(
       url.format({
         pathname: "/assets/models",
@@ -222,7 +238,6 @@ app.post("/assets", function (req, res) {
       })
     );
   }
- 
 });
 app.get("/assets/360", async function (req, res) {
   let filteredResult = [];
@@ -257,7 +272,6 @@ app.get("/assets/360", async function (req, res) {
   }
 });
 
-
 //WORKING (UPLOAD PAGE)
 const uploadmanager = require("./scripts/uploadsmanager_model");
 app.get("/upload", function (req, res) {
@@ -280,7 +294,7 @@ app.post(
     if (tmpContent.image) {
       result = tmpContent.image.map((a) => a.originalname);
     }
-    tmpContent['format'] = tmpContent.model[0].originalname.split('.')[1];
+    tmpContent["format"] = tmpContent.model[0].originalname.split(".")[1];
     gltfmodel.Create(req.files.model[0], function (gltfresult) {
       // Include fs module
       // var fs = require('fs');
@@ -293,7 +307,7 @@ app.post(
           tmpContent.model[0].originalname;
       }
       tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
-      console.log(tmpContent);
+      console.log("---->", tmpContent);
       res.end("complete");
     });
   }
@@ -312,7 +326,10 @@ app.get("/editpage/model", function (req, res) {
         folderpath: tmpContent.folderpath,
         modelviewerpath: tmpContent.modelviewerpath,
         modelfile: tmpContent.model[0].originalname,
-        thumbnail: typeof(tmpContent.thumbnail) == 'undefined' ? '' : tmpContent.thumbnail[0].originalname,
+        thumbnail:
+          typeof tmpContent.thumbnail == "undefined"
+            ? ""
+            : tmpContent.thumbnail[0].originalname,
         imagefiles: images,
         format: tmpContent.format,
       },
@@ -356,10 +373,10 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
     tmpContent.model[0].destination
   );
   //save model database
-  databasemanager_model.save(req,res, allfiles, function(result){
+  databasemanager_model.save(req, res, allfiles, function (result) {
     res.send(result);
-    var oldpath = './uploads/' + body.folderpath.replaceAll(' ', '_');
-    var newpath = './uploads/' + result;
+    var oldpath = "./uploads/" + body.folderpath.replaceAll(" ", "_");
+    var newpath = "./uploads/" + result;
     uploadsmanager_model.changepath(oldpath, newpath);
   });
 });
@@ -429,13 +446,12 @@ app.post("/savethreesixty", uploadmanager_360.upload360, function (req, res) {
 
   uploadmanager_360.publish(foldername, allfiles, tmpContent.destination);
 
-  databasemanager_360.save(req,res, allfiles, function(result){
+  databasemanager_360.save(req, res, allfiles, function (result) {
     res.send(result);
-    var oldpath = './uploads/' + foldername;
-    var newpath = './uploads/' + result;
+    var oldpath = "./uploads/" + foldername;
+    var newpath = "./uploads/" + result;
     uploadmanager_360.changepath(oldpath, newpath);
   });
-
 });
 
 app.get("/view/360", function (req, res) {
@@ -510,53 +526,91 @@ process.on("exit", () => {
   console.log("process.exit() method is fired");
 });
 
-
 //WORKING DOWNLOAD ASSET POST
-app.post("/downloadasset/:type/:modelid", function(req, res) {
+app.post("/downloadasset/:type/:modelid", function (req, res) {
   var dbmanager = databasemanager_model;
   var update;
   console.log(req.params.modelid);
   //console.log(req.param.modelid);
-  switch(req.params.type){
-    case 'model':
+  switch (req.params.type) {
+    case "model":
       dbmanager = databasemanager_model;
-      update = { $push: {downloadedModels: mongoose.Types.ObjectId(req.params.modelid)}}
+      update = {
+        $push: {
+          downloadedModels: mongoose.Types.ObjectId(req.params.modelid),
+        },
+      };
       break;
-    case '360':
+    case "360":
       dbmanager = databasemanager_360;
-      update = { $push: {downloadedThreeSixty:  mongoose.Types.ObjectId(req.params.modelid)}}
+      update = {
+        $push: {
+          downloadedThreeSixty: mongoose.Types.ObjectId(req.params.modelid),
+        },
+      };
       break;
   }
   //get userid and add modelid into userid database
-  dbmanager.GetModel(req.params.modelid, (result)=> {
+  dbmanager.GetModel(req.params.modelid, (result) => {
     var downloadpath = __dirname + result.assetPath.folderpath.slice(1);
-    filedownloader.CreateZipArchive(result.title, downloadpath, (tmppath)=> {
-      res.download(tmppath, req.param('file'), function(err){
-      //CHECK FOR ERROR
-      fs.unlink(tmppath, (err)=> {
-        if(err) console.log(err);
-        else {
-          console.log("complete fs delete tmp file", req.user);
-          //save asset id into user downloaded array
-          var filter = { _id: req.user._id };
-          userModel.findOneAndUpdate(filter, update, function(err,doc){
-            if(err) console.log(err);
-            console.log('updated', doc);
-          })
-        }
-      });
+    filedownloader.CreateZipArchive(result.title, downloadpath, (tmppath) => {
+      res.download(tmppath, req.param("file"), function (err) {
+        //CHECK FOR ERROR
+        fs.unlink(tmppath, (err) => {
+          if (err) console.log(err);
+          else {
+            console.log("complete fs delete tmp file", req.user);
+            //check if is already in array
+            dbmanager.FindModelById(req.params.modelid, (result) => {
+              if (result === undefined) {
+                //save asset id into user downloaded array
+                var filter = { _id: req.user._id };
+                userModel.findOneAndUpdate(filter, update, function (err, doc) {
+                  if (err) console.log(err);
+                  console.log("updated", doc);
+                });
+              }else{
+                console.log("user has downloaded before");
+              }
+            });
+          }
+        });
       });
     });
   });
 });
 
-app.get("/:user_id/dashboard/profile", authMiddleware.isAuthenticated, userController.showProfile);
-app.post("/:user_id/dashboard/profile", authMiddleware.isAuthenticated, userController.showProfile);
-app.patch("/:user_id/dashboard/profile", authMiddleware.isAuthenticated, userController.showProfile);
+app.get(
+  "/:user_id/dashboard/profile",
+  authMiddleware.isAuthenticated,
+  userController.showProfile
+);
+app.post(
+  "/:user_id/dashboard/profile",
+  authMiddleware.isAuthenticated,
+  userController.showProfile
+);
+app.patch(
+  "/:user_id/dashboard/profile",
+  authMiddleware.isAuthenticated,
+  userController.showProfile
+);
 
-app.get("/:user_id/dashboard/uploads", authMiddleware.isAuthenticated, userController.showUploads);
-app.get("/:user_id/dashboard/downloads", authMiddleware.isAuthenticated, userController.showDownloads);
-app.get("/:user_id/dashboard/enrollment", authMiddleware.isAuthenticated, userController.showEnrollment);
+app.get(
+  "/:user_id/dashboard/uploads",
+  authMiddleware.isAuthenticated,
+  userController.showUploads
+);
+app.get(
+  "/:user_id/dashboard/downloads",
+  authMiddleware.isAuthenticated,
+  userController.showDownloads
+);
+app.get(
+  "/:user_id/dashboard/enrollment",
+  authMiddleware.isAuthenticated,
+  userController.showEnrollment
+);
 app.get("/login", authController.showlogin);
 app.get("/authentication/activate", authController.showActivateAndSetPassword); //done
 app.get("/forgot-password", authController.showForgotPassword); //done
@@ -565,7 +619,8 @@ app.get("/logout", authMiddleware.isAuthenticated, userController.logout);
 
 app.post(
   "/:user_id/dashboard/enrollment",
-  authMiddleware.isAuthenticated, userController.createEnrollment,
+  authMiddleware.isAuthenticated,
+  userController.createEnrollment,
   authController.emailActivation,
   userController.showEnrollment
 );
@@ -596,5 +651,5 @@ app.delete(
 app.delete(
   "/:user_id/dashboard/uploads/:type/:asset_id/delete",
   authMiddleware.isAuthenticated,
-  userController.deleteUploads,
+  userController.deleteUploads
 );

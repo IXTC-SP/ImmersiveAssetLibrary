@@ -33,14 +33,11 @@ const alertMessage = (alert, message) => {
 const controller = {
   login: async (req, res) => {
     try {
-      req.session.userObj = await userModel
-        .findById({ _id: req.session.passport.user._id })
-        .populate("downloadedModels")
-        .populate("downloadedThreeSixty");
+      res.redirect(`/assets/models`);
     } catch (error) {
       res.redirect(`/login`);
     }
-    res.redirect(`/assets/models`);
+  
   },
   setPassword: async (req, res, next) => {
     //click set, use for reset and activation

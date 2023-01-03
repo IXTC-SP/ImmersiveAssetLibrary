@@ -55,7 +55,7 @@ class RenderView {
     this.accounts = renderObj.accounts
     this.errorObj= req.errorObj || renderObj.errorObj
     this.profile = renderObj.profile
-    this.user= req.session.userObj
+    this.user= req.user
   }
 }
 const controller = {
@@ -112,10 +112,10 @@ const controller = {
         }
       }
       renderObj.uploads["models"] = await modelModel.find({
-        owner: req.session.userObj._id,
+        owner: req.user._id,
       });
       renderObj.uploads["360"] = await threeSixtyModel.find({
-        owner: req.session.userObj._id,
+        owner: req.user._id,
       });
       console.log(renderObj.isSuccess.alert);
     } catch (err) {
@@ -154,9 +154,8 @@ const controller = {
   },
   showDownloads: async (req, res, next) => {
     let renderObj = new RenderObjs()
-
-    let user = req.session.userObj;
     try {
+      const user = await userModel.findOne({_id : req.user._id}).populate("downloadedModels").populate("downloadedThreeSixty")
       renderObj.downloads["models"] = [...user.downloadedModels];
       renderObj.downloads["360"] = [...user.downloadedThreeSixty];
     } catch (err) {
@@ -177,10 +176,10 @@ const controller = {
     console.log("-->", req.errorObj);
     try {
       renderObj.uploads["models"] = await modelModel.find({
-        owner: req.session.userObj._id,
+        owner: req.user._id,
       });
       renderObj.uploads["360"] = await threeSixtyModel.find({
-        owner: req.session.userObj._id,
+        owner: req.user._id,
       });
     } catch (err) {
       console.log(err);
@@ -318,8 +317,8 @@ const controller = {
     }
     req.isSuccess = isSuccess;
     req.errorObj = errorObj;
-    return redirect(`/${req.params.user_id}/dashboard/enrollment`)
-   // return next();
+    //return res.redirect(`/${req.params.user_id}/dashboard/enrollment`)
+    return next();
   },
   deleteUploads: async (req, res, next) => {
     let dbmanager;

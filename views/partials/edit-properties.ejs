@@ -42,21 +42,24 @@
                   <div class="accordion-body p-2">
                     <%if(isModel){%>
                     <div class="all-files">
-                      <% for(var i=0; i < content.imagefiles.length; i++) {%>
-                        <div class="current-file">
-                          <div class="d-flex justify-content-between w-100">
-
-                            <span class="p-0 text-muted text-overflow">
-                              <%=content.imagefiles[i]%>
-                            </span>
-                            <button class="remove-file bg-transparent border-0"
-                              onclick="removeExistingFile(this,'<%-content.imagefiles[i]%>')"><i
-                                class="fa-regular fa-trash-can trash-btn"></i></button>
+                      <%if (content.imagefiles){%>
+                        <% for(var i=0; i < content.imagefiles.length; i++) {%>
+                          <div class="current-file">
+                            <div class="d-flex justify-content-between w-100">
+  
+                              <span class="p-0 text-muted text-overflow">
+                                <%=content.imagefiles[i]%>
+                              </span>
+                              <button class="remove-file bg-transparent border-0"
+                                onclick="removeExistingFile(this,'<%-content.imagefiles[i]%>')"><i
+                                  class="fa-regular fa-trash-can trash-btn"></i></button>
+                            </div>
+                            <hr class="m-0">
                           </div>
-                          <hr class="m-0">
-                        </div>
-
-                        <%}%>
+  
+                          <%}%>
+                      <%}%>
+                      
                     </div>
                     <%}else{%>
                       <div class="all-files">
