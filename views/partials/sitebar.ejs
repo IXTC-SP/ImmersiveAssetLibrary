@@ -6,7 +6,7 @@
   <div class="container">
     <div class="d-flex">
       <div class="my-auto">
-        <a href="/assets/models">
+        <a href="/assets/models" onclick="clearLocalStorage()">
           <h2 class="navbar-brand text-white header-title">
             Immersive Asset Library
           </h2>
@@ -83,3 +83,11 @@
 </nav>
 
 <main class="mt-5"></main>
+<script>
+ const clearLocalStorage= () => {
+    window.localStorage.removeItem('selectedAssetType');
+    window.localStorage.removeItem('searchTerm');
+    window.localStorage.removeItem('selectedFormat');
+    window.localStorage.removeItem('selectedAttributes');
+  }
+</script>

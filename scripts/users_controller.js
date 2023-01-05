@@ -343,7 +343,8 @@ const controller = {
     }
     req.isSuccess = isSuccess;
     req.errorObj = errorObj;
-    return redirect(`/${req.params.user_id}/dashboard/uploads`)
+    //return redirect(`/${req.params.user_id}/dashboard/uploads`)
+    return next();
   },
 };
 

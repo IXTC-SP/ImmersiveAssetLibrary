@@ -59,6 +59,7 @@ const Save = async function(req, res, files, callback) {
       else {
         var newassetpath = assetpath;
         newassetpath.folderpath = './uploads/' + obj._id.toString();
+        newassetpath.gltfmodelpath = '../uploads/' + obj._id.toString() + "/model.gltf"//sandra added
         changePath(obj._id, newassetpath);
         callback(obj._id.toString());
       }
