@@ -15,9 +15,9 @@
           </div>
           <div class="card-body upload-card-body p-3 d-flex justify-content-between">
             <div>
-              <h6 class="card-title m-0">
+              <p class="card-title m-0">
                   <%= card.title %>
-               </h6>
+               </p>
               <!-- <% let tags = "" %>
               <% card.tags.forEach(tag =>{%>
                 <% tags += tag %>              
@@ -56,17 +56,12 @@
           <div class="card-body upload-card-body p-3 d-flex justify-content-between">
             <div>
 
-              <h6 class="card-title m-0">
+              <p class="card-title m-0">
                   <%= card.title %>
-                </h6>
-              <!-- <% let tags = "" %>
-              <% card.tags.forEach(tag =>{%>
-                <% tags += tag %>              
-              <%})%>
-              <span class="card-text text-overflow"><small><%= tags %></small></span>        -->
-              <span class="card-text text-overflow"><small>
+                </p>
+              <p class="card-text text-overflow"><small>
                   <%= card.uploaddate.toLocaleString().split(",")[0] %>
-                </small></span>
+                </small></p>
 
 
 

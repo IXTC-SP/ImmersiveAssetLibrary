@@ -169,6 +169,18 @@ const check360Filters = async (result, query) => {
   return filteredResult;
 };
 
+const sortResults = (result) => {
+  result.sort((a, b) => {
+    return a.uploaddate > b.uploaddate
+      ? -1
+      : a.uploaddate > b.uploaddate
+      ? 1
+      : 0;
+  });
+
+  return result;
+};
+
 //WORKING (ASSET LIST PAGE)
 app.get(
   "/assets/models",
@@ -179,6 +191,7 @@ app.get(
       console.log("no search");
       databasemanager_model.GetAllModels(async (result) => {
         filteredResult = await check3dModelFilters(result, req.query);
+        filteredResult = await sortResults(filteredResult);
         console.log(filteredResult.length);
         res.render("assets", {
           data: {
@@ -193,6 +206,7 @@ app.get(
     } else {
       databasemanager_model.SearchBar(req.query.search, async (result) => {
         filteredResult = await check3dModelFilters(result, req.query);
+        filteredResult = await sortResults(filteredResult);
         res.render("assets", {
           data: {
             models: filteredResult,
@@ -245,6 +259,7 @@ app.get("/assets/360", async function (req, res) {
     console.log("no search");
     databasemanager_360.GetAllModels(async (result) => {
       filteredResult = await check360Filters(result, req.query);
+      filteredResult = await sortResults(filteredResult);
       res.render("assets", {
         data: {
           models: filteredResult,
@@ -259,6 +274,7 @@ app.get("/assets/360", async function (req, res) {
     console.log("search");
     databasemanager_360.SearchBar(req.query.search, async (result) => {
       filteredResult = await check360Filters(result, req.query);
+      filteredResult = await sortResults(filteredResult);
       res.render("assets", {
         data: {
           models: filteredResult,
@@ -530,7 +546,8 @@ process.on("exit", () => {
 app.post("/downloadasset/:type/:modelid", function (req, res) {
   var dbmanager = databasemanager_model;
   var update;
-  console.log(req.params.modelid);
+  var filter;
+  console.log("post download item", req.params.modelid);
   //console.log(req.param.modelid);
   switch (req.params.type) {
     case "model":
@@ -540,6 +557,10 @@ app.post("/downloadasset/:type/:modelid", function (req, res) {
           downloadedModels: mongoose.Types.ObjectId(req.params.modelid),
         },
       };
+      filter = {
+        _id: req.user._id,
+        downloadedModels: req.params.modelid,
+      };
       break;
     case "360":
       dbmanager = databasemanager_360;
@@ -547,6 +568,10 @@ app.post("/downloadasset/:type/:modelid", function (req, res) {
         $push: {
           downloadedThreeSixty: mongoose.Types.ObjectId(req.params.modelid),
         },
+      };
+      filter = {
+        _id: req.user._id,
+        downloadedThreeSixty: req.params.modelid,
       };
       break;
   }
@@ -556,23 +581,22 @@ app.post("/downloadasset/:type/:modelid", function (req, res) {
     filedownloader.CreateZipArchive(result.title, downloadpath, (tmppath) => {
       res.download(tmppath, req.param("file"), function (err) {
         //CHECK FOR ERROR
-        fs.unlink(tmppath, (err) => {
+        fs.unlink(tmppath, async (err) => {
           if (err) console.log(err);
           else {
             console.log("complete fs delete tmp file", req.user);
             //check if is already in array
-            dbmanager.FindModelById(req.params.modelid, (result) => {
-              if (result === undefined) {
-                //save asset id into user downloaded array
-                var filter = { _id: req.user._id };
-                userModel.findOneAndUpdate(filter, update, function (err, doc) {
+            //save asset id into user downloaded array
+              let doc = await userModel.findOne(filter);
+              console.log("doc", doc);
+              if (doc === null) {
+                userModel.findOneAndUpdate({_id: req.user._id}, update, function (err, doc) {
                   if (err) console.log(err);
                   console.log("updated", doc);
                 });
-              }else{
+              } else {
                 console.log("user has downloaded before");
               }
-            });
           }
         });
       });
@@ -651,5 +675,6 @@ app.delete(
 app.delete(
   "/:user_id/dashboard/uploads/:type/:asset_id/delete",
   authMiddleware.isAuthenticated,
-  userController.deleteUploads
+  userController.deleteUploads,
+  userController.showUploads
 );
