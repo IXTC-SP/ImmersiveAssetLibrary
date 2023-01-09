@@ -132,8 +132,8 @@
       tags : [],
       type : type,
       }
-      var tags = document.querySelectorAll("#selected_tag_element");
-      for(i = 0; i<tags.length;i++){ data.tags.push(tags[i].innerText); }
+      var tags = document.querySelectorAll(".selected_tag_element");
+      for(i = 0; i<tags.length;i++){ data.tags.push(tags[i].innerHTML); }
       data.files = files;
       console.log(data);
       for(i=0; i< newfiles.length;i++)
