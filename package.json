@@ -16,7 +16,7 @@
     "3d-convert": "^1.0.9",
     "3d-model-converter": "^1.0.0",
     "adm-zip": "^0.5.9",
-    "bcrypt": "^5.1.0",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.1",
     "bootstrap-table": "^1.21.1",
     "connect-ensure-login": "^0.1.1",
