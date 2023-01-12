@@ -323,8 +323,11 @@ app.post(
           tmpContent.model[0].originalname;
       }
       tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
-      console.log("---->", tmpContent);
-      res.end("complete");
+      console.log(tmpContent);
+      gltfmodel.ClearMaterialFromModel(gltfresult, function(){
+        res.end("complete");
+      })
+      
     });
   }
 );
@@ -395,6 +398,48 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
     var newpath = "./uploads/" + result;
     uploadsmanager_model.changepath(oldpath, newpath);
   });
+});
+const awsMethods = require("./middlewares/aws_methods")
+app.post("/save3dmodel", awsMethods.uploadFiles, function (req, res) {
+  console.log(req.files);
+  console.log(req.uploadedData);
+  console.log(req.body);
+
+  //create list with all files required to save
+  // let body = JSON.parse(req.body.data);
+  // let allfiles = body.files;
+  // if (req.files.file) {
+  //   if (req.files.file.length > 0) {
+  //     let newfiles = req.files.file.map((a) => a.originalname);
+  //     allfiles = body.files.concat(newfiles);
+  //   }
+  // }
+  // if (typeof body.modelfile != "undefined") {
+  //   allfiles.push(body.modelfile);
+  // }
+  // if (typeof body.modelviewerpath != "undefined") {
+  //   allfiles.push(body.modelviewerpath);
+  // }
+  // if (typeof req.files.newthumbnail != "undefined") {
+  //   console.log(req.files.newthumbnail[0].originalname);
+  //   allfiles.push(req.files.newthumbnail[0].filename);
+  // }
+  // let thumbnail =
+  //   body.thumbnail == ""
+  //     ? req.files.newthumbnail[0].originalname.replace("tmp", body.folderpath)
+  //     : body.thumbnail;
+  // uploadsmanager_model.publish(
+  //   body.folderpath,
+  //   allfiles,
+  //   tmpContent.model[0].destination
+  // );
+  //save model database
+  // databasemanager_model.save(req,res, allfiles, function(result){
+  //   res.send(result);
+  //   var oldpath = './uploads/' + body.folderpath.replaceAll(' ', '_');
+  //   var newpath = './uploads/' + result;
+  //   uploadsmanager_model.changepath(oldpath, newpath);
+  // });
 });
 // ----- model upload to publish ------ END
 

@@ -283,12 +283,13 @@
         "../." +  data.assetPath.folderpath + "/" + data.assetPath.diffuse
       );
       if (diffusepath != "") {
-        var diffuse = await modelviewer.createTexture(
-          "../." +  data.assetPath.folderpath + "/" + data.assetPath.diffuse
-        );
         // var diffuse = await modelviewer.createTexture(
-        //   data.assetPath.folderpath + "/" + data.assetPath.diffuse
+        //   "../." +  data.assetPath.folderpath + "/" + data.assetPath.diffuse
         // );
+        //frm bucket
+        var diffuse = await modelviewer.createTexture(
+          data.assetPath.folderpath + "/" + data.assetPath.diffuse
+        );
         material.pbrMetallicRoughness["baseColorTexture"].setTexture(diffuse);
       }
       var emissivepath = "../." + data.assetPath.folderpath.emission;
