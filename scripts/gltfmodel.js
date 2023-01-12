@@ -79,32 +79,35 @@ const ClearMaterialFromModel = (gltfmodelpath, callback) => {
   let path =  gltfmodelpath.replace('model.gltf','');
   let rawdata = fs.readFileSync(gltfmodelpath);
   let jsonfile = JSON.parse(rawdata);
-  jsonfile.images.forEach((image,i)=>{
-    console.log(image.uri);
-    let imagepath = path + image.uri;
-    var imageexist = fs.existsSync(imagepath);
-    if(!imageexist){
-      console.log(imagepath + " does not exist");
-      jsonfile.textures.forEach((texture,t)=>{
-        if(texture.source == i){
-          console.log(texture + ' has source from image ' + i);
-          jsonfile.materials.forEach((material,m)=>{
-            if(material.pbrMetallicRoughness['baseColorTexture']){
-              if(material.pbrMetallicRoughness['baseColorTexture']['index'] == t){
-                console.log(material + ' has source from texture ' + t);
-                delete material.pbrMetallicRoughness['baseColorTexture'];
+  if(jsonfile.images){
+    jsonfile.images.forEach((image,i)=>{
+      console.log(image.uri);
+      let imagepath = path + image.uri;
+      var imageexist = fs.existsSync(imagepath);
+      if(!imageexist){
+        console.log(imagepath + " does not exist");
+        jsonfile.textures.forEach((texture,t)=>{
+          if(texture.source == i){
+            console.log(texture + ' has source from image ' + i);
+            jsonfile.materials.forEach((material,m)=>{
+              if(material.pbrMetallicRoughness['baseColorTexture']){
+                if(material.pbrMetallicRoughness['baseColorTexture']['index'] == t){
+                  console.log(material + ' has source from texture ' + t);
+                  delete material.pbrMetallicRoughness['baseColorTexture'];
+                }
               }
-            }
-          });
-          // jsonfile.textures.splice(t,1);
-          delete jsonfile.textures[t]
-        }
-      })
-      // jsonfile.images.splice(i,1);
-      delete jsonfile.images[i]
-    }
-  })
-  console.log(jsonfile);
+            });
+            // jsonfile.textures.splice(t,1);
+            delete jsonfile.textures[t]
+          }
+        })
+        // jsonfile.images.splice(i,1);
+        delete jsonfile.images[i]
+      }
+    })
+  }
+
+  //console.log(jsonfile);
   let data = JSON.stringify(jsonfile);
   fs.writeFile(gltfmodelpath, data, (err)=>{
     if (err)

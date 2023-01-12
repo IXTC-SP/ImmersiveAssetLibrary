@@ -66,7 +66,8 @@ const publishfile = async function(foldername, files){
       var oldPath = './uploads/tmp/' + file
       var newPath = publishpath + '/' + file
       fs.renameSync(oldPath, newPath);
-      filesizetotal += getFilesizeInBytes(newPath);
+   
+      filesizetotal += getFilesizeInBytes(oldPath);
     }
     console.log('move complete');
 
@@ -77,7 +78,7 @@ const publishfile = async function(foldername, files){
         var newPath = (publishpath + '/model.gltf');
         fs.renameSync(oldPath, newPath);
         console.log('add gltf folder');
-        filesizetotal += getFilesizeInBytes(newPath);
+        filesizetotal += getFilesizeInBytes(oldPath);
       }
     } catch(err) {
       console.error(err)
@@ -86,7 +87,7 @@ const publishfile = async function(foldername, files){
     //data required -> folderpath, totalfilesize, publish date,  assettype, ownedby, main asset type, main asset path, download count
     console.log('getting file size ' + filesizetotal);
     // getfilesize(publishpath);
-    closeTmpFolder();
+    //closeTmpFolder();
 
 };
 

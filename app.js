@@ -306,6 +306,7 @@ app.post(
   uploadsmanager_model.uploadtmp3D,
   function (req, res) {
     tmpContent = req.files;
+    console.log("savetmp", tmpContent)
     let result;
     if (tmpContent.image) {
       result = tmpContent.image.map((a) => a.originalname);
@@ -323,7 +324,7 @@ app.post(
           tmpContent.model[0].originalname;
       }
       tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
-      console.log(tmpContent);
+      console.log("---->>>", tmpContent);
       gltfmodel.ClearMaterialFromModel(gltfresult, function(){
         res.end("complete");
       })
@@ -359,9 +360,51 @@ app.get("/editpage/model", function (req, res) {
   }
 });
 
+// app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
+//   console.log(req.files);
+//   console.log(req.body);
+
+//   //create list with all files required to save
+//   let body = JSON.parse(req.body.data);
+//   let allfiles = body.files;
+//   if (req.files.file) {
+//     if (req.files.file.length > 0) {
+//       let newfiles = req.files.file.map((a) => a.originalname);
+//       allfiles = body.files.concat(newfiles);
+//     }
+//   }
+//   if (typeof body.modelfile != "undefined") {
+//     allfiles.push(body.modelfile);
+//   }
+//   if (typeof body.modelviewerpath != "undefined") {
+//     allfiles.push(body.modelviewerpath);
+//   }
+//   if (typeof req.files.newthumbnail != "undefined") {
+//     console.log(req.files.newthumbnail[0].originalname);
+//     allfiles.push(req.files.newthumbnail[0].filename);
+//   }
+//   let thumbnail =
+//     body.thumbnail == ""
+//       ? req.files.newthumbnail[0].originalname.replace("tmp", body.folderpath)
+//       : body.thumbnail;
+//   uploadsmanager_model.publish(
+//     body.folderpath,
+//     allfiles,
+//     tmpContent.model[0].destination
+//   );
+//   //save model database
+//   databasemanager_model.save(req, res, allfiles, function (result) {
+//     res.send(result);
+//     var oldpath = "./uploads/" + body.folderpath.replaceAll(" ", "_");
+//     var newpath = "./uploads/" + result;
+//     uploadsmanager_model.changepath(oldpath, newpath);
+//   });
+// });
+const awsMethods = require("./middlewares/aws_methods")
 app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
   console.log(req.files);
-  console.log(req.body);
+  //console.log(req.uploadedData);
+  console.log("body data", req.body.data);
 
   //create list with all files required to save
   let body = JSON.parse(req.body.data);
@@ -386,60 +429,27 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
     body.thumbnail == ""
       ? req.files.newthumbnail[0].originalname.replace("tmp", body.folderpath)
       : body.thumbnail;
-  uploadsmanager_model.publish(
-    body.folderpath,
-    allfiles,
-    tmpContent.model[0].destination
-  );
-  //save model database
-  databasemanager_model.save(req, res, allfiles, function (result) {
-    res.send(result);
-    var oldpath = "./uploads/" + body.folderpath.replaceAll(" ", "_");
-    var newpath = "./uploads/" + result;
-    uploadsmanager_model.changepath(oldpath, newpath);
-  });
-});
-const awsMethods = require("./middlewares/aws_methods")
-app.post("/save3dmodel", awsMethods.uploadFiles, function (req, res) {
-  console.log(req.files);
-  console.log(req.uploadedData);
-  console.log(req.body);
 
-  //create list with all files required to save
-  // let body = JSON.parse(req.body.data);
-  // let allfiles = body.files;
-  // if (req.files.file) {
-  //   if (req.files.file.length > 0) {
-  //     let newfiles = req.files.file.map((a) => a.originalname);
-  //     allfiles = body.files.concat(newfiles);
-  //   }
-  // }
-  // if (typeof body.modelfile != "undefined") {
-  //   allfiles.push(body.modelfile);
-  // }
-  // if (typeof body.modelviewerpath != "undefined") {
-  //   allfiles.push(body.modelviewerpath);
-  // }
-  // if (typeof req.files.newthumbnail != "undefined") {
-  //   console.log(req.files.newthumbnail[0].originalname);
-  //   allfiles.push(req.files.newthumbnail[0].filename);
-  // }
-  // let thumbnail =
-  //   body.thumbnail == ""
-  //     ? req.files.newthumbnail[0].originalname.replace("tmp", body.folderpath)
-  //     : body.thumbnail;
+  //allfiles is jus the string
   // uploadsmanager_model.publish(
   //   body.folderpath,
   //   allfiles,
-  //   tmpContent.model[0].destination
   // );
   //save model database
-  // databasemanager_model.save(req,res, allfiles, function(result){
-  //   res.send(result);
-  //   var oldpath = './uploads/' + body.folderpath.replaceAll(' ', '_');
-  //   var newpath = './uploads/' + result;
-  //   uploadsmanager_model.changepath(oldpath, newpath);
-  // });
+  databasemanager_model.save(req,res, allfiles, async function(result){
+    res.send(result);
+    console.log("id--->", result)
+    // var oldpath = './uploads/' + body.folderpath.replaceAll(' ', '_');
+    // var newpath = './uploads/' + result;//result is the obid
+    // uploadsmanager_model.changepath(oldpath, newpath);
+    console.log("allfiles", allfiles)
+    console.log("tmpconetnt", tmpContent)
+    tmpContent["thumbnail"] = req.files.newthumbnail[0]
+    const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result)
+    uploadsmanager_model.closeTmpFolder()
+    console.log(uploadedDataToAws)
+  });
+
 });
 // ----- model upload to publish ------ END
 
