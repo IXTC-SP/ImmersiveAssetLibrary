@@ -12,6 +12,8 @@ const s3 = new AWS.S3({
   accessKeyId: ID,
   secretAccessKey: SECRET,
 });
+
+const bucketName = "immersive-asset-library-bucket"
 const awsMethods = {
   uploadFiles: async (tmpContent, objId, req, res, next) => {
     let allFiles = [];
@@ -27,7 +29,7 @@ const awsMethods = {
         return await new Promise((resolve, reject) => {
           // Setting up S3 upload parameters
           params = {
-            Bucket: "immersive-asset-library-bucket",
+            Bucket: bucketName,
             Key: file.gltfPath
               ? `uploads/${objId}/model.gltf`
               : `uploads/${objId}/${file.originalname}`, // folder + File name you want to save as in S3
@@ -64,8 +66,26 @@ const awsMethods = {
       });
     }
   },
-  downloadFiles:async()=> {
-    
+  downloadFiles:async(objId)=> {
+    const Params = {
+      Bucket: bucketName,
+      Key: `uploads/${objId}/`,
+    };
+    try {
+      s3.getObject(
+        { Params},
+        function (error, data) {
+          if (error != null) {
+            alert("Failed to retrieve an object: " + error);
+          } else {
+            alert("Loaded " + data.ContentLength + " bytes");
+            // do something with data.Body
+          }
+        }
+      )
+    } catch (err) {
+      console.log("Error", err);
+    }
   }
 };
 
