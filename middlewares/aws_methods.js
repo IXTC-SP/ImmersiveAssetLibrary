@@ -14,22 +14,24 @@ const s3 = new AWS.S3({
 });
 const awsMethods = {
   uploadFiles: async (tmpContent, objId, req, res, next) => {
-    let allFiles = []
-    tmpContent.image? allFiles = [...tmpContent.image, ...tmpContent.model] : allFiles = [...tmpContent.model] ;
-    
-    allFiles.push(tmpContent.thumbnail)
-    allFiles.push({gltfPath : tmpContent.modelviewerpath})
-    console.log("----->content", allFiles);
-    console.log("----->Id", objId);
-    if (allFiles) {
+    let allFiles = [];
+    tmpContent.image
+      ? (allFiles = [...tmpContent.image, ...tmpContent.model])
+      : (allFiles = [...tmpContent.model]);
+    allFiles.push(tmpContent.thumbnail);
+    allFiles.push({ gltfPath: "uploads\\tmp\\model.gltf" });
+    try {
       let params = null;
       const promises = allFiles.map(async (file) => {
+        const fileContent = fs.readFileSync(file.gltfPath ? file.gltfPath : file.path,);
         return await new Promise((resolve, reject) => {
           // Setting up S3 upload parameters
           params = {
             Bucket: "immersive-asset-library-bucket",
-            Key: file.gltfPath? `uploads/${objId}/model.gltf`:`uploads/${objId}/${file.originalname}` , // folder + File name you want to save as in S3
-            Body: file.gltfPath? file.gltfPath : file.path,
+            Key: file.gltfPath
+              ? `uploads/${objId}/model.gltf`
+              : `uploads/${objId}/${file.originalname}`, // folder + File name you want to save as in S3
+            Body: fileContent,
           };
           const data = s3.upload(params, function (err, data) {
             if (err) {
@@ -41,25 +43,30 @@ const awsMethods = {
               });
             } else {
               console.log(`File uploaded successfully. ${data.Location}`);
-              console.log(`File uploaded successfully. ${data.Bucket}`);
+              // console.log(`File uploaded successfully. ${data.Bucket}`);
+              // const dataObj = {};
+              // //get the name of file and the url
+              // dataObj[file.originalname] = data.Location;
+              // console.log(dataObj);
               resolve(data);
             }
           });
-          return data;
         });
       });
       const uploadedData = await Promise.all(promises);
-      return uploadedData;
-      req.uploadedData = [...uploadedData];
-      //return next()
-    } else {
-      console.log("An epub file is required");
+      uploadedData.push({"folderPath": `https://${params.Bucket}.s3.amazonaws.com/uploads/${objId}`})
+      return uploadedData 
+    } catch (error) {
+      console.log(error);
       return res.status(500).json({
         status: "failed",
-        message: "An epub file is required",
+        message: error,
       });
     }
   },
+  downloadFiles:async()=> {
+    
+  }
 };
 
 module.exports = awsMethods;

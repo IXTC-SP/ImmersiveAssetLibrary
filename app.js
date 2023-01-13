@@ -407,49 +407,58 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
   console.log("body data", req.body.data);
 
   //create list with all files required to save
-  let body = JSON.parse(req.body.data);
-  let allfiles = body.files;
-  if (req.files.file) {
-    if (req.files.file.length > 0) {
-      let newfiles = req.files.file.map((a) => a.originalname);
-      allfiles = body.files.concat(newfiles);
-    }
-  }
-  if (typeof body.modelfile != "undefined") {
-    allfiles.push(body.modelfile);
-  }
-  if (typeof body.modelviewerpath != "undefined") {
-    allfiles.push(body.modelviewerpath);
-  }
-  if (typeof req.files.newthumbnail != "undefined") {
-    console.log(req.files.newthumbnail[0].originalname);
-    allfiles.push(req.files.newthumbnail[0].filename);
-  }
-  let thumbnail =
-    body.thumbnail == ""
-      ? req.files.newthumbnail[0].originalname.replace("tmp", body.folderpath)
-      : body.thumbnail;
+  // let body = JSON.parse(req.body.data);
+  // let allfiles = body.files;
+  // if (req.files.file) {
+  //   if (req.files.file.length > 0) {
+  //     let newfiles = req.files.file.map((a) => a.originalname);
+  //     allfiles = body.files.concat(newfiles);
+  //   }
+  // }
+  // if (typeof body.modelfile != "undefined") {
+  //   allfiles.push(body.modelfile);
+  // }
+  // if (typeof body.modelviewerpath != "undefined") {
+  //   allfiles.push(body.modelviewerpath);
+  // }
+  // if (typeof req.files.newthumbnail != "undefined") {
+  //   console.log(req.files.newthumbnail[0].originalname);
+  //   allfiles.push(req.files.newthumbnail[0].filename);
+  // }
+  // let thumbnail =
+  //   body.thumbnail == ""
+  //     ? req.files.newthumbnail[0].originalname.replace("tmp", body.folderpath)
+  //     : body.thumbnail;
 
   //allfiles is jus the string
-  uploadsmanager_model.publish(
-    body.folderpath,
-    allfiles,
-  );
+  // uploadsmanager_model.publish(
+  //   body.folderpath,
+  //   allfiles,
+  // );
   //save model database
-  databasemanager_model.save(req,res, allfiles, async function(result){
-    res.send(result);
+  databasemanager_model.save(req,res, async function(result){
     console.log("id--->", result)
     // var oldpath = './uploads/' + body.folderpath.replaceAll(' ', '_');
     // var newpath = './uploads/' + result;//result is the obid
     // uploadsmanager_model.changepath(oldpath, newpath);
-    console.log("allfiles", allfiles)
+    // console.log("allfiles", allfiles)
     console.log("tmpconetnt", tmpContent)
     tmpContent["thumbnail"] = req.files.newthumbnail[0]
     const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result)
     //uploadsmanager_model.closeTmpFolder()
     console.log(uploadedDataToAws)
     //update model db with the urls
+    databasemanager_model.GetModel(result, async function(doc){
+      console.log(doc)
+      databasemanager_model.updateToAwsPaths(doc, uploadedDataToAws, function(result){
+        res.send(result);
+      })
+      
+    } )
+    
+
   });
+
 
 });
 // ----- model upload to publish ------ END

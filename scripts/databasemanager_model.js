@@ -1,6 +1,7 @@
 const fs = require("fs");
 const modeldb = require("../models/model");
 const fastFolderSize = require("fast-folder-size");
+const fastFolderSizeSync = require('fast-folder-size/sync')
 
 class AssetPath {
   folderpath = "";
@@ -17,7 +18,7 @@ class Attribute {
   textured = false;
 }
 
-const Save = async function(req, res, files, callback) {
+const Save = async function (req, res, callback) {
   //create list with all files required to save
   let body = JSON.parse(req.body.data);
 
@@ -30,24 +31,36 @@ const Save = async function(req, res, files, callback) {
   let assetpath = new AssetPath();
   //get size from tmp folder straight
   //assetpath.folderpath = "./uploads/" + body.folderpath.replaceAll(" ", "_");
-  assetpath.folderpath = "./uploads/tmp"
+  assetpath.folderpath = "./uploads/tmp";
   //assetpath.gltfmodelpath = body.gltfmodelpath.replace("tmp", body.folderpath);
   assetpath.gltfmodelpath = body.gltfmodelpath;
   assetpath.diffuse = body.diffusepath;
   assetpath.emission = body.emissivepath;
   //assetpath.thumbnail = body.thumbnail == '' ? req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath) : body.thumbnail;
   assetpath.thumbnail = body.thumbnail;
-  console.log(  assetpath.folderpath,"before fast folder size");
+  console.log(assetpath.folderpath, "before fast folder size");
   console.log(body.format);
+  let modelOutFolderSize = null
+  fastFolderSize(`${assetpath.folderpath}/model_out`, (err, bytes) => {
+    if (err) {
+      console.log("fast folder fail");
+      throw err;
+    }else{
+      modelOutFolderSize = bytes
+    }
+  })
   fastFolderSize(assetpath.folderpath, (err, bytes) => {
     if (err) {
       console.log("fast folder fail");
-      throw err
+      throw err;
     }
-
-    console.log(typeof(body.tags[0]));
-
-    var foldersize = (Math.round((bytes / (1024 * 1024)) * 10) / 10).toString() + 'mb';
+    console.log(modelOutFolderSize)
+    console.log(typeof body.tags[0]);
+    console.log(bytes)
+    var foldersize =
+      (
+        Math.round(((bytes - modelOutFolderSize) / (1024 * 1024)) * 10) / 10
+      ).toString() + "mb";
     var model = new modeldb({
       title: body.title,
       description: body.description,
@@ -56,28 +69,50 @@ const Save = async function(req, res, files, callback) {
       assetPath: assetpath,
       atrribute: attribute,
       filesize: foldersize,
-      format: body.format
+      format: body.format,
     });
-    model.save(function(err, obj) {
+    model.save(function (err, obj) {
       if (err) return console.log(err);
       else {
         var newassetpath = assetpath;
-        newassetpath.folderpath = './uploads/' + obj._id.toString();
-        newassetpath.gltfmodelpath = '../uploads/' + obj._id.toString() + "/model.gltf"//sandra added
+        newassetpath.folderpath = "./uploads/" + obj._id.toString();
+        newassetpath.gltfmodelpath =
+          "../uploads/" + obj._id.toString() + "/model.gltf"; //sandra added
         changePath(obj._id, newassetpath);
         callback(obj._id.toString());
       }
     });
   });
-}
-
- async function changePath(objid, newassetpath) {
-  await modeldb.updateOne({ _id: objid }, {
-  assetPath: newassetpath
-});
-}
-
+};
 module.exports.save = Save;
+
+const updateToAwsPaths = async function (doc, uploadedDataToAws, cb){
+  let folderPath =  uploadedDataToAws[uploadedDataToAws.length-1].folderPath;
+ 
+  let assetpath = new AssetPath();
+  assetpath.folderpath = folderPath;
+  assetpath.gltfmodelpath = `${folderPath}/model.gltf`;
+  assetpath.diffuse = `${folderPath}/${doc.assetPath.diffuse}`;
+  assetpath.emission = `${folderPath}/${doc.assetPath.emission}`;
+  assetpath.thumbnail = `${folderPath}/new_thumbnail.png`;
+ 
+  changePath(doc._id, assetpath) 
+  
+  cb(doc._id.toString())
+  console.log("updated")
+}
+
+module.exports.updateToAwsPaths = updateToAwsPaths;
+
+async function changePath(objid, newassetpath) {
+  await modeldb.updateOne(
+    { _id: objid },
+    {
+      assetPath: newassetpath,
+    }
+  );
+}
+
 
 const GetModel = (id, callback) => {
   modeldb.findOne(
@@ -158,8 +193,8 @@ const FindModelById = (id, callback) => {
 };
 module.exports.FindModelById = FindModelById;
 
-const FindByAttribute =async (results, attributes) => {
-  let newResults = []
+const FindByAttribute = async (results, attributes) => {
+  let newResults = [];
   newResults = results.filter((item) => {
     let allAttrSelected = true;
     if (typeof attributes === "string") {
@@ -178,7 +213,7 @@ const FindByAttribute =async (results, attributes) => {
 module.exports.FindByAttribute = FindByAttribute;
 
 const FindByFormat = async (results, format) => {
-  let newResults = []
+  let newResults = [];
   newResults = results.filter((item) => {
     if (item.format === format) {
       console.log("items");

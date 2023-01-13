@@ -266,41 +266,45 @@
   getEJScontent(data);
 
   function getEJScontent(data) {
+    console.log(data)
     Array.from(thumbnails).forEach((element) => {
-      element.src =
-       "../." + data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
+      // element.src =
+      //  "../." + data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
+       element.src =
+       data.assetPath.thumbnail;
     });
     if(assettype === "model"){
 
     console.log(data.assetPath.gltfmodelpath);
-    modelviewer.src = "../" + data.assetPath.gltfmodelpath;
+    //modelviewer.src = "../" + data.assetPath.gltfmodelpath;
+    modelviewer.src = data.assetPath.gltfmodelpath;
     modelviewer.addEventListener("load", () => {
     const material = modelviewer.model.materials[0];
-    const createAndApplyTexture = async (channel) => {
-      // Applies the new texture to the specified channel.
-      var diffusepath = "../." + data.assetPath.folderpath.diffuse;
-      console.log(
-        "../." +  data.assetPath.folderpath + "/" + data.assetPath.diffuse
-      );
-      if (diffusepath != "") {
-        // var diffuse = await modelviewer.createTexture(
-        //   "../." +  data.assetPath.folderpath + "/" + data.assetPath.diffuse
-        // );
-        //frm bucket
-        var diffuse = await modelviewer.createTexture(
-          data.assetPath.folderpath + "/" + data.assetPath.diffuse
-        );
-        material.pbrMetallicRoughness["baseColorTexture"].setTexture(diffuse);
-      }
-      var emissivepath = "../." + data.assetPath.folderpath.emission;
-      if (emissivepath != "") {
-        var emission = await modelviewer.createTexture(
-          "../." +  data.assetPath.folderpath + "/" + data.assetPath.emission
-        );
-        material["emissiveTexture"].setTexture(emission);
-      }
-    };
-    createAndApplyTexture("baseColorTexture");
+    // const createAndApplyTexture = async (channel) => {
+    //   // Applies the new texture to the specified channel.
+    //   var diffusepath = "../." + data.assetPath.folderpath.diffuse;
+    //   console.log(
+    //     "../." +  data.assetPath.folderpath + "/" + data.assetPath.diffuse
+    //   );
+    //   if (diffusepath != "") {
+    //     // var diffuse = await modelviewer.createTexture(
+    //     //   "../." +  data.assetPath.folderpath + "/" + data.assetPath.diffuse
+    //     // );
+    //     //frm bucket
+    //     var diffuse = await modelviewer.createTexture(
+    //       data.assetPath.folderpath + "/" + data.assetPath.diffuse
+    //     );
+    //     material.pbrMetallicRoughness["baseColorTexture"].setTexture(diffuse);
+    //   }
+    //   var emissivepath = "../." + data.assetPath.folderpath.emission;
+    //   if (emissivepath != "") {
+    //     var emission = await modelviewer.createTexture(
+    //       "../." +  data.assetPath.folderpath + "/" + data.assetPath.emission
+    //     );
+    //     material["emissiveTexture"].setTexture(emission);
+    //   }
+    // };
+    // createAndApplyTexture("baseColorTexture");
    });
     }else{
       runPannellum(data.atrribute.type)
