@@ -28,11 +28,15 @@ const Save = async function(req, res, files, callback) {
   attribute.textured = body.textured;
 
   let assetpath = new AssetPath();
-  assetpath.folderpath = "./uploads/" + body.folderpath.replaceAll(" ", "_");
-  assetpath.gltfmodelpath = body.gltfmodelpath.replace("tmp", body.folderpath);
+  //get size from tmp folder straight
+  //assetpath.folderpath = "./uploads/" + body.folderpath.replaceAll(" ", "_");
+  assetpath.folderpath = "./uploads/tmp"
+  //assetpath.gltfmodelpath = body.gltfmodelpath.replace("tmp", body.folderpath);
+  assetpath.gltfmodelpath = body.gltfmodelpath;
   assetpath.diffuse = body.diffusepath;
   assetpath.emission = body.emissivepath;
-  assetpath.thumbnail = body.thumbnail == '' ? req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath) : body.thumbnail;
+  //assetpath.thumbnail = body.thumbnail == '' ? req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath) : body.thumbnail;
+  assetpath.thumbnail = body.thumbnail;
   console.log(  assetpath.folderpath,"before fast folder size");
   console.log(body.format);
   fastFolderSize(assetpath.folderpath, (err, bytes) => {

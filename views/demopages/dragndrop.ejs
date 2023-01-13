@@ -558,7 +558,8 @@
           files.forEach((file, i) => {
             var f;
             if (isObj(file.name)) {
-              f = new fileObj("model", "model", file)
+              //f = new fileObj("model", "model", file)
+              f = new fileObj("model", "", file)
               currentformat = getExtension(file.name);
             } else {
               //f = new fileObj("image", "other", file)
@@ -626,20 +627,21 @@
         }
       });
 
-      function setupFileObjs() {
-        fileObjs = [];
-        files.forEach((file, i) => {
-          var f;
-          if (isObj(file.name)) {
-            f = new fileObj("model", "model", file)
-          } else {
-             //f = new fileObj("image", "other", file)
-            f = new fileObj("image", "", file)
-          }
-          fileObjs.push(f);
-        });
-        console.log(fileObjs);
-      }
+      // function setupFileObjs() {
+      //   fileObjs = [];
+      //   files.forEach((file, i) => {
+      //     var f;
+      //     if (isObj(file.name)) {
+      //       //f = new fileObj("model", "model", file)
+      //       f = new fileObj("model", "", file)
+      //     } else {
+      //        //f = new fileObj("image", "other", file)
+      //       f = new fileObj("image", "", file)
+      //     }
+      //     fileObjs.push(f);
+      //   });
+      //   console.log(fileObjs);
+      // }
 
 
 

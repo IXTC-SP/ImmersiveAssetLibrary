@@ -14,27 +14,22 @@ const s3 = new AWS.S3({
 });
 const awsMethods = {
   uploadFiles: async (tmpContent, objId, req, res, next) => {
-    const allFiles = [...tmpContent.image, ...tmpContent.model];
+    let allFiles = []
+    tmpContent.image? allFiles = [...tmpContent.image, ...tmpContent.model] : allFiles = [...tmpContent.model] ;
+    
     allFiles.push(tmpContent.thumbnail)
+    allFiles.push({gltfPath : tmpContent.modelviewerpath})
     console.log("----->content", allFiles);
     console.log("----->Id", objId);
     if (allFiles) {
       let params = null;
       const promises = allFiles.map(async (file) => {
-        // const fileData = fs.readFileSync("./uploads/tmp/" + file, function (err, data) {
-        //   if (err) {
-        //     console.log(err);
-        //   } else {
-        //     console.log("file data---->>", data);
-        //     return data
-        //   }
-        // });
         return await new Promise((resolve, reject) => {
           // Setting up S3 upload parameters
           params = {
             Bucket: "immersive-asset-library-bucket",
-            Key: "uploads/" + objId + "/" + file.originalname, // folder + File name you want to save as in S3
-            Body: file.path,
+            Key: file.gltfPath? `uploads/${objId}/model.gltf`:`uploads/${objId}/${file.originalname}` , // folder + File name you want to save as in S3
+            Body: file.gltfPath? file.gltfPath : file.path,
           };
           const data = s3.upload(params, function (err, data) {
             if (err) {
@@ -54,30 +49,6 @@ const awsMethods = {
         });
       });
       const uploadedData = await Promise.all(promises);
-      const gltfPromise = () => {
-        params = {
-          Bucket: "immersive-asset-library-bucket",
-          Key: "uploads/" + objId + "/" + "model.gltf", // folder + File name you want to save as in S3
-          Body: tmpContent.modelviewerpath,
-        };
-        const gltfData = s3.upload(params, function (err, data) {
-          if (err) {
-            console.log(err);
-            return res.status(500).json({
-              status: "failed",
-              message: "An error occured during file upload. Please try again.",
-            });
-          } else {
-            console.log(`File uploaded successfully. ${data.Location}`);
-            console.log(`File uploaded successfully. ${data.Bucket}`);
-            return data;
-          }
-        });
-        return gltfData
-      };
-      const gltfData = await new Promise(gltfPromise)
-      uploadedData.push(gltfData);
-
       return uploadedData;
       req.uploadedData = [...uploadedData];
       //return next()

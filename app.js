@@ -431,10 +431,10 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
       : body.thumbnail;
 
   //allfiles is jus the string
-  // uploadsmanager_model.publish(
-  //   body.folderpath,
-  //   allfiles,
-  // );
+  uploadsmanager_model.publish(
+    body.folderpath,
+    allfiles,
+  );
   //save model database
   databasemanager_model.save(req,res, allfiles, async function(result){
     res.send(result);
@@ -446,8 +446,9 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
     console.log("tmpconetnt", tmpContent)
     tmpContent["thumbnail"] = req.files.newthumbnail[0]
     const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result)
-    uploadsmanager_model.closeTmpFolder()
+    //uploadsmanager_model.closeTmpFolder()
     console.log(uploadedDataToAws)
+    //update model db with the urls
   });
 
 });
