@@ -23,6 +23,9 @@ const userController = require("./scripts/users_controller");
 const authController = require("./scripts/auth_controller");
 const authMiddleware = require("./middlewares/auth_middleware"); // middleware for the authentication, to check if theres a session
 const passport = require("passport");
+const awsMethods = require("./middlewares/aws_methods");
+const archiver = require("archiver");
+const PassThrough = require("stream");
 
 const flash = require("connect-flash");
 const methodOverride = require("method-override");
@@ -306,7 +309,7 @@ app.post(
   uploadsmanager_model.uploadtmp3D,
   function (req, res) {
     tmpContent = req.files;
-    console.log("savetmp", tmpContent)
+    console.log("savetmp", tmpContent);
     let result;
     if (tmpContent.image) {
       result = tmpContent.image.map((a) => a.originalname);
@@ -325,10 +328,9 @@ app.post(
       }
       tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
       console.log("---->>>", tmpContent);
-      gltfmodel.ClearMaterialFromModel(gltfresult, function(){
+      gltfmodel.ClearMaterialFromModel(gltfresult, function () {
         res.end("complete");
-      })
-      
+      });
     });
   }
 );
@@ -400,7 +402,7 @@ app.get("/editpage/model", function (req, res) {
 //     uploadsmanager_model.changepath(oldpath, newpath);
 //   });
 // });
-const awsMethods = require("./middlewares/aws_methods")
+
 app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
   console.log(req.files);
   //console.log(req.uploadedData);
@@ -436,30 +438,29 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
   //   allfiles,
   // );
   //save model database
-  databasemanager_model.save(req,res, async function(result){
-    console.log("id--->", result)
+  databasemanager_model.save(req, res, async function (result) {
+    console.log("id--->", result);
     // var oldpath = './uploads/' + body.folderpath.replaceAll(' ', '_');
     // var newpath = './uploads/' + result;//result is the obid
     // uploadsmanager_model.changepath(oldpath, newpath);
     // console.log("allfiles", allfiles)
-    console.log("tmpconetnt", tmpContent)
-    tmpContent["thumbnail"] = req.files.newthumbnail[0]
-    const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result)
+    console.log("tmpconetnt", tmpContent);
+    tmpContent["thumbnail"] = req.files.newthumbnail[0];
+    const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result);
     //uploadsmanager_model.closeTmpFolder()
-    console.log(uploadedDataToAws)
+    console.log(uploadedDataToAws);
     //update model db with the urls
-    databasemanager_model.GetModel(result, async function(doc){
-      console.log(doc)
-      databasemanager_model.updateToAwsPaths(doc, uploadedDataToAws, function(result){
-        res.send(result);
-      })
-      
-    } )
-    
-
+    databasemanager_model.GetModel(result, async function (doc) {
+      console.log(doc);
+      databasemanager_model.updateToAwsPaths(
+        doc,
+        uploadedDataToAws,
+        function (result) {
+          res.send(result);
+        }
+      );
+    });
   });
-
-
 });
 // ----- model upload to publish ------ END
 
@@ -608,6 +609,67 @@ process.on("exit", () => {
 });
 
 //WORKING DOWNLOAD ASSET POST
+// app.post("/downloadasset/:type/:modelid", function (req, res) {
+//   var dbmanager = databasemanager_model;
+//   var update;
+//   var filter;
+//   console.log("post download item", req.params.modelid);
+//   //console.log(req.param.modelid);
+//   switch (req.params.type) {
+//     case "model":
+//       dbmanager = databasemanager_model;
+//       update = {
+//         $push: {
+//           downloadedModels: mongoose.Types.ObjectId(req.params.modelid),
+//         },
+//       };
+//       filter = {
+//         _id: req.user._id,
+//         downloadedModels: req.params.modelid,
+//       };
+//       break;
+//     case "360":
+//       dbmanager = databasemanager_360;
+//       update = {
+//         $push: {
+//           downloadedThreeSixty: mongoose.Types.ObjectId(req.params.modelid),
+//         },
+//       };
+//       filter = {
+//         _id: req.user._id,
+//         downloadedThreeSixty: req.params.modelid,
+//       };
+//       break;
+//   }
+//   //get userid and add modelid into userid database
+//   dbmanager.GetModel(req.params.modelid, (result) => {
+//     var downloadpath = __dirname + result.assetPath.folderpath.slice(1);
+//     filedownloader.CreateZipArchive(result.title, downloadpath, (tmppath) => {
+//       res.download(tmppath, req.param("file"), function (err) {
+//         //CHECK FOR ERROR
+//         fs.unlink(tmppath, async (err) => {
+//           if (err) console.log(err);
+//           else {
+//             console.log("complete fs delete tmp file", req.user);
+//             //check if is already in array
+//             //save asset id into user downloaded array
+//               let doc = await userModel.findOne(filter);
+//               console.log("doc", doc);
+//               if (doc === null) {
+//                 userModel.findOneAndUpdate({_id: req.user._id}, update, function (err, doc) {
+//                   if (err) console.log(err);
+//                   console.log("updated", doc);
+//                 });
+//               } else {
+//                 console.log("user has downloaded before");
+//               }
+//           }
+//         });
+//       });
+//     });
+//   });
+// });
+
 app.post("/downloadasset/:type/:modelid", function (req, res) {
   var dbmanager = databasemanager_model;
   var update;
@@ -641,34 +703,34 @@ app.post("/downloadasset/:type/:modelid", function (req, res) {
       break;
   }
   //get userid and add modelid into userid database
-  dbmanager.GetModel(req.params.modelid, (result) => {
-    var downloadpath = __dirname + result.assetPath.folderpath.slice(1);
-    filedownloader.CreateZipArchive(result.title, downloadpath, (tmppath) => {
-      res.download(tmppath, req.param("file"), function (err) {
-        //CHECK FOR ERROR
-        fs.unlink(tmppath, async (err) => {
-          if (err) console.log(err);
-          else {
-            console.log("complete fs delete tmp file", req.user);
-            //check if is already in array
-            //save asset id into user downloaded array
-              let doc = await userModel.findOne(filter);
-              console.log("doc", doc);
-              if (doc === null) {
-                userModel.findOneAndUpdate({_id: req.user._id}, update, function (err, doc) {
-                  if (err) console.log(err);
-                  console.log("updated", doc);
-                });
-              } else {
-                console.log("user has downloaded before");
-              }
+  dbmanager.GetModel(req.params.modelid, async (result) => {
+    try {
+      //download from aws
+      const zipFiles = await awsMethods.downloadFiles(result._id);
+      console.log("downloadeddata", zipFiles);
+      // res is the response object in the http request. You may want to create your own write stream object to write files in your local machine
+      zipFiles.pipe(res);
+      // use finalize function to start the process
+      zipFiles.finalize();
+      let doc = await userModel.findOne(filter);
+      console.log("doc", doc);
+      if (doc === null) {
+        userModel.findOneAndUpdate(
+          { _id: req.user._id },
+          update,
+          function (err, doc) {
+            if (err) console.log(err);
+            console.log("updated", doc);
           }
-        });
-      });
-    });
+        );
+      } else {
+        console.log("user has downloaded before");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   });
 });
-
 app.get(
   "/:user_id/dashboard/profile",
   authMiddleware.isAuthenticated,

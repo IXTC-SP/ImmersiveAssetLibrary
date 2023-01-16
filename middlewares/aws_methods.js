@@ -1,7 +1,14 @@
 const fs = require("fs");
 const AWS = require("aws-sdk");
 require("dotenv").config();
-
+const join = require("path").join;
+const s3Zip = require("s3-zip");
+const archiver = require("archiver");
+const path = require("path");
+const stream = require("stream");
+// import archiver from 'archiver';
+// import path from 'path'
+// import { PassThrough } from 'stream';
 //creat bucket manually in S3 first
 
 // Enter copied or downloaded access ID and secret key here
@@ -13,7 +20,7 @@ const s3 = new AWS.S3({
   secretAccessKey: SECRET,
 });
 
-const bucketName = "immersive-asset-library-bucket"
+const bucketName = "immersive-asset-library-bucket";
 const awsMethods = {
   uploadFiles: async (tmpContent, objId, req, res, next) => {
     let allFiles = [];
@@ -25,10 +32,12 @@ const awsMethods = {
     try {
       let params = null;
       const promises = allFiles.map(async (file) => {
-        const fileContent = fs.readFileSync(file.gltfPath ? file.gltfPath : file.path,);
         return await new Promise((resolve, reject) => {
+          const fileContent = fs.readFileSync(
+            file.gltfPath ? file.gltfPath : file.path
+          );
           // Setting up S3 upload parameters
-          params = {
+          let params = {
             Bucket: bucketName,
             Key: file.gltfPath
               ? `uploads/${objId}/model.gltf`
@@ -45,19 +54,16 @@ const awsMethods = {
               });
             } else {
               console.log(`File uploaded successfully. ${data.Location}`);
-              // console.log(`File uploaded successfully. ${data.Bucket}`);
-              // const dataObj = {};
-              // //get the name of file and the url
-              // dataObj[file.originalname] = data.Location;
-              // console.log(dataObj);
               resolve(data);
             }
           });
         });
       });
       const uploadedData = await Promise.all(promises);
-      uploadedData.push({"folderPath": `https://${params.Bucket}.s3.amazonaws.com/uploads/${objId}`})
-      return uploadedData 
+      uploadedData.push({
+        folderPath: `https://${params.Bucket}.s3.amazonaws.com/uploads/${objId}`,
+      });
+      return uploadedData;
     } catch (error) {
       console.log(error);
       return res.status(500).json({
@@ -66,27 +72,47 @@ const awsMethods = {
       });
     }
   },
-  downloadFiles:async(objId)=> {
-    const Params = {
-      Bucket: bucketName,
-      Key: `uploads/${objId}/`,
+  downloadFiles: async (objId) => {
+    let params = {
+      Bucket: bucketName /* required */,
+      Prefix: `uploads/${objId}/`, // Can be your folder name
     };
-    try {
-      s3.getObject(
-        { Params},
-        function (error, data) {
-          if (error != null) {
-            alert("Failed to retrieve an object: " + error);
-          } else {
-            alert("Loaded " + data.ContentLength + " bytes");
-            // do something with data.Body
-          }
+    //get list of Files in folder
+    const listObjectsPromise = new Promise((resolve, reject) => {
+      const dataContents = s3.listObjectsV2(params, function (err, data) {
+        if (err) {
+          reject(err, err.stack); // an error occurred
+        } else {
+          resolve(data.Contents);
+          // successful respons
         }
-      )
-    } catch (err) {
-      console.log("Error", err);
-    }
-  }
+      });
+
+      return dataContents;
+    });
+    let files = await listObjectsPromise;
+    //get each file content
+    const archive = archiver("zip", { zlib: { level: 5 } });
+    const getObjectsPromise = files.map(async (item) => {
+      return await new Promise((resolve, reject) => {
+        // using pass through stream object to wrap the stream from aws s3
+        const passthrough = new stream.PassThrough();
+        params = {
+          Bucket: bucketName /* required */,
+          Key: `${item.Key}`,
+        };
+        s3.getObject(params).createReadStream().pipe(passthrough)
+        resolve({passthrough, name: item.Key.split("/")[2]});
+      });
+    });
+    const fileObjects = await Promise.all(getObjectsPromise);
+    fileObjects.forEach((item) => {
+      archive.append(item.passthrough, { name: item.name });
+    });
+
+    console.log(archive);
+    return archive;
+  },
 };
 
 module.exports = awsMethods;
