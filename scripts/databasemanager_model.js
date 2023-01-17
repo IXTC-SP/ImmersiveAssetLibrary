@@ -41,14 +41,18 @@ const Save = async function (req, res, callback) {
   console.log(assetpath.folderpath, "before fast folder size");
   console.log(body.format);
   let modelOutFolderSize = null
-  fastFolderSize(`${assetpath.folderpath}/model_out`, (err, bytes) => {
-    if (err) {
-      console.log("fast folder fail");
-      throw err;
-    }else{
-      modelOutFolderSize = bytes
-    }
-  })
+  if(fs.existsSync("./uploads/tmp/model_out")){
+    fastFolderSize(`${assetpath.folderpath}/model_out`, (err, bytes) => {
+      if (err) {
+        console.log("fast folder fail");
+        throw err;
+      }else{
+        modelOutFolderSize = bytes
+      }
+    })
+  }else{
+    modelOutFolderSize = 2
+  }
   fastFolderSize(assetpath.folderpath, (err, bytes) => {
     if (err) {
       console.log("fast folder fail");
@@ -91,10 +95,15 @@ const updateToAwsPaths = async function (doc, uploadedDataToAws, cb){
  
   let assetpath = new AssetPath();
   assetpath.folderpath = folderPath;
-  assetpath.gltfmodelpath = `${folderPath}/model.gltf`;
-  assetpath.diffuse = `${folderPath}/${doc.assetPath.diffuse}`;
-  assetpath.emission = `${folderPath}/${doc.assetPath.emission}`;
-  assetpath.thumbnail = `${folderPath}/new_thumbnail.png`;
+  // assetpath.gltfmodelpath = `${folderPath}/model.gltf`;
+  // assetpath.diffuse = `${folderPath}/${doc.assetPath.diffuse}`;
+  // assetpath.emission = `${folderPath}/${doc.assetPath.emission}`;
+  // assetpath.thumbnail = `${folderPath}/new_thumbnail.png`;
+  assetpath.gltfmodelpath = `model.gltf`;
+  //assetpath.diffuse = `${folderPath}/${doc.assetPath.diffuse}`;
+  //assetpath.emission = `${folderPath}/${doc.assetPath.emission}`;
+  assetpath.thumbnail = `new_thumbnail.png`;
+ 
  
   changePath(doc._id, assetpath) 
   

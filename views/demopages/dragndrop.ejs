@@ -580,14 +580,14 @@
         //if cubemap file, process and popup to assign textures
         if (currenttype == "360image" && currentformat == "cubemap") {
           files.forEach((file, i) => {
-            fileObjs.push(new fileObj("image", "other", file));
+            fileObjs.push(new fileObj("image", "other_", file));
            
           });
           return;
         }
         if (currenttype == "360image" && currentformat == "equirectangular") {
           files.forEach((file, i) => {
-            fileObjs.push(new fileObj("image", "equi", file));
+            fileObjs.push(new fileObj("image", "equi_", file));
           });
           return;
         }

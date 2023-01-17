@@ -11,6 +11,7 @@
   var files = [];
   var newfiles = [];
   var type = '';
+  console.log("--->tyep", format);
   getEJScontent();
 
   //reload page when back button on browser is pressed
@@ -32,6 +33,7 @@
   console.log("does not exist");
   <% } %>
 
+  
   if(type == 'cubemap'){
     files.push(<%- JSON.stringify(images.front)%>);
     files.push(<%- JSON.stringify(images.right)%>);
@@ -40,11 +42,10 @@
     files.push(<%- JSON.stringify(images.top)%>);
     files.push(<%- JSON.stringify(images.bottom)%>);
   } else {
-    files.push(<%- JSON.stringify(images.equi)%>);
+    files.push(<%- JSON.stringify(images.equi.originalname)%>);
   }
   runPannellum(type)
   }
-
   function getTextureFromFilesArray(typename){
     var result ="";
     for(i=0;i<files.length;i++){
@@ -54,7 +55,6 @@
     }
     return result;
   }
-
 
   function runPannellum(type) {
     console.log(files);
@@ -150,7 +150,9 @@
 
       request.onreadystatechange = function() { // listen for state changes
       if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+        console.log("-->send from backedn", request.responseText)
         nextURL += request.responseText;
+        console.log(nextURL)
         window.location = nextURL;
       }
       }

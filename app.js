@@ -103,6 +103,7 @@ app.get(
         isModel = false;
         break;
     }
+    console.log(req.params.modelid)
     dbmanager.FindModelById(req.params.modelid, (result) => {
       console.log("---->", result);
       console.log(result.owner);
@@ -328,14 +329,16 @@ app.post(
       }
       tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
       console.log("---->>>", tmpContent);
-      gltfmodel.ClearMaterialFromModel(gltfresult, function () {
-        res.end("complete");
-      });
+      // gltfmodel.ClearMaterialFromModel(gltfresult, function () {
+      //   res.end("complete");
+      // });
+      res.end("complete");
     });
   }
 );
 
 app.get("/editpage/model", function (req, res) {
+  console.log("view model", tmpContent.modelviewerpath)
   if (tmpContent) {
     let images;
     if (tmpContent.image) {
@@ -446,7 +449,8 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
     // console.log("allfiles", allfiles)
     console.log("tmpconetnt", tmpContent);
     tmpContent["thumbnail"] = req.files.newthumbnail[0];
-    const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result);
+    const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result, "3dModel");
+    tmpContent = []
     //uploadsmanager_model.closeTmpFolder()
     console.log(uploadedDataToAws);
     //update model db with the urls
@@ -455,8 +459,8 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
       databasemanager_model.updateToAwsPaths(
         doc,
         uploadedDataToAws,
-        function (result) {
-          res.send(result);
+        function (id) {
+          res.send(id);
         }
       );
     });
@@ -466,35 +470,84 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
 
 // ----- 360 upload to publish ------ START
 
+// app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function (req, res) {
+//   console.log(req.body);
+//   console.log(req.files);
+//   tmpContent["image"] = [];
+//   tmpContent["destination"] = req.files.image[0].destination;
+//   if (req.body.format == "cubemap") {
+//     tmpContent["image"]["top"] = req.files.image.find(
+//       (element) => element.originalname.split("_")[0] == "top"
+//     ).originalname;
+//     tmpContent["image"]["front"] = req.files.image.find(
+//       (element) => element.originalname.split("_")[0] == "front"
+//     ).originalname;
+//     tmpContent["image"]["bottom"] = req.files.image.find(
+//       (element) => element.originalname.split("_")[0] == "bottom"
+//     ).originalname;
+//     tmpContent["image"]["right"] = req.files.image.find(
+//       (element) => element.originalname.split("_")[0] == "right"
+//     ).originalname;
+//     tmpContent["image"]["back"] = req.files.image.find(
+//       (element) => element.originalname.split("_")[0] == "back"
+//     ).originalname;
+//     tmpContent["image"]["left"] = req.files.image.find(
+//       (element) => element.originalname.split("_")[0] == "left"
+//     ).originalname;
+//   } else {
+//     tmpContent["image"]["equi"] = req.files.image[0].originalname;
+//   }
+//   tmpContent["format"] = req.body.format;
+//   console.log("-> to aws", tmpContent);
+//   res.end("complete");
+// });
 app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function (req, res) {
   console.log(req.body);
   console.log(req.files);
   tmpContent["image"] = [];
   tmpContent["destination"] = req.files.image[0].destination;
   if (req.body.format == "cubemap") {
+    // tmpContent["image"]["top"] = req.files.image.find(
+    //   (element) => element.originalname.split("_")[0] == "top"
+    // ).originalname;
+    // tmpContent["image"]["front"] = req.files.image.find(
+    //   (element) => element.originalname.split("_")[0] == "front"
+    // ).originalname;
+    // tmpContent["image"]["bottom"] = req.files.image.find(
+    //   (element) => element.originalname.split("_")[0] == "bottom"
+    // ).originalname;
+    // tmpContent["image"]["right"] = req.files.image.find(
+    //   (element) => element.originalname.split("_")[0] == "right"
+    // ).originalname;
+    // tmpContent["image"]["back"] = req.files.image.find(
+    //   (element) => element.originalname.split("_")[0] == "back"
+    // ).originalname;
+    // tmpContent["image"]["left"] = req.files.image.find(
+    //   (element) => element.originalname.split("_")[0] == "left"
+    // ).originalname;
     tmpContent["image"]["top"] = req.files.image.find(
-      (element) => element.originalname.split("_")[0] == "top"
-    ).originalname;
+      (element) => element.originalname.includes("top")
+    );
     tmpContent["image"]["front"] = req.files.image.find(
-      (element) => element.originalname.split("_")[0] == "front"
-    ).originalname;
+      (element) => element.originalname.includes("front") 
+    );
     tmpContent["image"]["bottom"] = req.files.image.find(
-      (element) => element.originalname.split("_")[0] == "bottom"
-    ).originalname;
+      (element) => element.originalname.includes("bottom") 
+    );
     tmpContent["image"]["right"] = req.files.image.find(
-      (element) => element.originalname.split("_")[0] == "right"
-    ).originalname;
+      (element) => element.originalname.includes("right") 
+    );
     tmpContent["image"]["back"] = req.files.image.find(
-      (element) => element.originalname.split("_")[0] == "back"
-    ).originalname;
+      (element) => element.originalname.includes( "back")
+    );
     tmpContent["image"]["left"] = req.files.image.find(
-      (element) => element.originalname.split("_")[0] == "left"
-    ).originalname;
+      (element) => element.originalname.includes( "left")
+    );
   } else {
-    tmpContent["image"]["equi"] = req.files.image[0].originalname;
+    tmpContent["image"]["equi"] = req.files.image[0];
   }
   tmpContent["format"] = req.body.format;
-  console.log(tmpContent);
+  console.log("-> to tmp", tmpContent);
   res.end("complete");
 });
 
@@ -508,31 +561,76 @@ app.get("/editpage/360", function (req, res) {
   });
 });
 
+// app.post("/savethreesixty", uploadmanager_360.upload360, function (req, res) {
+//   console.log(req.files);
+//   console.log(req.body);
+
+//   //create list with all files required to save
+//   let body = JSON.parse(req.body.data);
+//   let allfiles = body.files;
+//   if (req.files.file) {
+//     console.log("running req files");
+//     if (req.files.file.length > 0) {
+//       let newfiles = req.files.file.map((a) => a.originalname);
+//       allfiles = body.files.concat(newfiles);
+//     }
+//   }
+//   console.log(allfiles);
+//   let foldername =
+//     body.title == "" ? "default_foldername" : body.title.replaceAll(" ", "_");
+
+//   uploadmanager_360.publish(foldername, allfiles, tmpContent.destination);
+
+//   databasemanager_360.save(req, res, allfiles, function (result) {
+//     res.send(result);
+//     var oldpath = "./uploads/" + foldername;
+//     var newpath = "./uploads/" + result;
+//     uploadmanager_360.changepath(oldpath, newpath);
+//   });
+// });
 app.post("/savethreesixty", uploadmanager_360.upload360, function (req, res) {
   console.log(req.files);
-  console.log(req.body);
-
+  //console.log(req.body);
+  console.log("body data", req.body.data);
   //create list with all files required to save
-  let body = JSON.parse(req.body.data);
-  let allfiles = body.files;
-  if (req.files.file) {
-    console.log("running req files");
-    if (req.files.file.length > 0) {
-      let newfiles = req.files.file.map((a) => a.originalname);
-      allfiles = body.files.concat(newfiles);
-    }
-  }
-  console.log(allfiles);
-  let foldername =
-    body.title == "" ? "default_foldername" : body.title.replaceAll(" ", "_");
+  // let body = JSON.parse(req.body.data);
+  // let allfiles = body.files;
+  // if (req.files.file) {
+  //   console.log("running req files");
+  //   if (req.files.file.length > 0) {
+  //     let newfiles = req.files.file.map((a) => a.originalname);
+  //     allfiles = body.files.concat(newfiles);
+  //   }
+  // }
+  // console.log(allfiles);
+  // let foldername =
+  //   body.title == "" ? "default_foldername" : body.title.replaceAll(" ", "_");
 
-  uploadmanager_360.publish(foldername, allfiles, tmpContent.destination);
+  // uploadmanager_360.publish(foldername, allfiles, tmpContent.destination);
 
-  databasemanager_360.save(req, res, allfiles, function (result) {
-    res.send(result);
-    var oldpath = "./uploads/" + foldername;
-    var newpath = "./uploads/" + result;
-    uploadmanager_360.changepath(oldpath, newpath);
+  databasemanager_360.save(req, res, async function (result) {
+    console.log("id--->", result);
+    // res.send(result);
+    // var oldpath = "./uploads/" + foldername;
+    // var newpath = "./uploads/" + result;
+    // uploadmanager_360.changepath(oldpath, newpath);
+    console.log("tmpconetnt", tmpContent);
+    tmpContent["thumbnail"] = req.files.newthumbnail[0];
+    const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result, "360");
+    console.log(uploadedDataToAws);
+    tmpContent = []
+     //update model db with the urls
+     databasemanager_360.GetModel(result, function (doc) {
+      console.log(doc);
+      databasemanager_360.updateToAwsPaths(
+        doc,
+        uploadedDataToAws,
+        function (id) {
+          console.log(id)
+          res.send(id);
+        }
+      );
+    });
   });
 });
 

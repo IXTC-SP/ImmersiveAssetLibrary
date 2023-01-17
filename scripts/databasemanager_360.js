@@ -21,7 +21,7 @@ class Attribute {
   type = 'default';
 }
 
-const Save = async function(req, res, files, callback) {
+const Save = async function(req, res, callback) {
   //create list with all files required to save
   let body = JSON.parse(req.body.data);
 
@@ -29,7 +29,8 @@ const Save = async function(req, res, files, callback) {
   attribute.type = body.type;
 
   let assetpath = new AssetPath();
-  assetpath.folderpath = './uploads/' + body.title.replaceAll(' ', '_');
+  //assetpath.folderpath = './uploads/' + body.title.replaceAll(' ', '_');
+  assetpath.folderpath = "./uploads/tmp";
   if(attribute.type == 'cubemap'){
     assetpath.cubemap.front = body.files[0];
     assetpath.cubemap.right = body.files[1];
@@ -40,7 +41,8 @@ const Save = async function(req, res, files, callback) {
   } else {
     assetpath.equirectangular = body.files[0];
   }
-  assetpath.thumbnail = req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath);
+  //assetpath.thumbnail = req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath);
+  assetpath.thumbnail = req.files.newthumbnail[0].originalname;
   fastFolderSize(assetpath.folderpath, (err, bytes) => {
     if (err) {
       throw err
@@ -57,27 +59,54 @@ const Save = async function(req, res, files, callback) {
       format: body.format
     });
 
-    asset.save(function(err, obj) {
+    asset.save(async function(err, obj) {
       if (err) return console.log(err);
       else {
         var newassetpath = assetpath;
         newassetpath.folderpath = './uploads/' + obj._id.toString();
-        changePath(obj._id, newassetpath);
+        await threesixtydb.updateOne({ _id: obj._id },  { assetPath : newassetpath});
+        // changePath(obj._id, newassetpath);
         callback(obj._id.toString());
       }
     });
 });
 }
 
-async function changePath(objid, newassetpath) {
- await threesixtydb.updateOne({ _id: objid }, {
- assetPath: newassetpath
-});
+async function changePath(objid, newFolderPath) {
+ await threesixtydb.updateOne({ _id: objid },  { assetPath : newFolderPath  });
 }
 
 module.exports.save = Save;
 
+
+const updateToAwsPaths = async function (doc, uploadedDataToAws, cb){
+  let newFolderPath =  uploadedDataToAws[uploadedDataToAws.length-1].folderPath;
+  let attribute = doc.atrribute.type
+
+  let assetpath = new AssetPath();
+  assetpath.folderpath = newFolderPath;
+  if(attribute.type == 'cubemap'){
+    assetpath.cubemap.front = doc.assetPath.cubemap.front
+    assetpath.cubemap.right = doc.assetPath.cubemap.right
+    assetpath.cubemap.back = doc.assetPath.cubemap.back
+    assetpath.cubemap.left = doc.assetPath.cubemap.left
+    assetpath.cubemap.top = doc.assetPath.cubemap.top
+    assetpath.cubemap.bottom = doc.assetPath.cubemap.bottom
+  } else {
+    assetpath.equirectangular = doc.assetPath.equirectangular
+  }
+   assetpath.thumbnail = doc.assetPath.thumbnail
+  
+  changePath(doc._id, assetpath) 
+  
+  cb(doc._id.toString())
+  console.log("updated")
+}
+
+module.exports.updateToAwsPaths = updateToAwsPaths;
+
 const GetModel = (id, callback) => {
+  console.log("---->>> getmodel id", id)
   threesixtydb.findOne({
     _id: id
   }, (err, result) => {
@@ -149,6 +178,7 @@ module.exports.SearchBar = SearchBar;
 
 
 const FindModelById = (id, callback) => {
+  console.log("_>>>>>> id",id)
   threesixtydb.findOne({
     _id: id
   }, (err, result) => {

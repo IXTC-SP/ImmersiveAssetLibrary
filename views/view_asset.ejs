@@ -11,9 +11,15 @@
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.3/dist/css/splide.min.css"
 />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"
+/>
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"
+></script>
 <section class="d-flex flex-column m-auto mt-5">
   <div class="row justify-content-center">
     <div class="col-7 d-flex flex-column flex-wrap">
@@ -27,7 +33,7 @@
         <div
           class="carousel-inner shadow-1-strong rounded-3 carousel-model-view"
         >
-        <%if(isModel){%>
+          <%if(isModel){%>
           <div class="carousel-item active" data-bs-interval="false">
             <model-viewer
               class="model-viewer-dimensions"
@@ -43,8 +49,8 @@
             ></model-viewer>
           </div>
           <%}else{%>
-            <div class="model-viewer-dimensions" id="panorama"></div>
-        <%}%>
+          <div class="model-viewer-dimensions" id="panorama"></div>
+          <%}%>
           <!-- <div class="carousel-item" data-bs-interval="false">
             <img
               src=""
@@ -100,7 +106,10 @@
             </ul>
           </div>
         </section> -->
-        <div class="carousel-indicators" style="margin-bottom: -20px; margin-left: 0; right: auto;">
+        <div
+          class="carousel-indicators"
+          style="margin-bottom: -20px; margin-left: 0; right: auto"
+        >
           <button
             type="button"
             data-mdb-target="#carouselExampleIndicators"
@@ -171,10 +180,10 @@
     </div>
     <div class="col-3 d-flex flew-wrap gap-4 flex-column">
       <div>
-        <%if(isModel){%>  
+        <%if(isModel){%>
         <h6>3D Model Details</h6>
-        <%}else{%>   
-        <h6>360 Image Details</h6>        
+        <%}else{%>
+        <h6>360 Image Details</h6>
         <%}%>
       </div>
       <div class="border border-secondary rounded-2 p-2">
@@ -185,58 +194,60 @@
         <hr class="m-0" />
         <div class="d-flex justify-content-between align-items-center p-1">
           <p class="m-0">Published</p>
-          <p class="m-0"><%= data.uploaddate.toLocaleString().split(",")[0] %></p>
+          <p class="m-0">
+            <%= data.uploaddate.toLocaleString().split(",")[0] %>
+          </p>
         </div>
         <hr class="m-0" />
         <!-- 3d model -->
-        <%if(isModel){%>          
-          <div class="d-flex justify-content-between align-items-center p-1">
-            <p class="m-0">Low Poly</p>
-            <%if(data.atrribute.lowpoly){%>
-            <i class="fa-regular fa-circle-check attribute-check"></i>
-            <%}else{%>
-            <i class="fa-regular fa-circle-xmark attribute-cross"></i>
-            <%}%>
-          </div>
-          <hr class="m-0" />
-          <div class="d-flex justify-content-between align-items-center p-1">
-            <p class="m-0">Rigged</p>
-            <%if(data.atrribute.rigged){%>
-            <i class="fa-regular fa-circle-check attribute-check"></i>
-            <%}else{%>
-            <i class="fa-regular fa-circle-xmark attribute-cross"></i>
-            <%}%>
-          </div>
-          <hr class="m-0" />
-          <div class="d-flex justify-content-between align-items-center p-1">
-            <p class="m-0">Animated</p>
-            <%if(data.atrribute.animated){%>
-            <i class="fa-regular fa-circle-check attribute-check"></i>
-            <%}else{%>
-            <i class="fa-regular fa-circle-xmark attribute-cross"></i>
-            <%}%>
-          </div>
-          <hr class="m-0" />
-          <div class="d-flex justify-content-between align-items-center p-1">
-            <p class="m-0">Textured</p>
-            <%if(data.atrribute.textured){%>
-            <i class="fa-regular fa-circle-check attribute-check"></i>
-            <%}else{%>
-            <i class="fa-regular fa-circle-xmark attribute-cross"></i>
-            <%}%>
-          </div>
-          <hr class="m-0" />
-        <%}else{%>            
+        <%if(isModel){%>
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Low Poly</p>
+          <%if(data.atrribute.lowpoly){%>
+          <i class="fa-regular fa-circle-check attribute-check"></i>
+          <%}else{%>
+          <i class="fa-regular fa-circle-xmark attribute-cross"></i>
+          <%}%>
+        </div>
+        <hr class="m-0" />
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Rigged</p>
+          <%if(data.atrribute.rigged){%>
+          <i class="fa-regular fa-circle-check attribute-check"></i>
+          <%}else{%>
+          <i class="fa-regular fa-circle-xmark attribute-cross"></i>
+          <%}%>
+        </div>
+        <hr class="m-0" />
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Animated</p>
+          <%if(data.atrribute.animated){%>
+          <i class="fa-regular fa-circle-check attribute-check"></i>
+          <%}else{%>
+          <i class="fa-regular fa-circle-xmark attribute-cross"></i>
+          <%}%>
+        </div>
+        <hr class="m-0" />
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <p class="m-0">Textured</p>
+          <%if(data.atrribute.textured){%>
+          <i class="fa-regular fa-circle-check attribute-check"></i>
+          <%}else{%>
+          <i class="fa-regular fa-circle-xmark attribute-cross"></i>
+          <%}%>
+        </div>
+        <hr class="m-0" />
+        <%}else{%>
         <!-- 360 image -->
-          <div class="d-flex justify-content-between align-items-center p-1">           
-            <%if(data.atrribute.type === 'equirectangular'){%>
-            <p class="m-0">Equirectangular</p>
-            <%}else{%>
-            <p class="m-0">Cubemap</p>
-            <%}%>
-            <i class="fa-regular fa-circle-check attribute-check"></i>
-          </div>
-          <hr class="m-0" />
+        <div class="d-flex justify-content-between align-items-center p-1">
+          <%if(data.atrribute.type === 'equirectangular'){%>
+          <p class="m-0">Equirectangular</p>
+          <%}else{%>
+          <p class="m-0">Cubemap</p>
+          <%}%>
+          <i class="fa-regular fa-circle-check attribute-check"></i>
+        </div>
+        <hr class="m-0" />
         <%}%>
         <div class="d-flex justify-content-between align-items-center p-1">
           <p class="m-0">Download Size</p>
@@ -244,12 +255,21 @@
         </div>
       </div>
       <div class="w-100">
-        <form class="" action="/downloadasset/<%= assettype %>/<%= data._id %>" method="post">
-            <!-- <input type="submit" id='submit-btn' value="download"> -->
-            <button type="submit" id='submit-btn' value="download" class="w-100 btn theme-color btn-rounded">
-                Download
-            </button>
-          </form>
+        <form
+          class=""
+          action="/downloadasset/<%= assettype %>/<%= data._id %>"
+          method="post"
+        >
+          <!-- <input type="submit" id='submit-btn' value="download"> -->
+          <button
+            type="submit"
+            id="submit-btn"
+            value="download"
+            class="w-100 btn theme-color btn-rounded"
+          >
+            Download
+          </button>
+        </form>
       </div>
     </div>
   </div>
@@ -267,17 +287,20 @@
 
   function getEJScontent(data) {
     console.log(data)
+    if(data.assetPath.thumbnail != null){
     Array.from(thumbnails).forEach((element) => {
       // element.src =
       //  "../." + data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
        element.src =
-       data.assetPath.thumbnail;
+       data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
     });
+    }
+
     if(assettype === "model"){
 
-    console.log(data.assetPath.gltfmodelpath);
+    console.log(data.assetPath.folderpath + "/" + data.assetPath.gltfmodelpath);
     //modelviewer.src = "../" + data.assetPath.gltfmodelpath;
-    modelviewer.src = data.assetPath.gltfmodelpath;
+    modelviewer.src = data.assetPath.folderpath + "/" + data.assetPath.gltfmodelpath;
     modelviewer.addEventListener("load", () => {
     const material = modelviewer.model.materials[0];
     // const createAndApplyTexture = async (channel) => {
@@ -331,14 +354,12 @@
       console.log("view");
       viewer = pannellum.viewer('panorama', {
       "type": "equirectangular",
-      "panorama": data.assetPath.folderpath.slice(1) + "/" + data.assetPath.equirectangular,
+      "panorama": data.assetPath.folderpath + "/" + data.assetPath.equirectangular,
       "autoLoad": true
       });
       console.log("erro");
     }
   }
-
-
 </script>
 
 <%- include('./partials/footer') %>

@@ -36,8 +36,11 @@ const Create = (objectfile, callback) => {
           }
           // log the output received from the command
           console.log("Output: \n", output)
+
+          callback(gltfpath);
         });
-        callback(gltfpath);
+        // gltfpath = modelfolderpath + "\\model.gltf"
+
         break;
         case "fbx":
         // code block

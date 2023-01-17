@@ -64,6 +64,7 @@
 
       request.onreadystatechange = function () { // listen for state changes
         if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+          console.log("-->send from backedn", request.responseText)
           nextURL += request.responseText;
           window.location = nextURL;
         }
