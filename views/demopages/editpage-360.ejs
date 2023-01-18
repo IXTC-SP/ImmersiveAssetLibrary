@@ -1,256 +1,253 @@
 <%- include('../partials/header') %>
 
-<link rel="stylesheet" href="../modellist.css" />
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"
-/>
+<link rel="stylesheet" href="../modellist.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
 
-<script
-  type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"
-></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 <script type="text/javascript" src="/datamuse.js"></script>
 
 <%- include('../partials/edit-properties') %>
 <script>
-    var files = [];
-    var newfiles = [];
-    var type = '';
+  var files = [];
+  var newfiles = [];
+  var type = '';
+  getEJScontent();
 
-    getEJScontent();
-
-    //reload page when back button on browser is pressed
-    window.addEventListener( "pageshow", function ( event ) {
-      var historyTraversal = event.persisted ||
-                             ( typeof window.performance != "undefined" &&
-                                  window.performance.navigation.type === 2 );
-      if ( historyTraversal ) {
-        // Handle page restore.
-        window.location.reload();
-      }
-    });
-
-
-    function getEJScontent(){
-    <% if (format) {  %>
-      type = <%- JSON.stringify(format)%>
-      console.log("--->tyep", type);
-    <% } else { %>
-    console.log("does not exist");
-    <% } %>
-
-    if(type === 'cubemap'){
-      console.log("type is cube map")
-      files.push(<%- JSON.stringify(images.front.originalname)%>);
-
-    } else {
-      console.log("type is equi")
-      files.push(<%- JSON.stringify(images.equi.originalname)%>);
+  //reload page when back button on browser is pressed
+  window.addEventListener( "pageshow", function ( event ) {
+    var historyTraversal = event.persisted ||
+                           ( typeof window.performance != "undefined" &&
+                                window.performance.navigation.type === 2 );
+    if ( historyTraversal ) {
+      // Handle page restore.
+      window.location.reload();
     }
-    runPannellum(type)
-    }
-    function getTextureFromFilesArray(typename){
-      var result ="";
-      for(i=0;i<files.length;i++){
-        if(files[i].split("_")[0] == typename){
-          result = files[i];
-        }
-      }
-      return result;
-    }
+  });
 
-    function runPannellum(type) {
-      console.log(files);
-      var viewer;
-      if(type == 'cubemap'){
-        viewer = pannellum.viewer('panorama', {
-          "type": "cubemap",
-          "cubeMap": [
-            "../uploads/tmp/" + files[0],
-            "../uploads/tmp/" + files[1],
-            "../uploads/tmp/" + files[2],
-            "../uploads/tmp/" + files[3],
-            "../uploads/tmp/" + files[4],
-            "../uploads/tmp/" + files[5]
-          ],
-          "autoLoad": true
-        });
-      } else {
-        viewer = pannellum.viewer('panorama', {
-        "type": "equirectangular",
-        "panorama": "../uploads/tmp/" + files[0],
-        "autoLoad": true
-        });
-      }
-      console.log(viewer);
-      viewer.on('load', function(){
-        console.log('running viewer');
-        saveThumbnail(viewer);
-      });
-      // https://naver.github.io/egjs-view360/examples/img/equi.jpg
-    }
 
-    let thumbnailblob = '';
-    function saveThumbnail(viewer){
-      var img = viewer.getRenderer().render(
-        viewer.getPitch() / 180 * Math.PI,
-        viewer.getYaw() / 180 * Math.PI,
-        viewer.getHfov() / 180 * Math.PI,
-        {'returnImage': true});
-      var imgblob = dataURItoBlob(img);
-      console.log(imgblob);
-      console.log(typeof(imgblob));
-      thumbnailblob = imgblob;
-    }
+  function getEJScontent(){
+  <% if (format) {  %>
+    type = <%- JSON.stringify(format)%>;
+  <% } else { %>
+  console.log("does not exist");
+  <% } %>
 
-    function dataURItoBlob(dataURI) {
-      // convert base64 to raw binary data held in a string
-      // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-      var byteString = atob(dataURI.split(',')[1]);
-
-      // separate out the mime component
-      var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-
-      // write the bytes of the string to an ArrayBuffer
-      var ab = new ArrayBuffer(byteString.length);
-      var ia = new Uint8Array(ab);
-      for (var i = 0; i < byteString.length; i++) {
-          ia[i] = byteString.charCodeAt(i);
-      }
-      //New Code
-      return new Blob([ab], {type: mimeString});
+  if(type == 'cubemap'){
+    files.push(<%- JSON.stringify(images.front)%>);
+    files.push(<%- JSON.stringify(images.right)%>);
+    files.push(<%- JSON.stringify(images.back)%>);
+    files.push(<%- JSON.stringify(images.left)%>);
+    files.push(<%- JSON.stringify(images.top)%>);
+    files.push(<%- JSON.stringify(images.bottom)%>);
+  } else {
+    files.push(<%- JSON.stringify(images.equi)%>);
+  }
+  runPannellum(type)
   }
 
-    async function createUploadContent() {
-      const formData = new FormData();
-      const request = new XMLHttpRequest();
-      var nextURL = "/asset/360/";
-      var postURL = "/savethreesixty";
-      console.log("create upload content");
-
-      var data = {
-        files : [],
-        title : document.querySelector(".title-info").value,
-        description : document.querySelector(".desc-info").value,
-        tags : [],
-        type : type,
-        }
-        var tags = document.querySelectorAll(".selected_tag_element");
-        for(i = 0; i<tags.length;i++){ data.tags.push(tags[i].innerHTML); }
-        data.files = files;
-        console.log(data);
-        for(i=0; i< newfiles.length;i++)
-        { formData.append('file', newfiles[i]); }
-        formData.append('data', JSON.stringify(data));
-
-        if(thumbnailblob){
-          var file = new File([thumbnailblob], 'new_thumbnail.png');
-          console.log(file);
-          formData.append('newthumbnail', file);
-        }
-
-        request.onreadystatechange = function() { // listen for state changes
-        if (request.readyState == 4 && request.status == 200) { // when completed we can move away
-          console.log("-->send from backedn", request.responseText)
-          nextURL += request.responseText;
-          console.log(nextURL)
-          window.location = nextURL;
-        }
-        }
-        request.open("POST", postURL, false);
-        request.send(formData);
-    }
-
-    function addNewFile(el) {
-        console.log(el.files[0].name);
-        newfiles.push(el.files[0]);
-        let p = document.querySelector('.all-files')
-        let main = document.createElement('div');
-        main.classList.add("new-file")
-        console.log(p);
-        main.innerHTML = `
-                      <div class='d-flex justify-content-between w-100'>
-                        <span class='p-0 text-muted text-overflow'>${el.files[0].name}</span>
-                        <button class='remove-file bg-transparent border-0'onclick='removeNewFile(this,"${el.files[0].name}")'>
-                          <i class='fa-regular fa-trash-can trash-btn'></i>
-                        </button>
-                      </div>
-                        <hr class='m-0'>
-                    `
-        p.appendChild(main);
-      }
-
-      function removeNewFile(el, file) {
-        newfiles = newfiles.filter(i => i !== file);
-        var element = el;
-        element.parentElement.parentElement.remove();
-      }
+  // function getTextureFromFilesArray(typename){
+  //   var result ="";
+  //   for(i=0;i<files.length;i++){
+  //     if(files[i].split("_")[0] == typename){
+  //       result = files[i];
+  //     }
+  //   }
+  //   return result;
+  // }
 
 
-
-    var suggestedtagelements = [];
-    var selectedtagelements = [];
-
-    const node = document.getElementById("tag_create");
-    node.addEventListener("keyup", function(event) {
-      if (event.key === "Enter") {
-        // Do work
-        if (selectedtagelements.includes(node.value)) return;
-        addTag(node.value);
-        createTagSuggestion(node.value);
-        node.value = "";
-
-      }
-    });
-
-    function clearsuggestedtagelements() {
-      if (suggestedtagelements.length === 0) return;
-      suggestedtagelements.forEach(e => {
-        e.remove();
-      })
-    }
-
-    function createTagSuggestion(tagname) {
-      clearsuggestedtagelements();
-      suggestionsFromDatamuse(tagname).then(result => {
-        result.forEach(a => {
-          createSuggestElement(a.word);
-        });
+  function runPannellum(type) {
+    console.log(files);
+    var viewer;
+    if(type == 'cubemap'){
+      viewer = pannellum.viewer('panorama', {
+        "type": "cubemap",
+        "cubeMap": [
+          "../uploads/tmp/" + files[0].originalname,
+          "../uploads/tmp/" + files[1].originalname,
+          "../uploads/tmp/" + files[2].originalname,
+          "../uploads/tmp/" + files[3].originalname,
+          "../uploads/tmp/" + files[4].originalname,
+          "../uploads/tmp/" + files[5].originalname
+        ],
+        "autoLoad": true
+      });
+    } else {
+      viewer = pannellum.viewer('panorama', {
+      "type": "equirectangular",
+      "panorama": "../uploads/tmp/" + files[0].originalname,
+      "autoLoad": true
       });
     }
-    function createSuggestElement(tagname) {
-        let tag = document.createElement("div");
-        tag.innerHTML = tagname;
-        let addBtn = document.createElement("button")
-        addBtn.setAttribute('id', 'tag_suggest');
-        addBtn.innerHTML = `<div>${tagname}</div><i class="fa-solid fa-plus icon small-icon-size  ms-2 "></i>`;
-        addBtn.classList = "d-flex align-items-center bg-transparent suggested-tag border-secondary border rounded-2 p-1"
-        document.getElementById('tag_suggest').appendChild(addBtn);
-        addBtn.onclick = function () {
-          if (selectedtagelements.includes(tagname)) return;
-          addTag(tagname);
-          createTagSuggestion(tagname);
-        };
-        //add to suggested tag element array
-        suggestedtagelements.push(col);
+    console.log(viewer);
+    viewer.on('load', function(){
+      console.log('running viewer');
+      saveThumbnail(viewer);
+    });
+    // https://naver.github.io/egjs-view360/examples/img/equi.jpg
+  }
+
+  let thumbnailblob = '';
+  function saveThumbnail(viewer){
+    var img = viewer.getRenderer().render(
+      viewer.getPitch() / 180 * Math.PI,
+      viewer.getYaw() / 180 * Math.PI,
+      viewer.getHfov() / 180 * Math.PI,
+      {'returnImage': true});
+    var imgblob = dataURItoBlob(img);
+    console.log(imgblob);
+    console.log(typeof(imgblob));
+    thumbnailblob = imgblob;
+  }
+
+  function dataURItoBlob(dataURI) {
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    var byteString = atob(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+    // write the bytes of the string to an ArrayBuffer
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    //New Code
+    return new Blob([ab], {type: mimeString});
+}
+
+  async function createUploadContent() {
+    const formData = new FormData();
+    const request = new XMLHttpRequest();
+    var nextURL = "/asset/360/";
+    var postURL = "/savethreesixty";
+    console.log("create upload content");
+
+    var data = {
+      files : [],
+      title : document.querySelector(".title-info").value,
+      description : document.querySelector(".desc-info").value,
+      tags : [],
+      type : type,
+      }
+      var tags = document.querySelectorAll(".selected_tag_element");
+      for(i = 0; i<tags.length;i++){ data.tags.push(tags[i].innerHTML); }
+      data.files = files;
+      console.log(data);
+      for(i=0; i< newfiles.length;i++)
+      { formData.append('file', newfiles[i]); }
+      formData.append('data', JSON.stringify(data));
+
+      if(thumbnailblob){
+        var file = new File([thumbnailblob], 'new_thumbnail.png');
+        console.log(file);
+        formData.append('newthumbnail', file);
       }
 
-    function addTag(tagname) {
-        //get div child from group
-        var div = document.getElementById('selected_tags_group');
-        var tagBtn = document.createElement('button');
-        tagBtn.innerHTML = `<span class= "selected_tag_element">${tagname}</span><i class="fa-solid fa-xmark small-icon-size  ms-2 "></i>`;
-        tagBtn.classList = "p-0 text-white p-1 btn tag rounded-2 px-2"
-        tagBtn.onclick = function () {
-          div.removeChild(tagBtn);
-          selectedtagelements = selectedtagelements.filter(e => e !== tagname);
-        };
-        div.appendChild(tagBtn);
-        let taginput = document.getElementById("tag_input_content");
-        taginput.value = selectedtagelements.toString();
-        selectedtagelements.push(tagname);
+
+
+      request.onreadystatechange = function() { // listen for state changes
+      if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+        nextURL += request.responseText;
+        window.location = nextURL;
       }
+      }
+      request.open("POST", postURL, false);
+      request.send(formData);
+  }
+
+  function addNewFile(el) {
+      console.log(el.files[0].name);
+      newfiles.push(el.files[0]);
+      let p = document.querySelector('.all-files')
+      let main = document.createElement('div');
+      main.classList.add("new-file")
+      console.log(p);
+      main.innerHTML = `
+                    <div class='d-flex justify-content-between w-100'>
+                      <span class='p-0 text-muted text-overflow'>${el.files[0].name}</span>
+                      <button class='remove-file bg-transparent border-0'onclick='removeNewFile(this,"${el.files[0].name}")'>
+                        <i class='fa-regular fa-trash-can trash-btn'></i>
+                      </button>
+                    </div>
+                      <hr class='m-0'>
+                  `
+      p.appendChild(main);
+    }
+
+    function removeNewFile(el, file) {
+      newfiles = newfiles.filter(i => i !== file);
+      var element = el;
+      element.parentElement.parentElement.remove();
+    }
+
+
+
+  var suggestedtagelements = [];
+  var selectedtagelements = [];
+
+  const node = document.getElementById("tag_create");
+  node.addEventListener("keyup", function(event) {
+    if (event.key === "Enter") {
+      // Do work
+      if (selectedtagelements.includes(node.value)) return;
+      addTag(node.value);
+      createTagSuggestion(node.value);
+      node.value = "";
+
+    }
+  });
+
+  function clearsuggestedtagelements() {
+    if (suggestedtagelements.length === 0) return;
+    suggestedtagelements.forEach(e => {
+      e.remove();
+    })
+  }
+
+  function createTagSuggestion(tagname) {
+    clearsuggestedtagelements();
+    suggestionsFromDatamuse(tagname).then(result => {
+      result.forEach(a => {
+        createSuggestElement(a.word);
+      });
+    });
+  }
+  function createSuggestElement(tagname) {
+      let tag = document.createElement("div");
+      tag.innerHTML = tagname;
+      let addBtn = document.createElement("button")
+      addBtn.setAttribute('id', 'tag_suggest');
+      addBtn.innerHTML = `<div>${tagname}</div><i class="fa-solid fa-plus icon small-icon-size  ms-2 "></i>`;
+      addBtn.classList = "d-flex align-items-center bg-transparent suggested-tag border-secondary border rounded-2 p-1"
+      document.getElementById('tag_suggest').appendChild(addBtn);
+      addBtn.onclick = function () {
+        if (selectedtagelements.includes(tagname)) return;
+        addTag(tagname);
+        createTagSuggestion(tagname);
+      };
+      //add to suggested tag element array
+      suggestedtagelements.push(col);
+    }
+
+  function addTag(tagname) {
+      //get div child from group
+      var div = document.getElementById('selected_tags_group');
+      var tagBtn = document.createElement('button');
+      tagBtn.innerHTML = `<span class= "selected_tag_element">${tagname}</span><i class="fa-solid fa-xmark small-icon-size  ms-2 "></i>`;
+      tagBtn.classList = "p-0 text-white p-1 btn tag rounded-2 px-2"
+      tagBtn.onclick = function () {
+        div.removeChild(tagBtn);
+        selectedtagelements = selectedtagelements.filter(e => e !== tagname);
+      };
+      div.appendChild(tagBtn);
+      let taginput = document.getElementById("tag_input_content");
+      taginput.value = selectedtagelements.toString();
+      selectedtagelements.push(tagname);
+    }
 </script>
+
 
 <%- include('../partials/footer') %>

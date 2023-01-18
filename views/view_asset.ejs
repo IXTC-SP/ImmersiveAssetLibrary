@@ -278,7 +278,7 @@
   var data = <%-JSON.stringify(data) %>;
   var assettype = <%-JSON.stringify(assettype) %>;
   var files = [];
-  console.log(data);
+  console.log("view-asset",data);
   var modelviewer = document.getElementById("model-viewer");
   var thumbnails = document.getElementsByClassName("thumbnail-img");
   console.log(thumbnails);
@@ -293,60 +293,61 @@
       //  "../." + data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
        element.src =
        data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
+     
     });
     }
 
     if(assettype === "model"){
 
-    console.log(data.assetPath.folderpath + "/" + data.assetPath.gltfmodelpath);
-    //modelviewer.src = "../" + data.assetPath.gltfmodelpath;
-    modelviewer.src = data.assetPath.folderpath + "/" + data.assetPath.gltfmodelpath;
-    modelviewer.addEventListener("load", () => {
-    const material = modelviewer.model.materials[0];
-    // const createAndApplyTexture = async (channel) => {
-    //   // Applies the new texture to the specified channel.
-    //   var diffusepath = "../." + data.assetPath.folderpath.diffuse;
-    //   console.log(
-    //     "../." +  data.assetPath.folderpath + "/" + data.assetPath.diffuse
-    //   );
-    //   if (diffusepath != "") {
-    //     // var diffuse = await modelviewer.createTexture(
-    //     //   "../." +  data.assetPath.folderpath + "/" + data.assetPath.diffuse
-    //     // );
-    //     //frm bucket
-    //     var diffuse = await modelviewer.createTexture(
-    //       data.assetPath.folderpath + "/" + data.assetPath.diffuse
-    //     );
-    //     material.pbrMetallicRoughness["baseColorTexture"].setTexture(diffuse);
-    //   }
-    //   var emissivepath = "../." + data.assetPath.folderpath.emission;
-    //   if (emissivepath != "") {
-    //     var emission = await modelviewer.createTexture(
-    //       "../." +  data.assetPath.folderpath + "/" + data.assetPath.emission
-    //     );
-    //     material["emissiveTexture"].setTexture(emission);
-    //   }
-    // };
-    // createAndApplyTexture("baseColorTexture");
-   });
+      console.log(data.assetPath.folderpath + "/" + data.assetPath.gltfmodelpath);
+      //modelviewer.src = "../" + data.assetPath.gltfmodelpath;
+      modelviewer.src = data.assetPath.folderpath + "/" + data.assetPath.gltfmodelpath;
+      modelviewer.addEventListener("load", () => {
+      const material = modelviewer.model.materials[0];
+      // const createAndApplyTexture = async (channel) => {
+      //   // Applies the new texture to the specified channel.
+      //   var diffusepath = "../." + data.assetPath.folderpath.diffuse;
+      //   console.log(
+      //     "../." +  data.assetPath.folderpath + "/" + data.assetPath.diffuse
+      //   );
+      //   if (diffusepath != "") {
+      //     // var diffuse = await modelviewer.createTexture(
+      //     //   "../." +  data.assetPath.folderpath + "/" + data.assetPath.diffuse
+      //     // );
+      //     //frm bucket
+      //     var diffuse = await modelviewer.createTexture(
+      //       data.assetPath.folderpath + "/" + data.assetPath.diffuse
+      //     );
+      //     material.pbrMetallicRoughness["baseColorTexture"].setTexture(diffuse);
+      //   }
+      //   var emissivepath = "../." + data.assetPath.folderpath.emission;
+      //   if (emissivepath != "") {
+      //     var emission = await modelviewer.createTexture(
+      //       "../." +  data.assetPath.folderpath + "/" + data.assetPath.emission
+      //     );
+      //     material["emissiveTexture"].setTexture(emission);
+      //   }
+      // };
+      // createAndApplyTexture("baseColorTexture");
+    });
     }else{
       runPannellum(data.atrribute.type)
     }
   }
 
   function runPannellum(type) {
-    console.log(files);
     var viewer;
     if(type == 'cubemap'){
+      console.log(data.assetPath.folderpath + "/" + data.assetPath.cubemap.front)
       viewer =  pannellum.viewer('panorama', {
       "type": "cubemap",
       "cubeMap": [
-        "../cubemap/nx.png",
-        "../cubemap/pz.png",
-        "../cubemap/px.png",
-        "../cubemap/nz.png",
-        "../cubemap/py.png",
-        "../cubemap/ny.png"
+      data.assetPath.folderpath + "/" + data.assetPath.cubemap.front,
+      data.assetPath.folderpath + "/" + data.assetPath.cubemap.right,
+      data.assetPath.folderpath + "/" + data.assetPath.cubemap.back,
+      data.assetPath.folderpath + "/" + data.assetPath.cubemap.left,
+      data.assetPath.folderpath + "/" + data.assetPath.cubemap.top,
+      data.assetPath.folderpath + "/" + data.assetPath.cubemap.bottom,
       ],
       "autoLoad": true
     });

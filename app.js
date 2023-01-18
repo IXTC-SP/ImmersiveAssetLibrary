@@ -329,10 +329,10 @@ app.post(
       }
       tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
       console.log("---->>>", tmpContent);
-      // gltfmodel.ClearMaterialFromModel(gltfresult, function () {
-      //   res.end("complete");
-      // });
-      res.end("complete");
+      gltfmodel.ClearMaterialFromModel(gltfresult, function () {
+        res.end("complete");
+      });
+     
     });
   }
 );

@@ -33,11 +33,11 @@ const Save = async function (req, res, callback) {
   //assetpath.folderpath = "./uploads/" + body.folderpath.replaceAll(" ", "_");
   assetpath.folderpath = "./uploads/tmp";
   //assetpath.gltfmodelpath = body.gltfmodelpath.replace("tmp", body.folderpath);
-  assetpath.gltfmodelpath = body.gltfmodelpath;
+  assetpath.gltfmodelpath = "model.gltf";
   assetpath.diffuse = body.diffusepath;
   assetpath.emission = body.emissivepath;
   //assetpath.thumbnail = body.thumbnail == '' ? req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath) : body.thumbnail;
-  assetpath.thumbnail = body.thumbnail;
+  assetpath.thumbnail = req.files.newthumbnail[0].originalname;
   console.log(assetpath.folderpath, "before fast folder size");
   console.log(body.format);
   let modelOutFolderSize = null
@@ -91,10 +91,10 @@ const Save = async function (req, res, callback) {
 module.exports.save = Save;
 
 const updateToAwsPaths = async function (doc, uploadedDataToAws, cb){
-  let folderPath =  uploadedDataToAws[uploadedDataToAws.length-1].folderPath;
+  let newFolderPath =  uploadedDataToAws[uploadedDataToAws.length-1].folderPath;
  
   let assetpath = new AssetPath();
-  assetpath.folderpath = folderPath;
+  assetpath.folderpath = newFolderPath;
   // assetpath.gltfmodelpath = `${folderPath}/model.gltf`;
   // assetpath.diffuse = `${folderPath}/${doc.assetPath.diffuse}`;
   // assetpath.emission = `${folderPath}/${doc.assetPath.emission}`;
@@ -103,7 +103,12 @@ const updateToAwsPaths = async function (doc, uploadedDataToAws, cb){
   //assetpath.diffuse = `${folderPath}/${doc.assetPath.diffuse}`;
   //assetpath.emission = `${folderPath}/${doc.assetPath.emission}`;
   assetpath.thumbnail = `new_thumbnail.png`;
- 
+  // const result = await modeldb.findOneAndUpdate(
+  //   { _id: doc._id },
+  //   { $set: { "assetPath.folderpath": newFolderPath } },
+  //   { new: true }
+  // );
+  // console.log(result)
  
   changePath(doc._id, assetpath) 
   

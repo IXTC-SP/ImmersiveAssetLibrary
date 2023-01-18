@@ -22,19 +22,22 @@ const awsMethods = {
     let allFiles = [];
     let params = null;
     if (type === "360") {
-      tmpContent.image.equi?
-      allFiles.push(tmpContent.image.equi):
-      null
+      if(tmpContent.image.equi){
+        allFiles.push(tmpContent.image.equi)
+      }else{
+        allFiles.push(tmpContent.image.top)
+        allFiles.push(tmpContent.image.front)
+        allFiles.push(tmpContent.image.bottom)
+        allFiles.push(tmpContent.image.right)
+        allFiles.push(tmpContent.image.left)
+        allFiles.push(tmpContent.image.back)
+      }    
     } else {
       tmpContent.image
         ? (allFiles = [...tmpContent.image, ...tmpContent.model])
         : (allFiles = [...tmpContent.model]);
         allFiles.push({ gltfPath: "uploads\\tmp\\model.gltf" });
     }
-
-    // tmpContent.image
-    //   ? (allFiles = [...tmpContent.image, ...tmpContent.model])
-    //   : (allFiles = [...tmpContent.model]);
     allFiles.push(tmpContent.thumbnail);
     console.log("allfiles", allFiles)
     try {
