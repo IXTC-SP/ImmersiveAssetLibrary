@@ -18,28 +18,28 @@ const s3 = new AWS.S3({
 const bucketName = "immersive-asset-library-bucket";
 const awsMethods = {
   uploadFiles: async (tmpContent, objId, type, req, res, next) => {
-    console.log(tmpContent)
+    console.log(tmpContent);
     let allFiles = [];
     let params = null;
     if (type === "360") {
-      if(tmpContent.image.equi){
-        allFiles.push(tmpContent.image.equi)
-      }else{
-        allFiles.push(tmpContent.image.top)
-        allFiles.push(tmpContent.image.front)
-        allFiles.push(tmpContent.image.bottom)
-        allFiles.push(tmpContent.image.right)
-        allFiles.push(tmpContent.image.left)
-        allFiles.push(tmpContent.image.back)
-      }    
+      if (tmpContent.image.equi) {
+        allFiles.push(tmpContent.image.equi);
+      } else {
+        allFiles.push(tmpContent.image.top);
+        allFiles.push(tmpContent.image.front);
+        allFiles.push(tmpContent.image.bottom);
+        allFiles.push(tmpContent.image.right);
+        allFiles.push(tmpContent.image.left);
+        allFiles.push(tmpContent.image.back);
+      }
     } else {
       tmpContent.image
         ? (allFiles = [...tmpContent.image, ...tmpContent.model])
         : (allFiles = [...tmpContent.model]);
-        allFiles.push({ gltfPath: "uploads\\tmp\\model.gltf" });
+      allFiles.push({ gltfPath: "uploads\\tmp\\model.gltf" });
     }
     allFiles.push(tmpContent.thumbnail);
-    console.log("allfiles", allFiles)
+    console.log("allfiles", allFiles);
     try {
       const promises = allFiles.map(async (file) => {
         return await new Promise((resolve, reject) => {
@@ -47,7 +47,7 @@ const awsMethods = {
             file.gltfPath ? file.gltfPath : file.path
           );
           // Setting up S3 upload parameters
-           params = {
+          params = {
             Bucket: bucketName,
             Key: file.gltfPath
               ? `uploads/${objId}/model.gltf`
@@ -126,6 +126,39 @@ const awsMethods = {
     } catch (error) {
       console.log(error);
       return error;
+    }
+  },
+  deleteFiles: async (objId) => {
+    try {
+      let params = {
+        Bucket: bucketName,
+        Prefix: `uploads/${objId}/`,
+      };
+
+      const listedObjects = await s3.listObjectsV2(params).promise();
+
+      if (listedObjects.Contents.length === 0) return;
+
+      const deleteParams = {
+        Bucket: bucketName,
+        Delete: { Objects: [] },
+      };
+
+      listedObjects.Contents.forEach(({ Key }) => {
+        deleteParams.Delete.Objects.push({ Key });
+      });
+
+      const data = await s3.deleteObjects(deleteParams, function (err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else 
+        console.log(data)
+        return data ; // successful response
+      }).promise()
+      return data
+
+    } catch (error) {
+      console.log(error)
+      return error
     }
   },
 };

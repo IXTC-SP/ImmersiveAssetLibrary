@@ -4,12 +4,9 @@ const bcrypt = require("bcryptjs");
 const userModel = require("../models/user");
 const modelModel = require("../models/model");
 const threeSixtyModel = require("../models/threesixty");
-const tokenModel = require("../models/token");
 const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
-const crypto = require("crypto");
-const nodemailer = require("nodemailer");
-
+const awsMethods = require("../middlewares/aws_methods");
 const { DateTime } = require("luxon");
 const console = require("console");
 const errorMessage = (error, message) => {
@@ -337,7 +334,11 @@ const controller = {
     let errorObj = errorMessage(false, " ");
     try {
       await dbmanager.deleteOne({ _id: req.params.asset_id });
-      isSuccess = alertMessage(true, "Asset successfully deleted");
+      let deletedInAws = await awsMethods.deleteFiles(req.params.asset_id)
+      console.log(deletedInAws)
+      if (deletedInAws.Deleted){
+        isSuccess = alertMessage(true, "Asset successfully deleted");
+      }      
     } catch (error) {
       errorObj = errorMessage(true, error.message);
     }

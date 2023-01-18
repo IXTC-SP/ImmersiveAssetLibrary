@@ -9,7 +9,7 @@
       <%uploads.models.forEach(card=>{%>
         <div class="card upload-card col-md-3 p-0">
           <div class="upload-card-img-div">
-            <img src="<%= card.assetPath.folderpath.slice(1) +
+            <img src="<%= card.assetPath.folderpath +
                 '/' +
                 card.assetPath.thumbnail %>" class="w-100 upload-card-img" alt="<%= card._id %>" />
           </div>
@@ -49,7 +49,7 @@
       <%uploads["360"].forEach(card=>{%>
         <div class="card upload-card col-md-3 p-0 ">
           <div class="upload-card-img-div">
-            <img src="<%= card.assetPath.folderpath.slice(1) +
+            <img src="<%= card.assetPath.folderpath +
                 '/' +
                 card.assetPath.thumbnail %>" class="w-100 upload-card-img" alt="<%= card._id %>" />
           </div>
