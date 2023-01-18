@@ -63,9 +63,9 @@ const Save = async function (req, res, callback) {
     asset.save(async function (err, obj) {
       if (err) return console.log(err);
       else {
-        var newassetpath = assetpath;
-        newassetpath.folderpath = "./uploads/" + obj._id.toString();
-        changePath(obj._id, newassetpath);
+        // var newassetpath = assetpath;
+        // newassetpath.folderpath = "./uploads/" + obj._id.toString();
+        changePath(obj._id, assetpath);
         callback(obj._id.toString());
       }
     });
@@ -81,23 +81,23 @@ module.exports.save = Save;
 const updateToAwsPaths = async function (doc, uploadedDataToAws, cb) {
   let newFolderPath =
     uploadedDataToAws[uploadedDataToAws.length - 1].folderPath;
-  let attribute = doc.atrribute;
+  // let attribute = doc.atrribute;
 
-  let assetpath = new AssetPath();
-  assetpath.folderpath = newFolderPath;
-  if (attribute.type == "cubemap") {
-    assetpath.cubemap = doc.assetPath.cubemap;
-    // assetpath.cubemap.right = doc.assetPath.cubemap.right
-    // assetpath.cubemap.back = doc.assetPath.cubemap.back
-    // assetpath.cubemap.left = doc.assetPath.cubemap.left
-    // assetpath.cubemap.top = doc.assetPath.cubemap.top
-    // assetpath.cubemap.bottom = doc.assetPath.cubemap.bottom
-  } else {
-    assetpath.equirectangular = doc.assetPath.equirectangular;
-  }
-  assetpath.thumbnail = doc.assetPath.thumbnail;
+  // let assetpath = new AssetPath();
+  // assetpath.folderpath = newFolderPath;
+  // if (attribute.type == "cubemap") {
+  //   assetpath.cubemap = doc.assetPath.cubemap;
+  //   // assetpath.cubemap.right = doc.assetPath.cubemap.right
+  //   // assetpath.cubemap.back = doc.assetPath.cubemap.back
+  //   // assetpath.cubemap.left = doc.assetPath.cubemap.left
+  //   // assetpath.cubemap.top = doc.assetPath.cubemap.top
+  //   // assetpath.cubemap.bottom = doc.assetPath.cubemap.bottom
+  // } else {
+  //   assetpath.equirectangular = doc.assetPath.equirectangular;
+  // }
+  // assetpath.thumbnail = doc.assetPath.thumbnail;
 
-  console.log("----> updated path", assetpath);
+  // console.log("----> updated path", assetpath);
   const result = await threesixtydb.findOneAndUpdate(
     { _id: doc._id },
     { $set: { "assetPath.folderpath": newFolderPath } },

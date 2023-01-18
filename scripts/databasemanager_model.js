@@ -34,8 +34,8 @@ const Save = async function (req, res, callback) {
   assetpath.folderpath = "./uploads/tmp";
   //assetpath.gltfmodelpath = body.gltfmodelpath.replace("tmp", body.folderpath);
   assetpath.gltfmodelpath = "model.gltf";
-  assetpath.diffuse = body.diffusepath;
-  assetpath.emission = body.emissivepath;
+  // assetpath.diffuse = body.diffusepath;
+  // assetpath.emission = body.emissivepath;
   //assetpath.thumbnail = body.thumbnail == '' ? req.files.newthumbnail[0].originalname.replace('tmp', body.folderpath) : body.thumbnail;
   assetpath.thumbnail = req.files.newthumbnail[0].originalname;
   console.log(assetpath.folderpath, "before fast folder size");
@@ -78,11 +78,11 @@ const Save = async function (req, res, callback) {
     model.save(function (err, obj) {
       if (err) return console.log(err);
       else {
-        var newassetpath = assetpath;
-        newassetpath.folderpath = "./uploads/" + obj._id.toString();
-        newassetpath.gltfmodelpath =
-          "../uploads/" + obj._id.toString() + "/model.gltf"; //sandra added
-        changePath(obj._id, newassetpath);
+        // var newassetpath = assetpath;
+        // newassetpath.folderpath = "./uploads/" + obj._id.toString();
+        // newassetpath.gltfmodelpath =
+        //   "../uploads/" + obj._id.toString() + "/model.gltf"; //sandra added
+        changePath(obj._id, assetpath);
         callback(obj._id.toString());
       }
     });
@@ -93,24 +93,24 @@ module.exports.save = Save;
 const updateToAwsPaths = async function (doc, uploadedDataToAws, cb){
   let newFolderPath =  uploadedDataToAws[uploadedDataToAws.length-1].folderPath;
  
-  let assetpath = new AssetPath();
-  assetpath.folderpath = newFolderPath;
-  // assetpath.gltfmodelpath = `${folderPath}/model.gltf`;
-  // assetpath.diffuse = `${folderPath}/${doc.assetPath.diffuse}`;
-  // assetpath.emission = `${folderPath}/${doc.assetPath.emission}`;
-  // assetpath.thumbnail = `${folderPath}/new_thumbnail.png`;
-  assetpath.gltfmodelpath = `model.gltf`;
-  //assetpath.diffuse = `${folderPath}/${doc.assetPath.diffuse}`;
-  //assetpath.emission = `${folderPath}/${doc.assetPath.emission}`;
-  assetpath.thumbnail = `new_thumbnail.png`;
-  // const result = await modeldb.findOneAndUpdate(
-  //   { _id: doc._id },
-  //   { $set: { "assetPath.folderpath": newFolderPath } },
-  //   { new: true }
-  // );
-  // console.log(result)
+  // let assetpath = new AssetPath();
+  // assetpath.folderpath = newFolderPath;
+  // // assetpath.gltfmodelpath = `${folderPath}/model.gltf`;
+  // // assetpath.diffuse = `${folderPath}/${doc.assetPath.diffuse}`;
+  // // assetpath.emission = `${folderPath}/${doc.assetPath.emission}`;
+  // // assetpath.thumbnail = `${folderPath}/new_thumbnail.png`;
+  // assetpath.gltfmodelpath = `model.gltf`;
+  // //assetpath.diffuse = `${folderPath}/${doc.assetPath.diffuse}`;
+  // //assetpath.emission = `${folderPath}/${doc.assetPath.emission}`;
+  // assetpath.thumbnail = `new_thumbnail.png`;
+  const result = await modeldb.findOneAndUpdate(
+    { _id: doc._id },
+    { $set: { "assetPath.folderpath": newFolderPath } },
+    { new: true }
+  );
+  console.log(result)
  
-  changePath(doc._id, assetpath) 
+  //changePath(doc._id, assetpath) 
   
   cb(doc._id.toString())
   console.log("updated")
