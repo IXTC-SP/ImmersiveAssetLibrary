@@ -547,11 +547,13 @@ app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function (req, res) {
     tmpContent["image"]["equi"] = req.files.image[0];
   }
   tmpContent["format"] = req.body.format;
-  console.log("-> to tmp", tmpContent);
+  console.log("-> to tmp", typeof tmpContent);
   res.end("complete");
 });
 
 app.get("/editpage/360", function (req, res) {
+  console.log( tmpContent.format )
+  console.log( tmpContent.image )
   res.render("demopages/editpage-360", {
     format: tmpContent.format,
     images: tmpContent.image,
