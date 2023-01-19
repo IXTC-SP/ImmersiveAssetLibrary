@@ -319,26 +319,33 @@ const controller = {
   },
   deleteUploads: async (req, res, next) => {
     let dbmanager;
+    let downloadedType;
     switch (req.params.type){
       case 'model':
         console.log('model asset type');
         dbmanager = modelModel;
+        downloadedType = "downloadedModels"
         break;
       case '360':
         console.log('360 asset type');
         dbmanager = threeSixtyModel;
+        downloadedType = "downloadedThreeSixty"
         break;
     }
     console.log("delete uploads");
     let isSuccess = alertMessage(false, " ");
     let errorObj = errorMessage(false, " ");
     try {
+      await userModel.updateMany({ downloadedType : [req.params.asset_id] }, { $pullAll: { downloadedType: [req.params.asset_id] } });
+      console.log("1")
       await dbmanager.deleteOne({ _id: req.params.asset_id });
-      let deletedInAws = await awsMethods.deleteFiles(req.params.asset_id)
+      console.log("2")
+      const deletedInAws = await awsMethods.deleteFiles(req.params.asset_id)
+      console.log("3")
       console.log(deletedInAws)
       if (deletedInAws.Deleted){
         isSuccess = alertMessage(true, "Asset successfully deleted");
-      }      
+      }
     } catch (error) {
       errorObj = errorMessage(true, error.message);
     }

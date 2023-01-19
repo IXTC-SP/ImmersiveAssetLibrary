@@ -63,9 +63,23 @@
     }
 
     .texture-assign-box {
-      border: 1px solid black;
+      border: 1px solid #4f4f4f;
       background-color: white;
+      padding: 10px;
     }
+    .texture-assign-box.top {
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+    }
+    .texture-assign-box.bottom {
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+    .texture-assign-box.left {
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+   
 
     /* The Modal (background) */
     .modal {
@@ -161,6 +175,11 @@
       align-items: center;
       justify-content: center;
     }
+
+    .cubemap-texture-assign{
+      width: 100%;
+      text-overflow: ellipsis;
+    }
   </style>
 
   <!-- <div class="text-center">
@@ -235,10 +254,11 @@
     <div class="modal-content">
       <span class="close" onclick="closeModalContent()">&times;</span>
       <div class="cubemap-content">
+        <p id="assign-texture-err" class="error-message m-0 d-none">Assign all textures before proceeding.</p>
         <p>Assign Texture :</p>
         <div class="container">
           <div class="row" style="height: 100px;">
-            <div class="col-3 texture-assign-box">
+            <div class="col-3 texture-assign-box top">
               <label for="top-texture-selection">Top</label>
               <select name="top-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
@@ -260,14 +280,14 @@
               <select name="back-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
             </div>
-            <div class="col-3 texture-assign-box">
+            <div class="col-3 texture-assign-box left">
               <label for="left-texture-selection">Left</label>
               <select name="left-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
             </div>
           </div>
           <div class="row" style="height: 100px;">
-            <div class="col-3 texture-assign-box">
+            <div class="col-3 texture-assign-box bottom">
               <label for="bottom-texture-selection">Bottom</label>
               <select name="bottom-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
@@ -275,7 +295,7 @@
           </div>
         </div>
       </div>
-      <div class="model-content ">
+      <!-- <div class="model-content ">
         <div class="d-flex flex-column mb-3 w-100">
           <p><strong>Assign Texture : </strong></p>
           <label for="diffuse-texture-selection">Diffuse</label>
@@ -297,9 +317,9 @@
           <select name="thumbnail" class="model-texture-assign mb-1" id="texture-selection">
           </select>
         </div>
-      </div>
+      </div> -->
       <!-- <button class="page-btn left" type="button" name="button" onclick="createuploadcontent()">Next</button> -->
-      <button class="btn btn-size theme-color btn-rounded upload-page-btn" type="button" onclick="createuploadcontent()"
+      <button class="btn btn-size theme-color btn-rounded upload-page-btn" type="button" onclick="checkCubemapTextures()"
         name="button"> Next
       </button>
 
@@ -318,6 +338,7 @@
       const dragText = document.querySelector(".drag-text");
       const collectedfiles = document.querySelector(".collected-files");
       const nextpagebtn = document.querySelector(".upload-page-btn");
+      const assignTextureErr = document.querySelector("#assign-texture-err")
 
       //reload page when back button on browser is pressed
       window.addEventListener("pageshow", function (event) {
@@ -348,6 +369,7 @@
 
       function assigntexture(e) {
         var filename = e.target.name.split("-")[0];
+        console.log("---->", fileObjs)
         fileObjs.forEach((f, i) => {
           if (f.file.name == e.target.value) {
             f.filename = filename;
@@ -355,6 +377,18 @@
           }
         })
       }
+
+      function checkCubemapTextures() {
+        if (!checkTextureIsAssigned(cubemaptextureassignselect)){
+          assignTextureErr.classList.remove("d-none");
+          if(!assignTextureErr.classList.contains("d-block")){
+            assignTextureErr.classList += " d-block"
+          }
+        }else{
+          createuploadcontent();
+        }
+      }
+
       function createuploadcontent() {
         const formData = new FormData();
         const request = new XMLHttpRequest();
@@ -422,20 +456,22 @@
           setupFileObjs();
         //if model file, process and popup to assign textures
         if (currenttype == "3dmodel") {
-          changeModalContent("model");
+          //changeModalContent("model");
+          createuploadcontent()
         }
         //if cubemap file, process and popup to assign textures
         if (currenttype == "360image") {
           if (currentformat == 'cubemap') changeModalContent("cubemap");
-          else createuploadcontent();
+          else 
+          {
+
+            createuploadcontent();
+          }
         }
-        // if (currenttype == "360image") {
+
+        // if (currenttype == "script") {
         //   createuploadcontent();
         // }
-
-        if (currenttype == "script") {
-          createuploadcontent();
-        }
         }
 
        
@@ -760,13 +796,13 @@
       }
 
       //modal content selection
-      const modelmodalcontent = document.querySelector(".model-content");
+      //const modelmodalcontent = document.querySelector(".model-content");
       const cubemapmodalcontent = document.querySelector(".cubemap-content")
       const cubemaptextureassignselect = document.querySelectorAll('.cubemap-texture-assign');
       const modeltextureassignselect = document.querySelectorAll('.model-texture-assign');
       const modalcontent = document.querySelector(".modal")
       modalcontent.style = "display:none;"
-      modelmodalcontent.style = "display:none;"
+      //modelmodalcontent.style = "display:none;"
       cubemapmodalcontent.style = "display:none;"
 
       function setupTextureAssignOptions(selects) {
@@ -785,7 +821,7 @@
             allowOnlySingleTextureAssigning(selects, e);
             assigntexture(e);
           }
-          createoption("none", "none", selects[i]);
+          createoption("Select", "Select", selects[i]);
           for (var j = 0; j < textureassignarray.length; j++) {
             createoption(textureassignarray[j].name, textureassignarray[j].name, selects[i]);
           }
@@ -795,14 +831,22 @@
       function allowOnlySingleTextureAssigning(selects, e) {
         for (var i = 0; i < selects.length; i++) {
           if (selects[i] != e.target && selects[i].value == e.target.value) {
-            selects[i].value = "none";
+            selects[i].value = "Select";
+          }
+        }
+      }
+
+      function checkTextureIsAssigned(selects) {
+        for (var i = 0; i < selects.length; i++) {
+          if (selects[i] === "Select") {
+            return false
           }
         }
       }
 
       function closeModalContent() {
         modalcontent.style = "display:none;"
-        modelmodalcontent.style = "display:none;"
+        //modelmodalcontent.style = "display:none;"
         cubemapmodalcontent.style = "display:none;"
       }
 
@@ -817,8 +861,10 @@
             break;
           case "cubemap":
             //show cubemap content
+            assignTextureErr.classList.remove("d-block");
+            assignTextureErr.classList += " d-none"
             modalcontent.style = "display:block;"
-            modelmodalcontent.style = "display:none;"
+            //modelmodalcontent.style = "display:none;"
             cubemapmodalcontent.style = "display:block;"
             setupTextureAssignOptions(cubemaptextureassignselect);
             break;

@@ -42,6 +42,7 @@
         >Profile</a
       >
     </li>
+    <% if (user.isAdmin){%>
     <li class="nav-item" role="presentation">
       <a
         class="nav-link <%= showUploads? 'active' :'' %>"
@@ -50,6 +51,7 @@
         >Uploads</a
       >
     </li>
+    <%}%>
     <li class="nav-item" role="presentation">
       <a
         class="nav-link <%= showDownloads? 'active' :'' %>"
@@ -58,6 +60,7 @@
         >Downloads</a
       >
     </li>
+    <% if (user.isAdmin){%>
     <li class="nav-item" role="presentation">
       <a
         class="nav-link <%= showEnrollment? 'active' :'' %>"
@@ -66,6 +69,7 @@
         >Enrollment</a
       >
     </li>
+    <%}%>
   </ul>
 
   <!-- Tabs navs -->
@@ -94,6 +98,7 @@
     >
       <%- include('./profile')%>
     </div>
+    <% if (user.isAdmin){%>
     <div
       class="tab-pane fade <%= showUploads? 'show active' :'' %>"
       id="ex3-tabs-2"
@@ -102,6 +107,7 @@
     >
       <%- include('./uploads'); %>
     </div>
+    <%}%>
     <div
       class="tab-pane fade <%= showDownloads? 'show active' :'' %>"
       id="ex3-tabs-3"
@@ -110,6 +116,7 @@
     >
       <%- include('./downloads'); %>
     </div>
+    <% if (user.isAdmin){%>
     <div
       class="tab-pane fade <%= showEnrollment? 'show active' :'' %>"
       id="ex3-tabs-4"
@@ -118,6 +125,7 @@
     >
       <%- include('./enrollment'); %>
     </div>
+    <%}%>
   </div>
 </section>
 <%- include('../partials/footer'); %>

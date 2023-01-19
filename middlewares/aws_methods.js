@@ -1,10 +1,7 @@
 const fs = require("fs");
 const AWS = require("aws-sdk");
 require("dotenv").config();
-const join = require("path").join;
-const s3Zip = require("s3-zip");
 const archiver = require("archiver");
-const path = require("path");
 const stream = require("stream");
 // Enter copied or downloaded access ID and secret key here
 const ID = process.env.AWS_ACCESS_KEY_ID;
@@ -66,6 +63,7 @@ const awsMethods = {
               console.log(`File uploaded successfully. ${data.Location}`);
               resolve(data);
             }
+            
           });
         });
       });
@@ -88,23 +86,10 @@ const awsMethods = {
       Prefix: `uploads/${objId}/`, // Can be your folder name
     };
     try {
-      //get list of Files in folder
-      const listObjectsPromise = new Promise((resolve, reject) => {
-        const dataContents = s3.listObjectsV2(params, function (err, data) {
-          if (err) {
-            reject(err, err.stack); // an error occurred
-          } else {
-            resolve(data.Contents);
-            // successful respons
-          }
-        });
-
-        return dataContents;
-      });
-      let files = await listObjectsPromise;
+      let files = await s3.listObjectsV2(params).promise()
       //get each file content
       const archive = archiver("zip", { zlib: { level: 5 } });
-      const getObjectsPromise = files.map(async (item) => {
+      const getObjectsPromise = files.Contents.map(async (item) => {
         return await new Promise((resolve, reject) => {
           // using pass through stream object to wrap the stream from aws s3
           const passthrough = new stream.PassThrough();
