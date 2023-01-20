@@ -18,7 +18,7 @@ const alertMessage = (alert, message) => {
 };
 
 const emailValidation = (emailInput) => {
- // return true;
+  // return true;
   const spMailFormat = "[a-z.]*[@]\sp.edu.sg"
   const ichatMailFormat  = "[a-z.]*[@]\ichat.sp.edu.sg"
   if (emailInput.match(spMailFormat) || emailInput.match(ichatMailFormat)) {
@@ -29,6 +29,8 @@ const emailValidation = (emailInput) => {
 
   return false
 };
+
+const superAdmin = { "637c8339c46b477d10e8b585" : "sandra_fong@sp.edu.sg"}
 
 // let isSuccess = alertMessage(false, "");
 // let errorObj = errorMessage(false, "");
@@ -307,8 +309,15 @@ const controller = {
     let isSuccess = alertMessage(false, " ");
     let errorObj = errorMessage(false, " ");
     try {
-      await userModel.deleteOne({ _id: req.params.acct_id });
-      isSuccess = alertMessage(true, "Account successfully deleted");
+      //check it is not me 
+      console.log(superAdmin[req.params.acct_id])
+      if(superAdmin[req.params.acct_id] === undefined){
+        await userModel.deleteOne({ _id: req.params.acct_id });
+        isSuccess = alertMessage(true, "Account successfully deleted");
+      }else{
+        errorObj = errorMessage(true, "You are not authorized to delete this user");
+      }
+    
     } catch (error) {
       errorObj = errorMessage(true, error.message);
     }

@@ -54,8 +54,8 @@
     <div class="card upload-card col-md-3 p-0">
       <div class="upload-card-img-div">
         <img
-          src="<%= card.assetPath.folderpath.slice(1) +
-                '/' +
+          src="<%= card.assetPath.folderpath + '/'
+                 +
                 card.assetPath.thumbnail %>"
           class="w-100 upload-card-img"
           alt="<%= card._id %>"
@@ -66,9 +66,9 @@
       >
         <div class="my-auto mx-0">
           <p class="card-title m-0"><%= card.title %></p>
-          <span class="card-text text-overflow"><small>
-            <%= card.tags.toString() %>
-          </small></span>
+          <p class="card-text text-overflow ">
+            <small> <%= card.tags.toString().replaceAll(","," ") %></small>
+           </p>
         </div>
         <div class="my-auto mx-0">
           <form action="/downloadasset/model/<%= card._id %>" method="POST">
