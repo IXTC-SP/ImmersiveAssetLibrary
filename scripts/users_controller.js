@@ -18,16 +18,16 @@ const alertMessage = (alert, message) => {
 };
 
 const emailValidation = (emailInput) => {
-  return true;
-  // const spMailFormat = "[a-z.]*[@]\sp.edu.sg"
-  // const ichatMailFormat  = "[a-z.]*[@]\ichat.sp.edu.sg"
-  // if (emailInput.match(spMailFormat) || emailInput.match(ichatMailFormat)) {
-  //   console.log("email allowed")
-  //   return true
-  // }
-  // console.log("email disallowed")
+ // return true;
+  const spMailFormat = "[a-z.]*[@]\sp.edu.sg"
+  const ichatMailFormat  = "[a-z.]*[@]\ichat.sp.edu.sg"
+  if (emailInput.match(spMailFormat) || emailInput.match(ichatMailFormat)) {
+    console.log("email allowed")
+    return true
+  }
+  console.log("email disallowed")
 
-  // return false
+  return false
 };
 
 // let isSuccess = alertMessage(false, "");
