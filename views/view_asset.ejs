@@ -277,6 +277,7 @@
 <script type="text/javascript">
   var data = <%-JSON.stringify(data) %>;
   var assettype = <%-JSON.stringify(assettype) %>;
+  var presignedUrl = <%-JSON.stringify(presignedUrl) %>;
   var files = [];
   console.log("view-asset",data);
   var modelviewer = document.getElementById("model-viewer");
@@ -289,11 +290,9 @@
     console.log(data)
     if(data.assetPath.thumbnail != null){
     Array.from(thumbnails).forEach((element) => {
-      // element.src =
-      //  "../." + data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
-       element.src =
-       data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
-     
+      //  element.src =
+      //  data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
+       element.src = presignedUrl
     });
     }
 

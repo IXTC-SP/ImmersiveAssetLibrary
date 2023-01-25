@@ -88,7 +88,7 @@ const userModel = require("./models/user");
 app.get(
   "/asset/:type/:modelid",
   authMiddleware.isAuthenticated,
-  function (req, res) {
+  async function (req, res) {
     var dbmanager;
     var isModel;
     switch (req.params.type) {
@@ -104,12 +104,16 @@ app.get(
         break;
     }
     console.log(req.params.modelid)
-    dbmanager.FindModelById(req.params.modelid, (result) => {
+    
+    dbmanager.FindModelById(req.params.modelid, async (result) => {
       console.log("---->", result);
       console.log(result.owner);
+      const presignedUrl = await awsMethods.getSignedFileUrl(req.params.modelid, result.assetPath.thumbnail)
+      console.log("preassignedurl", presignedUrl)
       userModel.findById(result.owner, function (err, doc) {
         console.log(doc.email);
         res.render("view_asset", {
+          presignedUrl,
           data: result,
           assettype: req.params.type,
           owner: doc.email,
