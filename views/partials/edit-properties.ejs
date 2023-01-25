@@ -12,7 +12,7 @@
                 <div>
                     <!-- <h6 class="asset-name">cyberpunk shiba inu</h6> -->
                     <model-viewer class="model-viewer-dimensions border border-secondary rounded-4" id="model-viewer" alt=""
-                      src='../uploads/shiba/gltf/scene.gltf' ar ar-modes="webxr scene-viewer quick-look" seamless-poster
+                      src='../uploads/tmp/model.gltf' ar ar-modes="webxr scene-viewer quick-look" seamless-poster
                       shadow-intensity="1" camera-controls enable-pan></model-viewer>
                   </div>
             <%}else{%>
@@ -42,21 +42,24 @@
                   <div class="accordion-body p-2">
                     <%if(isModel){%>
                     <div class="all-files">
-                      <% for(var i=0; i < content.imagefiles.length; i++) {%>
-                        <div class="current-file">
-                          <div class="d-flex justify-content-between w-100">
-
-                            <span class="p-0 text-muted text-overflow">
-                              <%=content.imagefiles[i]%>
-                            </span>
-                            <button class="remove-file bg-transparent border-0"
-                              onclick="removeExistingFile(this,'<%-content.imagefiles[i]%>')"><i
-                                class="fa-regular fa-trash-can trash-btn"></i></button>
+                      <%if (content.imagefiles){%>
+                        <% for(var i=0; i < content.imagefiles.length; i++) {%>
+                          <div class="current-file">
+                            <div class="d-flex justify-content-between w-100">
+  
+                              <span class="p-0 text-muted text-overflow">
+                                <%=content.imagefiles[i]%>
+                              </span>
+                              <button class="remove-file bg-transparent border-0"
+                                onclick="removeExistingFile(this,'<%-content.imagefiles[i]%>')"><i
+                                  class="fa-regular fa-trash-can trash-btn"></i></button>
+                            </div>
+                            <hr class="m-0">
                           </div>
-                          <hr class="m-0">
-                        </div>
-
-                        <%}%>
+  
+                          <%}%>
+                      <%}%>
+                      
                     </div>
                     <%}else{%>
                       <div class="all-files">
@@ -92,45 +95,24 @@
                     </div>
                     <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
                       <input class="rigged-info" name="optradio" class="form-check-input" type="checkbox"
-                        id="detail-rigged" checked value="rigged" />
+                        id="detail-rigged" value="rigged" />
                       <label class="form-check-label" for="detail-rigged" checked>Rigged</label>
                     </div>
                     <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
                       <input class="animated-info" name="optradio" class="form-check-input" type="checkbox"
-                        id="detail-animated" checked value="animated" />
+                        id="detail-animated" value="animated" />
                       <label class="form-check-label" for="detail-animated" checked>Animated</label>
                     </div>
                     <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
                       <input class="textured-info" name="optradio" class="form-check-input" type="checkbox"
-                        id="detail-texture" checked value="textures" />
+                        id="detail-texture" value="textures" />
                       <label class="form-check-label" for="detail-texture" checked>Textured</label>
                     </div>
                   </div>
   
                 </div>
               </div>
-            <%}else{%>
-              <div>
-                <div class="d-flex justify-content-between flex-wrap">
-                  <h6 class="w-100">Technical Details</h6>
-                  <div class="d-flex flex-wrap">
-                    <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
-                      <input name="optradio" type="radio"
-                        id="inlineCheckbox1" value="option1" />
-                      <label class="form-check-label" for="inlineCheckbox1">Equirectangular</label>
-                    </div>
-                    <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
-                      <input name="optradio" type="radio"
-                        id="inlineCheckbox2" checked value="option2" />
-                      <label class="form-check-label" for="inlineCheckbox2" checked>Cubemap</label>
-                    </div>
-                   
-                  </div>
-  
-                </div>
-              </div>
             <%}%>
-          
             <div>
               <h6>Tags</h6>
               <input type="text" id="tag_input_content" name="tag_input_content" value="" readonly>
@@ -147,7 +129,8 @@
         </div>
         <div class="row justify-content-between">     
             <div class="col-4">
-              <button type="button" class="btn btn-outline-info rounded-8"><h6 class="m-0">Delete</h6></button>
+              <a href="/upload"> <button type="button" class="btn btn-outline-info rounded-8"><h6 class="m-0">Cancel</h6></button></a>
+             
             </div>
             <div class="col-4 d-flex  justify-content-end">
               <button onclick="createUploadContent()" type="button"

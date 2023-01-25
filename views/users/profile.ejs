@@ -26,32 +26,42 @@
           <% if(user.isAdmin ){%>
           <input
             type="hidden"
-            name="credits"
             value="Admin"
             class="text-muted mb-0"
           />Admin <%} else {%>
           <input
             type="hidden"
-            name="credits"
-            value="Admin"
+            value="Student"
             class="text-muted mb-0"
           />Student <%}%>
         </div>
       </div>
-      <!-- Account Type-->
+      <!-- Downloaded-->
       <div class="row">
         <div class="col-sm-3">
-          <p class="mb-0">Uploads</p>
+          <p class="mb-0">Downloaded Assets</p>
         </div>
         <div class="col-sm-9">
           <input
             type="hidden"
-            name="credits"
             value="3"
             class="text-muted mb-0"
-          />3
+          /><%= Number(user.downloadedModels.length) + Number(user.downloadedThreeSixty.length) %>
         </div>
       </div>
+        <!-- uploaded-->
+        <div class="row">
+          <div class="col-sm-3">
+            <p class="mb-0">Uploaded Assets</p>
+          </div>
+          <div class="col-sm-9">
+            <input
+              type="hidden"
+              value="3"
+              class="text-muted mb-0"
+            /><%= Number(uploads["360"].length) + Number(uploads["models"].length)  %>
+          </div>
+        </div>
       <!-- edit button-->
       <div class="row align-items-center">
         <div class="col-sm-3">
@@ -105,50 +115,61 @@
           />Student <%}%>
         </div>
       </div>
-      <!-- Account Type-->
-      <div class="row">
+       <!-- Downloaded-->
+       <div class="row">
         <div class="col-sm-3">
-          <p class="mb-0">Uploads</p>
+          <p class="mb-0">Downloaded Assets</p>
         </div>
         <div class="col-sm-9">
           <input
             type="hidden"
-            name="credits"
             value="3"
             class="text-muted mb-0"
-          />3
+          /><%= Number(user.downloadedModels.length) + Number(user.downloadedThreeSixty.length) %>
         </div>
       </div>
+        <!-- uploaded-->
+        <div class="row">
+          <div class="col-sm-3">
+            <p class="mb-0">Uploaded Assets</p>
+          </div>
+          <div class="col-sm-9">
+            <input
+              type="hidden"
+              value="3"
+              class="text-muted mb-0"
+            /><%= Number(uploads["360"].length) + Number(uploads["models"].length)  %>
+          </div>
+        </div>
       <!-- pw-->
       <div class="row align-items-center">
         <div class="col-sm-3">
           <p class="mb-0">New Password</p>
         </div>
         <div class="col-sm-9">
-          <input type="password" name="password" required="" id="id_password" />
+          <input class="w-100" type="password" name="password" required="" id="id_password" />
           <i
-            class="far fa-eye"
+            class="far fa-eye password-eye"
             id="togglePassword"
-            style="margin-left: -30px; cursor: pointer"
           ></i>
         </div>
       </div>
       <!-- confirm pw-->
       <div class="row align-items-center">
         <div class="col-sm-3">
-          <p class="mb-0">ConfirmPassword</p>
+          <p class="mb-0">Confirm Password</p>
         </div>
         <div class="col-sm-9">
           <input
+          class="w-100" 
             type="password"
             name="confirmPassword"
             required=""
             id="id_confirmPassword"
           />
           <i
-            class="far fa-eye"
+            class="far fa-eye password-eye"
             id="toggleConfirmPassword"
-            style="margin-left: -30px; cursor: pointer"
           ></i>
         </div>
       </div>
@@ -158,40 +179,21 @@
         <p class="error-message m-0"><%= errorObj.message %></p>
         <%}%>
       </div>
-      <div class="col-sm-9">
-        <button type="submit" class="btn theme-color btn-rounded">
-          <i class="fa-solid fa-pen me-2" aria-hidden="true"></i>cancel
-        </button>
+      <div class="d-flex justify-content-between">
+        <div >
+          <button type="button" onclick="window.location.href='/<%= user._id %>/dashboard/profile';" class="btn btn-outline-info btn-rounded">
+            Cancel
+          </button>
+        </div>
+        <div >
+          <button type="submit" class="btn theme-color btn-rounded">
+            <i class="fa-solid fas fa-save me-2" aria-hidden="true"></i>Save
+          </button>
+        </div>
       </div>
-      <div class="col-sm-9">
-        <button type="submit" class="btn theme-color btn-rounded">
-          <i class="fa-solid fa-pen me-2" aria-hidden="true"></i>Save Password
-        </button>
-      </div>
+     
     </div>
   </form>
   <%}%>
 </div>
-<script>
-  // Change the type of input to password or text
-  const togglePassword = document.querySelector("#togglePassword");
-  const toggleConfirmPassword = document.querySelector(
-    "#toggleConfirmPassword"
-  );
-  const password = document.querySelector("#id_password");
-  const confirmPassword = document.querySelector("#id_confirmPassword");
 
-  toggleConfirmPassword.addEventListener("click", function () {
-    Toggle(confirmPassword, toggleConfirmPassword);
-  });
-  togglePassword.addEventListener("click", function () {
-    Toggle(password, togglePassword);
-  });
-  const Toggle = (id, icon) => {
-    // toggle the type attribute
-    const type = id.getAttribute("type") === "password" ? "text" : "password";
-    id.setAttribute("type", type);
-    // toggle the eye slash icon
-    icon.classList.toggle("fa-eye-slash");
-  };
-</script>

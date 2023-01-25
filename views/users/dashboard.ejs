@@ -19,14 +19,8 @@
   </svg>
 
   <div class="d-flex align-items-center">
-    <img
-      src="https://mdbootstrap.com/img/new/avatars/8.jpg"
-      alt=""
-      style="width: 60px; height: 60px"
-      class="rounded-circle"
-    />
     <div class="ms-3">
-      <h3 class="fw-bold mb-1"><%= user.email %></h3>
+      <h3 class="mb-1"><%= user.email %></h3>
       <% if (user.isAdmin) { %>
       <p class="text-muted mb-0">Admin</p>
       <%}else{%>
@@ -41,16 +35,6 @@
     role="tablist"
   >
     <li class="nav-item" role="presentation">
-      <!-- <a
-        class="nav-link <%= showProfile? 'active' :'' %>"
-        id="ex3-tab-1"
-        data-mdb-toggle="tab"
-        href="/<%= user._id%>/dashboard/profile"
-        role="tab"
-        aria-controls="ex3-tabs-1"
-        aria-selected="<%= showProfile? 'true' : 'false' %>"
-        >Profile</a
-      > -->
       <a
         class="nav-link <%= showProfile? 'active' :'' %>"
         href="/<%= user._id%>/dashboard/profile"
@@ -58,17 +42,8 @@
         >Profile</a
       >
     </li>
+    <% if (user.isAdmin){%>
     <li class="nav-item" role="presentation">
-      <!-- <a
-        class="nav-link <%= showUploads? 'active' :'' %>"
-        id="ex3-tab-2"
-        data-mdb-toggle="tab"
-        href="/<%= user._id%>/dashboard/uploads"
-        role="tab"
-        aria-controls="ex3-tabs-2"
-        aria-selected="<%= showUploads? 'true' : 'false' %>"
-        >Uploads</a
-      > -->
       <a
         class="nav-link <%= showUploads? 'active' :'' %>"
         href="/<%= user._id%>/dashboard/uploads"
@@ -76,17 +51,8 @@
         >Uploads</a
       >
     </li>
+    <%}%>
     <li class="nav-item" role="presentation">
-      <!-- <a
-        class="nav-link <%= showDownloads? 'active' :'' %>"
-        id="ex3-tab-3"
-        data-mdb-toggle="tab"
-        href="/<%= user._id%>/dashboard/downloads"
-        role="tab"
-        aria-controls="ex3-tabs-3"
-        aria-selected="<%= showDownloads? 'true' : 'false' %>"
-        >Downloads</a
-      > -->
       <a
         class="nav-link <%= showDownloads? 'active' :'' %>"
         href="/<%= user._id%>/dashboard/downloads"
@@ -94,17 +60,8 @@
         >Downloads</a
       >
     </li>
+    <% if (user.isAdmin){%>
     <li class="nav-item" role="presentation">
-      <!-- <a
-        class="nav-link <%= showEnrollment? 'active' :'' %>"
-        id="ex3-tab-4"
-        data-mdb-toggle="tab"
-        href="/<%= user._id%>/dashboard/enrollment"
-        role="tab"
-        aria-controls="ex3-tabs-4"
-        aria-selected="<%= showEnrollment? 'true' :'false' %>"
-        >Enrollment</a
-      > -->
       <a
         class="nav-link <%= showEnrollment? 'active' :'' %>"
         href="/<%= user._id%>/dashboard/enrollment"
@@ -112,6 +69,7 @@
         >Enrollment</a
       >
     </li>
+    <%}%>
   </ul>
 
   <!-- Tabs navs -->
@@ -123,6 +81,13 @@
     <div><%= isSuccess.message %></div>
   </div>
   <%}%>
+  <%if(errorObj.error){%>
+    <div class="alert alert-danger d-flex align-items-center" role="alert" >
+      <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+      <div><%= errorObj.message %></div>
+    <!-- <p class="error-message m-0"><%= errorObj.message %></p> -->
+  <%}%>
+  </div>
   <!-- Tabs content -->
   <div class="tab-content tab-content-height" id="ex2-content">
     <div
@@ -133,6 +98,7 @@
     >
       <%- include('./profile')%>
     </div>
+    <% if (user.isAdmin){%>
     <div
       class="tab-pane fade <%= showUploads? 'show active' :'' %>"
       id="ex3-tabs-2"
@@ -141,22 +107,68 @@
     >
       <%- include('./uploads'); %>
     </div>
+    <%}%>
     <div
       class="tab-pane fade <%= showDownloads? 'show active' :'' %>"
       id="ex3-tabs-3"
       role="tabpanel"
       aria-labelledby="ex3-tab-3"
     >
-      <%- include('./uploads'); %>
+      <%- include('./downloads'); %>
     </div>
+    <% if (user.isAdmin){%>
     <div
-      class="tab-pane fade h-100 <%= showEnrollment? 'show active' :'' %>"
+      class="tab-pane fade <%= showEnrollment? 'show active' :'' %>"
       id="ex3-tabs-4"
       role="tabpanel"
       aria-labelledby="ex3-tab-4"
     >
       <%- include('./enrollment'); %>
     </div>
+    <%}%>
   </div>
 </section>
 <%- include('../partials/footer'); %>
+<script>
+  const clickAssetType = (el, loadType) => {
+    if(!el.classList.contains(`${loadType}assetActive`)){
+    console.log(el)
+    const currentActiveTab = document.querySelector(`.${loadType}assetActive`)
+    console.log(currentActiveTab);
+    currentActiveTab.classList.remove(`${loadType}assetActive`)
+    el.classList += ` ${loadType}assetActive`
+    
+    const currentDisplay= document.getElementsByClassName(`${loadType}row d-flex`)[0]
+    currentDisplay.classList.remove("d-flex")
+    currentDisplay.classList += " d-none"
+    
+    const newDisplay = document.getElementById(loadType+el.innerText)
+    console.log(newDisplay)
+    newDisplay.classList.remove("d-none")
+    newDisplay.classList += " d-flex"
+    }
+  }
+  // Change the type of input to password or text
+  const togglePassword = document.querySelector("#togglePassword");
+  if(togglePassword){
+    const toggleConfirmPassword = document.querySelector(
+    "#toggleConfirmPassword"
+  );
+  const password = document.querySelector("#id_password");
+  const confirmPassword = document.querySelector("#id_confirmPassword");
+  toggleConfirmPassword.addEventListener("click", function () {
+    Toggle(confirmPassword, toggleConfirmPassword);
+  });
+  togglePassword.addEventListener("click", function () {
+    Toggle(password, togglePassword);
+  });
+  const Toggle = (id, icon) => {
+    // toggle the type attribute
+    const type = id.getAttribute("type") === "password" ? "text" : "password";
+    id.setAttribute("type", type);
+    // toggle the eye slash icon
+    icon.classList.toggle("fa-eye-slash");
+  };
+  }
+  
+</script>

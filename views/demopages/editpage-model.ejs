@@ -47,7 +47,7 @@
         format: <%- JSON.stringify(content.format) %>,
       }
       var tags = document.querySelectorAll(".selected_tag_element");
-      for (i = 0; i < tags.length; i++) { data.tags.push(tags[i].innerHTML); console.log(tags[i].innerHTML); }
+      for (i = 0; i < tags.length; i++) { data.tags.push(tags[i].toLowerCase()); console.log(tags[i].innerHTML.toLowerCase()); }
       data.files = files;
       console.log(data);
       for (i = 0; i < newfiles.length; i++) { formData.append('file', newfiles[i]); }
@@ -64,6 +64,7 @@
 
       request.onreadystatechange = function () { // listen for state changes
         if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+          console.log("-->send from backedn", request.responseText)
           nextURL += request.responseText;
           window.location = nextURL;
         }
@@ -104,20 +105,20 @@
 
     modelviewer.addEventListener("load", () => {
       const material = modelviewer.model.materials[0];
-      const createAndApplyTexture = async (channel) => {
-        // Applies the new texture to the specified channel.
-        var diffusepath = getTextureFromFilesArray('diffuse');
-        if (diffusepath != "") {
-          var diffuse = await modelviewer.createTexture("../uploads/tmp/" + diffusepath);
-          material.pbrMetallicRoughness['baseColorTexture'].setTexture(diffuse);
-        }
-        var emissivepath = getTextureFromFilesArray('emissive');
-        if (emissivepath != "") {
-          var emission = await modelviewer.createTexture("../uploads/tmp/" + emissivepath);
-          material['emissiveTexture'].setTexture(emission);
-        }
-      }
-      createAndApplyTexture('baseColorTexture');
+      // const createAndApplyTexture = async (channel) => {
+      //   // Applies the new texture to the specified channel.
+      //   var diffusepath = getTextureFromFilesArray('diffuse');
+      //   if (diffusepath != "") {
+      //     var diffuse = await modelviewer.createTexture("../uploads/tmp/" + diffusepath);
+      //     material.pbrMetallicRoughness['baseColorTexture'].setTexture(diffuse);
+      //   }
+      //   var emissivepath = getTextureFromFilesArray('emissive');
+      //   if (emissivepath != "") {
+      //     var emission = await modelviewer.createTexture("../uploads/tmp/" + emissivepath);
+      //     material['emissiveTexture'].setTexture(emission);
+      //   }
+      // }
+      // createAndApplyTexture('baseColorTexture');
     });
 
     function saveThumbnail(callback) {

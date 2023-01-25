@@ -36,8 +36,11 @@ const Create = (objectfile, callback) => {
           }
           // log the output received from the command
           console.log("Output: \n", output)
+
+          callback(gltfpath);
         });
-        callback(gltfpath);
+        // gltfpath = modelfolderpath + "\\model.gltf"
+
         break;
         case "fbx":
         // code block
@@ -52,7 +55,6 @@ const Create = (objectfile, callback) => {
                 if(err) {
                     throw err;
                 }
-
                 console.log("Directory renamed successfully.");
             });
             gltfpath = modelfolderpath + "\\model.gltf"
@@ -73,5 +75,64 @@ const Create = (objectfile, callback) => {
 
   }
 }
-
 module.exports.Create = Create;
+
+const ClearMaterialFromModel = (gltfmodelpath, callback) => {
+  console.log(gltfmodelpath);
+  let path =  gltfmodelpath.replace('model.gltf','');
+  let rawdata = fs.readFileSync(gltfmodelpath);
+  let jsonfile = JSON.parse(rawdata);
+  if(jsonfile.images){
+    jsonfile.images.forEach((image,i)=>{
+      console.log(image.uri);
+      let imagepath = path + image.uri;
+      var imageexist = fs.existsSync(imagepath);
+      if(!imageexist){
+        console.log(imagepath + " does not exist");
+        jsonfile.textures.forEach((texture,t)=>{
+          if(texture.source == i){
+            console.log(texture + ' has source from image ' + i);
+            jsonfile.materials.forEach((material,m)=>{
+              if(material.pbrMetallicRoughness['baseColorTexture']){
+                if(material.pbrMetallicRoughness['baseColorTexture']['index'] == t){
+                  console.log(material + ' has source from texture ' + t);
+                  delete material.pbrMetallicRoughness['baseColorTexture'];
+                }
+              }
+            });
+            // jsonfile.textures.splice(t,1);
+            delete jsonfile.textures[t]
+          }
+        })
+        // jsonfile.images.splice(i,1);
+        delete jsonfile.images[i]
+      }
+    })
+  }
+
+  //console.log(jsonfile);
+  let data = JSON.stringify(jsonfile);
+  fs.writeFile(gltfmodelpath, data, (err)=>{
+    if (err)
+    console.log(err);
+  else {
+    callback('');
+  }
+  });
+  // delete jsonfile['images'];
+  // delete jsonfile['textures'];
+  // jsonfile.materials.forEach((item,index)=> {
+  //   delete item.pbrMetallicRoughness['baseColorTexture'];
+  // })
+  // // let readfile = JSON.parse(jsonfile);
+  // console.log(jsonfile);
+  // let data = JSON.stringify(jsonfile);
+  // fs.writeFile(gltfmodelpath, data, (err)=>{
+  //   if (err)
+  //   console.log(err);
+  // else {
+  //   callback('');
+  // }
+  // });
+}
+module.exports.ClearMaterialFromModel = ClearMaterialFromModel;
