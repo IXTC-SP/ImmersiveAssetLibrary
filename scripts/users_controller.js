@@ -18,19 +18,19 @@ const alertMessage = (alert, message) => {
 };
 
 const emailValidation = (emailInput) => {
-  // return true;
-  const spMailFormat = "[a-z.]*[@]\sp.edu.sg"
-  const ichatMailFormat  = "[a-z.]*[@]\ichat.sp.edu.sg"
+  //return true;
+  const spMailFormat = "[a-z.]*[@]sp.edu.sg";
+  const ichatMailFormat = "[a-z.]*[@]ichat.sp.edu.sg";
   if (emailInput.match(spMailFormat) || emailInput.match(ichatMailFormat)) {
-    console.log("email allowed")
-    return true
+    console.log("email allowed");
+    return true;
   }
-  console.log("email disallowed")
+  console.log("email disallowed");
 
-  return false
+  return false;
 };
 
-const superAdmin = { "637c8339c46b477d10e8b585" : "sandra_fong@sp.edu.sg"}
+const superAdmin = { "637c8339c46b477d10e8b585": "sandra_fong@sp.edu.sg" };
 
 // let isSuccess = alertMessage(false, "");
 // let errorObj = errorMessage(false, "");
@@ -47,27 +47,26 @@ class RenderObjs {
 
 class RenderView {
   constructor(req, renderObj) {
-    this.isLoginpage= true
-    this.isSuccess= req.isSuccess || renderObj.isSuccess
-    this.uploads = renderObj.uploads
-    this.downloads = renderObj.downloads
-    this.accounts = renderObj.accounts
-    this.errorObj= req.errorObj || renderObj.errorObj
-    this.profile = renderObj.profile
-    this.user= req.user
+    this.isLoginpage = true;
+    this.isSuccess = req.isSuccess || renderObj.isSuccess;
+    this.uploads = renderObj.uploads;
+    this.downloads = renderObj.downloads;
+    this.accounts = renderObj.accounts;
+    this.errorObj = req.errorObj || renderObj.errorObj;
+    this.profile = renderObj.profile;
+    this.user = req.user;
   }
 }
 const controller = {
   logout: async (req, res) => {
-    req.logout(function(err) {
+    req.logout(function (err) {
       res.redirect("/login");
     });
-    
+
     // try {
     //   //paspport function, clears session, but not cookie
     //   //but if session is cleared no more id can be found it wont pop req.user,
 
-     
     // } catch (err) {
     //   res.redirect("/login");
     //  // return res.status(404).json("error:", err.message);
@@ -75,9 +74,9 @@ const controller = {
     // }
   },
   showProfile: async (req, res) => {
-    let renderObj = new RenderObjs()
-   
-    console.log(renderObj)
+    let renderObj = new RenderObjs();
+
+    console.log(renderObj);
     console.log("------>", req.body.email);
     console.log("---->", req.body.confirmPassword);
     const { password, confirmPassword, email } = req.body;
@@ -87,7 +86,10 @@ const controller = {
           console.log("--->", "save pw");
           if (password === "" || confirmPassword === "") {
             renderObj.profile = "edit";
-            renderObj.errorObj = errorMessage(true, "Please fill in the required fields");
+            renderObj.errorObj = errorMessage(
+              true,
+              "Please fill in the required fields"
+            );
           }
           if (password === confirmPassword) {
             console.log("pw same");
@@ -99,9 +101,15 @@ const controller = {
               { $set: { password: hash } },
               { new: true }
             );
-            renderObj.isSuccess = alertMessage(true, "Password Reset Sucessfully");
+            renderObj.isSuccess = alertMessage(
+              true,
+              "Password Reset Sucessfully"
+            );
           } else {
-            renderObj.errorObj = errorMessage(true, "Confirm password does not match");
+            renderObj.errorObj = errorMessage(
+              true,
+              "Confirm password does not match"
+            );
             renderObj.profile = "edit";
             console.log("click save");
           }
@@ -121,7 +129,7 @@ const controller = {
       console.log(err);
       renderObj.errorObj = errorMessage(true, err.message);
     }
-    let renderView = new RenderView(req, renderObj)
+    let renderView = new RenderView(req, renderObj);
     res.render("users/dashboard", {
       ...renderView,
       showProfile: true,
@@ -132,17 +140,17 @@ const controller = {
   },
 
   showEnrollment: async (req, res) => {
-    let renderObj = new RenderObjs()
-    
+    let renderObj = new RenderObjs();
+
     try {
-      renderObj.accounts = await userModel.find();
-      console.log(renderObj.accounts)
+      renderObj.accounts = await userModel.find({isActivated:true});
+      console.log(renderObj.accounts);
       console.log("Get the accounts");
     } catch (err) {
       console.log(err);
       renderObj.errorObj = errorMessage(true, "Failed to get users");
     }
-    let renderView = new RenderView(req, renderObj)
+    let renderView = new RenderView(req, renderObj);
     return res.render("users/dashboard", {
       ...renderView,
       showProfile: false,
@@ -152,15 +160,18 @@ const controller = {
     });
   },
   showDownloads: async (req, res, next) => {
-    let renderObj = new RenderObjs()
+    let renderObj = new RenderObjs();
     try {
-      const user = await userModel.findOne({_id : req.user._id}).populate("downloadedModels").populate("downloadedThreeSixty")
+      const user = await userModel
+        .findOne({ _id: req.user._id })
+        .populate("downloadedModels")
+        .populate("downloadedThreeSixty");
       renderObj.downloads["models"] = [...user.downloadedModels];
       renderObj.downloads["360"] = [...user.downloadedThreeSixty];
     } catch (err) {
       console.log(err);
     }
-    let renderView = new RenderView(req, renderObj)
+    let renderView = new RenderView(req, renderObj);
     res.render("users/dashboard", {
       ...renderView,
       showProfile: false,
@@ -170,7 +181,7 @@ const controller = {
     });
   },
   showUploads: async (req, res, next) => {
-    let renderObj = new RenderObjs()
+    let renderObj = new RenderObjs();
 
     console.log("-->", req.errorObj);
     try {
@@ -184,7 +195,7 @@ const controller = {
       console.log(err);
       req.errorObj = errorMessage(true, err);
     }
-    let renderView = new RenderView(req, renderObj)
+    let renderView = new RenderView(req, renderObj);
     res.render("users/dashboard", {
       ...renderView,
       showProfile: false,
@@ -196,7 +207,7 @@ const controller = {
   //create routes
   createEnrollment: async (req, res, next) => {
     //click add account
-    let renderObj = new RenderObjs()
+    let renderObj = new RenderObjs();
     let isAdmin = null;
     let addedUser = null;
     const createUser = async () => {
@@ -230,7 +241,7 @@ const controller = {
     };
     try {
       console.log("---->", req.body);
-      renderObj.accounts = await userModel.find();
+      renderObj.accounts = await userModel.find({isActivated:true});
       console.log("Get the accounts");
       if (req.body.email !== "") {
         //check is the sp email
@@ -246,7 +257,11 @@ const controller = {
                 true,
                 "This email has account already been created"
               );
-            } else {
+            } else if (
+              !addedUser.isActivated &&
+              addedUser.password === undefined
+            ) {
+
               //not activated
               //check if token expired, not expired then cant create again
               //expired will hv err decoding, at catch err create the user
@@ -267,6 +282,14 @@ const controller = {
                   "This email account has not been activated"
                 );
               }
+            } else {//got deleted and tryna add back again
+              let reactivateUser = await userModel.findOneAndUpdate({ email: req.body.email }, {isActivated: true}, {new: true});
+              console.log(reactivateUser)
+              renderObj.isSuccess = alertMessage(
+                true,
+                "Account has been reactivated"
+              );
+              renderObj.accounts = await userModel.find({isActivated:true});
             }
           } else {
             const result = await createUser();
@@ -281,7 +304,10 @@ const controller = {
           );
         }
       } else {
-        renderObj.errorObj = errorMessage(true, "Please fill in required fields");
+        renderObj.errorObj = errorMessage(
+          true,
+          "Please fill in required fields"
+        );
       }
     } catch (err) {
       console.log(err);
@@ -295,7 +321,7 @@ const controller = {
         renderObj.errorObj = errorMessage(true, err.message);
       }
     }
-    let renderView = new RenderView(req, renderObj)
+    let renderView = new RenderView(req, renderObj);
     return res.render("users/dashboard", {
       ...renderView,
       showProfile: false,
@@ -309,15 +335,22 @@ const controller = {
     let isSuccess = alertMessage(false, " ");
     let errorObj = errorMessage(false, " ");
     try {
-      //check it is not me 
-      console.log(superAdmin[req.params.acct_id])
-      if(superAdmin[req.params.acct_id] === undefined){
-        await userModel.deleteOne({ _id: req.params.acct_id });
+      //check it is not me
+      console.log(superAdmin[req.params.acct_id]);
+      if (superAdmin[req.params.acct_id] === undefined) {
+        // await userModel.deleteOne({ _id: req.params.acct_id });
+        await userModel.findOneAndUpdate(
+          { _id: req.params.acct_id },
+          { isActivated: false },
+          { new: true }
+        );
         isSuccess = alertMessage(true, "Account successfully deleted");
-      }else{
-        errorObj = errorMessage(true, "You are not authorized to delete this user");
+      } else {
+        errorObj = errorMessage(
+          true,
+          "You are not authorized to delete this user"
+        );
       }
-    
     } catch (error) {
       errorObj = errorMessage(true, error.message);
     }
@@ -329,30 +362,33 @@ const controller = {
   deleteUploads: async (req, res, next) => {
     let dbmanager;
     let downloadedType;
-    switch (req.params.type){
-      case 'model':
-        console.log('model asset type');
+    switch (req.params.type) {
+      case "model":
+        console.log("model asset type");
         dbmanager = modelModel;
-        downloadedType = "downloadedModels"
+        downloadedType = "downloadedModels";
         break;
-      case '360':
-        console.log('360 asset type');
+      case "360":
+        console.log("360 asset type");
         dbmanager = threeSixtyModel;
-        downloadedType = "downloadedThreeSixty"
+        downloadedType = "downloadedThreeSixty";
         break;
     }
     console.log("delete uploads");
     let isSuccess = alertMessage(false, " ");
     let errorObj = errorMessage(false, " ");
     try {
-      await userModel.updateMany({ downloadedType : [req.params.asset_id] }, { $pullAll: { downloadedType: [req.params.asset_id] } });
-      console.log("1")
+      await userModel.updateMany(
+        { downloadedType: [req.params.asset_id] },
+        { $pullAll: { downloadedType: [req.params.asset_id] } }
+      );
+      console.log("1");
       await dbmanager.deleteOne({ _id: req.params.asset_id });
-      console.log("2")
-      const deletedInAws = await awsMethods.deleteFiles(req.params.asset_id)
-      console.log("3")
-      console.log(deletedInAws)
-      if (deletedInAws.Deleted){
+      console.log("2");
+      const deletedInAws = await awsMethods.deleteFiles(req.params.asset_id);
+      console.log("3");
+      console.log(deletedInAws);
+      if (deletedInAws.Deleted) {
         isSuccess = alertMessage(true, "Asset successfully deleted");
       }
     } catch (error) {
