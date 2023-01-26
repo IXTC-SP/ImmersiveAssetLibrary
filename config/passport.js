@@ -1,7 +1,7 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const userModel = require("../models/user");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 //passwort js is a middle ware and will be used globally
 //each req will use a passprt local strategy, it uses express session
@@ -19,9 +19,12 @@ const verifyCallback = async (req, username, password, done) => {
  
   //passport use promise, .then and .catch, async and awaits wrapping the promise
   try {
-    user = await userModel.findOne({ email: username });
-    if (!user || !user.isActivated) {
-      return done(null, false, "Account not found");
+    user = await userModel.findOne({
+      email: username,
+      isActivated: true,
+    });
+    if (!user) {
+      return done(null, false, "Check that this account has been enrolled and activated.");
     }
     //use bcrypt to compare instead of passpor valid password
     // console.log(user);

@@ -6,12 +6,24 @@
   height: 500px;
 }
 .title {
-  font-family: Oswald;
-  color: #2b7a9e;
-  font-size: 48px;
+  font-family: Oswald, 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color: #2868a6;
+  font-size: 45px;
   font-weight: 700;
   text-align: center;
+  margin: 0;
 }
+
+.header-title{
+  font-family: Oswald;
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.header-subtitle{
+  font-weight: 300;
+}
+
 .background-color {
   background: linear-gradient(to left, #f1f1f1 200px, #fff 100px);
   z-index: -10;
@@ -21,7 +33,7 @@
 }
 .theme-color,
 .theme-color:hover {
-  background: linear-gradient(to left, #155e60, #2b7a9e);
+  background: linear-gradient(to left, #113865, #2b7a9e);
   color: white;
 }
 .theme-color-outline,
@@ -36,6 +48,12 @@
   height: inherit;
   margin-bottom: 100px;
 }
+.password-eye{
+  margin-left: -30px;
+  cursor: pointer;
+  position: absolute;
+  margin-top: 8px;
+}
 .enrollment-row {
   height: 10%;
 }
@@ -49,6 +67,13 @@
 }
 .password-page-btn {
   width: 100%;
+}
+
+.attribute-check{
+color: #1bd21b;
+}
+.attribute-cross{
+color: #f41919
 }
 
 .email-input {
@@ -79,7 +104,6 @@
   display: block;
 }
 
-
 .sticky-table-headers__sticky {
   background: white;
   position: sticky;
@@ -87,26 +111,38 @@
   box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.2);
 }
 
-.upload-row{
+.uploads-row,
+.downloads-row {
   --mdb-gutter-x: 0 !important;
+  width: 80%;
+}
+.uploads-nav {
+  width: 20%;
+  gap: 1em; 
 }
 
-.upload-card-body{
-  height:45%
+.upload-card-img-div{
+  height: 150px;
 
 }
+.upload-card-img{
+  height: inherit;
+  object-fit: cover;
+  padding: 5px;
+}
 
-.upload-card{
+.upload-card {
   width: 230px;
-  height: 100%;
+  height: 230px;
 }
 
-.upload-btn{
-  padding-left: 1em;
-  padding-right: 1em;
-  border-width: 1px
+.uploads-assetActive,
+.downloads-assetActive{
+  font-weight: bolder;
+  border: solid #3a6e86;
+  border-width: 0 0 0 2px;
 }
-.profile-body{
+.profile-body {
   display: flex;
   flex-direction: column;
   gap: 26px;

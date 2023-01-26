@@ -151,10 +151,10 @@ function getDirectories(srcpath) {
 }
 
 
-module.exports.uploadHandler = upload;
-module.exports.publish = publishfile;
-module.exports.closeTmpFolder = closeTmpFolder;
-module.exports.uploadtmp3D = uploadtmp3D;
-module.exports.upload3D = upload3D;
-module.exports.uploadtmp360 = uploadtmp360;
-module.exports.uploadtmpscript = uploadtmpscript;
+// module.exports.uploadHandler = upload;
+// module.exports.publish = publishfile;
+// module.exports.closeTmpFolder = closeTmpFolder;
+// module.exports.uploadtmp3D = uploadtmp3D;
+// module.exports.upload3D = upload3D;
+// module.exports.uploadtmp360 = uploadtmp360;
+// module.exports.uploadtmpscript = uploadtmpscript;

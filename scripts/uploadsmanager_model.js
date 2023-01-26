@@ -57,16 +57,17 @@ const upload3D = upload.fields([
 const publishfile = async function(foldername, files){
   var filesizetotal = 0;
     //create a new folder based on title
-    var publishpath = './uploads/' + foldername;
-    if (!fs.existsSync(publishpath)){
-    fs.mkdirSync(publishpath);
-    }
+    // var publishpath = './uploads/' + foldername;
+    // if (!fs.existsSync(publishpath)){
+    // fs.mkdirSync(publishpath);
+    // }
     //move temp files into new folder
     for (const file of files) {
       var oldPath = './uploads/tmp/' + file
-      var newPath = publishpath + '/' + file
-      fs.renameSync(oldPath, newPath);
-      filesizetotal += getFilesizeInBytes(newPath);
+      // var newPath = publishpath + '/' + file
+      // fs.renameSync(oldPath, newPath);
+      //filesizetotal += getFilesizeInBytes(newPath);
+      filesizetotal += getFilesizeInBytes(oldPath);//still
     }
     console.log('move complete');
 
@@ -74,10 +75,11 @@ const publishfile = async function(foldername, files){
       if (fs.existsSync('./uploads/tmp/model.gltf')) {
         //file exists
         var oldPath = './uploads/tmp/model.gltf'
-        var newPath = (publishpath + '/model.gltf');
-        fs.renameSync(oldPath, newPath);
-        console.log('add gltf folder');
-        filesizetotal += getFilesizeInBytes(newPath);
+        // var newPath = (publishpath + '/model.gltf');
+        // fs.renameSync(oldPath, newPath);
+        // console.log('add gltf folder');
+        //filesizetotal += getFilesizeInBytes(newPath);
+        filesizetotal += getFilesizeInBytes(oldPath);
       }
     } catch(err) {
       console.error(err)
@@ -86,7 +88,7 @@ const publishfile = async function(foldername, files){
     //data required -> folderpath, totalfilesize, publish date,  assettype, ownedby, main asset type, main asset path, download count
     console.log('getting file size ' + filesizetotal);
     // getfilesize(publishpath);
-    closeTmpFolder();
+    //closeTmpFolder();
 
 };
 

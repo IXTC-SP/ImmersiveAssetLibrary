@@ -45,15 +45,15 @@
   runPannellum(type)
   }
 
-  function getTextureFromFilesArray(typename){
-    var result ="";
-    for(i=0;i<files.length;i++){
-      if(files[i].split("_")[0] == typename){
-        result = files[i];
-      }
-    }
-    return result;
-  }
+  // function getTextureFromFilesArray(typename){
+  //   var result ="";
+  //   for(i=0;i<files.length;i++){
+  //     if(files[i].split("_")[0] == typename){
+  //       result = files[i];
+  //     }
+  //   }
+  //   return result;
+  // }
 
 
   function runPannellum(type) {
@@ -63,19 +63,19 @@
       viewer = pannellum.viewer('panorama', {
         "type": "cubemap",
         "cubeMap": [
-          "../uploads/tmp/" + files[0],
-          "../uploads/tmp/" + files[1],
-          "../uploads/tmp/" + files[2],
-          "../uploads/tmp/" + files[3],
-          "../uploads/tmp/" + files[4],
-          "../uploads/tmp/" + files[5]
+          "../uploads/tmp/" + files[0].originalname,
+          "../uploads/tmp/" + files[1].originalname,
+          "../uploads/tmp/" + files[2].originalname,
+          "../uploads/tmp/" + files[3].originalname,
+          "../uploads/tmp/" + files[4].originalname,
+          "../uploads/tmp/" + files[5].originalname
         ],
         "autoLoad": true
       });
     } else {
       viewer = pannellum.viewer('panorama', {
       "type": "equirectangular",
-      "panorama": "../uploads/tmp/" + files[0],
+      "panorama": "../uploads/tmp/" + files[0].originalname,
       "autoLoad": true
       });
     }
@@ -132,8 +132,8 @@
       tags : [],
       type : type,
       }
-      var tags = document.querySelectorAll("#selected_tag_element");
-      for(i = 0; i<tags.length;i++){ data.tags.push(tags[i].innerText); }
+      var tags = document.querySelectorAll(".selected_tag_element");
+      for(i = 0; i<tags.length;i++){ data.tags.push(tags[i].innerHTML.toLowerCase()); }
       data.files = files;
       console.log(data);
       for(i=0; i< newfiles.length;i++)
@@ -229,7 +229,7 @@
         createTagSuggestion(tagname);
       };
       //add to suggested tag element array
-      suggestedtagelements.push(col);
+      suggestedtagelements.push(addBtn);
     }
 
   function addTag(tagname) {
