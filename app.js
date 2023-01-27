@@ -319,19 +319,23 @@ app.post(
     gltfmodel.Create(req.files.model[0], function (gltfresult) {
       // Include fs module
       // var fs = require('fs');
-      if (gltfresult != "") {
+      if (gltfresult) {
         tmpContent["modelviewerpath"] = "../uploads/tmp/model.gltf";
+        tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
+        console.log("---->>>", tmpContent);
+        gltfmodel.ClearMaterialFromModel(gltfresult, function () {
+          res.end("complete");
+        });
       } else {
+        console.log("running gltf format model");
+        tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
         tmpContent["modelviewerpath"] =
           "." +
           tmpContent.model[0].destination +
           tmpContent.model[0].originalname;
-      }
-      tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
-      console.log("---->>>", tmpContent);
-      gltfmodel.ClearMaterialFromModel(gltfresult, function () {
         res.end("complete");
-      });
+      }
+
      
     });
   }
@@ -345,7 +349,6 @@ app.get("/editpage/model", function (req, res) {
       images = tmpContent.image.map((a) => a.originalname);
       console.log(images);
     }
-
     res.render("demopages/editpage-model", {
       content: {
         folderpath: tmpContent.folderpath,
@@ -447,7 +450,7 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
     // var newpath = './uploads/' + result;//result is the obid
     // uploadsmanager_model.changepath(oldpath, newpath);
     // console.log("allfiles", allfiles)
-    console.log("tmpconetnt", tmpContent);
+    console.log("tmpcontent", tmpContent);
     tmpContent["thumbnail"] = req.files.newthumbnail[0];
     const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result, "3dModel");
     tmpContent = []

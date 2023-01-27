@@ -457,14 +457,24 @@
         //if model file, process and popup to assign textures
         if (currenttype == "3dmodel") {
           //changeModalContent("model");
-          createuploadcontent()
+          var hasObj = false;
+          fileObjs.forEach((obj, index)=>{
+            if(obj.type == "model"){
+              hasObj = true;
+            }
+          })
+          if(hasObj){
+            createuploadcontent()
+            alert("model ready to upload");
+          } else {
+            alert("No model object added");
+          }
         }
         //if cubemap file, process and popup to assign textures
         if (currenttype == "360image") {
           if (currentformat == 'cubemap') changeModalContent("cubemap");
           else 
           {
-
             createuploadcontent();
           }
         }
@@ -473,8 +483,6 @@
         //   createuploadcontent();
         // }
         }
-
-       
       }
 
       //creating and managing file card
