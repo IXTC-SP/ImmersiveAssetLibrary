@@ -309,36 +309,35 @@ app.post(
   "/uploadtmp3dmodel",
   uploadsmanager_model.uploadtmp3D,
   function (req, res) {
-    try {
-      tmpContent = req.files;
-      console.log("savetmp", tmpContent);
-      let result;
-      if (tmpContent.image) {
-        result = tmpContent.image.map((a) => a.originalname);
-      }
-      tmpContent["format"] = tmpContent.model[0].originalname.split(".")[1];
-      gltfmodel.Create(req.files.model[0], function (gltfresult) {
-        // Include fs module
-        // var fs = require('fs');
-        if (gltfresult != "") {
-          tmpContent["modelviewerpath"] = "../uploads/tmp/model.gltf";
-        } else {
-          tmpContent["modelviewerpath"] =
-            "." +
-            tmpContent.model[0].destination +
-            tmpContent.model[0].originalname;
-        }
+    tmpContent = req.files;
+    console.log("savetmp", tmpContent);
+    let result;
+    if (tmpContent.image) {
+      result = tmpContent.image.map((a) => a.originalname);
+    }
+    tmpContent["format"] = tmpContent.model[0].originalname.split(".")[1];
+    gltfmodel.Create(req.files.model[0], function (gltfresult) {
+      // Include fs module
+      // var fs = require('fs');
+      if (gltfresult) {
+        tmpContent["modelviewerpath"] = "../uploads/tmp/model.gltf";
         tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
         console.log("---->>>", tmpContent);
         gltfmodel.ClearMaterialFromModel(gltfresult, function () {
           res.end("complete");
         });
-       
-      });
-    } catch (error) {
-      console.log(error)
-    }
-  
+      } else {
+        console.log("running gltf format model");
+        tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
+        tmpContent["modelviewerpath"] =
+          "." +
+          tmpContent.model[0].destination +
+          tmpContent.model[0].originalname;
+        res.end("complete");
+      }
+
+     
+    });
   }
 );
 
@@ -350,7 +349,6 @@ app.get("/editpage/model", function (req, res) {
       images = tmpContent.image.map((a) => a.originalname);
       console.log(images);
     }
-
     res.render("demopages/editpage-model", {
       content: {
         folderpath: tmpContent.folderpath,
@@ -446,33 +444,32 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
   //   allfiles,
   // );
   //save model database
-
-    databasemanager_model.save(req, res, async function (result) {
-      console.log("id--->", result);
-      // var oldpath = './uploads/' + body.folderpath.replaceAll(' ', '_');
-      // var newpath = './uploads/' + result;//result is the obid
-      // uploadsmanager_model.changepath(oldpath, newpath);
-      // console.log("allfiles", allfiles)
-      console.log("tmpconetnt", tmpContent);
-      tmpContent["thumbnail"] = req.files.newthumbnail[0];
-      const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result, "3dModel");
-      tmpContent = []
-      //uploadsmanager_model.closeTmpFolder()
-      console.log(uploadedDataToAws);
-      //update model db with the urls
-      databasemanager_model.GetModel(result, async function (doc) {
-        console.log(doc);
-        databasemanager_model.updateToAwsPaths(
-          doc,
-          uploadedDataToAws,
-          function (id) {
-            res.send(id);
-          }
-        );
-      });
+  databasemanager_model.save(req, res, async function (result) {
+    console.log("id--->", result);
+    // var oldpath = './uploads/' + body.folderpath.replaceAll(' ', '_');
+    // var newpath = './uploads/' + result;//result is the obid
+    // uploadsmanager_model.changepath(oldpath, newpath);
+    // console.log("allfiles", allfiles)
+    console.log("tmpcontent", tmpContent);
+    tmpContent["thumbnail"] = req.files.newthumbnail[0];
+    const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result, "3dModel");
+    tmpContent = []
+    //uploadsmanager_model.closeTmpFolder()
+    console.log(uploadedDataToAws);
+    //update model db with the urls
+    databasemanager_model.GetModel(result, async function (doc) {
+      console.log(doc);
+      databasemanager_model.updateToAwsPaths(
+        doc,
+        uploadedDataToAws,
+        function (id) {
+          res.send(id);
+        }
+      );
     });
 
  
+});
 });
 // ----- model upload to publish ------ END
 

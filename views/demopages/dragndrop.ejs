@@ -477,34 +477,40 @@
 
       //next page btn
       function processUploads() {
-        try {
-            //if no uploads added
-            if (files.length == 0)
-            {alert("No uploads added");}
-          else{
-            setupFileObjs();
-          //if model file, process and popup to assign textures
-          if (currenttype == "3dmodel") {
-            //changeModalContent("model");
-            createuploadcontent()
-          }
-          //if cubemap file, process and popup to assign textures
-          if (currenttype == "360image") {
-            if (currentformat == 'cubemap') changeModalContent("cubemap");
-            else 
-            {
-              createuploadcontent();
+        //if no uploads added
+        if (files.length == 0)
+          {alert("No uploads added");}
+        else{
+          setupFileObjs();
+        //if model file, process and popup to assign textures
+        if (currenttype == "3dmodel") {
+          //changeModalContent("model");
+          var hasObj = false;
+          fileObjs.forEach((obj, index)=>{
+            if(obj.type == "model"){
+              hasObj = true;
             }
+          })
+          if(hasObj){
+            createuploadcontent()
+            alert("model ready to upload");
+          } else {
+            alert("No model object added");
+          }
+        }
+        //if cubemap file, process and popup to assign textures
+        if (currenttype == "360image") {
+          if (currentformat == 'cubemap') changeModalContent("cubemap");
+          else 
+          {
+            createuploadcontent();
           }
 
           // if (currenttype == "script") {
           //   createuploadcontent();
           // }
           }
-        } catch (error) {
-          alert(error)
         }
-      
       }
 
       //creating and managing file card

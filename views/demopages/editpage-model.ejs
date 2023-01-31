@@ -82,14 +82,13 @@
       files = <%- JSON.stringify(content.imagefiles)%>;
       <% }  %>
       modelpath = '<%- content.modelviewerpath %>';
-      console.log(modelpath);
+      console.log("get model path here: ",modelpath);
       modelviewer.src = modelpath;
       console.log(getTextureFromFilesArray('diffuse'));
       <% } else { %>
       console.log("does not exist");
       <% } %>
 
-      console.log(modelviewer);
       modelviewer.addEventListener('load', saveThumbnail);
     }
 

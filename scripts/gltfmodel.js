@@ -1,14 +1,18 @@
 const { exec } = require("child_process");
 const path = require('path');
-const fs = require('fs')
+const fs = require('fs');
+const obj2gltf = require("obj2gltf");
 
 
 const Create = (objectfile, callback) => {
   var modelfolderpath = path.resolve(objectfile.destination);
   // var modelfolderpath = path.resolve(objectfile.destination.split("/model")[0]);
   var modeltype = objectfile.filename.split(".")[1];
-  var modelfilepath = path.resolve(objectfile.destination + "\\" + objectfile.originalname);
-  var gltfpath = modelfolderpath + "\\model.gltf";
+  var modelfilepath = path.resolve(objectfile.destination + "/" + objectfile.originalname);
+  // var modelfilepath = path.resolve(objectfile.destination + "\\" + objectfile.originalname);
+  // var gltfpath = modelfolderpath + "\\model.gltf";
+  var gltfpath = modelfolderpath + "/model.gltf";
+  console.log(objectfile.destination, objectfile.originalname, modelfilepath);
   // var gltfpath = modelfolderpath + "\\" + "gltf" + "\\" + "model.gltf";
 
   try {
@@ -23,22 +27,31 @@ const Create = (objectfile, callback) => {
     switch (modeltype) {
       case "obj":
         // code block
-        console.log("running obj conversion");
-        var runcode = 'obj2gltf -i ';
-        // runcode += file;
-        runcode += modelfilepath + ' -o ' + gltfpath;
-        exec(runcode, (err, output) => {
-          // once the command has completed, the callback function is called
-          if (err) {
-            // log and return if we encounter an error
-            console.error("could not execute command: ", err)
-            return
-          }
-          // log the output received from the command
-          console.log("Output: \n", output)
-
+        var objpath = objectfile.destination + "/" + objectfile.originalname;
+        var objgltfpath = objectfile.destination + "/model.gltf";
+        obj2gltf(objpath).then(function (gltf) {
+          const data = Buffer.from(JSON.stringify(gltf));
+          console.log(data);
+          fs.writeFileSync(objgltfpath, data);
           callback(gltfpath);
         });
+
+        // console.log("running obj conversion", modelfilepath, gltfpath);
+        // var runcode = 'obj2gltf -i ';
+        // // runcode += file;
+        // runcode += modelfilepath + ' -o ' + gltfpath;
+        // exec(runcode, (err, output) => {
+        //   // once the command has completed, the callback function is called
+        //   if (err) {
+        //     // log and return if we encounter an error
+        //     console.error("could not execute command: ", err)
+        //     return
+        //   }
+        //   // log the output received from the command
+        //   console.log("Output: \n", output)
+
+        //   callback(gltfpath);
+        // });
         // gltfpath = modelfolderpath + "\\model.gltf"
 
         break;
@@ -57,7 +70,8 @@ const Create = (objectfile, callback) => {
                 }
                 console.log("Directory renamed successfully.");
             });
-            gltfpath = modelfolderpath + "\\model.gltf"
+            // gltfpath = modelfolderpath + "\\model.gltf"
+            gltfpath = modelfolderpath + "/model.gltf"
             console.log(gltfpath);
             // yay, do what we will with our shiny new GLB file!
             console.log("completed fbx to gltf conversion");
@@ -136,3 +150,14 @@ const ClearMaterialFromModel = (gltfmodelpath, callback) => {
   // });
 }
 module.exports.ClearMaterialFromModel = ClearMaterialFromModel;
+
+//TESTING ONLY
+// const TryObj2Gltf = () => {
+//   var modelfolderpath = "./public/deadpool_model/model/deadpool_obj.obj";
+//   var gltfpath = "./public/deadpool_model/model/model.gltf";
+//   obj2gltf(modelfolderpath).then(function (gltf) {
+//     const data = Buffer.from(JSON.stringify(gltf));
+//     console.log(data);
+//     fs.writeFileSync(gltfpath, data);
+//   });
+// }
