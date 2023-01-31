@@ -1,6 +1,7 @@
 const { exec } = require("child_process");
 const path = require('path');
-const fs = require('fs')
+const fs = require('fs');
+const obj2gltf = require("obj2gltf");
 
 
 const Create = (objectfile, callback) => {
@@ -26,22 +27,31 @@ const Create = (objectfile, callback) => {
     switch (modeltype) {
       case "obj":
         // code block
-        console.log("running obj conversion", modelfilepath, gltfpath);
-        var runcode = 'obj2gltf -i ';
-        // runcode += file;
-        runcode += modelfilepath + ' -o ' + gltfpath;
-        exec(runcode, (err, output) => {
-          // once the command has completed, the callback function is called
-          if (err) {
-            // log and return if we encounter an error
-            console.error("could not execute command: ", err)
-            return
-          }
-          // log the output received from the command
-          console.log("Output: \n", output)
-
+        var objpath = objectfile.destination + "/" + objectfile.originalname;
+        var objgltfpath = objectfile.destination + "/model.gltf";
+        obj2gltf(objpath).then(function (gltf) {
+          const data = Buffer.from(JSON.stringify(gltf));
+          console.log(data);
+          fs.writeFileSync(objgltfpath, data);
           callback(gltfpath);
         });
+
+        // console.log("running obj conversion", modelfilepath, gltfpath);
+        // var runcode = 'obj2gltf -i ';
+        // // runcode += file;
+        // runcode += modelfilepath + ' -o ' + gltfpath;
+        // exec(runcode, (err, output) => {
+        //   // once the command has completed, the callback function is called
+        //   if (err) {
+        //     // log and return if we encounter an error
+        //     console.error("could not execute command: ", err)
+        //     return
+        //   }
+        //   // log the output received from the command
+        //   console.log("Output: \n", output)
+
+        //   callback(gltfpath);
+        // });
         // gltfpath = modelfolderpath + "\\model.gltf"
 
         break;
@@ -140,3 +150,14 @@ const ClearMaterialFromModel = (gltfmodelpath, callback) => {
   // });
 }
 module.exports.ClearMaterialFromModel = ClearMaterialFromModel;
+
+//TESTING ONLY
+// const TryObj2Gltf = () => {
+//   var modelfolderpath = "./public/deadpool_model/model/deadpool_obj.obj";
+//   var gltfpath = "./public/deadpool_model/model/model.gltf";
+//   obj2gltf(modelfolderpath).then(function (gltf) {
+//     const data = Buffer.from(JSON.stringify(gltf));
+//     console.log(data);
+//     fs.writeFileSync(gltfpath, data);
+//   });
+// }
