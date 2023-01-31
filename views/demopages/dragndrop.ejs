@@ -486,17 +486,22 @@
         //if model file, process and popup to assign textures
         if (currenttype == "3dmodel") {
           //changeModalContent("model");
-          var hasObj = false;
+          var objCount = 0;
           fileObjs.forEach((obj, index)=>{
             if(obj.type == "model"){
-              hasObj = true;
+              objCount++;
             }
           })
-          if(hasObj){
-            createuploadcontent()
-            alert("model ready to upload");
-          } else {
-            alert("No model object added");
+          switch(objCount){
+            case 0:
+              alert("No model object added");
+              break;
+            case 1:
+              createuploadcontent()
+              break;
+            default:
+              alert("Please upload only ONE model file");
+              break;
           }
         }
         //if cubemap file, process and popup to assign textures
