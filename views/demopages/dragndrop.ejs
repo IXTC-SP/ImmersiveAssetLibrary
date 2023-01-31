@@ -66,7 +66,7 @@
       border: 1px solid #4f4f4f;
       background-color: white;
       padding: 10px;
-      height: 134px;
+      height: 168px;
     }
     .texture-assign-box.top {
       border-top-left-radius: 6px;
@@ -193,6 +193,11 @@
       width: 100%;
       text-overflow: ellipsis;
     }
+
+    .texture-assign-box img{
+      width: 100px;
+      height: 100px;
+    }
   </style>
 
   <!-- <div class="text-center">
@@ -275,7 +280,7 @@
               <label for="top-texture-selection">Top</label>
               <select name="top-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
-              <img src="">image</img>
+              <img src="">
             </div>
           </div>
           <div class="row" >
@@ -395,6 +400,11 @@
 
       const uploadform = document.querySelector(".upload-form");
 
+      function loadImgFile (imgElement, file){
+	     // const image = e.target.parentElement.children[2];
+	      imgElement.src = URL.createObjectURL(file);
+      };
+
       function assigntexture(e) {
         var filename = e.target.name.split("-")[0];
         console.log("---->", fileObjs)
@@ -403,7 +413,9 @@
             f.filename = filename;
             return;
           }
-        })
+          console.log(e.target.parentElement.children[2])
+          loadImgFile (e.target.parentElement.children[2],f.file )
+        }) 
       }
 
       function checkCubemapTextures() {
@@ -857,7 +869,7 @@
       cubemapmodalcontent.style = "display:none;"
 
       function setupTextureAssignOptions(selects) {
-
+        console.log("assign texture-->", files)
         let textureassignarray = [];
         files.forEach((item, i) => {
           if (isImage(item.name)) {
