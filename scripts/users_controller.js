@@ -283,7 +283,8 @@ const controller = {
                 );
               }
             } else {//got deleted and tryna add back again
-              let reactivateUser = await userModel.findOneAndUpdate({ email: req.body.email }, {isActivated: true}, {new: true});
+              req.body.isAdmin === "Admin" ? (isAdmin = true) : (isAdmin = false);
+              let reactivateUser = await userModel.findOneAndUpdate({ email: req.body.email }, {isActivated: true, isAdmin}, {new: true});
               console.log(reactivateUser)
               renderObj.isSuccess = alertMessage(
                 true,

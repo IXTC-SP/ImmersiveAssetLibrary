@@ -33,7 +33,7 @@ const awsMethods = {
       tmpContent.image
         ? (allFiles = [...tmpContent.image, ...tmpContent.model])
         : (allFiles = [...tmpContent.model]);
-      allFiles.push({ gltfPath: "uploads\\tmp\\model.gltf" });
+      allFiles.push({ gltfPath: "uploads/tmp/model.gltf" });
     }
     allFiles.push(tmpContent.thumbnail);
     console.log("allfiles", allFiles);

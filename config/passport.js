@@ -20,7 +20,7 @@ const verifyCallback = async (req, username, password, done) => {
   //passport use promise, .then and .catch, async and awaits wrapping the promise
   try {
     user = await userModel.findOne({
-      email: username,
+      email: username.toLowerCase(),
       isActivated: true,
     });
     if (!user) {

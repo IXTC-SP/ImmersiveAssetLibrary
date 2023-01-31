@@ -20,14 +20,14 @@
             <%}%>
            
 
-            <div class="custom-file">
+            <!-- <div class="custom-file">
               <h6>Add Files</h6>
               <input type="file" class="custom-file-input form-control" id="inputGroupFile01"
-                accept="image/png, image/jpeg" onchange="addNewFile(this)">
+                accept="image/png, image/jpeg" onchange="addNewFile(this)"> -->
               <!-- <span class="btn btn-primary btn-file">
             Browse
           </span> -->
-            </div>
+            <!-- </div> -->
            
             <div class="accordion" id="accordionExample">
               <div class="accordion-item">
@@ -37,7 +37,7 @@
                     View Attached Files
                   </button>
                 </h2>
-                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                <div id="collapseOne" class="accordion-collapse" aria-labelledby="headingOne"
                   data-bs-parent="#accordionExample">
                   <div class="accordion-body p-2">
                     <%if(isModel){%>
@@ -50,9 +50,9 @@
                               <span class="p-0 text-muted text-overflow">
                                 <%=content.imagefiles[i]%>
                               </span>
-                              <button class="remove-file bg-transparent border-0"
+                              <!-- <button class="remove-file bg-transparent border-0"
                                 onclick="removeExistingFile(this,'<%-content.imagefiles[i]%>')"><i
-                                  class="fa-regular fa-trash-can trash-btn"></i></button>
+                                  class="fa-regular fa-trash-can trash-btn"></i></button> -->
                             </div>
                             <hr class="m-0">
                           </div>

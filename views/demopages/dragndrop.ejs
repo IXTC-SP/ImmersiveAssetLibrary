@@ -66,6 +66,7 @@
       border: 1px solid #4f4f4f;
       background-color: white;
       padding: 10px;
+      height: 134px;
     }
     .texture-assign-box.top {
       border-top-left-radius: 6px;
@@ -79,6 +80,18 @@
       border-top-right-radius: 6px;
       border-bottom-right-radius: 6px;
     }
+    .texture-assign-box.front {
+      border-top: 0px ;
+      border-right: 0px ;
+      border-bottom: 0px ;
+    }
+    .texture-assign-box.right {
+      border-right: 0px ;
+    }
+    .texture-assign-box.back {
+      border-right: 0px ;
+    }
+   
    
 
     /* The Modal (background) */
@@ -111,7 +124,7 @@
       margin: auto;
       padding: 20px;
       border: 1px solid #888;
-      width: 400px;
+      width: 600px;
       align-items: center;
       display: flex;
     }
@@ -199,7 +212,7 @@
             <i class="fa-solid fa-arrow-up-from-bracket drop-icon"></i>
             <span class="drag-text">Drag and Drop <span class="browse-btn" id="browse-btn" onclick="browse()">or
                 Browse</span></span><br>
-            <input type="file" id="browse-input" name="file" value="" style="display:none;">
+            <input type="file" id="browse-input" name="file" hidden>
           </div>
           <div>
             <p class="text-center mb-0 " id="format-support-info"><span class="support-types-text">We support
@@ -257,25 +270,25 @@
         <p id="assign-texture-err" class="error-message m-0 d-none">Assign all textures before proceeding.</p>
         <p>Assign Texture :</p>
         <div class="container">
-          <div class="row" style="height: 100px;">
+          <div class="row" >
             <div class="col-3 texture-assign-box top">
               <label for="top-texture-selection">Top</label>
               <select name="top-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
             </div>
           </div>
-          <div class="row" style="height: 100px;">
-            <div class="col-3 texture-assign-box">
+          <div class="row" >
+            <div class="col-3 texture-assign-box front">
               <label for="front-texture-selection">Front</label>
               <select name="front-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
             </div>
-            <div class="col-3 texture-assign-box">
+            <div class="col-3 texture-assign-box right">
               <label for="right-texture-selection">Right</label>
               <select name="right-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
             </div>
-            <div class="col-3 texture-assign-box">
+            <div class="col-3 texture-assign-box back">
               <label for="back-texture-selection">Back</label>
               <select name="back-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
@@ -286,7 +299,7 @@
               </select>
             </div>
           </div>
-          <div class="row" style="height: 100px;">
+          <div class="row">
             <div class="col-3 texture-assign-box bottom">
               <label for="bottom-texture-selection">Bottom</label>
               <select name="bottom-texture-selection" class="cubemap-texture-assign" id="texture-selection">
@@ -334,11 +347,25 @@
 
     <script type="text/javascript" src="fileextensioncheck.js"></script>
     <script>
+
       const dragArea = document.querySelector(".drop-zone");
       const dragText = document.querySelector(".drag-text");
       const collectedfiles = document.querySelector(".collected-files");
       const nextpagebtn = document.querySelector(".upload-page-btn");
       const assignTextureErr = document.querySelector("#assign-texture-err")
+      const browseInput = document.getElementById('browse-input');
+      const fileChosen = document.getElementById('file-chosen');
+
+      browseInput.addEventListener('change', async function(){
+        console.log(this.files[0])
+        //fileChosen.textContent = this.files[0].name
+        // createFileCard(this.files[0].name)
+        if (isZip(this.files[0].name)) {
+              await convertziptofile(this.files[0])
+            } else {
+              readFile(this.files[0]);
+            }
+      })
 
       //reload page when back button on browser is pressed
       window.addEventListener("pageshow", function (event) {
@@ -436,7 +463,8 @@
           }
         }
         request.open("POST", postURL, false);
-        request.send(formData);
+        request.send(formData)
+    
       }
 
       //create option for select element
@@ -449,32 +477,34 @@
 
       //next page btn
       function processUploads() {
-        //if no uploads added
-        if (files.length == 0)
-          {alert("No uploads added");}
-        else{
-          setupFileObjs();
-        //if model file, process and popup to assign textures
-        if (currenttype == "3dmodel") {
-          //changeModalContent("model");
-          createuploadcontent()
-        }
-        //if cubemap file, process and popup to assign textures
-        if (currenttype == "360image") {
-          if (currentformat == 'cubemap') changeModalContent("cubemap");
-          else 
-          {
-
-            createuploadcontent();
+        try {
+            //if no uploads added
+            if (files.length == 0)
+            {alert("No uploads added");}
+          else{
+            setupFileObjs();
+          //if model file, process and popup to assign textures
+          if (currenttype == "3dmodel") {
+            //changeModalContent("model");
+            createuploadcontent()
           }
-        }
+          //if cubemap file, process and popup to assign textures
+          if (currenttype == "360image") {
+            if (currentformat == 'cubemap') changeModalContent("cubemap");
+            else 
+            {
+              createuploadcontent();
+            }
+          }
 
-        // if (currenttype == "script") {
-        //   createuploadcontent();
-        // }
+          // if (currenttype == "script") {
+          //   createuploadcontent();
+          // }
+          }
+        } catch (error) {
+          alert(error)
         }
-
-       
+      
       }
 
       //creating and managing file card
@@ -523,6 +553,9 @@
         //trashcanBtn.style.display = "block"
         trashcanBtn.addEventListener('click', function (event) {
           removeFile(card, filename);
+          // files = files.map(item=> {
+          //   item
+          // })
           event.preventDefault();
         });
 
@@ -545,6 +578,7 @@
 
       function removeFile(card, filename) {
         card.remove();
+        console.log(card)
         for (var i = 0; i < files.length; i++) {
           if (files[i].name === filename) {
             files.splice(i, 1);
@@ -585,6 +619,8 @@
           createFileCard(file.name);
           files.push(file);
           console.log(files + " currently added file");
+        }else{
+          alert("Please check that your file/folder type are support")
         }
       }
 
@@ -644,13 +680,16 @@
       dragArea.addEventListener('dragleave', (event) => {
         dragcounter--;
         if (dragcounter === 0) {
-          dragText.textContent = "Drag & Drop"
+          dragText.innerHTML = "Drag and Drop <span class='browse-btn' id='browse-btn' onclick='browse()'>or Browse</span>"
+
         }
+        //browseAddListener()
       });
       dragArea.addEventListener('drop', async (event) => {
         console.log("drop")
         dragcounter = 0;
-        dragText.textContent = "Drag & Drop";
+        dragText.innerHTML = "Drag and Drop <span class='browse-btn' id='browse-btn' onclick='browse()'>or Browse</span>"
+        //browseAddListener()
         event.preventDefault();
         if (event.dataTransfer.items) {
           [...event.dataTransfer.files].forEach(async (file, i) => {
@@ -681,28 +720,28 @@
 
 
 
-      async function convertziptofile(file) {
-        var collectedfiles = [];
-        var jszip = new JSZip();
-        var zip = await jszip.loadAsync(file);
-        var foldername = '';
-        var zipfiles = Object.keys(zip.files);
-        for (var i in zipfiles) {
-          var zipfile = zip.files[zipfiles[i]];
-          var fileData = await zipfile.async('blob');
-          var filename = zipfiles[i].replace(foldername, "");
-          var file = new File([fileData], filename);
-          collectedfiles.push(file);
-        }
-        console.log("complete");
-        readFiles(collectedfiles);
-      }
+      // async function convertziptofile(file) {
+      //   var collectedfiles = [];
+      //   var jszip = new JSZip();
+      //   var zip = await jszip.loadAsync(file);
+      //   var foldername = '';
+      //   var zipfiles = Object.keys(zip.files);
+      //   for (var i in zipfiles) {
+      //     var zipfile = zip.files[zipfiles[i]];
+      //     var fileData = await zipfile.async('blob');
+      //     var filename = zipfiles[i].replace(foldername, "");
+      //     var file = new File([fileData], filename);
+      //     collectedfiles.push(file);
+      //   }
+      //   console.log("complete");
+      //   readFiles(collectedfiles);
+      // }
 
-      //browse button
-      function browse() {
-        var i = document.getElementById("browse-input");
-        i.click();
-      }
+      // //browse button
+      // function browse() {
+      //   var i = document.getElementById("browse-input");
+      //   i.click();
+      // }
 
       async function convertziptofile(file) {
         var collectedfiles = [];
@@ -821,6 +860,7 @@
             allowOnlySingleTextureAssigning(selects, e);
             assigntexture(e);
           }
+          selects[i].options.length = 0;
           createoption("Select", "Select", selects[i]);
           for (var j = 0; j < textureassignarray.length; j++) {
             createoption(textureassignarray[j].name, textureassignarray[j].name, selects[i]);
@@ -837,11 +877,15 @@
       }
 
       function checkTextureIsAssigned(selects) {
+        isAssigned = true
         for (var i = 0; i < selects.length; i++) {
-          if (selects[i] === "Select") {
-            return false
+          console.log(selects[i].value)
+          if (selects[i].value === "Select") {
+            isAssigned = false
+            
           }
         }
+        return isAssigned
       }
 
       function closeModalContent() {
