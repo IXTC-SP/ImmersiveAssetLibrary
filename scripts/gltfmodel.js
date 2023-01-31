@@ -7,8 +7,11 @@ const Create = (objectfile, callback) => {
   var modelfolderpath = path.resolve(objectfile.destination);
   // var modelfolderpath = path.resolve(objectfile.destination.split("/model")[0]);
   var modeltype = objectfile.filename.split(".")[1];
-  var modelfilepath = path.resolve(objectfile.destination + "\\" + objectfile.originalname);
-  var gltfpath = modelfolderpath + "\\model.gltf";
+  var modelfilepath = path.resolve(objectfile.destination + "/" + objectfile.originalname);
+  // var modelfilepath = path.resolve(objectfile.destination + "\\" + objectfile.originalname);
+  // var gltfpath = modelfolderpath + "\\model.gltf";
+  var gltfpath = modelfolderpath + "/model.gltf";
+  console.log(objectfile.destination, objectfile.originalname, modelfilepath);
   // var gltfpath = modelfolderpath + "\\" + "gltf" + "\\" + "model.gltf";
 
   try {
@@ -23,7 +26,7 @@ const Create = (objectfile, callback) => {
     switch (modeltype) {
       case "obj":
         // code block
-        console.log("running obj conversion");
+        console.log("running obj conversion", modelfilepath, gltfpath);
         var runcode = 'obj2gltf -i ';
         // runcode += file;
         runcode += modelfilepath + ' -o ' + gltfpath;
@@ -57,7 +60,8 @@ const Create = (objectfile, callback) => {
                 }
                 console.log("Directory renamed successfully.");
             });
-            gltfpath = modelfolderpath + "\\model.gltf"
+            // gltfpath = modelfolderpath + "\\model.gltf"
+            gltfpath = modelfolderpath + "/model.gltf"
             console.log(gltfpath);
             // yay, do what we will with our shiny new GLB file!
             console.log("completed fbx to gltf conversion");
