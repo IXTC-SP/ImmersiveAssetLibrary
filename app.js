@@ -327,15 +327,15 @@ app.post(
           res.end("complete");
         });
       } else {
-        console.log("running gltf format model");
+        console.log("running gltf format model", tmpContent.model[0].originalname.split(".")[1]);
         tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
-        tmpContent["modelviewerpath"] =
-          "." +
-          tmpContent.model[0].destination +
-          tmpContent.model[0].originalname;
-        res.end("complete");
+        var fullpath = tmpContent.model[0].destination + tmpContent.model[0].originalname;
+        tmpContent["modelviewerpath"] = "." + fullpath;
+        console.log("fullpath is " ,fullpath);
+        gltfmodel.ClearMaterialFromModel(fullpath, function () {
+          res.end("complete");
+        });
       }
-
      
     });
   }

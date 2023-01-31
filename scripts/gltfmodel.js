@@ -12,7 +12,7 @@ const Create = (objectfile, callback) => {
   // var modelfilepath = path.resolve(objectfile.destination + "\\" + objectfile.originalname);
   // var gltfpath = modelfolderpath + "\\model.gltf";
   var gltfpath = modelfolderpath + "/model.gltf";
-  console.log(objectfile.destination, objectfile.originalname, modelfilepath);
+  console.log(objectfile.destination, objectfile.originalname, gltfpath);
   // var gltfpath = modelfolderpath + "\\" + "gltf" + "\\" + "model.gltf";
 
   try {
@@ -23,70 +23,67 @@ const Create = (objectfile, callback) => {
   } catch (error) {
     console.error(error)
   }
-  if (!fs.existsSync(gltfpath)) {
-    switch (modeltype) {
-      case "obj":
-        // code block
-        var objpath = objectfile.destination + "/" + objectfile.originalname;
-        var objgltfpath = objectfile.destination + "/model.gltf";
-        obj2gltf(objpath).then(function (gltf) {
-          const data = Buffer.from(JSON.stringify(gltf));
-          console.log(data);
-          fs.writeFileSync(objgltfpath, data);
+  switch (modeltype) {
+    case "obj":
+      // code block
+      var objpath = objectfile.destination + "/" + objectfile.originalname;
+      var objgltfpath = objectfile.destination + "/model.gltf";
+      obj2gltf(objpath).then(function (gltf) {
+        const data = Buffer.from(JSON.stringify(gltf));
+        console.log(data);
+        fs.writeFileSync(objgltfpath, data);
+        callback(gltfpath);
+      });
+
+      // console.log("running obj conversion", modelfilepath, gltfpath);
+      // var runcode = 'obj2gltf -i ';
+      // // runcode += file;
+      // runcode += modelfilepath + ' -o ' + gltfpath;
+      // exec(runcode, (err, output) => {
+      //   // once the command has completed, the callback function is called
+      //   if (err) {
+      //     // log and return if we encounter an error
+      //     console.error("could not execute command: ", err)
+      //     return
+      //   }
+      //   // log the output received from the command
+      //   console.log("Output: \n", output)
+
+      //   callback(gltfpath);
+      // });
+      // gltfpath = modelfolderpath + "\\model.gltf"
+
+      break;
+    case "fbx":
+      // code block
+      // runcode = 'fbx2gltf -e -i ' + modelfilepath + ' -o ' + gltfpath;
+      const convert = require('fbx2gltf');
+      convert(modelfilepath, gltfpath, ['--embed']).then(
+        destPath => {
+          let oldDirName = modelfolderpath + "/model_out/model.gltf";
+          let newDirName = modelfolderpath + "/model.gltf";
+          // rename the directory
+          fs.rename(oldDirName, newDirName, (err) => {
+              if(err) {
+                  throw err;
+              }
+              console.log("Directory renamed successfully.");
+          });
+          // gltfpath = modelfolderpath + "\\model.gltf"
+          gltfpath = modelfolderpath + "/model.gltf"
+          console.log(gltfpath);
+          // yay, do what we will with our shiny new GLB file!
+          console.log("completed fbx to gltf conversion");
           callback(gltfpath);
-        });
-
-        // console.log("running obj conversion", modelfilepath, gltfpath);
-        // var runcode = 'obj2gltf -i ';
-        // // runcode += file;
-        // runcode += modelfilepath + ' -o ' + gltfpath;
-        // exec(runcode, (err, output) => {
-        //   // once the command has completed, the callback function is called
-        //   if (err) {
-        //     // log and return if we encounter an error
-        //     console.error("could not execute command: ", err)
-        //     return
-        //   }
-        //   // log the output received from the command
-        //   console.log("Output: \n", output)
-
-        //   callback(gltfpath);
-        // });
-        // gltfpath = modelfolderpath + "\\model.gltf"
-
-        break;
-        case "fbx":
-        // code block
-        // runcode = 'fbx2gltf -e -i ' + modelfilepath + ' -o ' + gltfpath;
-        const convert = require('fbx2gltf');
-        convert(modelfilepath, gltfpath, ['--embed']).then(
-          destPath => {
-            let oldDirName = modelfolderpath + "/model_out/model.gltf";
-            let newDirName = modelfolderpath + "/model.gltf";
-            // rename the directory
-            fs.rename(oldDirName, newDirName, (err) => {
-                if(err) {
-                    throw err;
-                }
-                console.log("Directory renamed successfully.");
-            });
-            // gltfpath = modelfolderpath + "\\model.gltf"
-            gltfpath = modelfolderpath + "/model.gltf"
-            console.log(gltfpath);
-            // yay, do what we will with our shiny new GLB file!
-            console.log("completed fbx to gltf conversion");
-            callback(gltfpath);
-          },
-          error => {
-            // ack, conversion failed: inspect 'error' for details
-          }
-        );
-        break;
-        default:
-          callback('');
-        break;
-    }
-
+        },
+        error => {
+          // ack, conversion failed: inspect 'error' for details
+        }
+      );
+      break;
+    default:
+        callback('');
+      break;
   }
 }
 module.exports.Create = Create;
