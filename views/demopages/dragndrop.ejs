@@ -280,7 +280,7 @@
               <label for="top-texture-selection">Top</label>
               <select name="top-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
-              <img src="">
+              <img src="./public/no-preview.jpeg">
             </div>
           </div>
           <div class="row" >
@@ -288,21 +288,25 @@
               <label for="front-texture-selection">Front</label>
               <select name="front-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
+              <img src="/public/no-preview.jpeg">
             </div>
             <div class="col-3 texture-assign-box right">
               <label for="right-texture-selection">Right</label>
               <select name="right-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
+              <img src="/public/no-preview.jpeg">
             </div>
             <div class="col-3 texture-assign-box back">
               <label for="back-texture-selection">Back</label>
               <select name="back-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
+              <img src="/public/no-preview.jpeg">
             </div>
             <div class="col-3 texture-assign-box left">
               <label for="left-texture-selection">Left</label>
               <select name="left-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
+              <img src="/public/no-preview.jpeg">
             </div>
           </div>
           <div class="row">
@@ -310,6 +314,7 @@
               <label for="bottom-texture-selection">Bottom</label>
               <select name="bottom-texture-selection" class="cubemap-texture-assign" id="texture-selection">
               </select>
+              <img src="/public/no-preview.jpeg">
             </div>
           </div>
         </div>
@@ -401,7 +406,6 @@
       const uploadform = document.querySelector(".upload-form");
 
       function loadImgFile (imgElement, file){
-	     // const image = e.target.parentElement.children[2];
 	      imgElement.src = URL.createObjectURL(file);
       };
 
@@ -411,10 +415,14 @@
         fileObjs.forEach((f, i) => {
           if (f.file.name == e.target.value) {
             f.filename = filename;
+            //console.log(e.target.parentElement.children[2])
+            loadImgFile (e.target.parentElement.children[2],f.file )
             return;
           }
-          console.log(e.target.parentElement.children[2])
-          loadImgFile (e.target.parentElement.children[2],f.file )
+          if(e.target.value === "Select"){
+            e.target.parentElement.children[2].src = "/public/no-preview.jpeg"
+          }
+
         }) 
       }
 
