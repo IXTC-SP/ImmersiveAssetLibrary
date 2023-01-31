@@ -467,7 +467,9 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
         }
       );
     });
-  });
+
+ 
+});
 });
 // ----- model upload to publish ------ END
 

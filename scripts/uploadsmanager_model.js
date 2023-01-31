@@ -5,7 +5,7 @@ multer = require('multer');
 
 var storagepath = './uploads/tmp/';
 var uploadcontent;
-const uploadstorage = multer.diskStorage({
+const uploadstorage  = multer.diskStorage({
   destination: (req, file, cb) => { // setting destination of uploading files
     fs.mkdirSync(storagepath, {
       recursive: true
@@ -13,7 +13,7 @@ const uploadstorage = multer.diskStorage({
     cb(null, storagepath);
   },
   filename: (req, file, cb) => { // naming file
-    cb(null, file.originalname);
+    cb(null, file.originalname)  
   }
 });
 var upload = multer({
