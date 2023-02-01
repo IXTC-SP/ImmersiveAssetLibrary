@@ -18,6 +18,7 @@
     "adm-zip": "^0.5.9",
     "archiver": "^5.3.1",
     "aws-sdk": "^2.1293.0",
+    "axios": "^1.2.6",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.1",
     "bootstrap-table": "^1.21.1",

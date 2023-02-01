@@ -3,6 +3,8 @@ const AWS = require("aws-sdk");
 require("dotenv").config();
 const archiver = require("archiver");
 const stream = require("stream");
+var AdmZip = require("adm-zip");
+
 // Enter copied or downloaded access ID and secret key here
 const ID = process.env.AWS_ACCESS_KEY_ID;
 const SECRET = process.env.AWS_SECRET_ACCESS_KEY;
@@ -108,7 +110,7 @@ const awsMethods = {
         archive.append(item.passthrough, { name: item.name });
       });
 
-      console.log(archive);
+      console.log("archive" ,archive);
       return archive;
     } catch (error) {
       console.log(error);
@@ -148,6 +150,120 @@ const awsMethods = {
       return error
     }
   },
+  getFolderContent: async (objId) => {
+    let params = {
+      Bucket: bucketName /* required */,
+      Prefix: `uploads/${objId}/`, // Can be your folder name
+    };
+    try {
+      let files = await s3.listObjectsV2(params).promise()
+      //get each file content
+      let filebuffers = [];
+      files.Contents.map((item) => {
+        params = {
+          Bucket: bucketName /* required */,
+          Key: `${item.Key}`,
+        };
+        filebuffers.push(s3.getObject(params));
+      });
+      console.log("archive" ,filebuffers);
+      return filebuffers;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  },
+  getSingleModelContent: async (objId, gltfpath, thumbnailpath) => {
+    var buffers = {};
+    var params = {
+      Bucket: bucketName,
+      Key: `uploads/${objId}/${gltfpath}`
+    };
+    var gltfbuffer = await s3.getObject(params).promise();
+    // await handleFiles(gltfbuffer);
+    
+    const bin = gltfbuffer.Body.toString('binary');
+    // buffers['gltf'] = bin;
+    var base64Gltf = Buffer.from(gltfbuffer.Body).toString("base64");
+    buffers['gltf'] = `data:${gltfbuffer.ContentType};base64,${base64Gltf}`;
+    var params2 = {
+      Bucket: bucketName,
+      Key: `uploads/${objId}/${thumbnailpath}`
+    };
+    var thumbnailbuffer = await s3.getObject(params2).promise();
+    var base64Image = Buffer.from(thumbnailbuffer.Body).toString("base64");
+    buffers['thumbnail'] = `data:${thumbnailbuffer.ContentType};base64,${base64Image}`;
+    return buffers;
+  },
+  getSingleCubemapContent: async (objId, cubemapPaths, thumbnailpath) => {
+    var buffers = {
+      cubemap: Object,
+      thumbnail: ""
+    }
+  for (const [key, value] of Object.entries(cubemapPaths)) {
+    console.log(`${key}: ${value}`);
+    var params = {
+      Bucket: bucketName,
+      Key: `uploads/${objId}/${value}`
+    };
+    s3.getObject(params, function(err, data) {
+      if (err) console.log(err, err.stack);
+      buffers.cubemap[key.toString()] = data.Body;
+    });
+  }
+    var params2 = {
+      Bucket: bucketName,
+      Key: `uploads/${objId}/${thumbnailpath}`
+    };
+    s3.getObject(params2, function(err, data) {
+      if (err) console.log(err, err.stack);
+      buffers.thumbnail = data.Body;
+    });
+    return buffers;
+  },
+  getSingleEquirectangularContent: async (objId, equirectangularPath, thumbnailpath) => {
+    var buffers = {
+      equirectangle: "",
+      thumbnail: ""
+    }
+    var params = {
+      Bucket: bucketName,
+      Key: `uploads/${objId}/${equirectangularPath}`
+    };
+    s3.getObject(params, function(err, data) {
+      if (err) console.log(err, err.stack);
+      buffers.equirectangle = data.Body;
+    });
+    var params2 = {
+      Bucket: bucketName,
+      Key: `uploads/${objId}/${thumbnailpath}`
+    };
+    s3.getObject(params2, function(err, data) {
+      if (err) console.log(err, err.stack);
+      buffers.thumbnail = data.Body;
+    });
+    return buffers;
+  },
+  getSignedFileUrl: async (objId, fileName) => {
+    let params = {
+      Bucket: bucketName,
+      Key: `uploads/${objId}/${fileName}`, // folder + File name you want to save as in S3
+      Expires: 5
+    }
+    var preassignedUrl = await s3.getSignedUrlPromise("getObject", params);
+    console.log("preassigned url " ,preassignedUrl);
+    return preassignedUrl;
+  }  
 };
 
 module.exports = awsMethods;
+
+const CreateZipArchive = async (files) => {
+  const zip = new AdmZip();
+  files.forEach (async (file)=>{
+    zip.addFile(file.Body);
+  })
+
+  var buffer = zip.toBuffer();
+  return buffer;
+};

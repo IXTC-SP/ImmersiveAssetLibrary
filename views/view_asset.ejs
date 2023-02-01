@@ -121,7 +121,7 @@
           >
             <img
               class="thumbnail-img d-block w-100 shadow-1-strong rounded carousel-size"
-              src="../uploads/shiba/thumbnail.png"
+              src=""
               class="img-fluid"
             />
           </button>
@@ -276,6 +276,7 @@
 </section>
 <script type="text/javascript">
   var data = <%-JSON.stringify(data) %>;
+  var buffers = <%- JSON.stringify(buffers) %>;
   var assettype = <%-JSON.stringify(assettype) %>;
   var files = [];
   console.log("view-asset",data);
@@ -286,24 +287,26 @@
   getEJScontent(data);
 
   function getEJScontent(data) {
-    console.log(data)
+
+    // console.log(urlsigned)
     if(data.assetPath.thumbnail != null){
+
     Array.from(thumbnails).forEach((element) => {
       // element.src =
+      // buffers.thumbnail;
       //  "../." + data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
-       element.src =
-       data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
-     
+      //  element.src =
+      //  urlsigned;
+      //  data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
     });
     }
 
     if(assettype === "model"){
-
-      console.log(data.assetPath.folderpath + "/" + data.assetPath.gltfmodelpath);
       //modelviewer.src = "../" + data.assetPath.gltfmodelpath;
-      modelviewer.src = data.assetPath.folderpath + "/" + data.assetPath.gltfmodelpath;
+      //   modelviewer.src = data.assetPath.folderpath + "/" + data.assetPath.gltfmodelpath;
+      modelviewer.src = buffers.gltf;
       modelviewer.addEventListener("load", () => {
-      const material = modelviewer.model.materials[0];
+      // const material = modelviewer.model.materials[0];
       // const createAndApplyTexture = async (channel) => {
       //   // Applies the new texture to the specified channel.
       //   var diffusepath = "../." + data.assetPath.folderpath.diffuse;
