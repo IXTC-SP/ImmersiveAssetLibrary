@@ -119,7 +119,6 @@ app.get(
           buffers = await awsMethods.getSingleCubemapContent(req.params.modelid,result.assetPath.cubemap, result.assetPath.thumbnail)
         }
       }
-      var presignedUri = await awsMethods.getSignedFileUrl(req.params.modelid, result.assetPath.thumbnail);
       userModel.findById(result.owner, function (err, doc) {
         // console.log(doc.email);
         res.render("view_asset", {
@@ -226,6 +225,7 @@ app.get(
       databasemanager_model.SearchBar(req.query.search, async (result) => {
         filteredResult = await check3dModelFilters(result, req.query);
         filteredResult = await sortResults(filteredResult);
+        console.log('running this');
         res.render("assets", {
           data: {
             models: filteredResult,

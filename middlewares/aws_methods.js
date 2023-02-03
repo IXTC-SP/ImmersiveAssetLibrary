@@ -193,7 +193,6 @@ const awsMethods = {
       Key: `uploads/${objId}/${gltfpath}`
     };
     const gltfbuffer = await s3.getObject(params).promise();
-    // const gltfString = new TextDecoder().decode(gltfbuffer.body);
     const model = JSON.parse(gltfbuffer.Body.toString());
 
     if(model.images){
@@ -220,9 +219,7 @@ const awsMethods = {
       Key: `uploads/${objId}/${thumbnailpath}`
     };
 
-    var thumbnailbuffer = await s3.getObject(params2).promise();
-    var base64Image = Buffer.from(thumbnailbuffer.Body).toString("base64");
-    buffers['thumbnail'] = `data:${thumbnailbuffer.ContentType};base64,${base64Image}`;
+    buffers['thumbnail'] =await s3.getSignedUrl('getObject', params2);
     return buffers;
   },
   getSingleCubemapContent: async (objId, cubemapPaths, thumbnailpath) => {
