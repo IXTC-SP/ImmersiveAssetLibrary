@@ -6,6 +6,9 @@ const stream = require("stream");
 var AdmZip = require("adm-zip");
 var JSZip = require("jszip");
 const { files } = require("jszip");
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+
+
 
 // Enter copied or downloaded access ID and secret key here
 const ID = process.env.AWS_ACCESS_KEY_ID;
@@ -190,47 +193,27 @@ const awsMethods = {
       Key: `uploads/${objId}/${gltfpath}`
     };
     const gltfbuffer = await s3.getObject(params).promise();
-    const gltfbufferData = gltfbuffer.data;
+    // const gltfString = new TextDecoder().decode(gltfbuffer.body);
+    const model = JSON.parse(gltfbuffer.Body.toString());
 
-    const gltfFileUrl = s3.getSignedUrl('getObject',params);
-    var textureFileUrls = [];
-    
-    const response = await fetch(gltfFileUrl);
-    const gltfBuffer = await response.arrayBuffer();
-    const gltfString = new TextDecoder().decode(gltfBuffer);
-    const model = JSON.parse(gltfString);
-    console.log(model);
+    if(model.images){
+      model.images.forEach((image)=> {
+        image.uri = s3.getSignedUrl('getObject', {Bucket: bucketName, Key: `uploads/${objId}/${image.uri}`});
+      });
+    }
 
-    const textureFileUrlPromises = model.images.map(async (image)=> {
-      return await new Promise((resolve,reject)=> {
-        console.log('image uri',image.uri);
-        const textureFileUrl = s3.getSignedUrl('getObject', {Bucket: bucketName, Key: `uploads/${objId}/${image.uri}`});
-        resolve(textureFileUrl);
-      })
-    })
+    let stringData = JSON.stringify(model);
+    let byteCharacters = new TextEncoder().encode(stringData);
+    let byteArrays = [...Array(byteCharacters.length)].map((_, i) => byteCharacters.slice(i * 8192, i * 8192 + 8192));
 
-    textureFileUrls = await Promise.all(textureFileUrlPromises);
-    var texturesBuffers = await Promise.all(textureFileUrls.map(url => fetch(url).then(response => response.arrayBuffer())));
-    console.log("getting gltf buffers");
-    const textures = texturesBuffers.map(buffer => `data:image/jpeg;base64,${arrayBufferToBase64(buffer)}`);
-    buffers['gltf'] = gltfbufferData;
+    let binaryData = '';
+    for (let byteArray of byteArrays) {
+      binaryData += String.fromCharCode(...new Uint8Array(byteArray));
+    }
 
-    // fetch(gltfFileUrl)
-    // .then(response => response.arrayBuffer())
-    // .then(gltfBuffer => {
-    //   const gltfString = new TextDecoder().decode(gltfBuffer);
-    //   const model = JSON.parse(gltfString);
-    //   model.textures.forEach(texture => {
-    //     const textureFileUrl = s3.getSignedUrl('getObject', {Bucket: 'my-bucket', Key: `model/${texture.uri}`});
-    //     textureFileUrls.push(textureFileUrl);
-    //   });
-    //   return Promise.all(textureFileUrls.map(url => fetch(url).then(response => response.arrayBuffer())));
-    // })
-    // .then(texturesBuffers => {
-    //   console.log("getting gltf buffers");
-    //   const textures = texturesBuffers.map(buffer => `data:image/jpeg;base64,${arrayBufferToBase64(buffer)}`);
-    //   buffers['gltf'] = model;
-    // });
+    let dataUrl = 'data:' + gltfbuffer.ContentType + ';base64,' + Buffer.from(binaryData).toString('base64');
+
+    buffers['gltf'] = dataUrl;
 
     var params2 = {
       Bucket: bucketName,

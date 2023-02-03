@@ -278,22 +278,12 @@
 <script type="text/javascript">
   var data = <%-JSON.stringify(data) %>;
   var buffers = <%- JSON.stringify(buffers) %>;
-  console.log(buffers.gltf);
   var assettype = <%-JSON.stringify(assettype) %>;
   var files = [];
   var modelviewer = document.getElementById("model-viewer");
   var thumbnails = document.getElementsByClassName("thumbnail-img");
   getEJScontent(data);
 
-  // loadZip();
-  async function loadZip(){
-  // Load the zip file using JSZip
-  var zip = new JSZip();
-  console.log(buffers);
-  zip.loadAsync(buffers.data).then(function(zip) {
-    modelviewer.src = zip;
-  });
-  }
 
   function getEJScontent(data) {
 
@@ -316,8 +306,8 @@
       //modelviewer.src = "../" + data.assetPath.gltfmodelpath;
       //   modelviewer.src = data.assetPath.folderpath + "/" + data.assetPath.gltfmodelpath;
       modelviewer.src = 
-      // buffers['gltf'];
-      URL.createObjectURL(new Blob([ buffers['gltf']]));
+      buffers['gltf'];
+      // URL.createObjectURL(new Blob([ buffers['gltf']]));
       // modelviewer.addEventListener("load", () => {
       // const material = modelviewer.model.materials[0];
       // const createAndApplyTexture = async (channel) => {
