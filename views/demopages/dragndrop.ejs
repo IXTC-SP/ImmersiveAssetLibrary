@@ -1,7 +1,7 @@
 <%- include('../partials/header') %>
-  <script type="text/javascript" src="jszip.min.js"></script>
+<script type="text/javascript" src="jszip.min.js"></script>
 
-
+<body>
   <section class="w-75 d-flex flex-column m-auto mt-5"></section>
   <style>
     .drop-zone {
@@ -22,7 +22,6 @@
       text-decoration: underline;
     }
 
-
     /* .upload-btn-group {
       padding-top: 2em;
       display: flex;
@@ -38,7 +37,6 @@
       margin: auto; */
     }
 
-
     .card {
       width: 120px;
       height: 120px;
@@ -51,7 +49,6 @@
       left: 100px;
       font-size: 20px;
       top: -5px;
-
     }
 
     .card-file-info {
@@ -81,18 +78,16 @@
       border-bottom-right-radius: 6px;
     }
     .texture-assign-box.front {
-      border-top: 0px ;
-      border-right: 0px ;
-      border-bottom: 0px ;
+      border-top: 0px;
+      border-right: 0px;
+      border-bottom: 0px;
     }
     .texture-assign-box.right {
-      border-right: 0px ;
+      border-right: 0px;
     }
     .texture-assign-box.back {
-      border-right: 0px ;
+      border-right: 0px;
     }
-   
-   
 
     /* The Modal (background) */
     .modal {
@@ -147,7 +142,7 @@
 
     .drop-icon {
       font-size: 60px;
-      color: #0092FF;
+      color: #0092ff;
     }
 
     .drag-text {
@@ -156,18 +151,18 @@
     }
 
     .browse-btn {
-      color: #0092FF;
+      color: #0092ff;
       text-decoration: none;
       cursor: pointer;
     }
 
     .support-types-text {
       font-size: 14px;
-      font-weight: 300
+      font-weight: 300;
     }
 
     .title-upload {
-      font-weight: 300
+      font-weight: 300;
     }
 
     .btn-size {
@@ -177,7 +172,14 @@
     .drop-zone-border {
       border: 0px;
       text-align: center;
-      background: linear-gradient(to right, #2b7a9e 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(#2b7a9e 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(to right, #2b7a9e 50%, rgba(255, 255, 255, 0) 0%), linear-gradient(#2b7a9e 50%, rgba(255, 255, 255, 0) 0%);
+      background: linear-gradient(
+          to right,
+          #2b7a9e 50%,
+          rgba(255, 255, 255, 0) 0%
+        ),
+        linear-gradient(#2b7a9e 50%, rgba(255, 255, 255, 0) 0%),
+        linear-gradient(to right, #2b7a9e 50%, rgba(255, 255, 255, 0) 0%),
+        linear-gradient(#2b7a9e 50%, rgba(255, 255, 255, 0) 0%);
       background-position: top, right, bottom, left;
       background-repeat: repeat-x, repeat-y;
       background-size: 30px 2px, 2px 30px;
@@ -189,18 +191,18 @@
       justify-content: center;
     }
 
-    .cubemap-texture-assign{
+    .cubemap-texture-assign {
       width: 100%;
       text-overflow: ellipsis;
     }
 
-    .texture-assign-box img{
+    .texture-assign-box img {
       width: 100%;
       height: 100%;
       border: 1px solid #4f4f4f;
     }
 
-    .cubemap-bg-img{
+    .cubemap-bg-img {
       /* background-image: url(blob:http://localhost:3000/fe75243b-5cef-43cb-8bbd-dd732193960a);
     background-size: contain; */
     }
@@ -211,41 +213,56 @@
   </div> -->
   <div class="card-body w-100">
     <h2 class="pb-2 text-center title-upload">Upload a new asset</h2>
-    <div class="row ">
-      <div class="col-2">
-      </div>
+    <div class="row">
+      <div class="col-2"></div>
       <div class="col-6">
         <div class="p-3 drop-zone-border drop-zone" id="drop-zone">
           <!-- <div class="collected-files">
           </div> -->
-          <i id="trash-icon" class="trash-btn fa-regular fa-trash-can" style="display: none"></i>
+          <i
+            id="trash-icon"
+            class="trash-btn fa-regular fa-trash-can"
+            style="display: none"
+          ></i>
           <div class="text-center mb-2 d-flex flex-column">
             <i class="fa-solid fa-arrow-up-from-bracket drop-icon"></i>
-            <span class="drag-text">Drag and Drop <span class="browse-btn" id="browse-btn" onclick="browse()">or
-                Browse</span></span><br>
-            <input type="file" id="browse-input" name="file" hidden>
+            <span class="drag-text"
+              >Drag and Drop
+              <span class="browse-btn" id="browse-btn" onclick="browse()"
+                >or Browse</span
+              ></span
+            ><br />
+            <input type="file" id="browse-input" name="file" hidden />
           </div>
           <div>
-            <p class="text-center mb-0 " id="format-support-info"><span class="support-types-text">We support
-              </span><span id="span-format"></span>
+            <p class="text-center mb-0" id="format-support-info">
+              <span class="support-types-text">We support </span
+              ><span id="span-format"></span>
             </p>
-          </p>
-            <p class="text-center mb-0 support-types-text" id="format-3dmodel-info">You can also upload a
-              <strong>ZIP</strong> folder containing only your textures(JPG, JPEG, PNG), materials, and mesh(obj, fbx).
+
+            <p
+              class="text-center mb-0 support-types-text"
+              id="format-3dmodel-info"
+            >
+              You can also upload a <strong>ZIP</strong> folder containing only
+              your textures(JPG, JPEG, PNG), materials, and mesh(obj, fbx).
             </p>
             <!-- <p class="text-center mb-0 support-types-text">Additional files can be added in the next step</p> -->
           </div>
-
-
         </div>
-        <div class="collected-files">
-        </div>
+        <div class="collected-files"></div>
       </div>
       <div class="col-2 d-flex flex-column justify-content-between">
         <div>
-          <label for="asset-select" class="support-types-text">Select Asset Type:</label>
-          <select class="admin-input rounded-2 p-1 w-100" name="assets" id="asset-select"
-            onchange="triggerChangeWithAssetSelect()">
+          <label for="asset-select" class="support-types-text"
+            >Select Asset Type:</label
+          >
+          <select
+            class="admin-input rounded-2 p-1 w-100"
+            name="assets"
+            id="asset-select"
+            onchange="triggerChangeWithAssetSelect()"
+          >
             <option value="3dmodel">3D Model</option>
             <!-- <option value="script">Script</option> -->
             <option value="360image">360 Image</option>
@@ -253,22 +270,29 @@
         </div>
 
         <div>
-        
-          <label class=" mt-2" id="asset-format-id" for="asset-format">Select Format:</label>
-          <select class="admin-input rounded-2 p-1 w-100" name="format" id="asset-format"
-            onchange="onChangeFormatType(this)">
-          </select>
+          <label class="mt-2" id="asset-format-id" for="asset-format"
+            >Select Format:</label
+          >
+          <select
+            class="admin-input rounded-2 p-1 w-100"
+            name="format"
+            id="asset-format"
+            onchange="onChangeFormatType(this)"
+          ></select>
         </div>
         <div class="mt-auto">
           <!-- <button class="btn btn-size btn-outline-info rounded-8 cancel-page-btn" type="button"
             name="button">Cancel</button> -->
-          <button class="btn btn-size theme-color btn-rounded upload-page-btn w-100" type="button" name="button"> Next
+          <button
+            class="btn btn-size theme-color btn-rounded upload-page-btn w-100"
+            type="button"
+            name="button"
+          >
+            Next
           </button>
         </div>
-
       </div>
-      <div class="col-2">
-      </div>
+      <div class="col-2"></div>
     </div>
   </div>
 
@@ -278,49 +302,107 @@
     <div class="modal-content">
       <span class="close" onclick="closeModalContent()">&times;</span>
       <div class="cubemap-content">
-        <p id="assign-texture-err" class="error-message m-0">Assign all textures before proceeding.</p>
+        <p id="assign-texture-err" class="error-message m-0">
+          Assign all textures before proceeding.
+        </p>
         <p>Assign Texture :</p>
         <div class="container">
-          <div class="row" >
-            <div name="top-texture-selection" id="drop1" class="col-3 texture-assign-box top cubemap-bg-img" >             
+          <div class="row">
+            <div
+              name="top-texture-selection"
+              id="drop1"
+              class="col-3 texture-assign-box top cubemap-bg-img"
+            >
               <label for="top-texture-selection">Top</label>
-              <select name="top-texture-selection" class="cubemap-texture-assign" >
-              </select>
-              <img id="drag1" alt="" draggable="true" class="texture-assign-box-img" src="">
-            </div>
-          </div>
-          <div class="row" >
-            <div name="front-texture-selection" id="drop2" class="col-3 texture-assign-box front cubemap-bg-img">
-              <label for="front-texture-selection">Front</label>
-              <select name="front-texture-selection" class="cubemap-texture-assign" >
-              </select>
-              <img id="drag2" draggable="true" class="texture-assign-box-img" src="">
-            </div>
-            <div id="drop3" class="col-3 texture-assign-box right cubemap-bg-img">
-              <label for="right-texture-selection">Right</label>
-              <select name="right-texture-selection" class="cubemap-texture-assign">
-              </select>
-              <img id="drag3" draggable="true" class="texture-assign-box-img" src="/no-preview.jpeg">
-            </div>
-            <div id="drop4" class="col-3 texture-assign-box back cubemap-bg-img">
-              <label for="back-texture-selection">Back</label>
-              <select name="back-texture-selection" class="cubemap-texture-assign" >
-              </select>
-              <img id="drag4" draggable="true" class="texture-assign-box-img" src="/no-preview.jpeg">
-            </div>
-            <div id="drop5" class="col-3 texture-assign-box left cubemap-bg-img">
-              <label for="left-texture-selection">Left</label>
-              <select name="left-texture-selection" class="cubemap-texture-assign" >
-              </select>
-              <img id="drag5" draggable="true" class="texture-assign-box-img" src="/no-preview.jpeg">
+              <!-- <select name="top-texture-selection" class="cubemap-texture-assign" >
+              </select> -->
+              <img
+                id="drag1"
+                alt=""
+                draggable="true"
+                class="texture-assign-box-img"
+                src=""
+              />
             </div>
           </div>
           <div class="row">
-            <div id="drop6" class="col-3 texture-assign-box bottom cubemap-bg-img">
+            <div
+              name="front-texture-selection"
+              id="drop2"
+              class="col-3 texture-assign-box front cubemap-bg-img"
+            >
+              <label for="front-texture-selection">Front</label>
+              <!-- <select name="front-texture-selection" class="cubemap-texture-assign" >
+              </select> -->
+              <img
+                id="drag2"
+                alt=""
+                draggable="true"
+                class="texture-assign-box-img"
+                src=""
+              />
+            </div>
+            <div
+              id="drop3"
+              class="col-3 texture-assign-box right cubemap-bg-img"
+            >
+              <label for="right-texture-selection">Right</label>
+              <!-- <select name="right-texture-selection" class="cubemap-texture-assign">
+              </select> -->
+              <img
+                id="drag3"
+                alt=""
+                draggable="true"
+                class="texture-assign-box-img"
+                src="/no-preview.jpeg"
+              />
+            </div>
+            <div
+              id="drop4"
+              class="col-3 texture-assign-box back cubemap-bg-img"
+            >
+              <label for="back-texture-selection">Back</label>
+              <!-- <select name="back-texture-selection" class="cubemap-texture-assign" >
+              </select> -->
+              <img
+                id="drag4"
+                alt=""
+                draggable="true"
+                class="texture-assign-box-img"
+                src="/no-preview.jpeg"
+              />
+            </div>
+            <div
+              id="drop5"
+              class="col-3 texture-assign-box left cubemap-bg-img"
+            >
+              <label for="left-texture-selection">Left</label>
+              <!-- <select name="left-texture-selection" class="cubemap-texture-assign" >
+              </select> -->
+              <img
+                id="drag5"
+                alt=""
+                draggable="true"
+                class="texture-assign-box-img"
+                src="/no-preview.jpeg"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div
+              id="drop6"
+              class="col-3 texture-assign-box bottom cubemap-bg-img"
+            >
               <label for="bottom-texture-selection">Bottom</label>
-              <select name="bottom-texture-selection" class="cubemap-texture-assign" >
-              </select>
-              <img id="drag6" draggable="true" class="texture-assign-box-img" src="/no-preview.jpeg">
+              <!-- <select name="bottom-texture-selection" class="cubemap-texture-assign" >
+              </select> -->
+              <img
+                id="drag6"
+                alt=""
+                draggable="true"
+                class="texture-assign-box-img"
+                src="/no-preview.jpeg"
+              />
             </div>
           </div>
         </div>
@@ -349,8 +431,13 @@
         </div>
       </div> -->
       <!-- <button class="page-btn left" type="button" name="button" onclick="createuploadcontent()">Next</button> -->
-      <button class="btn btn-size theme-color btn-rounded upload-page-btn" type="button" onclick="checkCubemapTextures()"
-        name="button"> Next
+      <button
+        class="btn btn-size theme-color btn-rounded upload-page-btn"
+        type="button"
+        onclick="checkCubemapTextures()"
+        name="button"
+      >
+        Next
       </button>
 
       <!-- <form class="upload-form" id="upload-form" action="/uploadcontent" method="post" enctype="multipart/form-data" onkeydown="return event.key != 'Enter';">
@@ -359,693 +446,700 @@
         </div>
       </form> -->
     </div>
+  </div>
+</body>
 
-    </body>
+<script type="text/javascript" src="fileextensioncheck.js"></script>
+<script>
+  const dragArea = document.querySelector(".drop-zone");
+  const dragText = document.querySelector(".drag-text");
+  const collectedfiles = document.querySelector(".collected-files");
+  const nextpagebtn = document.querySelector(".upload-page-btn");
+  const assignTextureErr = document.querySelector("#assign-texture-err");
+  const browseInput = document.getElementById("browse-input");
+  const fileChosen = document.getElementById("file-chosen");
+  const cubemapDivs = document.querySelectorAll(".texture-assign-box");
+  const cubemapImgs = document.querySelectorAll(".texture-assign-box-img");
 
-    <script type="text/javascript" src="fileextensioncheck.js"></script>
-    <script>
+  browseInput.addEventListener("change", async function () {
+    console.log(this.files[0]);
+    //fileChosen.textContent = this.files[0].name
+    // createFileCard(this.files[0].name)
+    if (isZip(this.files[0].name)) {
+      await convertziptofile(this.files[0]);
+    } else {
+      readFile(this.files[0]);
+    }
+  });
 
-      const dragArea = document.querySelector(".drop-zone");
-      const dragText = document.querySelector(".drag-text");
-      const collectedfiles = document.querySelector(".collected-files");
-      const nextpagebtn = document.querySelector(".upload-page-btn");
-      const assignTextureErr = document.querySelector("#assign-texture-err")
-      const browseInput = document.getElementById('browse-input');
-      const fileChosen = document.getElementById('file-chosen');
-      const cubemapDivs= document.querySelectorAll('.texture-assign-box');
-      const cubemapImgs= document.querySelectorAll('.texture-assign-box-img');
+  cubemapDivs.forEach((eachDiv) => {
+    eachDiv.addEventListener("dragover", async function (ev) {
+      ev.preventDefault();
+    });
+    eachDiv.addEventListener("drop", async function (ev) {
+      ev.preventDefault();
+      const dragImgData = ev.dataTransfer.getData("imgId");
+      const dragParentData = ev.dataTransfer.getData("parentId");
+      const dragAltData = ev.dataTransfer.getData("altValue");
+      const currentImgData = document.getElementById(ev.target.id);
+      console.log(
+        dragImgData,
+        dragParentData,
+        dragAltData,
+        ev.target.id,
+        ev.target.parentNode.children[1].alt,
+        ev.target.parentNode.children[0].innerText
+      );
+      droptexture(
+        ev.target.parentNode.children[1].alt,
+        ev.target.parentNode.children[0].innerText,
+        dragAltData
+      );
+      document
+        .getElementById(ev.target.parentNode.id)
+        .appendChild(document.getElementById(dragImgData));
+      //document.getElementById(dragParentData).children[1].value = ev.target.parentNode.children[1].value
+      document.getElementById(dragParentData).appendChild(currentImgData);
+    });
+  });
 
-      browseInput.addEventListener('change', async function(){
-        console.log(this.files[0])
-        //fileChosen.textContent = this.files[0].name
-        // createFileCard(this.files[0].name)
-        if (isZip(this.files[0].name)) {
-              await convertziptofile(this.files[0])
-            } else {
-              readFile(this.files[0]);
-            }
-      })
+  cubemapImgs.forEach((img) => {
+    img.addEventListener("dragstart", async function (ev) {
+      console.log(ev.target.id);
+      ev.dataTransfer.setData("imgId", ev.target.id);
+      ev.dataTransfer.setData("parentId", ev.target.parentNode.id);
+      ev.dataTransfer.setData("altValue", ev.target.parentNode.children[1].alt);
+    });
+  });
 
-      cubemapDivs.forEach(eachDiv => {
-        eachDiv.addEventListener('dragover', async function(ev){
-        ev.preventDefault();  
-      })
-      eachDiv.addEventListener('drop', async function(ev){
-        ev.preventDefault();
-        const dragImgData = ev.dataTransfer.getData("imgId");
-        const dragParentData = ev.dataTransfer.getData("parentId");
-        const dragAltData = ev.dataTransfer.getData("altValue");
-        const currentImgData = document.getElementById(ev.target.id)
-        console.log(dragImgData, dragParentData, dragAltData, ev.target.id, ev.target.parentNode.children[2].alt, ev.target.parentNode.children[1].value, ev.target.parentNode.children[1].name.split("-")[0] )
-        droptexture(ev.target.parentNode.children[2].alt, ev.target.parentNode.children[1].name.split("-")[0] , dragAltData, )
-        document.getElementById(ev.target.parentNode.id).appendChild(document.getElementById(dragImgData))
-        document.getElementById(dragParentData).children[1].value = ev.target.parentNode.children[1].value
-        document.getElementById(dragParentData).appendChild(currentImgData);
-      })
-      })
-    
-      cubemapImgs.forEach(img => {
-        img.addEventListener("dragstart", async function(ev){
-        console.log(ev.target.id)
-        ev.dataTransfer.setData("imgId", ev.target.id);
-        ev.dataTransfer.setData("parentId", ev.target.parentNode.id);
-        ev.dataTransfer.setData("altValue", ev.target.parentNode.children[2].alt);
-      })
-      })
-      
+  //reload page when back button on browser is pressed
+  window.addEventListener("pageshow", function (event) {
+    var historyTraversal =
+      event.persisted ||
+      (typeof window.performance != "undefined" &&
+        window.performance.navigation.type === 2);
+    if (historyTraversal) {
+      // Handle page restore.
+      window.location.reload();
+    }
+  });
 
-      function clickImage(img){
-        console.log(img)
-        img.parentNode.children[1].style = "display: block;"
+  class fileObj {
+    constructor(type, filename, file) {
+      this.type = type;
+      this.filename = filename;
+      this.file = file;
+    }
+  }
+  var fileObjs = [];
+
+  nextpagebtn.addEventListener("click", function (event) {
+    processUploads();
+    event.preventDefault();
+  });
+
+  const uploadform = document.querySelector(".upload-form");
+
+  function loadImgFile(imgEl, url, altName) {
+    //style.backgroundImage = `url(${URL.createObjectURL(file)})`;
+    imgEl.src = url
+    imgEl.alt = altName
+  }
+
+  // function assigntexture(e) {
+  //   var filename = e.target.name.split("-")[0];
+  //   console.log("---->", fileObjs)
+  //   fileObjs.forEach((f, i) => {
+  //     if (f.file.name == e.target.value) {
+  //       f.filename = filename;
+  //       //console.log(e.target.parentElement.children[2])
+  //       loadImgFile (e.target.parentElement.children[1],f.file )
+  //       //console.log(e.target.parentElement.style)
+  //       //loadImgFile (e.target.parentElement.style, f.file )
+  //       return;
+  //     }
+  //     // if(e.target.value === "Select"){
+  //     //   e.target.parentElement.children[2].src = "/no-preview.jpeg"
+  //     // }
+
+  //   })
+  // }
+  function droptexture(dropAlt, dropfilename, dragAltData) {
+    console.log(dropfilename, dragAltData);
+    //var filename = e.target.parentNode.children[1].name.split("-")[0];
+    let dropFileObjIndex;
+    let dragFileObjFilename;
+    fileObjs.forEach((f, i) => {
+      if (f.filename == dropfilename) {
+        dropFileObjIndex = i;
       }
-      //reload page when back button on browser is pressed
-      window.addEventListener("pageshow", function (event) {
-        var historyTraversal = event.persisted ||
-          (typeof window.performance != "undefined" &&
-            window.performance.navigation.type === 2);
-        if (historyTraversal) {
-          // Handle page restore.
-          window.location.reload();
-        }
-      });
-
-      class fileObj {
-        constructor(type, filename, file) {
-          this.type = type
-          this.filename = filename;
-          this.file = file;
-        }
+      if (f.file.name == dragAltData) {
+        dragFileObjFilename = f.filename;
+        f.filename = dropfilename;
       }
-      var fileObjs = [];
+    });
+    if (dropFileObjIndex != null) {
+      console.log("switch");
+      fileObjs[dropFileObjIndex].filename = dragFileObjFilename;
+    }
+    dropFileObjIndex = null;
+    dragFileObjIndex = null;
+    console.log("after ---->", fileObjs);
+  }
 
-      nextpagebtn.addEventListener('click', function (event) {
-        processUploads();
-        event.preventDefault();
-      });
+  function checkCubemapTextures() {
+    if (!checkTextureIsAssigned(cubemaptextureassignselect)) {
+      assignTextureErr.classList.remove("d-none");
+      if (!assignTextureErr.classList.contains("d-block")) {
+        assignTextureErr.classList += " d-block";
+      }
+    } else {
+      createuploadcontent();
+    }
+  }
 
-      const uploadform = document.querySelector(".upload-form");
+  function createuploadcontent() {
+    const formData = new FormData();
+    const request = new XMLHttpRequest();
+    var nextURL = "";
+    var postURL = "";
 
-      // function allowDrop(ev) {
-      //   ev.preventDefault();      
-      // }
+    switch (currenttype) {
+      case "3dmodel":
+        nextURL = "/editpage/model";
+        postURL = "/uploadtmp3dmodel";
+        break;
+      case "360image":
+        nextURL = "/editpage/360";
+        postURL = "/uploadtmp360";
+        break;
+      case "script":
+        nextURL = "/editpage/script";
+        postURL = "/uploadtmpscript";
+        break;
+    }
+    //decide asset type
+    formData.append("type", currenttype);
+    formData.append("format", currentformat);
+    //set file names
+    console.log(fileObjs);
+    fileObjs.forEach((fileObj, i) => {
+      var savedName = "";
+      if (fileObj.file.name.split("/")[1]) {
+        //savedName = fileObj.filename + "_" + fileObj.file.name.split("/")[1];
+        savedName = fileObj.filename + "" + fileObj.file.name.split("/")[1];
+      } else {
+        //savedName = fileObj.filename + "_" + fileObj.file.name;
+        savedName = fileObj.filename + "" + fileObj.file.name;
+      }
+      console.log(savedName);
+      if (fileObj.filename == "thumbnail") {
+        formData.append("thumbnail", fileObj.file, savedName);
+      } else formData.append(fileObj.type, fileObj.file, savedName);
+    });
+    console.log(formData.get("image"));
+    request.onreadystatechange = function () {
+      // listen for state changes
+      if (request.readyState == 4 && request.status == 200) {
+        // when completed we can move away
+        window.location = nextURL;
+      }
+    };
+    request.open("POST", postURL, false);
+    request.send(formData);
+  }
 
-      // function drag(ev) {
-      //   console.log(ev.target.id)
-      //   ev.dataTransfer.setData("imgId", ev.target.id);
-      //   ev.dataTransfer.setData("parentId", ev.target.parentNode.id);
-      // }
+  //create option for select element
+  function createoption(text, value, parent) {
+    var option = document.createElement("option");
+    option.text = text;
+    option.value = value;
+    parent.add(option);
+  }
 
-      // function drop(ev) {
-      //   ev.preventDefault();
-      //   const dragImgData = ev.dataTransfer.getData("imgId");
-      //   const dragParentData = ev.dataTransfer.getData("parentId");
-      //   const currentImgData = document.getElementById(ev.target.id)
-      //   console.log(dragImgData, dragParentData, ev.target.id, ev.target.parentNode.id )
-      //   document.getElementById(ev.target.parentNode.id).appendChild(document.getElementById(dragImgData))
-      //   document.getElementById(dragParentData).appendChild(currentImgData);
-      //   document.getElementById(dragParentData).removeChild(document.getElementById(dragImgData))
-      // }
+  function getImgUrl(file) {
+    //style.backgroundImage = `url(${URL.createObjectURL(file)})`;
+    return {url: URL.createObjectURL(file), altName: file.name};
+  }
 
-      function loadImgFile (imgEl, file){
-	      //style.backgroundImage = `url(${URL.createObjectURL(file)})`;
-        imgEl.src = URL.createObjectURL(file)
-        imgEl.alt = file.name
+  const loadImage = (imageSrc) =>
+    new Promise((resolve) => {
+      const image = new Image();
+      image.onload = () => {
+        console.log("new image")
+        const height = image.height;
+        const width = image.width;
+        resolve({ image, width, height });
       };
+      image.src = imageSrc;
+    });
 
-      function assigntexture(e) {
-        var filename = e.target.name.split("-")[0];
-        console.log("---->", fileObjs)
-        fileObjs.forEach((f, i) => {
-          if (f.file.name == e.target.value) {
-            f.filename = filename;
-            //console.log(e.target.parentElement.children[2])
-            loadImgFile (e.target.parentElement.children[2],f.file )
-            //console.log(e.target.parentElement.style)
-            //loadImgFile (e.target.parentElement.style, f.file )
-            return;
-          }
-          // if(e.target.value === "Select"){
-          //   e.target.parentElement.children[2].src = "/no-preview.jpeg"
-          // }
-
-        }) 
-      }
-      function droptexture(dropAlt, dropfilename, dragAltData) {
-        console.log(dropfilename,dragAltData)
-        //var filename = e.target.parentNode.children[1].name.split("-")[0];
-        let dropFileObjIndex;
-        let dragFileObjFilename;
-        fileObjs.forEach((f, i) => {
-          if (f.filename == dropfilename) {            
-            dropFileObjIndex = i
-          }
-          if (f.file.name == dragAltData) {
-            dragFileObjFilename = f.filename
-            f.filename = dropfilename;
-          }
-        })
-          if(dropFileObjIndex != null){
-            console.log("switch")
-            fileObjs[dropFileObjIndex].filename = dragFileObjFilename
-          }
-        dropFileObjIndex = null;
-        dragFileObjIndex = null;   
-        console.log("after ---->", fileObjs)
+  const run = async ( fileObjs) => {
+    let standardDimensions = null;
+    for(let i = 0; i < fileObjs.length; i++){
+      const {url, altName} = await getImgUrl(fileObjs[i].file)
+      
+      console.log(url)
+      const { image, width, height } = await loadImage(url);
+     
+      // do something with) `image`, `width`, and `height`})
+      standardDimensions === null? standardDimensions = height : null
+      console.log("load image-->", height, width, standardDimensions)
+      if(width === height && width === standardDimensions){
+        console.log("yes")
+        loadImgFile(cubemapImgs[i], url, altName)
+      }else{
+        console.log("no")
+        return false
       }
 
-      function checkCubemapTextures() {
-        if (!checkTextureIsAssigned(cubemaptextureassignselect)){
-          assignTextureErr.classList.remove("d-none");
-          if(!assignTextureErr.classList.contains("d-block")){
-            assignTextureErr.classList += " d-block"
+    }
+    return true
+  };
+
+  //next page btn
+  async function processUploads() {
+    //if no uploads added
+    if (files.length == 0) {
+      alert("No uploads added");
+    } else {
+      setupFileObjs();
+      //if model file, process and popup to assign textures
+      if (currenttype == "3dmodel") {
+        //changeModalContent("model");
+        var objCount = 0;
+        fileObjs.forEach((obj, index) => {
+          if (obj.type == "model") {
+            objCount++;
           }
-        }else{
+        });
+        switch (objCount) {
+          case 0:
+            alert("No model object added");
+            break;
+          case 1:
+            createuploadcontent();
+            break;
+          default:
+            alert("Please upload only ONE model file");
+            break;
+        }
+      }
+      //if cubemap file, process and popup to assign textures
+      if (currenttype == "360image") {
+        console.log("uploaded--->", fileObjs, fileObjs.length);
+
+        if (currentformat == "cubemap") {
+           let isWidthEqualHeight =  await run(fileObjs);
+           console.log("all is equal?", isWidthEqualHeight)
+          if (fileObjs.length === 6 && isWidthEqualHeight) {
+            changeModalContent("cubemap");
+          } else {
+            alert("need 6 images of equal width and height");
+          }
+        } else {
           createuploadcontent();
         }
+        // if (currenttype == "script") {
+        //   createuploadcontent();
+        // }
       }
+    }
+  }
 
-      function createuploadcontent() {
-        const formData = new FormData();
-        const request = new XMLHttpRequest();
-        var nextURL = "";
-        var postURL = "";
+  //creating and managing file card
+  let currenttype = "";
+  let currentformat = "";
 
-        switch (currenttype) {
-          case "3dmodel":
-            nextURL = "/editpage/model";
-            postURL = "/uploadtmp3dmodel";
+  function createFileCard(filename) {
+    //create a card
+    const card = document.createElement("div");
+    // const fileName = document.createElement("p");
+    // card.appendChild(fileName)
+    card.classList += "d-flex justify-content-between border-bottom py-2";
+    //card.classList.add("card");
+    collectedfiles.appendChild(card);
+
+    //create remove-btn for the card
+    // var removebtn = document.createElement('span');
+    // removebtn.innerHTML = "&times;";
+    // removebtn.classList.add("file-btn");
+    // removebtn.addEventListener('click', function(event) {
+    //   removeFile(card, filename);
+    //   event.preventDefault();
+    // });
+
+    //create image for the card
+    // var img = document.createElement('img');
+    // img.src = '';
+    // img.classList.add("img-top");
+    // card.appendChild(img);
+
+    //create file info
+    var fileinfo = document.createElement("div");
+    // fileinfo.classList.add('card-file-info');
+    card.appendChild(fileinfo);
+    var fileinfospan = document.createElement("span");
+    fileinfospan.innerHTML = filename;
+    fileinfo.appendChild(fileinfospan);
+
+    //create icon trashcan
+    var trashcanBtn = document.createElement("button");
+    trashcanBtn.classList += "btn btn-outline-danger border-0";
+    trashcanBtn.innerHTML =
+      '<i class="fa-solid fa-trash-can" style= "font-size :15px"></i>';
+    // var trashcanBtn = document.getElementById("trash-icon")
+    //trashcanBtn.style.display = "block"
+    trashcanBtn.addEventListener("click", function (event) {
+      removeFile(card, filename);
+      // files = files.map(item=> {
+      //   item
+      // })
+      event.preventDefault();
+    });
+
+    card.appendChild(trashcanBtn);
+    // const hr = document.createElement("hr")
+    // card.appendChild(hr)
+  }
+
+  function clearFilesIfNewType(newtype) {
+    if (currenttype != newtype) {
+      clearAllFileContent();
+      currenttype = newtype;
+    }
+  }
+
+  function clearAllFileContent() {
+    collectedfiles.innerHTML = "";
+    files = [];
+  }
+
+  function removeFile(card, filename) {
+    card.remove();
+    console.log(card);
+    for (var i = 0; i < files.length; i++) {
+      if (files[i].name === filename) {
+        files.splice(i, 1);
+        fileObjs.splice(i,1)
+        //const found = fileObjs.find((fileObj)=>{return fileObj.file.name === filename})
+      }
+    }
+  }
+  function readFiles(files) {
+    for (i = 0; i < files.length; i++) {
+      readFile(files[i]);
+    }
+  }
+
+  function readFile(file) {
+    let correctfiletype = false;
+    if (currentformat == "equirectangular" && files.length == 1) return;
+    switch (currenttype) {
+      case "3dmodel":
+        correctfiletype = isObj(file.name) || isImage(file.name);
+        break;
+      case "script":
+        switch (currentformat) {
+          case "csharp":
+            correctfiletype = isCsharp(file.name);
             break;
-          case "360image":
-            nextURL = "/editpage/360";
-            postURL = "/uploadtmp360";
+          case "javascript":
+            correctfiletype = isJavascript(file.name);
             break;
-          case "script":
-            nextURL = "/editpage/script";
-            postURL = "/uploadtmpscript";
-            break;
-        }
-        //decide asset type
-        formData.append("type", currenttype);
-        formData.append("format", currentformat);
-        //set file names
-        console.log(fileObjs);
-        fileObjs.forEach((fileObj, i) => {
-          var savedName = '';
-          if (fileObj.file.name.split("/")[1]) {
-            //savedName = fileObj.filename + "_" + fileObj.file.name.split("/")[1];
-            savedName = fileObj.filename + "" + fileObj.file.name.split("/")[1];
-          } else {
-            //savedName = fileObj.filename + "_" + fileObj.file.name;
-            savedName = fileObj.filename + "" + fileObj.file.name;
-          }
-          console.log(savedName);
-          if (fileObj.filename == 'thumbnail') {
-            formData.append('thumbnail', fileObj.file, savedName);
-          }
-          else formData.append(fileObj.type, fileObj.file, savedName);
-        });
-        console.log(formData.get('image'));
-        request.onreadystatechange = function () { // listen for state changes
-          if (request.readyState == 4 && request.status == 200) { // when completed we can move away
-            window.location = nextURL;
-          }
-        }
-        request.open("POST", postURL, false);
-        request.send(formData)
-    
-      }
-
-      //create option for select element
-      function createoption(text, value, parent) {
-        var option = document.createElement("option");
-        option.text = text;
-        option.value = value;
-        parent.add(option);
-      }
-
-      //next page btn
-      function processUploads() {
-        //if no uploads added
-        if (files.length == 0)
-          {alert("No uploads added");}
-        else{
-          setupFileObjs();
-        //if model file, process and popup to assign textures
-        if (currenttype == "3dmodel") {
-          //changeModalContent("model");
-          var objCount = 0;
-          fileObjs.forEach((obj, index)=>{
-            if(obj.type == "model"){
-              objCount++;
-            }
-          })
-          switch(objCount){
-            case 0:
-              alert("No model object added");
-              break;
-            case 1:
-              createuploadcontent()
-              break;
-            default:
-              alert("Please upload only ONE model file");
-              break;
-          }
-        }
-        //if cubemap file, process and popup to assign textures
-        if (currenttype == "360image") {
-          if (currentformat == 'cubemap') changeModalContent("cubemap");
-          else 
-          {
-            createuploadcontent();
-          }
-
-          // if (currenttype == "script") {
-          //   createuploadcontent();
-          // }
-          }
-        }
-      }
-
-      //creating and managing file card
-      let currenttype = "";
-      let currentformat = "";
-
-      function createFileCard(filename) {
-        //create a card
-        const card = document.createElement("div");
-        // const fileName = document.createElement("p");
-        // card.appendChild(fileName)
-        card.classList += "d-flex justify-content-between border-bottom py-2";
-        //card.classList.add("card");
-        collectedfiles.appendChild(card);
-
-        //create remove-btn for the card
-        // var removebtn = document.createElement('span');
-        // removebtn.innerHTML = "&times;";
-        // removebtn.classList.add("file-btn");
-        // removebtn.addEventListener('click', function(event) {
-        //   removeFile(card, filename);
-        //   event.preventDefault();
-        // });
-
-
-        //create image for the card
-        // var img = document.createElement('img');
-        // img.src = '';
-        // img.classList.add("img-top");
-        // card.appendChild(img);
-
-
-        //create file info
-        var fileinfo = document.createElement('div');
-        // fileinfo.classList.add('card-file-info');
-        card.appendChild(fileinfo);
-        var fileinfospan = document.createElement('span');
-        fileinfospan.innerHTML = filename;
-        fileinfo.appendChild(fileinfospan);
-
-        //create icon trashcan
-        var trashcanBtn = document.createElement("button");
-        trashcanBtn.classList += "btn btn-outline-danger border-0"
-        trashcanBtn.innerHTML = '<i class="fa-solid fa-trash-can" style= "font-size :15px"></i>'
-        // var trashcanBtn = document.getElementById("trash-icon")
-        //trashcanBtn.style.display = "block"
-        trashcanBtn.addEventListener('click', function (event) {
-          removeFile(card, filename);
-          // files = files.map(item=> {
-          //   item
-          // })
-          event.preventDefault();
-        });
-
-        card.appendChild(trashcanBtn);
-        // const hr = document.createElement("hr")
-        // card.appendChild(hr)
-      }
-
-      function clearFilesIfNewType(newtype) {
-        if (currenttype != newtype) {
-          clearAllFileContent();
-          currenttype = newtype;
-        }
-      }
-
-      function clearAllFileContent() {
-        collectedfiles.innerHTML = '';
-        files = [];
-      }
-
-      function removeFile(card, filename) {
-        card.remove();
-        console.log(card)
-        for (var i = 0; i < files.length; i++) {
-          if (files[i].name === filename) {
-            files.splice(i, 1);
-          }
-        }
-      }
-      function readFiles(files) {
-        for (i = 0; i < files.length; i++) {
-          readFile(files[i]);
-        }
-      }
-
-      function readFile(file) {
-        let correctfiletype = false;
-        if (currentformat == 'equirectangular' && files.length == 1) return;
-        switch (currenttype) {
-          case "3dmodel":
-            correctfiletype = isObj(file.name) || isImage(file.name);
-            break;
-          case "script":
-            switch (currentformat) {
-              case 'csharp':
-                correctfiletype = isCsharp(file.name);
-                break;
-              case 'javascript':
-                correctfiletype = isJavascript(file.name);
-                break;
-              case 'python':other
-                correctfiletype = isPython(file.name);
-                break;
-            }
-            break;
-          case "360image":
-            correctfiletype = isImage(file.name);
+          case "python":
+            other;
+            correctfiletype = isPython(file.name);
             break;
         }
-        if (correctfiletype) {
-          createFileCard(file.name);
-          files.push(file);
-          console.log(files + " currently added file");
-        }else{
-          alert("Please check that your file/folder type are support")
-        }
-      }
+        break;
+      case "360image":
+        correctfiletype = isImage(file.name);
+        break;
+    }
+    if (correctfiletype) {
+      createFileCard(file.name);
+      files.push(file);
+      console.log(files + " currently added file");
+    } else {
+      alert("Please check that your file/folder type are support");
+    }
+  }
 
-      function setupFileObjs() {
-        fileObjs = [];
-        if (currenttype == "3dmodel") {
-          files.forEach((file, i) => {
-            var f;
-            if (isObj(file.name)) {
-              //f = new fileObj("model", "model", file)
-              f = new fileObj("model", "", file)
-              currentformat = getExtension(file.name);
-            } else {
-              //f = new fileObj("image", "other", file)
-              f = new fileObj("image", "", file)
-            }
-            fileObjs.push(f);
-          });
-          return;
-        }
-        if (currenttype == "script") {
-          console.log(currentformat);
-          files.forEach((file, i) => {
-            fileObjs.push(new fileObj("script", currentformat, file));
-          });
-          console.log(fileObjs);
-          return;
-        }
-        //if cubemap file, process and popup to assign textures
-        if (currenttype == "360image" && currentformat == "cubemap") {
-          files.forEach((file, i) => {
-            fileObjs.push(new fileObj("image", "other_", file));
-           
-          });
-          return;
-        }
-        if (currenttype == "360image" && currentformat == "equirectangular") {
-          files.forEach((file, i) => {
-            fileObjs.push(new fileObj("image", "equi_", file));
-          });
-          return;
-        }
-
-      }
-
-      let files = [];
-      dragcounter = 0;
-      dragArea.addEventListener("dragover", (event) => {
-        // prevent default to allow drop
-        event.preventDefault();
-      });
-      dragArea.addEventListener('dragenter', (event) => {
-        event.preventDefault();
-        dragText.textContent = "Release to Upload"
-        dragcounter++;
-      });
-      dragArea.addEventListener('dragleave', (event) => {
-        dragcounter--;
-        if (dragcounter === 0) {
-          dragText.innerHTML = "Drag and Drop <span class='browse-btn' id='browse-btn' onclick='browse()'>or Browse</span>"
-
-        }
-        //browseAddListener()
-      });
-      dragArea.addEventListener('drop', async (event) => {
-        console.log("drop")
-        dragcounter = 0;
-        dragText.innerHTML = "Drag and Drop <span class='browse-btn' id='browse-btn' onclick='browse()'>or Browse</span>"
-        //browseAddListener()
-        event.preventDefault();
-        if (event.dataTransfer.items) {
-          [...event.dataTransfer.files].forEach(async (file, i) => {
-            if (isZip(file.name)) {
-              await convertziptofile(file)
-            } else {
-              readFile(file);
-            }
-          })
-        }
-      });
-
-      // function setupFileObjs() {
-      //   fileObjs = [];
-      //   files.forEach((file, i) => {
-      //     var f;
-      //     if (isObj(file.name)) {
-      //       //f = new fileObj("model", "model", file)
-      //       f = new fileObj("model", "", file)
-      //     } else {
-      //        //f = new fileObj("image", "other", file)
-      //       f = new fileObj("image", "", file)
-      //     }
-      //     fileObjs.push(f);
-      //   });
-      //   console.log(fileObjs);
-      // }
-
-
-
-      // async function convertziptofile(file) {
-      //   var collectedfiles = [];
-      //   var jszip = new JSZip();
-      //   var zip = await jszip.loadAsync(file);
-      //   var foldername = '';
-      //   var zipfiles = Object.keys(zip.files);
-      //   for (var i in zipfiles) {
-      //     var zipfile = zip.files[zipfiles[i]];
-      //     var fileData = await zipfile.async('blob');
-      //     var filename = zipfiles[i].replace(foldername, "");
-      //     var file = new File([fileData], filename);
-      //     collectedfiles.push(file);
-      //   }
-      //   console.log("complete");
-      //   readFiles(collectedfiles);
-      // }
-
-      // //browse button
-      // function browse() {
-      //   var i = document.getElementById("browse-input");
-      //   i.click();
-      // }
-
-      async function convertziptofile(file) {
-        var collectedfiles = [];
-        var jszip = new JSZip();
-        var zip = await jszip.loadAsync(file);
-        var foldername = '';
-        var zipfiles = Object.keys(zip.files);
-        for (var i in zipfiles) {
-          var zipfile = zip.files[zipfiles[i]];
-          var fileData = await zipfile.async('blob');
-          var filename = zipfiles[i].replace(foldername, "");
-          var file = new File([fileData], filename);
-          collectedfiles.push(file);
-        }
-        console.log("complete");
-        readFiles(collectedfiles);
-      }
-
-      //browse button
-      function browse() {
-        var i = document.getElementById("browse-input");
-        i.click();
-      }
-
-      //updating page based on selected asset
-      triggerChangeWithAssetSelect();
-
-      function triggerChangeWithAssetSelect() {
-        console.log("update")
-        var e = document.getElementById("asset-select");
-        var value = e.value;
-        var options = [];
-        var supportformat = "";
-        switch (value) {
-          case "360image":
-            options = ["cubemap", "equirectangular"];
-            supportformat = "JPG, JPEG, PNG.";
-            enableModelInfo(true);
-            break;
-          case "script":
-            options = ["c#", "javascript", "python"];
-            supportformat = "c#, javascript, python.";
-            enableModelInfo(true);
-            break;
-          case "3dmodel":
-            supportformat = "obj, fbx, JPG, JPEG, PNG.";
-            enableModelInfo(true);
-            break;
-        }
-        clearFilesIfNewType(value);
-        createAssetFormat(options);
-        updateSupportFormatText(supportformat);
-      }
-
-      function createAssetFormat(opts) {
-        var x = document.getElementById("asset-format");
-        var y = document.getElementById("asset-format-id");
-        if (opts.length == 0) {
-          x.style.display = "none";
-          y.style.display = "none";
+  function setupFileObjs() {
+    fileObjs = [];
+    if (currenttype == "3dmodel") {
+      files.forEach((file, i) => {
+        var f;
+        if (isObj(file.name)) {
+          //f = new fileObj("model", "model", file)
+          f = new fileObj("model", "", file);
+          currentformat = getExtension(file.name);
         } else {
-          x.style.display = "inline-block"
-          y.style.display = "inline-block"
-          x.options.length = 0;
-          opts.forEach((o) => {
-            createoption(o, o, x);
-          });
-          currentformat = x.value;
+          //f = new fileObj("image", "other", file)
+          f = new fileObj("image", "", file);
         }
+        fileObjs.push(f);
+      });
+      return;
+    }
+    if (currenttype == "script") {
+      console.log(currentformat);
+      files.forEach((file, i) => {
+        fileObjs.push(new fileObj("script", currentformat, file));
+      });
+      console.log(fileObjs);
+      return;
+    }
+    //if cubemap file, process and popup to assign textures
+    if (currenttype == "360image" && currentformat == "cubemap") {
+      files.forEach((file, i) => {
+        fileObjs.push(new fileObj("image", "other_", file));
+      });
+      return;
+    }
+    if (currenttype == "360image" && currentformat == "equirectangular") {
+      files.forEach((file, i) => {
+        fileObjs.push(new fileObj("image", "equi_", file));
+      });
+      return;
+    }
+  }
 
-      }
-
-      function updateSupportFormatText(t) {
-        var i = document.getElementById("format-support-info");
-        var spanText = document.getElementById("span-format");
-        spanText.innerText = t;
-      }
-
-      function enableModelInfo(b) {
-        var i = document.getElementById("format-3dmodel-info");
-        if (b) {
-          i.style.display = "inline-block";
+  let files = [];
+  dragcounter = 0;
+  dragArea.addEventListener("dragover", (event) => {
+    // prevent default to allow drop
+    event.preventDefault();
+  });
+  dragArea.addEventListener("dragenter", (event) => {
+    event.preventDefault();
+    dragText.textContent = "Release to Upload";
+    dragcounter++;
+  });
+  dragArea.addEventListener("dragleave", (event) => {
+    dragcounter--;
+    if (dragcounter === 0) {
+      dragText.innerHTML =
+        "Drag and Drop <span class='browse-btn' id='browse-btn' onclick='browse()'>or Browse</span>";
+    }
+    //browseAddListener()
+  });
+  dragArea.addEventListener("drop", async (event) => {
+    console.log("drop");
+    dragcounter = 0;
+    dragText.innerHTML =
+      "Drag and Drop <span class='browse-btn' id='browse-btn' onclick='browse()'>or Browse</span>";
+    //browseAddListener()
+    event.preventDefault();
+    if (event.dataTransfer.items) {
+      [...event.dataTransfer.files].forEach(async (file, i) => {
+        if (isZip(file.name)) {
+          await convertziptofile(file);
         } else {
-          i.style.display = "none";
+          readFile(file);
         }
+      });
+    }
+  });
+
+  async function convertziptofile(file) {
+    var collectedfiles = [];
+    var jszip = new JSZip();
+    var zip = await jszip.loadAsync(file);
+    var foldername = "";
+    var zipfiles = Object.keys(zip.files);
+    for (var i in zipfiles) {
+      var zipfile = zip.files[zipfiles[i]];
+      var fileData = await zipfile.async("blob");
+      var filename = zipfiles[i].replace(foldername, "");
+      var file = new File([fileData], filename);
+      collectedfiles.push(file);
+    }
+    console.log("complete");
+    readFiles(collectedfiles);
+  }
+
+  //browse button
+  function browse() {
+    var i = document.getElementById("browse-input");
+    i.click();
+  }
+
+  //updating page based on selected asset
+  triggerChangeWithAssetSelect();
+
+  function triggerChangeWithAssetSelect() {
+    console.log("update");
+    var e = document.getElementById("asset-select");
+    var value = e.value;
+    var options = [];
+    var supportformat = "";
+    switch (value) {
+      case "360image":
+        options = ["cubemap", "equirectangular"];
+        supportformat = "JPG, JPEG, PNG.";
+        enableModelInfo(true);
+        break;
+      case "script":
+        options = ["c#", "javascript", "python"];
+        supportformat = "c#, javascript, python.";
+        enableModelInfo(true);
+        break;
+      case "3dmodel":
+        supportformat = "obj, fbx, JPG, JPEG, PNG.";
+        enableModelInfo(true);
+        break;
+    }
+    clearFilesIfNewType(value);
+    createAssetFormat(options);
+    updateSupportFormatText(supportformat);
+  }
+
+  function createAssetFormat(opts) {
+    var x = document.getElementById("asset-format");
+    var y = document.getElementById("asset-format-id");
+    if (opts.length == 0) {
+      x.style.display = "none";
+      y.style.display = "none";
+    } else {
+      x.style.display = "inline-block";
+      y.style.display = "inline-block";
+      x.options.length = 0;
+      opts.forEach((o) => {
+        createoption(o, o, x);
+      });
+      currentformat = x.value;
+    }
+  }
+
+  function updateSupportFormatText(t) {
+    var i = document.getElementById("format-support-info");
+    var spanText = document.getElementById("span-format");
+    spanText.innerText = t;
+  }
+
+  function enableModelInfo(b) {
+    var i = document.getElementById("format-3dmodel-info");
+    if (b) {
+      i.style.display = "inline-block";
+    } else {
+      i.style.display = "none";
+    }
+  }
+
+  function onChangeFormatType(e) {
+    clearAllFileContent();
+    currentformat = e.value;
+  }
+
+  //modal content selection
+  //const modelmodalcontent = document.querySelector(".model-content");
+  const cubemapmodalcontent = document.querySelector(".cubemap-content");
+  const cubemaptextureassignselect = document.querySelectorAll(
+    ".cubemap-texture-assign"
+  );
+  const modeltextureassignselect = document.querySelectorAll(
+    ".model-texture-assign"
+  );
+  const modalcontent = document.querySelector(".modal");
+  modalcontent.style = "display:none;";
+  //modelmodalcontent.style = "display:none;"
+  cubemapmodalcontent.style = "display:none;";
+
+  function setupTextureAssignOptions(selects) {
+    console.log("assign texture-->", files);
+    console.log("fileObjs-->", fileObjs);
+    let textureassignarray = [];
+    files.forEach((item, i) => {
+      if (isImage(item.name)) {
+        textureassignarray.push(item);
       }
+    });
+    let currenttextureassignselect = selects;
 
-      function onChangeFormatType(e) {
-        clearAllFileContent();
-        currentformat = e.value;
+    // if (selects[0].options.length - 1 == textureassignarray.length) return;
+    // for (var i = 0; i < selects.length; i++) {
+    //   selects[i].onchange = function (e) {
+    //     allowOnlySingleTextureAssigning(selects, e);
+    //     assigntexture(e);
+    //   }
+    //   selects[i].options.length = 0;
+    //   createoption("Select", "Select", selects[i]);
+    //   for (var j = 0; j < textureassignarray.length; j++) {
+    //     createoption(textureassignarray[j].name, textureassignarray[j].name, selects[i]);
+    //   }
+
+    // }
+    //assign texture to each position and get which label it is
+    textureassignarray.forEach((item, idx) => {
+      //loadImgFile(cubemapImgs[idx],item)
+      const label = cubemapDivs[idx].children[0].innerText;
+      const found = fileObjs.find((fileObj) => {
+        return fileObj.file.name === item.name;
+      });
+      console.log(found);
+      found ? (found.filename = label) : null;
+    });
+  }
+
+  // function allowOnlySingleTextureAssigning(selects, e) {
+  //   for (var i = 0; i < selects.length; i++) {
+  //     if (selects[i] != e.target && selects[i].value == e.target.value) {
+  //       selects[i].value = "Select";
+
+  //     }
+  //   }
+  //   const elements = document.querySelectorAll(".texture-assign-box")
+  //     elements.forEach(element => {
+  //       console.log(element.children[1].value)
+  //       if(element.children[1].value === "Select"){
+  //         if( element.children[2] != undefined){
+  //           element.children[2].src = "/no-preview.jpeg"
+  //         }
+
+  //         }
+
+  //       })
+  // }
+
+  function checkTextureIsAssigned(selects) {
+    isAssigned = true;
+    for (var i = 0; i < selects.length; i++) {
+      console.log(selects[i].value);
+      if (selects[i].value === "Select") {
+        isAssigned = false;
       }
+    }
+    return isAssigned;
+  }
 
-      //modal content selection
-      //const modelmodalcontent = document.querySelector(".model-content");
-      const cubemapmodalcontent = document.querySelector(".cubemap-content")
-      const cubemaptextureassignselect = document.querySelectorAll('.cubemap-texture-assign');
-      const modeltextureassignselect = document.querySelectorAll('.model-texture-assign');
-      const modalcontent = document.querySelector(".modal")
-      modalcontent.style = "display:none;"
-      //modelmodalcontent.style = "display:none;"
-      cubemapmodalcontent.style = "display:none;"
+  function closeModalContent() {
+    modalcontent.style = "display:none;";
+    //modelmodalcontent.style = "display:none;"
+    cubemapmodalcontent.style = "display:none;";
+  }
 
-      function setupTextureAssignOptions(selects) {
-        console.log("assign texture-->", files)
-        let textureassignarray = [];
-        files.forEach((item, i) => {
-          if (isImage(item.name)) {
-            textureassignarray.push(item);
-          }
-        });
-        let currenttextureassignselect = selects;
-
-        if (selects[0].options.length - 1 == textureassignarray.length) return;
-        for (var i = 0; i < selects.length; i++) {
-          selects[i].onchange = function (e) {
-            allowOnlySingleTextureAssigning(selects, e);
-            assigntexture(e);
-          }
-          selects[i].options.length = 0;
-          createoption("Select", "Select", selects[i]);
-          for (var j = 0; j < textureassignarray.length; j++) {
-            createoption(textureassignarray[j].name, textureassignarray[j].name, selects[i]);
-          }
-        }
-      }
-
-      function allowOnlySingleTextureAssigning(selects, e) {
-        for (var i = 0; i < selects.length; i++) {
-          if (selects[i] != e.target && selects[i].value == e.target.value) {
-            selects[i].value = "Select";
-          
-          }
-        }
-        const elements = document.querySelectorAll(".texture-assign-box")
-          elements.forEach(element => {
-            console.log(element.children[1].value)
-            if(element.children[1].value === "Select"){
-              if( element.children[2] != undefined){
-                element.children[2].src = "/no-preview.jpeg"
-              }
-            
-              }
-              
-            })
-      }
-
-      function checkTextureIsAssigned(selects) {
-        isAssigned = true
-        for (var i = 0; i < selects.length; i++) {
-          console.log(selects[i].value)
-          if (selects[i].value === "Select") {
-            isAssigned = false
-            
-          }
-        }
-        return isAssigned
-      }
-
-      function closeModalContent() {
-        modalcontent.style = "display:none;"
+  function changeModalContent(condition) {
+    switch (condition) {
+      case "model":
+        //show model content
+        modalcontent.style = "display:block;";
+        modelmodalcontent.style = "display:block;";
+        cubemapmodalcontent.style = "display:none;";
+        setupTextureAssignOptions(modeltextureassignselect);
+        break;
+      case "cubemap":
+        //show cubemap content
+        assignTextureErr.classList.remove("d-block");
+        assignTextureErr.classList += " d-none";
+        modalcontent.style = "display:block;";
         //modelmodalcontent.style = "display:none;"
-        cubemapmodalcontent.style = "display:none;"
-      }
+        cubemapmodalcontent.style = "display:block;";
+        setupTextureAssignOptions(cubemaptextureassignselect);
+        break;
+    }
+  }
+</script>
 
-      function changeModalContent(condition) {
-        switch (condition) {
-          case "model":
-            //show model content
-            modalcontent.style = "display:block;"
-            modelmodalcontent.style = "display:block;"
-            cubemapmodalcontent.style = "display:none;"
-            setupTextureAssignOptions(modeltextureassignselect);
-            break;
-          case "cubemap":
-            //show cubemap content
-            assignTextureErr.classList.remove("d-block");
-            assignTextureErr.classList += " d-none"
-            modalcontent.style = "display:block;"
-            //modelmodalcontent.style = "display:none;"
-            cubemapmodalcontent.style = "display:block;"
-            setupTextureAssignOptions(cubemaptextureassignselect);
-            break;
-        }
-      }
-    </script>
-
-
-    <%- include('../partials/footer') %>
+<%- include('../partials/footer') %>

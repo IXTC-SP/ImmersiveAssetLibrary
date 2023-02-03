@@ -531,22 +531,22 @@ app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function (req, res) {
     //   (element) => element.originalname.split("_")[0] == "left"
     // ).originalname;
     tmpContent["image"]["top"] = req.files.image.find(
-      (element) => element.originalname.includes("top")
+      (element) => element.originalname.includes("Top")
     );
     tmpContent["image"]["front"] = req.files.image.find(
-      (element) => element.originalname.includes("front") 
+      (element) => element.originalname.includes("Front") 
     );
     tmpContent["image"]["bottom"] = req.files.image.find(
-      (element) => element.originalname.includes("bottom") 
+      (element) => element.originalname.includes("Bottom") 
     );
     tmpContent["image"]["right"] = req.files.image.find(
-      (element) => element.originalname.includes("right") 
+      (element) => element.originalname.includes("Right") 
     );
     tmpContent["image"]["back"] = req.files.image.find(
-      (element) => element.originalname.includes( "back")
+      (element) => element.originalname.includes( "Back")
     );
     tmpContent["image"]["left"] = req.files.image.find(
-      (element) => element.originalname.includes( "left")
+      (element) => element.originalname.includes( "Left")
     );
   } else {
     tmpContent["image"]["equi"] = req.files.image[0];

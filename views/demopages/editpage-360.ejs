@@ -80,10 +80,13 @@
       });
     }
     console.log(viewer);
-    viewer.on('load', function(){
+   
+      viewer.on('load', function(){
       console.log('running viewer');
       saveThumbnail(viewer);
     });
+
+   
     // https://naver.github.io/egjs-view360/examples/img/equi.jpg
   }
 
