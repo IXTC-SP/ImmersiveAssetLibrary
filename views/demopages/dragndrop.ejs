@@ -542,8 +542,8 @@
 
   function loadImgFile(imgEl, url, altName) {
     //style.backgroundImage = `url(${URL.createObjectURL(file)})`;
-    imgEl.src = url
-    imgEl.alt = altName
+    imgEl.src = url;
+    imgEl.alt = altName;
   }
 
   // function assigntexture(e) {
@@ -659,14 +659,14 @@
 
   function getImgUrl(file) {
     //style.backgroundImage = `url(${URL.createObjectURL(file)})`;
-    return {url: URL.createObjectURL(file), altName: file.name};
+    return { url: URL.createObjectURL(file), altName: file.name };
   }
 
   const loadImage = (imageSrc) =>
     new Promise((resolve) => {
       const image = new Image();
       image.onload = () => {
-        console.log("new image")
+        console.log("new image");
         const height = image.height;
         const width = image.width;
         resolve({ image, width, height });
@@ -674,27 +674,26 @@
       image.src = imageSrc;
     });
 
-  const run = async ( fileObjs) => {
+  const run = async (fileObjs) => {
     let standardDimensions = null;
-    for(let i = 0; i < fileObjs.length; i++){
-      const {url, altName} = await getImgUrl(fileObjs[i].file)
-      
-      console.log(url)
-      const { image, width, height } = await loadImage(url);
-     
-      // do something with) `image`, `width`, and `height`})
-      standardDimensions === null? standardDimensions = height : null
-      console.log("load image-->", height, width, standardDimensions)
-      if(width === height && width === standardDimensions){
-        console.log("yes")
-        loadImgFile(cubemapImgs[i], url, altName)
-      }else{
-        console.log("no")
-        return false
-      }
+    for (let i = 0; i < fileObjs.length; i++) {
+      const { url, altName } = await getImgUrl(fileObjs[i].file);
 
+      console.log(url);
+      const { image, width, height } = await loadImage(url);
+
+      // do something with) `image`, `width`, and `height`})
+      standardDimensions === null ? (standardDimensions = height) : null;
+      console.log("load image-->", height, width, standardDimensions);
+      if (width === height && width === standardDimensions) {
+        console.log("yes");
+        loadImgFile(cubemapImgs[i], url, altName);
+      } else {
+        console.log("no");
+        return false;
+      }
     }
-    return true
+    return true;
   };
 
   //next page btn
@@ -728,10 +727,9 @@
       //if cubemap file, process and popup to assign textures
       if (currenttype == "360image") {
         console.log("uploaded--->", fileObjs, fileObjs.length);
-
         if (currentformat == "cubemap") {
-           let isWidthEqualHeight =  await run(fileObjs);
-           console.log("all is equal?", isWidthEqualHeight)
+          let isWidthEqualHeight = await run(fileObjs);
+          console.log("all is equal?", isWidthEqualHeight);
           if (fileObjs.length === 6 && isWidthEqualHeight) {
             changeModalContent("cubemap");
           } else {
@@ -821,7 +819,7 @@
     for (var i = 0; i < files.length; i++) {
       if (files[i].name === filename) {
         files.splice(i, 1);
-        fileObjs.splice(i,1)
+        fileObjs.splice(i, 1);
         //const found = fileObjs.find((fileObj)=>{return fileObj.file.name === filename})
       }
     }
@@ -858,9 +856,29 @@
         break;
     }
     if (correctfiletype) {
-      createFileCard(file.name);
-      files.push(file);
-      console.log(files + " currently added file");
+      let foundIdx = "not found" 
+      console.log(files)
+      foundIdx = files.find((eachfile,idx) => {
+        if(eachfile.name === file.name){
+          console.log(idx)
+          return idx
+        };
+       
+      });
+
+      if (foundIdx != "not found") {
+        const val = confirm("A file with the name already exists. Would you like to replace the exsiting one?");
+        if(val){
+          files.splice(foundIdx, 1)
+          createFileCard(file.name);
+        files.push(file);
+        console.log(files + " currently added file");
+        }            
+      } else {
+        createFileCard(file.name);
+        files.push(file);
+        console.log(files + " currently added file");
+      }
     } else {
       alert("Please check that your file/folder type are support");
     }
