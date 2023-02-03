@@ -274,17 +274,26 @@
     </div>
   </div>
 </section>
+<script src="/jszip.min.js"></script>
 <script type="text/javascript">
   var data = <%-JSON.stringify(data) %>;
   var buffers = <%- JSON.stringify(buffers) %>;
+  console.log(buffers.gltf);
   var assettype = <%-JSON.stringify(assettype) %>;
   var files = [];
-  console.log("view-asset",data);
   var modelviewer = document.getElementById("model-viewer");
   var thumbnails = document.getElementsByClassName("thumbnail-img");
-  console.log(thumbnails);
-  console.log(modelviewer);
   getEJScontent(data);
+
+  // loadZip();
+  async function loadZip(){
+  // Load the zip file using JSZip
+  var zip = new JSZip();
+  console.log(buffers);
+  zip.loadAsync(buffers.data).then(function(zip) {
+    modelviewer.src = zip;
+  });
+  }
 
   function getEJScontent(data) {
 
@@ -292,8 +301,10 @@
     if(data.assetPath.thumbnail != null){
 
     Array.from(thumbnails).forEach((element) => {
-      // element.src =
-      // buffers.thumbnail;
+      // Read the file as a data URL
+      // reader.readAsDataURL(buffers[4]);
+      element.src =
+      buffers['thumbnail'];
       //  "../." + data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
       //  element.src =
       //  urlsigned;
@@ -304,8 +315,10 @@
     if(assettype === "model"){
       //modelviewer.src = "../" + data.assetPath.gltfmodelpath;
       //   modelviewer.src = data.assetPath.folderpath + "/" + data.assetPath.gltfmodelpath;
-      modelviewer.src = buffers.gltf;
-      modelviewer.addEventListener("load", () => {
+      modelviewer.src = 
+      // buffers['gltf'];
+      URL.createObjectURL(new Blob([ buffers['gltf']]));
+      // modelviewer.addEventListener("load", () => {
       // const material = modelviewer.model.materials[0];
       // const createAndApplyTexture = async (channel) => {
       //   // Applies the new texture to the specified channel.
@@ -332,7 +345,7 @@
       //   }
       // };
       // createAndApplyTexture("baseColorTexture");
-    });
+    // });
     }else{
       runPannellum(data.atrribute.type)
     }

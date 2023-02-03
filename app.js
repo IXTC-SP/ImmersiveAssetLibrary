@@ -103,36 +103,36 @@ app.get(
         isModel = false;
         break;
     }
-    console.log(req.params.modelid)
-    dbmanager.FindModelById(req.params.modelid, async (result) => {
+    var modelid = req.params.modelid;
+    console.log('asset objid ',modelid)
+    dbmanager.FindModelById(modelid, async (result) => {
       // console.log("---->", result);
       // console.log(result.owner);
       var buffers;
-      await awsMethods.getFolderContent(req.params.modelid);
-      // if(isModel){
-      //   buffers = await awsMethods.getSingleModelContent(req.params.modelid,result.assetPath.gltfmodelpath, result.assetPath.thumbnail)
-      // } else {
-      //   if(result.assetPath.equirectangular) {
-      //     buffers = await awsMethods.getSingleEquirectangularContent(req.params.modelid,result.assetPath.equirectangular, result.assetPath.thumbnail)
-      //   } else {
-      //     buffers = await awsMethods.getSingleCubemapContent(req.params.modelid,result.assetPath.cubemap, result.assetPath.thumbnail)
-      //   }
-      // }
-      // console.log(buffers);
-      // var presignedUri = await awsMethods.getSignedFileUrl(req.params.modelid, result.assetPath.thumbnail);
-    //   userModel.findById(result.owner, function (err, doc) {
-    //     // console.log(doc.email);
-    //     res.render("view_asset", {
-    //       // uri : presignedUri,
-    //       buffers : buffers,
-    //       data: result,
-    //       assettype: req.params.type,
-    //       owner: doc.email,
-    //       isLoginpage: true,
-    //       isModel,
-    //       user: req.user,
-    //     });
-    //   });
+      // buffers = await awsMethods.getFolderContent(modelid);
+      if(isModel){
+        buffers = await awsMethods.getSingleModelContent(req.params.modelid,result.assetPath.gltfmodelpath, result.assetPath.thumbnail)
+      } else {
+        if(result.assetPath.equirectangular) {
+          buffers = await awsMethods.getSingleEquirectangularContent(req.params.modelid,result.assetPath.equirectangular, result.assetPath.thumbnail)
+        } else {
+          buffers = await awsMethods.getSingleCubemapContent(req.params.modelid,result.assetPath.cubemap, result.assetPath.thumbnail)
+        }
+      }
+      var presignedUri = await awsMethods.getSignedFileUrl(req.params.modelid, result.assetPath.thumbnail);
+      userModel.findById(result.owner, function (err, doc) {
+        // console.log(doc.email);
+        res.render("view_asset", {
+          // uri : presignedUri,
+          buffers : buffers,
+          data: result,
+          assettype: req.params.type,
+          owner: doc.email,
+          isLoginpage: true,
+          isModel,
+          user: req.user,
+        });
+      });
     });
   }
 );

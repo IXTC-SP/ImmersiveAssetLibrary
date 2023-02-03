@@ -4,6 +4,8 @@ require("dotenv").config();
 const archiver = require("archiver");
 const stream = require("stream");
 var AdmZip = require("adm-zip");
+var JSZip = require("jszip");
+const { files } = require("jszip");
 
 // Enter copied or downloaded access ID and secret key here
 const ID = process.env.AWS_ACCESS_KEY_ID;
@@ -150,28 +152,36 @@ const awsMethods = {
       return error
     }
   },
-  getFolderContent: async (objId) => {
+  getFolderContent: async () => {
     let params = {
       Bucket: bucketName /* required */,
-      Prefix: `uploads/${objId}/`, // Can be your folder name
+      Key: `sample/modelitem.zip`, // Can be your folder name
     };
-    try {
-      let files = await s3.listObjectsV2(params).promise()
-      //get each file content
-      let filebuffers = [];
-      files.Contents.map((item) => {
-        params = {
-          Bucket: bucketName /* required */,
-          Key: `${item.Key}`,
-        };
-        filebuffers.push(s3.getObject(params));
-      });
-      console.log("archive" ,filebuffers);
-      return filebuffers;
-    } catch (error) {
-      console.log(error);
-      return error;
-    }
+    var data = await s3.getObject(params).promise();
+    // Load the zip file data buffer
+    // var zip = new JSZip();
+    // var ziploaded = await zip.loadAsync(data.Body);
+    // // Get the list of files in the zip
+    // var files = Object.keys(ziploaded.files);
+    // // Read the contents of each file in the zip
+    // const fileDatasPromise = files.map(async (file) => {
+    //   return await new Promise((resolve, reject) => {
+    //     resolve(zip.files[file].async("uint8array"));
+    //     // resolve(zip.files[file].async("blob"));
+    //   });
+    // });
+    // const file_datas = await Promise.all(fileDatasPromise);
+    // console.log(file_datas[3])
+    // // console.log(file_datas);
+    // // for (var i = 0; i < files.length; i++) {
+    // //   var file = files[i];
+    // //   zip.files[file].async("blob").then(function(file_data) {
+    // //     console.log(file_data);
+    // //     file_datas.push(file_data);
+    // //   });
+    // // }
+    // return file_datas;
+    return data.Body;
   },
   getSingleModelContent: async (objId, gltfpath, thumbnailpath) => {
     var buffers = {};
@@ -179,17 +189,54 @@ const awsMethods = {
       Bucket: bucketName,
       Key: `uploads/${objId}/${gltfpath}`
     };
-    var gltfbuffer = await s3.getObject(params).promise();
-    // await handleFiles(gltfbuffer);
+    const gltfbuffer = await s3.getObject(params).promise();
+    const gltfbufferData = gltfbuffer.data;
+
+    const gltfFileUrl = s3.getSignedUrl('getObject',params);
+    var textureFileUrls = [];
     
-    const bin = gltfbuffer.Body.toString('binary');
-    // buffers['gltf'] = bin;
-    var base64Gltf = Buffer.from(gltfbuffer.Body).toString("base64");
-    buffers['gltf'] = `data:${gltfbuffer.ContentType};base64,${base64Gltf}`;
+    const response = await fetch(gltfFileUrl);
+    const gltfBuffer = await response.arrayBuffer();
+    const gltfString = new TextDecoder().decode(gltfBuffer);
+    const model = JSON.parse(gltfString);
+    console.log(model);
+
+    const textureFileUrlPromises = model.images.map(async (image)=> {
+      return await new Promise((resolve,reject)=> {
+        console.log('image uri',image.uri);
+        const textureFileUrl = s3.getSignedUrl('getObject', {Bucket: bucketName, Key: `uploads/${objId}/${image.uri}`});
+        resolve(textureFileUrl);
+      })
+    })
+
+    textureFileUrls = await Promise.all(textureFileUrlPromises);
+    var texturesBuffers = await Promise.all(textureFileUrls.map(url => fetch(url).then(response => response.arrayBuffer())));
+    console.log("getting gltf buffers");
+    const textures = texturesBuffers.map(buffer => `data:image/jpeg;base64,${arrayBufferToBase64(buffer)}`);
+    buffers['gltf'] = gltfbufferData;
+
+    // fetch(gltfFileUrl)
+    // .then(response => response.arrayBuffer())
+    // .then(gltfBuffer => {
+    //   const gltfString = new TextDecoder().decode(gltfBuffer);
+    //   const model = JSON.parse(gltfString);
+    //   model.textures.forEach(texture => {
+    //     const textureFileUrl = s3.getSignedUrl('getObject', {Bucket: 'my-bucket', Key: `model/${texture.uri}`});
+    //     textureFileUrls.push(textureFileUrl);
+    //   });
+    //   return Promise.all(textureFileUrls.map(url => fetch(url).then(response => response.arrayBuffer())));
+    // })
+    // .then(texturesBuffers => {
+    //   console.log("getting gltf buffers");
+    //   const textures = texturesBuffers.map(buffer => `data:image/jpeg;base64,${arrayBufferToBase64(buffer)}`);
+    //   buffers['gltf'] = model;
+    // });
+
     var params2 = {
       Bucket: bucketName,
       Key: `uploads/${objId}/${thumbnailpath}`
     };
+
     var thumbnailbuffer = await s3.getObject(params2).promise();
     var base64Image = Buffer.from(thumbnailbuffer.Body).toString("base64");
     buffers['thumbnail'] = `data:${thumbnailbuffer.ContentType};base64,${base64Image}`;
@@ -258,12 +305,38 @@ const awsMethods = {
 
 module.exports = awsMethods;
 
-const CreateZipArchive = async (files) => {
-  const zip = new AdmZip();
-  files.forEach (async (file)=>{
-    zip.addFile(file.Body);
-  })
+const CreateZipArchive = async (file) => {
+  var zip = new Zip(file); 
 
-  var buffer = zip.toBuffer();
-  return buffer;
+  zip.extractAllTo('./uploads/viewfolder', true);
+  return zip;
 };
+
+const GetFileBuffersFromZipFileBuffer = async (zipbuffer)=> {
+  // Parse the zip file data buffer
+var zip = new JSZip();
+zip.loadAsync(zipbuffer).then(function(zip) {
+  // Get the list of files in the zip
+  var files = Object.keys(zip.files);
+
+  // Read the contents of each file in the zip
+  for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    console.log(file);
+    // zip.files[file].async("text").then(function(file_data) {
+    //   console.log(file_data);
+    // });
+  }
+});
+}
+
+// Convert an ArrayBuffer to a base64 string
+function arrayBufferToBase64(buffer) {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
