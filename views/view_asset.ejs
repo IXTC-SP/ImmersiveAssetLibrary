@@ -293,12 +293,13 @@
     Array.from(thumbnails).forEach((element) => {
       // Read the file as a data URL
       // reader.readAsDataURL(buffers[4]);
-      element.src =
-      buffers['thumbnail'];
+      // element.src =
+      // buffers['thumbnail'];
       //  "../." + data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
-      //  element.src =
+       element.src =
       //  urlsigned;
       //  data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
+       data.assetPath.thumbnail;
     });
     }
 
@@ -344,24 +345,32 @@
   function runPannellum(type) {
     var viewer;
     if(type == 'cubemap'){
-      console.log(data.assetPath.folderpath + "/" + data.assetPath.cubemap.front)
+      console.log(buffers['cubemap']);
       viewer =  pannellum.viewer('panorama', {
       "type": "cubemap",
+      // "cubeMap": [
+      // data.assetPath.folderpath + "/" + data.assetPath.cubemap.front,
+      // data.assetPath.folderpath + "/" + data.assetPath.cubemap.right,
+      // data.assetPath.folderpath + "/" + data.assetPath.cubemap.back,
+      // data.assetPath.folderpath + "/" + data.assetPath.cubemap.left,
+      // data.assetPath.folderpath + "/" + data.assetPath.cubemap.top,
+      // data.assetPath.folderpath + "/" + data.assetPath.cubemap.bottom,
+      // ],
       "cubeMap": [
-      data.assetPath.folderpath + "/" + data.assetPath.cubemap.front,
-      data.assetPath.folderpath + "/" + data.assetPath.cubemap.right,
-      data.assetPath.folderpath + "/" + data.assetPath.cubemap.back,
-      data.assetPath.folderpath + "/" + data.assetPath.cubemap.left,
-      data.assetPath.folderpath + "/" + data.assetPath.cubemap.top,
-      data.assetPath.folderpath + "/" + data.assetPath.cubemap.bottom,
+      buffers.cubemap.front,
+      buffers.cubemap.right,
+      buffers.cubemap.back,
+      buffers.cubemap.left,
+      buffers.cubemap.top,
+      buffers.cubemap.bottom,
       ],
       "autoLoad": true
     });
     } else {
-      console.log("view");
+      console.log(buffers.equirectangle);
       viewer = pannellum.viewer('panorama', {
       "type": "equirectangular",
-      "panorama": data.assetPath.folderpath + "/" + data.assetPath.equirectangular,
+      "panorama": buffers.equirectangle,
       "autoLoad": true
       });
       console.log("erro");

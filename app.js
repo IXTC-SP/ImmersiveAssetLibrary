@@ -111,16 +111,15 @@ app.get(
       var buffers;
       // buffers = await awsMethods.getFolderContent(modelid);
       if(isModel){
-        buffers = await awsMethods.getSingleModelContent(req.params.modelid,result.assetPath.gltfmodelpath, result.assetPath.thumbnail)
+        buffers = await awsMethods.getSingleModelContent(req.params.modelid,result.assetPath.gltfmodelpath)
       } else {
         if(result.assetPath.equirectangular) {
-          buffers = await awsMethods.getSingleEquirectangularContent(req.params.modelid,result.assetPath.equirectangular, result.assetPath.thumbnail)
+          buffers = await awsMethods.getSingleEquirectangularContent(req.params.modelid,result.assetPath.equirectangular)
         } else {
-          buffers = await awsMethods.getSingleCubemapContent(req.params.modelid,result.assetPath.cubemap, result.assetPath.thumbnail)
+          buffers = await awsMethods.getSingleCubemapContent(req.params.modelid,result.assetPath.cubemap)
         }
       }
       userModel.findById(result.owner, function (err, doc) {
-        // console.log(doc.email);
         res.render("view_asset", {
           // uri : presignedUri,
           buffers : buffers,

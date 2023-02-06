@@ -205,3 +205,18 @@ const AssignUserToModel = function (userid, modelid) {};
 const ReconstructModelDB = function () {};
 
 const SetupSampleDB = function () {};
+
+const awsMethod = require("../middlewares/aws_methods");
+const UpdateThumbnailUrl = function() {
+  console.log('loaded');
+  threesixtydb.find({}, (err,results)=> {
+    results.forEach(async (result,index)=> {
+      //original path is called 'new_thumbnail.png'
+      var newThumbnailPath = await awsMethod.reloadThumbnailUrl(result._id,'new_thumbnail.png');
+      threesixtydb.findByIdAndUpdate(result._id, {$set: { "assetPath.thumbnail": newThumbnailPath }}, (result)=> {
+      })
+    });
+  });
+}
+
+UpdateThumbnailUrl();

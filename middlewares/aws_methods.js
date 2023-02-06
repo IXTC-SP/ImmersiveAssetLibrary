@@ -186,7 +186,7 @@ const awsMethods = {
     // return file_datas;
     return data.Body;
   },
-  getSingleModelContent: async (objId, gltfpath, thumbnailpath) => {
+  getSingleModelContent: async (objId, gltfpath) => {
     var buffers = {};
     var params = {
       Bucket: bucketName,
@@ -213,62 +213,41 @@ const awsMethods = {
     let dataUrl = 'data:' + gltfbuffer.ContentType + ';base64,' + Buffer.from(binaryData).toString('base64');
 
     buffers['gltf'] = dataUrl;
-
-    var params2 = {
-      Bucket: bucketName,
-      Key: `uploads/${objId}/${thumbnailpath}`
-    };
-
-    buffers['thumbnail'] =await s3.getSignedUrl('getObject', params2);
     return buffers;
   },
-  getSingleCubemapContent: async (objId, cubemapPaths, thumbnailpath) => {
-    var buffers = {
-      cubemap: Object,
-      thumbnail: ""
-    }
-  for (const [key, value] of Object.entries(cubemapPaths)) {
-    console.log(`${key}: ${value}`);
-    var params = {
-      Bucket: bucketName,
-      Key: `uploads/${objId}/${value}`
-    };
-    s3.getObject(params, function(err, data) {
-      if (err) console.log(err, err.stack);
-      buffers.cubemap[key.toString()] = data.Body;
+  getSingleCubemapContent: async (objId, cubemapPaths) => {
+    var buffers = {};
+    buffers['cubemap'] = {};
+    const fileDatasPromise = Object.entries(cubemapPaths).map(async (key,value) => {
+      return await new Promise((resolve, reject) => {
+        var params = {
+          Bucket: bucketName,
+          Key: `uploads/${objId}/${key[1]}`
+        };
+        s3.getObject(params).promise().then(data=> {
+          var base64Image = data.Body.toString("base64");
+          var imgSrc = `data:${data.ContentType};base64,${base64Image}`;
+          var result = { key : key[0], path : imgSrc}
+          resolve(result);
+        });
+      });
     });
-  }
-    var params2 = {
-      Bucket: bucketName,
-      Key: `uploads/${objId}/${thumbnailpath}`
-    };
-    s3.getObject(params2, function(err, data) {
-      if (err) console.log(err, err.stack);
-      buffers.thumbnail = data.Body;
-    });
+    const file_datas = await Promise.all(fileDatasPromise);
+    file_datas.forEach((data, index)=>{
+      buffers['cubemap'][data.key.toString()] = data.path;
+    })
     return buffers;
   },
-  getSingleEquirectangularContent: async (objId, equirectangularPath, thumbnailpath) => {
-    var buffers = {
-      equirectangle: "",
-      thumbnail: ""
-    }
+  getSingleEquirectangularContent: async (objId, equirectangularPath) => {
+    var buffers = {};
     var params = {
       Bucket: bucketName,
       Key: `uploads/${objId}/${equirectangularPath}`
     };
-    s3.getObject(params, function(err, data) {
-      if (err) console.log(err, err.stack);
-      buffers.equirectangle = data.Body;
-    });
-    var params2 = {
-      Bucket: bucketName,
-      Key: `uploads/${objId}/${thumbnailpath}`
-    };
-    s3.getObject(params2, function(err, data) {
-      if (err) console.log(err, err.stack);
-      buffers.thumbnail = data.Body;
-    });
+    var preassignedUrl = await  s3.getObject(params).promise();
+    var base64Image = preassignedUrl.Body.toString("base64");
+    var imgSrc = `data:${preassignedUrl.ContentType};base64,${base64Image}`;
+    buffers['equirectangle'] = imgSrc;
     return buffers;
   },
   getSignedFileUrl: async (objId, fileName) => {
@@ -280,43 +259,15 @@ const awsMethods = {
     var preassignedUrl = await s3.getSignedUrlPromise("getObject", params);
     console.log("preassigned url " ,preassignedUrl);
     return preassignedUrl;
-  }  
+  },
+  reloadThumbnailUrl : async (objId,thumbnailpath) => {
+    let params = {
+      Bucket: bucketName,
+      Key: `uploads/${objId}/${thumbnailpath}`, // folder + File name you want to save as in S3
+    }
+    var preassignedUrl = await s3.getSignedUrlPromise("getObject", params);
+    return preassignedUrl;
+  }
 };
 
 module.exports = awsMethods;
-
-const CreateZipArchive = async (file) => {
-  var zip = new Zip(file); 
-
-  zip.extractAllTo('./uploads/viewfolder', true);
-  return zip;
-};
-
-const GetFileBuffersFromZipFileBuffer = async (zipbuffer)=> {
-  // Parse the zip file data buffer
-var zip = new JSZip();
-zip.loadAsync(zipbuffer).then(function(zip) {
-  // Get the list of files in the zip
-  var files = Object.keys(zip.files);
-
-  // Read the contents of each file in the zip
-  for (var i = 0; i < files.length; i++) {
-    var file = files[i];
-    console.log(file);
-    // zip.files[file].async("text").then(function(file_data) {
-    //   console.log(file_data);
-    // });
-  }
-});
-}
-
-// Convert an ArrayBuffer to a base64 string
-function arrayBufferToBase64(buffer) {
-  let binary = '';
-  const bytes = new Uint8Array(buffer);
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
