@@ -232,7 +232,7 @@
                 >or Browse</span
               ></span
             ><br />
-            <input type="file" id="browse-input" name="file" hidden multiple/>
+            <input type="file" id="browse-input" name="file" hidden multiple />
           </div>
           <div>
             <p class="text-center mb-0" id="format-support-info">
@@ -270,7 +270,10 @@
         </div>
 
         <div>
-          <label class="mt-2" id="asset-format-id" for="asset-format"
+          <label
+            class="mt-2 support-types-text"
+            id="asset-format-id"
+            for="asset-format"
             >Select Format:</label
           >
           <select
@@ -279,6 +282,9 @@
             id="asset-format"
             onchange="onChangeFormatType(this)"
           ></select>
+          <p class="d-none support-types-text" id="format-type-caption">
+            Upload only 6 images of equal height and width.
+          </p>
         </div>
         <div class="mt-auto">
           <!-- <button class="btn btn-size btn-outline-info rounded-8 cancel-page-btn" type="button"
@@ -302,7 +308,7 @@
     <div class="modal-content">
       <span class="close" onclick="closeModalContent()">&times;</span>
       <div class="cubemap-content">
-        <p id="assign-texture-err" class="error-message m-0">
+        <p id="assign-texture-err" class="alert-modal m-0">
           Assign all textures before proceeding.
         </p>
         <p>Assign Texture :</p>
@@ -447,6 +453,39 @@
       </form> -->
     </div>
   </div>
+
+  <!-- Alert Modal -->
+  <div
+    class="modal d-none"
+    id="alert-modal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="exampleModalLongTitle"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <!-- <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div> -->
+        <div class="modal-body" id="alert-message"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Close
+          </button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 
 <script type="text/javascript" src="fileextensioncheck.js"></script>
@@ -460,18 +499,20 @@
   const fileChosen = document.getElementById("file-chosen");
   const cubemapDivs = document.querySelectorAll(".texture-assign-box");
   const cubemapImgs = document.querySelectorAll(".texture-assign-box-img");
+  const formatTypeCaption = document.getElementById("format-type-caption");
+  const alertModal = document.getElementById("alert-modal");
+  const alertMessage = document.getElementById("alert-message");
 
   browseInput.addEventListener("change", async function () {
     console.log(this.files);
     [...this.files].forEach(async (file, i) => {
       if (isZip(file.name)) {
-      await convertziptofile(file);
-    } else {
-      console.log("not a zip")
-      readFile(file);
-    }
-    })
-
+        await convertziptofile(file);
+      } else {
+        console.log("not a zip");
+        readFile(file);
+      }
+    });
   });
 
   cubemapDivs.forEach((eachDiv) => {
@@ -702,7 +743,10 @@
   async function processUploads() {
     //if no uploads added
     if (files.length == 0) {
-      alert("No uploads added");
+      alertModal.classList.remove("d-none")
+      alertModal.classList += (" d-block")
+      alertMessage.innerText = "Please upload files"
+      
     } else {
       setupFileObjs();
       //if model file, process and popup to assign textures
@@ -838,7 +882,7 @@
 
   function readFile(file) {
     let correctfiletype = false;
-    console.log(files, file)
+    console.log(files, file);
     if (currentformat == "equirectangular" && files.length == 1) return;
     switch (currenttype) {
       case "3dmodel":
@@ -862,7 +906,7 @@
         correctfiletype = isImage(file.name);
         break;
     }
-    console.log(correctfiletype)
+    console.log(correctfiletype);
     if (correctfiletype) {
       let foundIdx = null;
       console.log(files);
@@ -883,12 +927,11 @@
           console.log(files);
           const card = document.getElementById(`${found.name}`);
           removeFile(card, `${found.name}`);
-          addCreatedFile(file) 
+          addCreatedFile(file);
         }
       } else {
-        addCreatedFile(file) 
+        addCreatedFile(file);
       }
-   
     } else {
       alert("Please check that your file/folder type are supported");
     }
@@ -967,11 +1010,10 @@
     //browseAddListener()
     event.preventDefault();
     if (event.dataTransfer.items) {
-
       [...event.dataTransfer.files].forEach(async (file, i) => {
-        console.log(event.dataTransfer.files)
+        console.log(event.dataTransfer.files);
         if (isZip(file.name)) {
-         convertziptofile(file);
+          convertziptofile(file);
         } else {
           readFile(file);
         }
@@ -980,7 +1022,7 @@
   });
 
   async function convertziptofile(file) {
-    let hasExtraFolder = false
+    let hasExtraFolder = false;
     var collectedfiles = [];
     var jszip = new JSZip();
     var zip = await jszip.loadAsync(file);
@@ -990,21 +1032,20 @@
       var zipfile = zip.files[zipfiles[i]];
       var fileData = await zipfile.async("blob");
       var filename = zipfiles[i].replace(foldername, "");
-      if(filename.includes("/")){        
-        alert("Make sure all files are in the root of the zip folder")
+      if (filename.includes("/")) {
+        alert("Make sure all files are in the root of the zip folder");
         //index 0 is an empty file, if theres another folder
-        hasExtraFolder = true
-        break
-      }else{
+        hasExtraFolder = true;
+        break;
+      } else {
         var file = new File([fileData], filename);
         collectedfiles.push(file);
       }
-
     }
-    if(!hasExtraFolder){
+    if (!hasExtraFolder) {
       console.log("complete", collectedfiles);
-       readFiles(collectedfiles);
-    } 
+      readFiles(collectedfiles);
+    }
   }
 
   //browse button
@@ -1027,6 +1068,7 @@
         options = ["cubemap", "equirectangular"];
         supportformat = "JPG, JPEG, PNG.";
         enableModelInfo(true);
+        enable360Instructions(true);
         break;
       case "script":
         options = ["c#", "javascript", "python"];
@@ -1036,6 +1078,7 @@
       case "3dmodel":
         supportformat = "obj, fbx, JPG, JPEG, PNG.";
         enableModelInfo(true);
+        enable360Instructions(false);
         break;
     }
     clearFilesIfNewType(value);
@@ -1075,9 +1118,23 @@
     }
   }
 
+  function enable360Instructions(enable) {
+    if (enable) {
+      formatTypeCaption.classList.remove("d-none");
+      formatTypeCaption.classList += " d-block";
+    } else {
+      formatTypeCaption.classList.remove("d-block");
+      formatTypeCaption.classList += " d-none";
+    }
+  }
+
   function onChangeFormatType(e) {
     clearAllFileContent();
     currentformat = e.value;
+    currentformat === "cubemap"
+      ? (formatTypeCaption.innerText =
+          "Upload only 6 images of equal height and width.")
+      : (formatTypeCaption.innerText = "Upload only 1 image");
   }
 
   //modal content selection

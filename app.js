@@ -867,6 +867,9 @@ app.get(
   authMiddleware.isAuthenticated,
   userController.showEnrollment
 );
+app.get("/", function (req,res){
+  res.redirect("/login");
+});
 app.get("/login", authController.showlogin);
 app.get("/authentication/activate", authController.showActivateAndSetPassword); //done
 app.get("/forgot-password", authController.showForgotPassword); //done
