@@ -232,7 +232,7 @@
                 >or Browse</span
               ></span
             ><br />
-            <input type="file" id="browse-input" name="file" hidden />
+            <input type="file" id="browse-input" name="file" hidden multiple/>
           </div>
           <div>
             <p class="text-center mb-0" id="format-support-info">
@@ -462,14 +462,16 @@
   const cubemapImgs = document.querySelectorAll(".texture-assign-box-img");
 
   browseInput.addEventListener("change", async function () {
-    console.log(this.files[0]);
-    //fileChosen.textContent = this.files[0].name
-    // createFileCard(this.files[0].name)
-    if (isZip(this.files[0].name)) {
-      await convertziptofile(this.files[0]);
+    console.log(this.files);
+    [...this.files].forEach(async (file, i) => {
+      if (isZip(file.name)) {
+      await convertziptofile(file);
     } else {
-      readFile(this.files[0]);
+      console.log("not a zip")
+      readFile(file);
     }
+    })
+
   });
 
   cubemapDivs.forEach((eachDiv) => {
@@ -755,6 +757,7 @@
     // const fileName = document.createElement("p");
     // card.appendChild(fileName)
     card.classList += "d-flex justify-content-between border-bottom py-2";
+    card.id = filename;
     //card.classList.add("card");
     collectedfiles.appendChild(card);
 
@@ -819,7 +822,10 @@
     for (var i = 0; i < files.length; i++) {
       if (files[i].name === filename) {
         files.splice(i, 1);
-        fileObjs.splice(i, 1);
+        if (fileObjs != undefined) {
+          fileObjs.splice(i, 1);
+        }
+
         //const found = fileObjs.find((fileObj)=>{return fileObj.file.name === filename})
       }
     }
@@ -832,6 +838,7 @@
 
   function readFile(file) {
     let correctfiletype = false;
+    console.log(files, file)
     if (currentformat == "equirectangular" && files.length == 1) return;
     switch (currenttype) {
       case "3dmodel":
@@ -855,33 +862,42 @@
         correctfiletype = isImage(file.name);
         break;
     }
+    console.log(correctfiletype)
     if (correctfiletype) {
-      let foundIdx = "not found" 
-      console.log(files)
-      foundIdx = files.find((eachfile,idx) => {
-        if(eachfile.name === file.name){
-          console.log(idx)
-          return idx
-        };
-       
+      let foundIdx = null;
+      console.log(files);
+      let found = files.find((eachfile, idx) => {
+        if (eachfile.name === file.name) {
+          foundIdx = idx;
+          return eachfile;
+        }
       });
+      console.log(found);
 
-      if (foundIdx != "not found") {
-        const val = confirm("A file with the name already exists. Would you like to replace the exsiting one?");
-        if(val){
-          files.splice(foundIdx, 1)
-          createFileCard(file.name);
-        files.push(file);
-        console.log(files + " currently added file");
-        }            
+      if (found != undefined) {
+        const val = confirm(
+          "A file with the name already exists. Would you like to replace the exsiting one?"
+        );
+        if (val) {
+          //files.splice(foundIdx, 1)
+          console.log(files);
+          const card = document.getElementById(`${found.name}`);
+          removeFile(card, `${found.name}`);
+          addCreatedFile(file) 
+        }
       } else {
-        createFileCard(file.name);
-        files.push(file);
-        console.log(files + " currently added file");
+        addCreatedFile(file) 
       }
+   
     } else {
-      alert("Please check that your file/folder type are support");
+      alert("Please check that your file/folder type are supported");
     }
+  }
+
+  function addCreatedFile(file) {
+    createFileCard(file.name);
+    files.push(file);
+    console.log(files + " currently added file");
   }
 
   function setupFileObjs() {
@@ -951,9 +967,11 @@
     //browseAddListener()
     event.preventDefault();
     if (event.dataTransfer.items) {
+
       [...event.dataTransfer.files].forEach(async (file, i) => {
+        console.log(event.dataTransfer.files)
         if (isZip(file.name)) {
-          await convertziptofile(file);
+         convertziptofile(file);
         } else {
           readFile(file);
         }
@@ -962,6 +980,7 @@
   });
 
   async function convertziptofile(file) {
+    let hasExtraFolder = false
     var collectedfiles = [];
     var jszip = new JSZip();
     var zip = await jszip.loadAsync(file);
@@ -971,11 +990,21 @@
       var zipfile = zip.files[zipfiles[i]];
       var fileData = await zipfile.async("blob");
       var filename = zipfiles[i].replace(foldername, "");
-      var file = new File([fileData], filename);
-      collectedfiles.push(file);
+      if(filename.includes("/")){        
+        alert("Make sure all files are in the root of the zip folder")
+        //index 0 is an empty file, if theres another folder
+        hasExtraFolder = true
+        break
+      }else{
+        var file = new File([fileData], filename);
+        collectedfiles.push(file);
+      }
+
     }
-    console.log("complete");
-    readFiles(collectedfiles);
+    if(!hasExtraFolder){
+      console.log("complete", collectedfiles);
+       readFiles(collectedfiles);
+    } 
   }
 
   //browse button
