@@ -168,7 +168,6 @@ const SearchBar = (searchterm, callback) => {
     });
 };
 module.exports.SearchBar = SearchBar;
-
 const FindModelById = (id, callback) => {
   modeldb.findOne(
     {
@@ -237,3 +236,24 @@ const AssignUserToModel = function (userid, modelid) {};
 const ReconstructModelDB = function () {};
 
 const SetupSampleDB = function () {};
+
+
+const awsMethod = require("../middlewares/aws_methods");
+const UpdateThumbnailUrlOnInterval = function() {
+  console.log('loaded');
+  modeldb.find({}, (err,results)=> {
+    results.forEach(async (result,index)=> {
+      //original path is called 'new_thumbnail.png'
+      var newThumbnailPath = await awsMethod.reloadThumbnailUrl(result._id,'new_thumbnail.png');
+      modeldb.findByIdAndUpdate(result._id, {$set: { "assetPath.thumbnail": newThumbnailPath }}, (result)=> {
+      })
+    });
+  });
+  setInterval(function(){
+    UpdateThumbnailUrlOnInterval();
+  }, 1000*60*10)
+}
+
+UpdateThumbnailUrlOnInterval();
+
+

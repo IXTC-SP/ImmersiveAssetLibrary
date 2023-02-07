@@ -203,7 +203,8 @@
     //console.log(assetimg);
     assetimg.src =
       // data.assetPath.folderpath.slice(1) + "/" + data.assetPath.thumbnail;
-      data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
+      // data.assetPath.folderpath + "/" + data.assetPath.thumbnail;
+      data.assetPath.thumbnail;
     //console.log(assetimg.src);
     let assetname = clone.querySelector("#asset-name");
     assetname.innerHTML = data.title;

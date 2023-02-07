@@ -103,13 +103,26 @@ app.get(
         isModel = false;
         break;
     }
-    console.log(req.params.modelid)
-    dbmanager.FindModelById(req.params.modelid, (result) => {
-      console.log("---->", result);
-      console.log(result.owner);
+    var modelid = req.params.modelid;
+    console.log('asset objid ',modelid)
+    dbmanager.FindModelById(modelid, async (result) => {
+      // console.log("---->", result);
+      // console.log(result.owner);
+      var buffers;
+      // buffers = await awsMethods.getFolderContent(modelid);
+      if(isModel){
+        buffers = await awsMethods.getSingleModelContent(req.params.modelid,result.assetPath.gltfmodelpath)
+      } else {
+        if(result.assetPath.equirectangular) {
+          buffers = await awsMethods.getSingleEquirectangularContent(req.params.modelid,result.assetPath.equirectangular)
+        } else {
+          buffers = await awsMethods.getSingleCubemapContent(req.params.modelid,result.assetPath.cubemap)
+        }
+      } 
       userModel.findById(result.owner, function (err, doc) {
-        console.log(doc.email);
         res.render("view_asset", {
+          // uri : presignedUri,
+          buffers : buffers,
           data: result,
           assettype: req.params.type,
           owner: doc.email,
@@ -211,6 +224,7 @@ app.get(
       databasemanager_model.SearchBar(req.query.search, async (result) => {
         filteredResult = await check3dModelFilters(result, req.query);
         filteredResult = await sortResults(filteredResult);
+        console.log('running this');
         res.render("assets", {
           data: {
             models: filteredResult,
