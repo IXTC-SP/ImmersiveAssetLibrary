@@ -3,9 +3,6 @@ const AWS = require("aws-sdk");
 require("dotenv").config();
 const archiver = require("archiver");
 const stream = require("stream");
-var AdmZip = require("adm-zip");
-var JSZip = require("jszip");
-const { files } = require("jszip");
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 

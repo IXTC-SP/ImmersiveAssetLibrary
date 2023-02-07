@@ -589,8 +589,9 @@
   let confirmVal = null;
   let foundSameFile = null
   let replacedFile = null
+  let browser
 
-  browseInput.addEventListener("change", async function () {
+  browseInput.addEventListener("input", async function () {
     console.log(this.files);
     [...this.files].forEach(async (file, i) => {
       if (isZip(file.name)) {
@@ -599,7 +600,10 @@
         console.log("not a zip");
         readFile(file);
       }
+
     });
+    this.value = null
+    console.log(this.files);
   });
 
   cubemapDivs.forEach((eachDiv) => {
