@@ -2,6 +2,7 @@ const fs = require("fs");
 const modeldb = require("../models/model");
 const fastFolderSize = require("fast-folder-size");
 const fastFolderSizeSync = require('fast-folder-size/sync')
+const awsMethod = require("../middlewares/aws_methods");
 
 class AssetPath {
   folderpath = "";
@@ -83,9 +84,11 @@ module.exports.save = Save;
 
 const updateToAwsPaths = async function (doc, uploadedDataToAws, cb){
   let newFolderPath =  uploadedDataToAws[uploadedDataToAws.length-1].folderPath;
+  var newThumbnailPath = await awsMethod.reloadThumbnailUrl(doc._id,'new_thumbnail.png');
+
   const result = await modeldb.findOneAndUpdate(
     { _id: doc._id },
-    { $set: { "assetPath.folderpath": newFolderPath } },
+    { $set: { "assetPath.folderpath": newFolderPath, "assetPath.thumbnail": newThumbnailPath } },
     { new: true }
   );
   console.log(result)
@@ -238,8 +241,7 @@ const ReconstructModelDB = function () {};
 const SetupSampleDB = function () {};
 
 
-const awsMethod = require("../middlewares/aws_methods");
-const UpdateThumbnailUrlOnInterval = function() {
+const UpdateThumbnailUrl = function() {
   console.log('loaded');
   modeldb.find({}, (err,results)=> {
     results.forEach(async (result,index)=> {
@@ -249,11 +251,13 @@ const UpdateThumbnailUrlOnInterval = function() {
       })
     });
   });
-  setInterval(function(){
-    UpdateThumbnailUrlOnInterval();
-  }, 1000*60*10)
+  // setInterval(function(){
+  //   UpdateThumbnailUrl();
+  // }, 1000*60*10)
 }
 
-UpdateThumbnailUrlOnInterval();
+module.exports.UpdateThumbnailUrl = UpdateThumbnailUrl;
+
+// UpdateThumbnailUrl();
 
 

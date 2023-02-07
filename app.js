@@ -78,9 +78,8 @@ app.listen(port, async () => {
     console.log(`Failed to connect to DB`);
     process.exit(1);
   }
-
+  job();
   console.log(`Immersive Library backend listening on port ${port}`);
-  job.start();
 });
 
 const userModel = require("./models/user");
@@ -635,7 +634,7 @@ app.post("/savethreesixty", uploadmanager_360.upload360, function (req, res) {
     // var oldpath = "./uploads/" + foldername;
     // var newpath = "./uploads/" + result;
     // uploadmanager_360.changepath(oldpath, newpath);
-    console.log("tmpconetnt", tmpContent);
+    console.log("tmpcontent", tmpContent);
     tmpContent["thumbnail"] = req.files.newthumbnail[0];
     const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result, "360");
     console.log(uploadedDataToAws);
