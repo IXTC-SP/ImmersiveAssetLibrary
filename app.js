@@ -118,7 +118,7 @@ app.get(
         } else {
           buffers = await awsMethods.getSingleCubemapContent(req.params.modelid,result.assetPath.cubemap)
         }
-      }
+      } 
       userModel.findById(result.owner, function (err, doc) {
         res.render("view_asset", {
           // uri : presignedUri,

@@ -207,8 +207,8 @@ const ReconstructModelDB = function () {};
 const SetupSampleDB = function () {};
 
 const awsMethod = require("../middlewares/aws_methods");
-const UpdateThumbnailUrl = function() {
-  console.log('loaded');
+const UpdateThumbnailUrlOnInterval = function() {
+  console.log('loaded 360 thumbnails');
   threesixtydb.find({}, (err,results)=> {
     results.forEach(async (result,index)=> {
       //original path is called 'new_thumbnail.png'
@@ -217,6 +217,10 @@ const UpdateThumbnailUrl = function() {
       })
     });
   });
+  setInterval(function(){
+    UpdateThumbnailUrlOnInterval();
+  }, 1000*60*12)
 }
 
-UpdateThumbnailUrl();
+
+UpdateThumbnailUrlOnInterval();

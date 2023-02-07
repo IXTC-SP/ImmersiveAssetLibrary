@@ -239,7 +239,7 @@ const SetupSampleDB = function () {};
 
 
 const awsMethod = require("../middlewares/aws_methods");
-const UpdateThumbnailUrl = function() {
+const UpdateThumbnailUrlOnInterval = function() {
   console.log('loaded');
   modeldb.find({}, (err,results)=> {
     results.forEach(async (result,index)=> {
@@ -249,8 +249,11 @@ const UpdateThumbnailUrl = function() {
       })
     });
   });
+  setInterval(function(){
+    UpdateThumbnailUrlOnInterval();
+  }, 1000*60*10)
 }
 
-UpdateThumbnailUrl();
+UpdateThumbnailUrlOnInterval();
 
 
