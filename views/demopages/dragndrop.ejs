@@ -525,10 +525,7 @@
           >
             <use xlink:href="#exclamation-triangle-fill" />
           </svg>
-          <!-- <h5 class="modal-title">Alert</h5> -->
-          <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button> -->
+
         </div>
         <div class="modal-body d-flex bg-transparent">
           <!-- <svg class="bi flex-shrink-0 me-2 mt-1" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg> -->
@@ -583,8 +580,6 @@
   const cubemapDivs = document.querySelectorAll(".texture-assign-box");
   const cubemapImgs = document.querySelectorAll(".texture-assign-box-img");
   const formatTypeCaption = document.getElementById("format-type-caption");
-  // const alertModal = document.getElementById("alert-modal");
-  // const alertMessage = document.getElementById("alert-message");
   const modalAlert = document.getElementById("modal-alert");
   const modalAlertMessage = document.getElementById("modal-alert-message");
   const cancelButton = document.getElementById("modal-alert-cancel");
@@ -686,10 +681,6 @@
 
   function openConfirmModal(message, callback) {
     confirmVal = null;
-    // const replaceButton = document.getElementById("modal-alert-replace");
-    // const cancelButton = document.getElementById("modal-alert-cancel");
-    // const okayButton = document.getElementById("modal-alert-okay");
-    
     okayButton.classList.remove("d-block");
     replaceButton.classList.remove("d-none");
     cancelButton.classList.remove("d-none");
@@ -891,9 +882,6 @@
     //if no uploads added
     if (files.length == 0) {
       openAlertModal("Upload files before proceeding.");
-      // modalAlert.classList.remove("d-none")
-      // modalAlert.classList += (" d-flex")
-      // alertMessage.innerText = "Upload files before proceeding."
     } else {
       setupFileObjs();
       //if model file, process and popup to assign textures
@@ -910,10 +898,6 @@
             openAlertModal(
               "No model object uploaded.\n Add either a .fbx, .obj file to proceed."
             );
-            // modalAlert.classList.remove("d-none")
-            // modalAlert.classList += (" d-flex")
-            // modalAlertMessage.innerText = "No model object added"
-            //alert("No model object added");
             break;
           case 1:
             createuploadcontent();
@@ -959,22 +943,6 @@
     card.id = filename;
     //card.classList.add("card");
     collectedfiles.appendChild(card);
-
-    //create remove-btn for the card
-    // var removebtn = document.createElement('span');
-    // removebtn.innerHTML = "&times;";
-    // removebtn.classList.add("file-btn");
-    // removebtn.addEventListener('click', function(event) {
-    //   removeFile(card, filename);
-    //   event.preventDefault();
-    // });
-
-    //create image for the card
-    // var img = document.createElement('img');
-    // img.src = '';
-    // img.classList.add("img-top");
-    // card.appendChild(img);
-
     //create file info
     var fileinfo = document.createElement("div");
     // fileinfo.classList.add('card-file-info');
@@ -1024,8 +992,6 @@
         if (fileObjs != undefined) {
           fileObjs.splice(i, 1);
         }
-
-        //const found = fileObjs.find((fileObj)=>{return fileObj.file.name === filename})
       }
     }
   }
@@ -1079,14 +1045,6 @@
         openConfirmModal(
           "A file with the name already exists. Would you like to replace the existing one?"
         );
-        // console.log(confirmVal);
-        // if (confirmVal) {
-        //   //files.splice(foundIdx, 1)
-        //   console.log(files);
-        //   const card = document.getElementById(`${found.name}`);
-        //   removeFile(card, `${found.name}`);
-        //   addCreatedFile(file);
-        // }
       } else {
         addCreatedFile(file);
       }
