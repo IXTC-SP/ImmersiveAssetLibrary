@@ -222,6 +222,7 @@ app.get(
       });
     } else {
       databasemanager_model.SearchBar(req.query.search, async (result) => {
+        console.log("result--->",result)
         filteredResult = await check3dModelFilters(result, req.query);
         filteredResult = await sortResults(filteredResult);
         console.log('running this');

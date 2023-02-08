@@ -144,30 +144,53 @@ function FindModelsByTags(tags) {
   );
 }
 
+// const SearchBar = (searchterm, callback) => {
+//   var arr = [];
+//   let searchArr = searchterm.toLowerCase().split(" ")
+//   console.log(searchArr)
+//   //const searchTermLowerCase = searchterm.toLowerCase();
+//   console.log("start mongoose search");
+//   modeldb
+//     .find({
+//       title:{$in:[...searchArr]}
+//     })
+//     .then(function (nameresult) {
+//       arr.push(nameresult);
+//       console.log("finish search name", nameresult);
+//       modeldb
+//         .find({
+//           tags: {$in:[...searchArr]},
+//         })
+//         .then(function (tagresult) {
+//            //arr.push(tagresult);
+//           //arr = [...new Set(tagresult)];
+//           arr = [...tagresult,...nameresult];
+//           console.log("finish search tag", tagresult);
+//           console.log("arr--->",arr)
+//           callback(arr);
+//         });
+//     });
+// };
 const SearchBar = (searchterm, callback) => {
   var arr = [];
-  const searchTermLowerCase = searchterm.toLowerCase();
+  let searchArr = searchterm.split(" ")
+  console.log(searchArr)
+  //const searchTermLowerCase = searchterm.toLowerCase();
   console.log("start mongoose search");
-  modeldb
-    .find({
-      title: searchTermLowerCase,
-    })
+  modeldb.aggregate([
+    {$addFields : {title_arr: {$split: ["$title", " "]}}},
+    { $match : { $or : [{title_arr : {$in:[...searchArr]}}, {tags: {$in:[...searchArr]}}] }},
+  ]).collation(
+    { locale: 'en', strength: 2 }
+  )
     .then(function (nameresult) {
-      arr.push(nameresult);
+      arr.push(...nameresult);
       console.log("finish search name", nameresult);
-      modeldb
-        .find({
-          tags: searchTermLowerCase,
-        })
-        .then(function (tagresult) {
-          // arr.push(tagresult);
-          arr = [...new Set(tagresult)];
-          console.log("finish search tag", tagresult);
-          callback(arr);
-        });
+      callback(arr);
     });
 };
 module.exports.SearchBar = SearchBar;
+
 const FindModelById = (id, callback) => {
   modeldb.findOne(
     {
@@ -239,6 +262,7 @@ const SetupSampleDB = function () {};
 
 
 const awsMethod = require("../middlewares/aws_methods");
+const { Console } = require("console");
 const UpdateThumbnailUrlOnInterval = function() {
   console.log('loaded');
   modeldb.find({}, (err,results)=> {
@@ -254,6 +278,6 @@ const UpdateThumbnailUrlOnInterval = function() {
   }, 1000*60*10)
 }
 
-UpdateThumbnailUrlOnInterval();
+// UpdateThumbnailUrlOnInterval();
 
 

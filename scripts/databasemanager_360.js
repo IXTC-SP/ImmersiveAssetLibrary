@@ -223,4 +223,4 @@ const UpdateThumbnailUrlOnInterval = function() {
 }
 
 
-UpdateThumbnailUrlOnInterval();
+// UpdateThumbnailUrlOnInterval();
