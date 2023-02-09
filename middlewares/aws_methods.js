@@ -4,7 +4,7 @@ require("dotenv").config();
 const archiver = require("archiver");
 const stream = require("stream");
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-
+var request = require('request');
 
 
 // Enter copied or downloaded access ID and secret key here
@@ -211,6 +211,65 @@ const awsMethods = {
 
     buffers['gltf'] = dataUrl;
     return buffers;
+  },
+  getSingleModelContentByURL: async (objId, gltfpath) => {
+    var buffers = {};
+    var params = {
+      Bucket: bucketName,
+      Key: `uploads/${objId}/${gltfpath}`
+    };
+    const model = s3.getSignedUrl('getObject', params)
+    console.log(model);
+
+    function parse(){
+      return new Promise(function(resolve, reject){
+          request(model, function (error, response, body) {
+              // in addition to parsing the value, deal with possible errors
+              if (error) return reject(error);
+              try {
+                  // JSON.parse() can throw an exception if not valid JSON
+                  resolve(JSON.parse(body));
+              } catch(e) {
+                  reject(e);
+              }
+          });
+      });
+  }
+
+  var modelfile = await parse()
+  if(modelfile.images){
+    modelfile.images.forEach((image)=> {
+      image.uri = s3.getSignedUrl('getObject', {Bucket: bucketName, Key: `uploads/${objId}/${image.uri}`});
+      console.log("running images");
+    });
+  }
+    let stringData = JSON.stringify(modelfile);
+    // let byteCharacters = new TextEncoder().encode(stringData);
+    // let byteArrays = [...Array(byteCharacters.length)].map((_, i) => byteCharacters.slice(i * 8192, i * 8192 + 8192));
+
+    // let binaryData = '';
+    // for (let byteArray of byteArrays) {
+    //   binaryData += String.fromCharCode(...new Uint8Array(byteArray));
+    // }
+
+    // let dataUrl = "data:application/octet-stream;base64," + Buffer.from(binaryData).toString('base64');
+    let dataUrl = "data:application/octet-stream;base64," + Buffer.from(stringData).toString("base64");
+
+  buffers['gltf'] = dataUrl;
+  return buffers;
+
+
+
+    // let stringData = JSON.stringify(model);
+    // let byteCharacters = new TextEncoder().encode(stringData);
+    // let byteArrays = [...Array(byteCharacters.length)].map((_, i) => byteCharacters.slice(i * 8192, i * 8192 + 8192));
+
+    // let binaryData = '';
+    // for (let byteArray of byteArrays) {
+    //   binaryData += String.fromCharCode(...new Uint8Array(byteArray));
+    // }
+
+    // let dataUrl = 'data:' + gltfbuffer.ContentType + ';base64,' + Buffer.from(binaryData).toString('base64');
   },
   getSingleCubemapContent: async (objId, cubemapPaths) => {
     var buffers = {};

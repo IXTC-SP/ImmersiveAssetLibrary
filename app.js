@@ -111,7 +111,8 @@ app.get(
       var buffers;
       // buffers = await awsMethods.getFolderContent(modelid);
       if(isModel){
-        buffers = await awsMethods.getSingleModelContent(req.params.modelid,result.assetPath.gltfmodelpath)
+        // buffers = await awsMethods.getSingleModelContent(req.params.modelid,result.assetPath.gltfmodelpath)
+        buffers = await awsMethods.getSingleModelContentByURL(req.params.modelid,result.assetPath.gltfmodelpath)
       } else {
         if(result.assetPath.equirectangular) {
           buffers = await awsMethods.getSingleEquirectangularContent(req.params.modelid,result.assetPath.equirectangular)
@@ -119,6 +120,8 @@ app.get(
           buffers = await awsMethods.getSingleCubemapContent(req.params.modelid,result.assetPath.cubemap)
         }
       } 
+      const used = process.memoryUsage().heapUsed / 1024 / 1024;
+      console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
       userModel.findById(result.owner, function (err, doc) {
         res.render("view_asset", {
           // uri : presignedUri,
