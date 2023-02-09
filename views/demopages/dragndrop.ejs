@@ -66,6 +66,15 @@
       bottom: 0;
       left: 0;
     }
+    .dragging {
+      cursor: grabbing;
+    }
+
+    .draggable {
+      cursor: grab;
+    }
+
+
 
     .texture-assign-box {
       border: 1px solid #444444;
@@ -73,6 +82,7 @@
       padding: 0px;
       height: 140px;
     }
+    
     .texture-assign-box.top {
       border-top-left-radius: 6px;
       border-top-right-radius: 6px;
@@ -217,6 +227,9 @@
       height: 100%;
       /* border: 1px solid #444444; */
     }
+    option:hover {
+  background-color: yellow;
+}
 
     .cubemap-bg-img {
       /* background-image: url(blob:http://localhost:3000/fe75243b-5cef-43cb-8bbd-dd732193960a);
@@ -525,7 +538,6 @@
           >
             <use xlink:href="#exclamation-triangle-fill" />
           </svg>
-
         </div>
         <div class="modal-body d-flex bg-transparent">
           <!-- <svg class="bi flex-shrink-0 me-2 mt-1" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg> -->
@@ -587,9 +599,10 @@
   const okayButton = document.getElementById("modal-alert-okay");
 
   let confirmVal = null;
-  let foundSameFile = null
-  let replacedFile = null
-  let browser
+  let foundSameFile = null;
+  let replacedFile = null;
+  let browser;
+  let mouseHasEnter = false
 
   browseInput.addEventListener("input", async function () {
     console.log(this.files);
@@ -600,9 +613,8 @@
         console.log("not a zip");
         readFile(file);
       }
-
     });
-    this.value = null
+    this.value = null;
     console.log(this.files);
   });
 
@@ -638,6 +650,12 @@
   });
 
   cubemapImgs.forEach((img) => {
+    img.addEventListener("mouseenter",async function (ev) {
+      const list = ev.target.classList;
+      if (!list.contains("draggable")) {
+        ev.target.classList +=" draggable";  
+      }
+    });
     img.addEventListener("dragstart", async function (ev) {
       console.log(ev.target.id);
       ev.dataTransfer.setData("imgId", ev.target.id);
@@ -675,7 +693,6 @@
   function closeAlertModal() {
     modalAlert.classList.remove("d-flex");
     modalAlert.classList += " d-none";
-    
   }
   function openAlertModal(message) {
     modalAlert.classList.remove("d-none");
@@ -698,7 +715,7 @@
   function confirmReplace(e) {
     e.preventDefault();
     closeAlertModal();
-    hideReplaceAndCancelButton()
+    hideReplaceAndCancelButton();
 
     console.log(files);
     const card = document.getElementById(`${foundSameFile.name}`);
@@ -709,17 +726,16 @@
 
   function cancelReplace() {
     closeAlertModal();
-    hideReplaceAndCancelButton () 
-  } 
+    hideReplaceAndCancelButton();
+  }
 
-  function hideReplaceAndCancelButton () {
+  function hideReplaceAndCancelButton() {
     okayButton.classList.remove("d-none");
     okayButton.classList += " d-block";
     cancelButton.classList.remove("d-block");
     cancelButton.classList += " d-none";
     replaceButton.classList.remove("d-block");
     replaceButton.classList += " d-none";
-
   }
 
   const uploadform = document.querySelector(".upload-form");
@@ -1035,7 +1051,7 @@
     if (correctfiletype) {
       let foundIdx = null;
       console.log(files);
-      foundSameFile = null
+      foundSameFile = null;
       foundSameFile = files.find((eachfile, idx) => {
         if (eachfile.name === file.name) {
           foundIdx = idx;
@@ -1045,7 +1061,7 @@
       console.log(foundSameFile);
 
       if (foundSameFile != undefined) {
-        replacedFile = file
+        replacedFile = file;
         openConfirmModal(
           "A file with the name already exists. Would you like to replace the existing one?"
         );

@@ -159,6 +159,7 @@ const check3dModelFilters = async (result, query) => {
         filteredResult,
         query.format
       );
+      console.log("--->list", list)
       return list;
     } else {
       return filteredResult;
@@ -257,7 +258,7 @@ app.post("/assets", function (req, res) {
       })
     );
   } else {
-    req.body.format === "obj" || req.body.format === "fbx"
+    req.body.format === "obj" || req.body.format === "fbx" || req.body.format === "gltf"
       ? null
       : (req.body.format = "format");
     res.redirect(
