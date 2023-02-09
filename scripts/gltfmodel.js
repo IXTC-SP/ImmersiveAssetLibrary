@@ -71,7 +71,7 @@ const Create = (objectfile, callback) => {
           });
           // gltfpath = modelfolderpath + "\\model.gltf"
           gltfpath = modelfolderpath + "/model.gltf"
-          console.log(gltfpath);
+          // console.log(gltfpath);
           // yay, do what we will with our shiny new GLB file!
           console.log("completed fbx to gltf conversion");
           callback(gltfpath);
@@ -89,10 +89,11 @@ const Create = (objectfile, callback) => {
 module.exports.Create = Create;
 
 const ClearMaterialFromModel = (gltfmodelpath, callback) => {
-  console.log(gltfmodelpath);
+  // console.log(gltfmodelpath);
   let path =  gltfmodelpath.replace('model.gltf','');
   let rawdata = fs.readFileSync(gltfmodelpath);
   let jsonfile = JSON.parse(rawdata);
+  console.log('json file materials' ,jsonfile.materials);
   if(jsonfile.images){
     jsonfile.images.forEach((image,i)=>{
       console.log(image.uri);
@@ -110,6 +111,19 @@ const ClearMaterialFromModel = (gltfmodelpath, callback) => {
                   delete material.pbrMetallicRoughness['baseColorTexture'];
                 }
               }
+              if(material.pbrMetallicRoughness.metallicRoughnessTexture){
+                if(material.pbrMetallicRoughness.metallicRoughnessTexture['index'] == t){
+                  console.log(material + ' has source from texture ' + t);
+                  delete material.pbrMetallicRoughness.metallicRoughnessTexture;
+                }
+              }
+              if(material.occlusionTexture){
+                if(material.occlusionTexture['index'] == t){
+                  console.log(material + ' has source from texture ' + t);
+                  delete material.occlusionTexture;
+                }
+              }
+
             });
             // jsonfile.textures.splice(t,1);
             delete jsonfile.textures[t]

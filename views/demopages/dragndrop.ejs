@@ -248,7 +248,7 @@
         <div class="p-3 drop-zone-border drop-zone" id="drop-zone">
           <!-- <div class="collected-files">
           </div> -->
-          <div
+          <!-- <div
             id="alert-modal"
             class="w-100 alert alert-danger d-none align-items-center justify-content-center bg-transparent"
             role="alert"
@@ -263,7 +263,7 @@
               <use xlink:href="#exclamation-triangle-fill" />
             </svg>
             <div id="alert-message" class="text-danger"></div>
-          </div>
+          </div> -->
           <i
             id="trash-icon"
             class="trash-btn fa-regular fa-trash-can"
@@ -507,7 +507,7 @@
       </div> -->
       <!-- <button class="page-btn left" type="button" name="button" onclick="createuploadcontent()">Next</button> -->
       <button
-        class="btn btn-size theme-color btn-rounded upload-page-btn"
+        class="btn btn-size theme-color btn-rounded upload-page-btn mt-2"
         type="button"
         onclick="checkCubemapTextures()"
         name="button"
@@ -529,7 +529,7 @@
       <div class="modal-content" style="width: 330px">
         <div class="modal-header p-0 border-0">
           <svg
-            class="flex-shrink-0 me-2 text-danger"
+            class="flex-shrink-0 text-danger"
             style="fill: currentColor"
             width="50"
             height="50"
@@ -551,7 +551,7 @@
           <button
             id="modal-alert-replace"
             type="button"
-            class="btn btn-primary d-none"
+            class="btn btn-primary d-none theme-color
             data-dismiss="modal"
             onclick="confirmReplace(event)"
           >
@@ -560,7 +560,7 @@
           <button
             id="modal-alert-okay"
             type="button"
-            class="btn btn-secondary d-block"
+            class="btn btn-secondary d-block "
             data-dismiss="modal"
             onclick="closeAlertModal()"
           >
@@ -605,7 +605,7 @@
   let mouseHasEnter = false
 
   browseInput.addEventListener("input", async function () {
-    console.log(this.files);
+    // console.log(this.files);
     [...this.files].forEach(async (file, i) => {
       if (isZip(file.name)) {
         await convertziptofile(file);
@@ -615,7 +615,7 @@
       }
     });
     this.value = null;
-    console.log(this.files);
+    // console.log(this.files);
   });
 
   cubemapDivs.forEach((eachDiv) => {
@@ -657,7 +657,7 @@
       }
     });
     img.addEventListener("dragstart", async function (ev) {
-      console.log(ev.target.id);
+      // console.log(ev.target.id);
       ev.dataTransfer.setData("imgId", ev.target.id);
       ev.dataTransfer.setData("parentId", ev.target.parentNode.id);
       ev.dataTransfer.setData("altValue", ev.target.parentNode.children[1].alt);
@@ -717,7 +717,7 @@
     closeAlertModal();
     hideReplaceAndCancelButton();
 
-    console.log(files);
+    // console.log(files);
     const card = document.getElementById(`${foundSameFile.name}`);
     removeFile(card, `${foundSameFile.name}`);
     addCreatedFile(replacedFile);
@@ -765,7 +765,7 @@
   //   })
   // }
   function droptexture(dropAlt, dropfilename, dragAltData) {
-    console.log(dropfilename, dragAltData);
+    // console.log(dropfilename, dragAltData);
     //var filename = e.target.parentNode.children[1].name.split("-")[0];
     let dropFileObjIndex;
     let dragFileObjFilename;
@@ -784,7 +784,7 @@
     }
     dropFileObjIndex = null;
     dragFileObjIndex = null;
-    console.log("after ---->", fileObjs);
+    // console.log("after ---->", fileObjs);
   }
 
   function checkCubemapTextures() {
@@ -823,7 +823,7 @@
     formData.append("type", currenttype);
     formData.append("format", currentformat);
     //set file names
-    console.log(fileObjs);
+    // console.log(fileObjs);
     fileObjs.forEach((fileObj, i) => {
       var savedName = "";
       if (fileObj.file.name.split("/")[1]) {
@@ -833,7 +833,7 @@
         //savedName = fileObj.filename + "_" + fileObj.file.name;
         savedName = fileObj.filename + "" + fileObj.file.name;
       }
-      console.log(savedName);
+      // console.log(savedName);
       if (fileObj.filename == "thumbnail") {
         formData.append("thumbnail", fileObj.file, savedName);
       } else formData.append(fileObj.type, fileObj.file, savedName);
@@ -867,7 +867,7 @@
     new Promise((resolve) => {
       const image = new Image();
       image.onload = () => {
-        console.log("new image");
+        // console.log("new image");
         const height = image.height;
         const width = image.width;
         resolve({ image, width, height });
@@ -1023,7 +1023,7 @@
 
   function readFile(file) {
     let correctfiletype = false;
-    console.log(files, file);
+    // console.log(files, file);
     if (currentformat == "equirectangular" && files.length == 1) return;
     switch (currenttype) {
       case "3dmodel":
@@ -1047,7 +1047,7 @@
         correctfiletype = isImage(file.name);
         break;
     }
-    console.log(correctfiletype);
+    // console.log(correctfiletype);
     if (correctfiletype) {
       let foundIdx = null;
       console.log(files);
@@ -1058,7 +1058,7 @@
           return eachfile;
         }
       });
-      console.log(foundSameFile);
+      // console.log(foundSameFile);
 
       if (foundSameFile != undefined) {
         replacedFile = file;
@@ -1077,7 +1077,7 @@
   function addCreatedFile(file) {
     createFileCard(file.name);
     files.push(file);
-    console.log(files + " currently added file");
+    // console.log(files + " currently added file");
   }
 
   function setupFileObjs() {
@@ -1140,7 +1140,7 @@
     //browseAddListener()
   });
   dragArea.addEventListener("drop", async (event) => {
-    console.log("drop");
+    // console.log("drop");
     dragcounter = 0;
     dragText.innerHTML =
       "Drag and Drop <span class='browse-btn' id='browse-btn' onclick='browse()'>or Browse</span>";
@@ -1148,7 +1148,7 @@
     event.preventDefault();
     if (event.dataTransfer.items) {
       [...event.dataTransfer.files].forEach(async (file, i) => {
-        console.log(event.dataTransfer.files);
+        // console.log(event.dataTransfer.files);
         if (isZip(file.name)) {
           convertziptofile(file);
         } else {
@@ -1181,7 +1181,7 @@
       }
     }
     if (!hasExtraFolder) {
-      console.log("complete", collectedfiles);
+      // console.log("complete", collectedfiles);
       readFiles(collectedfiles);
     }
   }
@@ -1196,7 +1196,7 @@
   triggerChangeWithAssetSelect();
 
   function triggerChangeWithAssetSelect() {
-    console.log("update");
+    // console.log("update");
     var e = document.getElementById("asset-select");
     var value = e.value;
     var options = [];
@@ -1290,8 +1290,8 @@
   cubemapmodalcontent.style = "display:none;";
 
   function setupTextureAssignOptions(selects) {
-    console.log("assign texture-->", files);
-    console.log("fileObjs-->", fileObjs);
+    // console.log("assign texture-->", files);
+    // console.log("fileObjs-->", fileObjs);
     let textureassignarray = [];
     files.forEach((item, i) => {
       if (isImage(item.name)) {
@@ -1320,7 +1320,7 @@
       const found = fileObjs.find((fileObj) => {
         return fileObj.file.name === item.name;
       });
-      console.log(found);
+      // console.log(found);
       found ? (found.filename = label) : null;
     });
   }
@@ -1348,7 +1348,7 @@
   function checkTextureIsAssigned(selects) {
     isAssigned = true;
     for (var i = 0; i < selects.length; i++) {
-      console.log(selects[i].value);
+      // console.log(selects[i].value);
       if (selects[i].value === "Select") {
         isAssigned = false;
       }

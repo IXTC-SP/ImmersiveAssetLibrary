@@ -19,7 +19,7 @@ const s3 = new AWS.S3({
 const bucketName = "immersive-asset-library-bucket";
 const awsMethods = {
   uploadFiles: async (tmpContent, objId, type, req, res, next) => {
-    console.log("AWS temp content details",tmpContent);
+    // console.log("AWS temp content details",tmpContent);
     let allFiles = [];
     let params = null;
     if (type === "360") {
@@ -40,14 +40,14 @@ const awsMethods = {
       allFiles.push({ gltfPath: tmpContent.modelviewerpath });
     }
     allFiles.push(tmpContent.thumbnail);
-    console.log("allfiles", allFiles);
+    // console.log("allfiles", allFiles);
     try {
       const promises = allFiles.map(async (file) => {
         return await new Promise((resolve, reject) => {
           const fileContent = fs.readFileSync(
             file.gltfPath ? file.gltfPath.substring(1) : file.path
           );
-          console.log(" file content data : ",fileContent);
+          // console.log(" file content data : ",fileContent);
           // Setting up S3 upload parameters
           params = {
             Bucket: bucketName,
@@ -66,7 +66,7 @@ const awsMethods = {
                   "An error occured during file upload. Please try again.",
               });
             } else {
-              console.log(`File uploaded successfully. ${data.Location}`);
+              // console.log(`File uploaded successfully. ${data.Location}`);
               resolve(data);
             }
             

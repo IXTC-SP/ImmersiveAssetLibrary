@@ -10,7 +10,6 @@ const session = require("express-session");
 
 const path = require("path");
 const url = require("url");
-const userObj = require("./config/userLogin");
 
 const gltfmodel = require("./scripts/gltfmodel");
 const uploadsmanager_model = require("./scripts/uploadsmanager_model");
@@ -78,6 +77,8 @@ app.listen(port, async () => {
     console.log(`Failed to connect to DB`);
     process.exit(1);
   }
+  databasemanager_360.UpdateThumbnailUrl()
+  databasemanager_model.UpdateThumbnailUrl()
   job();
   console.log(`Immersive Library backend listening on port ${port}`);
 });
