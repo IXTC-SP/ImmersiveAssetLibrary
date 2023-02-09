@@ -1,5 +1,7 @@
 const nodeCron = require("node-cron");
 const userModel = require("../models/user");
+const modelDb = require("../scripts/databasemanager_model");
+const threesixtyDb = require("../scripts/databasemanager_360");
 //nodeCron.schedule(expression, function, options);
 //1st arg * is the time scheduler. all * means every seccond
 //2nd arg ia a function executing the job
@@ -27,6 +29,18 @@ const removeUnactivatedAcc = async () => {
     console.log(error);
   }
 };
-const job = nodeCron.schedule("0 8 * * *", removeUnactivatedAcc);
+const removeUnactivatedAccJob = nodeCron.schedule("0 8 * * *", removeUnactivatedAcc);
 
-module.exports = job;
+const recreateThumbnailSignedURL = async () => {
+  console.log("regenerating thumbnail URL");
+  modelDb.UpdateThumbnailUrl();
+  threesixtyDb.UpdateThumbnailUrl();
+};
+const recreateThumbnailSignedURLJob = nodeCron.schedule("55 */11 * * *", recreateThumbnailSignedURL);
+
+
+module.exports = () => {  
+  console.log("running cron jobs");
+  recreateThumbnailSignedURLJob.start();
+  removeUnactivatedAccJob.start();
+}

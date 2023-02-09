@@ -261,6 +261,7 @@ const awsMethods = {
     let params = {
       Bucket: bucketName,
       Key: `uploads/${objId}/${thumbnailpath}`, // folder + File name you want to save as in S3
+      Expires: 43200
     }
     var preassignedUrl = await s3.getSignedUrlPromise("getObject", params);
     return preassignedUrl;

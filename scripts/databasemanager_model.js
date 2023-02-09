@@ -1,7 +1,12 @@
 const fs = require("fs");
 const modeldb = require("../models/model");
 const fastFolderSize = require("fast-folder-size");
+<<<<<<< HEAD
 const fastFolderSizeSync = require("fast-folder-size/sync");
+=======
+const fastFolderSizeSync = require('fast-folder-size/sync')
+const awsMethod = require("../middlewares/aws_methods");
+>>>>>>> 15cdaed1e543bbd75c0f3f3b3ef544afebc6a6f2
 
 class AssetPath {
   folderpath = "";
@@ -81,12 +86,13 @@ const Save = async function (req, res, callback) {
 };
 module.exports.save = Save;
 
-const updateToAwsPaths = async function (doc, uploadedDataToAws, cb) {
-  let newFolderPath =
-    uploadedDataToAws[uploadedDataToAws.length - 1].folderPath;
+const updateToAwsPaths = async function (doc, uploadedDataToAws, cb){
+  let newFolderPath =  uploadedDataToAws[uploadedDataToAws.length-1].folderPath;
+  var newThumbnailPath = await awsMethod.reloadThumbnailUrl(doc._id,'new_thumbnail.png');
+
   const result = await modeldb.findOneAndUpdate(
     { _id: doc._id },
-    { $set: { "assetPath.folderpath": newFolderPath } },
+    { $set: { "assetPath.folderpath": newFolderPath, "assetPath.thumbnail": newThumbnailPath } },
     { new: true }
   );
   console.log(result);
@@ -265,12 +271,11 @@ const ReconstructModelDB = function () {};
 
 const SetupSampleDB = function () {};
 
-const awsMethod = require("../middlewares/aws_methods");
-const { Console } = require("console");
-const UpdateThumbnailUrlOnInterval = function () {
-  console.log("loaded");
-  modeldb.find({}, (err, results) => {
-    results.forEach(async (result, index) => {
+
+const UpdateThumbnailUrl = function() {
+  console.log('loaded');
+  modeldb.find({}, (err,results)=> {
+    results.forEach(async (result,index)=> {
       //original path is called 'new_thumbnail.png'
       var newThumbnailPath = await awsMethod.reloadThumbnailUrl(
         result._id,
@@ -283,9 +288,14 @@ const UpdateThumbnailUrlOnInterval = function () {
       );
     });
   });
-  setInterval(function () {
-    UpdateThumbnailUrlOnInterval();
-  }, 1000 * 60 * 10);
-};
+  // setInterval(function(){
+  //   UpdateThumbnailUrl();
+  // }, 1000*60*10)
+}
+
+module.exports.UpdateThumbnailUrl = UpdateThumbnailUrl;
+
+// UpdateThumbnailUrl();
+
 
 // UpdateThumbnailUrlOnInterval();

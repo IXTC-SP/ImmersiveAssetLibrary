@@ -47,7 +47,9 @@
         format: <%- JSON.stringify(content.format) %>,
       }
       var tags = document.querySelectorAll(".selected_tag_element");
-      for (i = 0; i < tags.length; i++) { data.tags.push(tags[i].toLowerCase()); console.log(tags[i].innerHTML.toLowerCase()); }
+      for (i = 0; i < tags.length; i++) { 
+        data.tags.push(tags[i].innerHTML.toLowerCase()); 
+        console.log(tags[i].innerHTML.toLowerCase()); }
       data.files = files;
       console.log(data);
       for (i = 0; i < newfiles.length; i++) { formData.append('file', newfiles[i]); }
