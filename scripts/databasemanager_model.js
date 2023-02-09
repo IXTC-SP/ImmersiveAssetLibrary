@@ -1,12 +1,8 @@
 const fs = require("fs");
 const modeldb = require("../models/model");
 const fastFolderSize = require("fast-folder-size");
-<<<<<<< HEAD
-const fastFolderSizeSync = require("fast-folder-size/sync");
-=======
 const fastFolderSizeSync = require('fast-folder-size/sync')
 const awsMethod = require("../middlewares/aws_methods");
->>>>>>> 15cdaed1e543bbd75c0f3f3b3ef544afebc6a6f2
 
 class AssetPath {
   folderpath = "";
