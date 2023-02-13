@@ -120,8 +120,6 @@ app.get(
           buffers = await awsMethods.getSingleCubemapContent(req.params.modelid,result.assetPath.cubemap)
         }
       } 
-      const used = process.memoryUsage().heapUsed / 1024 / 1024;
-      console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
       userModel.findById(result.owner, function (err, doc) {
         res.render("view_asset", {
           // uri : presignedUri,
@@ -344,6 +342,8 @@ app.post(
         console.log("---->>>", tmpContent);
         gltfmodel.ClearMaterialFromModel(gltfresult, function () {
           res.end("complete");
+          checkMemory();
+
         });
       } else {
         console.log("running gltf format model", tmpContent.model[0].originalname.split(".")[1]);
@@ -353,6 +353,7 @@ app.post(
         console.log("fullpath is " ,fullpath);
         gltfmodel.ClearMaterialFromModel(fullpath, function () {
           res.end("complete");
+          checkMemory();
         });
       }
      
@@ -932,3 +933,10 @@ app.delete(
   userController.deleteUploads,
   userController.showUploads
 );
+
+//for checking memory
+function checkMemory(){
+  let used = process.memoryUsage().heapUsed / 1024 / 1024;
+  console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+}
+

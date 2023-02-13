@@ -199,15 +199,8 @@ const awsMethods = {
     }
 
     let stringData = JSON.stringify(model);
-    let byteCharacters = new TextEncoder().encode(stringData);
-    let byteArrays = [...Array(byteCharacters.length)].map((_, i) => byteCharacters.slice(i * 8192, i * 8192 + 8192));
+    let dataUrl = "data:application/octet-stream;base64," + Buffer.from(stringData).toString("base64");
 
-    let binaryData = '';
-    for (let byteArray of byteArrays) {
-      binaryData += String.fromCharCode(...new Uint8Array(byteArray));
-    }
-
-    let dataUrl = 'data:' + gltfbuffer.ContentType + ';base64,' + Buffer.from(binaryData).toString('base64');
 
     buffers['gltf'] = dataUrl;
     return buffers;

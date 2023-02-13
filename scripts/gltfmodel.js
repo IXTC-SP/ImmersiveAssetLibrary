@@ -5,6 +5,7 @@ const obj2gltf = require("obj2gltf");
 
 
 const Create = (objectfile, callback) => {
+  console.time("create time");
   var modelfolderpath = path.resolve(objectfile.destination);
   // var modelfolderpath = path.resolve(objectfile.destination.split("/model")[0]);
   var modeltype = objectfile.filename.split(".")[1];
@@ -32,6 +33,8 @@ const Create = (objectfile, callback) => {
         const data = Buffer.from(JSON.stringify(gltf));
         console.log(data);
         fs.writeFileSync(objgltfpath, data);
+        checkMemory();
+        console.timeEnd("create time")
         callback(gltfpath);
       });
 
@@ -74,6 +77,8 @@ const Create = (objectfile, callback) => {
           // console.log(gltfpath);
           // yay, do what we will with our shiny new GLB file!
           console.log("completed fbx to gltf conversion");
+          checkMemory();
+          console.timeEnd("create time")
           callback(gltfpath);
         },
         error => {
@@ -90,6 +95,7 @@ module.exports.Create = Create;
 
 const ClearMaterialFromModel = (gltfmodelpath, callback) => {
   // console.log(gltfmodelpath);
+  console.time("material")
   let path =  gltfmodelpath.replace('model.gltf','');
   let rawdata = fs.readFileSync(gltfmodelpath);
   let jsonfile = JSON.parse(rawdata);
@@ -141,6 +147,8 @@ const ClearMaterialFromModel = (gltfmodelpath, callback) => {
     if (err)
     console.log(err);
   else {
+  console.timeEnd("material")
+  checkMemory();
     callback('');
   }
   });
@@ -172,3 +180,10 @@ module.exports.ClearMaterialFromModel = ClearMaterialFromModel;
 //     fs.writeFileSync(gltfpath, data);
 //   });
 // }
+
+
+//for checking memory
+function checkMemory(){
+  let used = process.memoryUsage().heapUsed / 1024 / 1024;
+  console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+}
