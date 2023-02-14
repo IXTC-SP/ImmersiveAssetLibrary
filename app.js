@@ -3,28 +3,28 @@ require("dotenv").config();
 const express = require("express");
 const ejs = require("ejs");
 const app = express();
-const fs = require("fs");
+// const fs = require("fs");
 const bodyParser = require("body-parser");
 
 const session = require("express-session");
 
-const path = require("path");
+// const path = require("path");
 const url = require("url");
 
 const gltfmodel = require("./scripts/gltfmodel");
 const uploadsmanager_model = require("./scripts/uploadsmanager_model");
 const databasemanager_model = require("./scripts/databasemanager_model");
-const uploadmanager_360 = require("./scripts/uploadmanager_360");
+// const uploadmanager_360 = require("./scripts/uploadmanager_360");
 const databasemanager_360 = require("./scripts/databasemanager_360");
-const storagemanagement = require("./scripts/storagemanagement");
-const filedownloader = require("./scripts/filedownloader");
+// const storagemanagement = require("./scripts/storagemanagement");
+// const filedownloader = require("./scripts/filedownloader");
 const userController = require("./scripts/users_controller");
 const authController = require("./scripts/auth_controller");
 const authMiddleware = require("./middlewares/auth_middleware"); // middleware for the authentication, to check if theres a session
 const passport = require("passport");
 const awsMethods = require("./middlewares/aws_methods");
-const archiver = require("archiver");
-const PassThrough = require("stream");
+// const archiver = require("archiver");
+// const PassThrough = require("stream");
 
 const flash = require("connect-flash");
 const methodOverride = require("method-override");
@@ -74,17 +74,16 @@ app.listen(port, async () => {
       dbName: process.env.MONGO_DB,
     });
   } catch (err) {
-    console.log(`Failed to connect to DB`);
     process.exit(1);
   }
   databasemanager_360.UpdateThumbnailUrl()
   databasemanager_model.UpdateThumbnailUrl()
   job();
-  console.log(`Immersive Library backend listening on port ${port}`);
 });
 
 const userModel = require("./models/user");
 
+//For loading single model/360 pages
 app.get(
   "/asset/:type/:modelid",
   authMiddleware.isAuthenticated,
@@ -93,25 +92,18 @@ app.get(
     var isModel;
     switch (req.params.type) {
       case "model":
-        console.log("model asset type");
         dbmanager = databasemanager_model;
         isModel = true;
         break;
       case "360":
-        console.log("360 asset type");
         dbmanager = databasemanager_360;
         isModel = false;
         break;
     }
     var modelid = req.params.modelid;
-    console.log('asset objid ',modelid)
     dbmanager.FindModelById(modelid, async (result) => {
-      // console.log("---->", result);
-      // console.log(result.owner);
       var buffers;
-      // buffers = await awsMethods.getFolderContent(modelid);
       if(isModel){
-        // buffers = await awsMethods.getSingleModelContent(req.params.modelid,result.assetPath.gltfmodelpath)
         buffers = await awsMethods.getSingleModelContentByURL(req.params.modelid,result.assetPath.gltfmodelpath)
       } else {
         if(result.assetPath.equirectangular) {
@@ -120,11 +112,10 @@ app.get(
           buffers = await awsMethods.getSingleCubemapContent(req.params.modelid,result.assetPath.cubemap)
         }
       } 
-      const used = process.memoryUsage().heapUsed / 1024 / 1024;
-      console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+      // const used = process.memoryUsage().heapUsed / 1024 / 1024;
+      // console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
       userModel.findById(result.owner, function (err, doc) {
         res.render("view_asset", {
-          // uri : presignedUri,
           buffers : buffers,
           data: result,
           assettype: req.params.type,
@@ -138,6 +129,7 @@ app.get(
   }
 );
 
+//checking model filter on assets page
 const check3dModelFilters = async (result, query) => {
   let filteredResult = [];
   const attributesPromise = async () => {
@@ -162,7 +154,6 @@ const check3dModelFilters = async (result, query) => {
         filteredResult,
         query.format
       );
-      console.log("--->list", list)
       return list;
     } else {
       return filteredResult;
@@ -171,6 +162,7 @@ const check3dModelFilters = async (result, query) => {
   filteredResult = await formatPromise();
   return filteredResult;
 };
+//checking 360 filter on assets page
 const check360Filters = async (result, query) => {
   let filteredResult = [];
   const formatPromise = async () => {
@@ -180,7 +172,6 @@ const check360Filters = async (result, query) => {
       typeof query.format !== "undefined"
     ) {
       const list = await databasemanager_360.FindByFormat(result, query.format);
-      console.log("--->", list);
       return list;
     } else {
       return result;
@@ -189,7 +180,7 @@ const check360Filters = async (result, query) => {
   filteredResult = await formatPromise();
   return filteredResult;
 };
-
+//sorting assets on assets pages
 const sortResults = (result) => {
   result.sort((a, b) => {
     return a.uploaddate > b.uploaddate
@@ -209,11 +200,9 @@ app.get(
   async function (req, res) {
     let filteredResult = [];
     if (typeof req.query.search === "undefined" || req.query.search === "") {
-      console.log("no search");
       databasemanager_model.GetAllModels(async (result) => {
         filteredResult = await check3dModelFilters(result, req.query);
         filteredResult = await sortResults(filteredResult);
-        console.log(filteredResult.length);
         res.render("assets", {
           data: {
             models: filteredResult,
@@ -226,10 +215,8 @@ app.get(
       });
     } else {
       databasemanager_model.SearchBar(req.query.search, async (result) => {
-        console.log("result--->",result)
         filteredResult = await check3dModelFilters(result, req.query);
         filteredResult = await sortResults(filteredResult);
-        console.log('running this');
         res.render("assets", {
           data: {
             models: filteredResult,
@@ -243,9 +230,7 @@ app.get(
     }
   }
 );
-
 app.post("/assets", function (req, res) {
-  console.log(req.body);
   if (req.body.asset === "360") {
     req.body.format === "equirectangular" || req.body.format === "cubemap"
       ? null
@@ -276,10 +261,10 @@ app.post("/assets", function (req, res) {
     );
   }
 });
+
 app.get("/assets/360", async function (req, res) {
   let filteredResult = [];
   if (typeof req.query.search === "undefined" || req.query.search === "") {
-    console.log("no search");
     databasemanager_360.GetAllModels(async (result) => {
       filteredResult = await check360Filters(result, req.query);
       filteredResult = await sortResults(filteredResult);
@@ -294,7 +279,6 @@ app.get("/assets/360", async function (req, res) {
       });
     });
   } else {
-    console.log("search");
     databasemanager_360.SearchBar(req.query.search, async (result) => {
       filteredResult = await check360Filters(result, req.query);
       filteredResult = await sortResults(filteredResult);
@@ -315,7 +299,7 @@ app.get("/assets/360", async function (req, res) {
 const uploadmanager = require("./scripts/uploadsmanager_model");
 app.get("/upload", function (req, res) {
   uploadmanager.closeTmpFolder();
-  res.render("demopages/dragndrop", {
+  res.render("/dragndrop", {
     isLoginpage: true,
     user: req.user,
   });
@@ -329,28 +313,22 @@ app.post(
   uploadsmanager_model.uploadtmp3D,
   function (req, res) {
     tmpContent = req.files;
-    console.log("savetmp", tmpContent);
     let result;
     if (tmpContent.image) {
       result = tmpContent.image.map((a) => a.originalname);
     }
     tmpContent["format"] = tmpContent.model[0].originalname.split(".")[1];
     gltfmodel.Create(req.files.model[0], function (gltfresult) {
-      // Include fs module
-      // var fs = require('fs');
       if (gltfresult) {
         tmpContent["modelviewerpath"] = "../uploads/tmp/model.gltf";
         tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
-        console.log("---->>>", tmpContent);
         gltfmodel.ClearMaterialFromModel(gltfresult, function () {
           res.end("complete");
         });
       } else {
-        console.log("running gltf format model", tmpContent.model[0].originalname.split(".")[1]);
         tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
         var fullpath = tmpContent.model[0].destination + tmpContent.model[0].originalname;
         tmpContent["modelviewerpath"] = "." + fullpath;
-        console.log("fullpath is " ,fullpath);
         gltfmodel.ClearMaterialFromModel(fullpath, function () {
           res.end("complete");
         });
@@ -361,14 +339,12 @@ app.post(
 );
 
 app.get("/editpage/model", function (req, res) {
-  console.log("view model", tmpContent.modelviewerpath)
   if (tmpContent) {
     let images;
     if (tmpContent.image) {
       images = tmpContent.image.map((a) => a.originalname);
-      console.log(images);
     }
-    res.render("demopages/editpage-model", {
+    res.render("editpage-model", {
       content: {
         folderpath: tmpContent.folderpath,
         modelviewerpath: tmpContent.modelviewerpath,
@@ -387,97 +363,15 @@ app.get("/editpage/model", function (req, res) {
   }
 });
 
-// app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
-//   console.log(req.files);
-//   console.log(req.body);
-
-//   //create list with all files required to save
-//   let body = JSON.parse(req.body.data);
-//   let allfiles = body.files;
-//   if (req.files.file) {
-//     if (req.files.file.length > 0) {
-//       let newfiles = req.files.file.map((a) => a.originalname);
-//       allfiles = body.files.concat(newfiles);
-//     }
-//   }
-//   if (typeof body.modelfile != "undefined") {
-//     allfiles.push(body.modelfile);
-//   }
-//   if (typeof body.modelviewerpath != "undefined") {
-//     allfiles.push(body.modelviewerpath);
-//   }
-//   if (typeof req.files.newthumbnail != "undefined") {
-//     console.log(req.files.newthumbnail[0].originalname);
-//     allfiles.push(req.files.newthumbnail[0].filename);
-//   }
-//   let thumbnail =
-//     body.thumbnail == ""
-//       ? req.files.newthumbnail[0].originalname.replace("tmp", body.folderpath)
-//       : body.thumbnail;
-//   uploadsmanager_model.publish(
-//     body.folderpath,
-//     allfiles,
-//     tmpContent.model[0].destination
-//   );
-//   //save model database
-//   databasemanager_model.save(req, res, allfiles, function (result) {
-//     res.send(result);
-//     var oldpath = "./uploads/" + body.folderpath.replaceAll(" ", "_");
-//     var newpath = "./uploads/" + result;
-//     uploadsmanager_model.changepath(oldpath, newpath);
-//   });
-// });
 
 app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
-  console.log(req.files);
-  //console.log(req.uploadedData);
-  console.log("body data", req.body.data);
 
-  //create list with all files required to save
-  // let body = JSON.parse(req.body.data);
-  // let allfiles = body.files;
-  // if (req.files.file) {
-  //   if (req.files.file.length > 0) {
-  //     let newfiles = req.files.file.map((a) => a.originalname);
-  //     allfiles = body.files.concat(newfiles);
-  //   }
-  // }
-  // if (typeof body.modelfile != "undefined") {
-  //   allfiles.push(body.modelfile);
-  // }
-  // if (typeof body.modelviewerpath != "undefined") {
-  //   allfiles.push(body.modelviewerpath);
-  // }
-  // if (typeof req.files.newthumbnail != "undefined") {
-  //   console.log(req.files.newthumbnail[0].originalname);
-  //   allfiles.push(req.files.newthumbnail[0].filename);
-  // }
-  // let thumbnail =
-  //   body.thumbnail == ""
-  //     ? req.files.newthumbnail[0].originalname.replace("tmp", body.folderpath)
-  //     : body.thumbnail;
-
-  //allfiles is jus the string
-  // uploadsmanager_model.publish(
-  //   body.folderpath,
-  //   allfiles,
-  // );
   //save model database
   databasemanager_model.save(req, res, async function (result) {
-    console.log("id--->", result);
-    // var oldpath = './uploads/' + body.folderpath.replaceAll(' ', '_');
-    // var newpath = './uploads/' + result;//result is the obid
-    // uploadsmanager_model.changepath(oldpath, newpath);
-    // console.log("allfiles", allfiles)
-    console.log("tmpcontent", tmpContent);
     tmpContent["thumbnail"] = req.files.newthumbnail[0];
     const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result, "3dModel");
     tmpContent = []
-    //uploadsmanager_model.closeTmpFolder()
-    console.log(uploadedDataToAws);
-    //update model db with the urls
     databasemanager_model.GetModel(result, async function (doc) {
-      console.log(doc);
       databasemanager_model.updateToAwsPaths(
         doc,
         uploadedDataToAws,
@@ -492,314 +386,22 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
 });
 // ----- model upload to publish ------ END
 
-// ----- 360 upload to publish ------ START
-
-// app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function (req, res) {
-//   console.log(req.body);
-//   console.log(req.files);
-//   tmpContent["image"] = [];
-//   tmpContent["destination"] = req.files.image[0].destination;
-//   if (req.body.format == "cubemap") {
-//     tmpContent["image"]["top"] = req.files.image.find(
-//       (element) => element.originalname.split("_")[0] == "top"
-//     ).originalname;
-//     tmpContent["image"]["front"] = req.files.image.find(
-//       (element) => element.originalname.split("_")[0] == "front"
-//     ).originalname;
-//     tmpContent["image"]["bottom"] = req.files.image.find(
-//       (element) => element.originalname.split("_")[0] == "bottom"
-//     ).originalname;
-//     tmpContent["image"]["right"] = req.files.image.find(
-//       (element) => element.originalname.split("_")[0] == "right"
-//     ).originalname;
-//     tmpContent["image"]["back"] = req.files.image.find(
-//       (element) => element.originalname.split("_")[0] == "back"
-//     ).originalname;
-//     tmpContent["image"]["left"] = req.files.image.find(
-//       (element) => element.originalname.split("_")[0] == "left"
-//     ).originalname;
-//   } else {
-//     tmpContent["image"]["equi"] = req.files.image[0].originalname;
-//   }
-//   tmpContent["format"] = req.body.format;
-//   console.log("-> to aws", tmpContent);
-//   res.end("complete");
-// });
-app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function (req, res) {
-  console.log(req.body);
-  console.log(req.files);
-  tmpContent["image"] = [];
-  tmpContent["destination"] = req.files.image[0].destination;
-  if (req.body.format == "cubemap") {
-    // tmpContent["image"]["top"] = req.files.image.find(
-    //   (element) => element.originalname.split("_")[0] == "top"
-    // ).originalname;
-    // tmpContent["image"]["front"] = req.files.image.find(
-    //   (element) => element.originalname.split("_")[0] == "front"
-    // ).originalname;
-    // tmpContent["image"]["bottom"] = req.files.image.find(
-    //   (element) => element.originalname.split("_")[0] == "bottom"
-    // ).originalname;
-    // tmpContent["image"]["right"] = req.files.image.find(
-    //   (element) => element.originalname.split("_")[0] == "right"
-    // ).originalname;
-    // tmpContent["image"]["back"] = req.files.image.find(
-    //   (element) => element.originalname.split("_")[0] == "back"
-    // ).originalname;
-    // tmpContent["image"]["left"] = req.files.image.find(
-    //   (element) => element.originalname.split("_")[0] == "left"
-    // ).originalname;
-    tmpContent["image"]["top"] = req.files.image.find(
-      (element) => element.originalname.includes("Top")
-    );
-    tmpContent["image"]["front"] = req.files.image.find(
-      (element) => element.originalname.includes("Front") 
-    );
-    tmpContent["image"]["bottom"] = req.files.image.find(
-      (element) => element.originalname.includes("Bottom") 
-    );
-    tmpContent["image"]["right"] = req.files.image.find(
-      (element) => element.originalname.includes("Right") 
-    );
-    tmpContent["image"]["back"] = req.files.image.find(
-      (element) => element.originalname.includes( "Back")
-    );
-    tmpContent["image"]["left"] = req.files.image.find(
-      (element) => element.originalname.includes( "Left")
-    );
-  } else {
-    tmpContent["image"]["equi"] = req.files.image[0];
-  }
-  tmpContent["format"] = req.body.format;
-  console.log("-> to tmp", typeof tmpContent);
-  res.end("complete");
-});
-
-app.get("/editpage/360", function (req, res) {
-  console.log( tmpContent.format )
-  console.log( tmpContent.image )
-  res.render("demopages/editpage-360", {
-    format: tmpContent.format,
-    images: tmpContent.image,
-    isLoginpage: true,
-    isModel: false,
-    user: req.user,
-  });
-});
-
-// app.post("/savethreesixty", uploadmanager_360.upload360, function (req, res) {
-//   console.log(req.files);
-//   console.log(req.body);
-
-//   //create list with all files required to save
-//   let body = JSON.parse(req.body.data);
-//   let allfiles = body.files;
-//   if (req.files.file) {
-//     console.log("running req files");
-//     if (req.files.file.length > 0) {
-//       let newfiles = req.files.file.map((a) => a.originalname);
-//       allfiles = body.files.concat(newfiles);
-//     }
-//   }
-//   console.log(allfiles);
-//   let foldername =
-//     body.title == "" ? "default_foldername" : body.title.replaceAll(" ", "_");
-
-//   uploadmanager_360.publish(foldername, allfiles, tmpContent.destination);
-
-//   databasemanager_360.save(req, res, allfiles, function (result) {
-//     res.send(result);
-//     var oldpath = "./uploads/" + foldername;
-//     var newpath = "./uploads/" + result;
-//     uploadmanager_360.changepath(oldpath, newpath);
-//   });
-// });
-app.post("/savethreesixty", uploadmanager_360.upload360, function (req, res) {
-  console.log(req.files);
-  //console.log(req.body);
-  console.log("body data", req.body.data);
-  //create list with all files required to save
-  // let body = JSON.parse(req.body.data);
-  // let allfiles = body.files;
-  // if (req.files.file) {
-  //   console.log("running req files");
-  //   if (req.files.file.length > 0) {
-  //     let newfiles = req.files.file.map((a) => a.originalname);
-  //     allfiles = body.files.concat(newfiles);
-  //   }
-  // }
-  // console.log(allfiles);
-  // let foldername =
-  //   body.title == "" ? "default_foldername" : body.title.replaceAll(" ", "_");
-
-  // uploadmanager_360.publish(foldername, allfiles, tmpContent.destination);
-
-  databasemanager_360.save(req, res, async function (result) {
-    console.log("id--->", result);
-    // res.send(result);
-    // var oldpath = "./uploads/" + foldername;
-    // var newpath = "./uploads/" + result;
-    // uploadmanager_360.changepath(oldpath, newpath);
-    console.log("tmpcontent", tmpContent);
-    tmpContent["thumbnail"] = req.files.newthumbnail[0];
-    const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result, "360");
-    console.log(uploadedDataToAws);
-    tmpContent = []
-     //update model db with the urls
-     databasemanager_360.GetModel(result, function (doc) {
-      console.log(doc);
-      databasemanager_360.updateToAwsPaths(
-        doc,
-        uploadedDataToAws,
-        function (id) {
-          console.log(id)
-          res.send(id);
-        }
-      );
-    });
-  });
-});
-
-app.get("/view/360", function (req, res) {
-  res.render("demopages/view-360", {
-    isLoginpage: true,
-    user: req.user,
-  });
-});
-// ----- 360 upload to publish ------ END
-
-// ----- script upload to publish ------ START
-const uploadmanager_script = require("./scripts/uploadmanager_script");
-const console = require("console");
-app.post(
-  "/uploadtmpscript",
-  uploadmanager_script.uploadtmpscript,
-  function (req, res) {
-    tmpContent = req.files;
-    tmpContent["destination"] = req.files.script[0].destination;
-    res.end("complete");
-  }
-);
-
-app.get("/editpage/script", function (req, res) {
-  if (tmpContent) {
-    console.log(tmpContent);
-    let scripts = tmpContent.script.map((a) => a.originalname);
-    console.log(scripts);
-    res.render("demopages/editpage-script", {
-      scripts: scripts,
-      isLoginpage: true,
-    });
-  }
-});
-
-app.get("/view/script", function (req, res) {
-  res.render("demopages/view-script", {
-    isLoginpage: true,
-  });
-});
-
-app.post(
-  "/upload",
-  storagemanagement.uploadHandler.fields([
-    { name: "objectfile", maxCount: 1 },
-    { name: "diffuse", maxCount: 1 },
-    { name: "metallicroughness", maxCount: 1 },
-    { name: "normal", maxCount: 1 },
-    { name: "occlusion", maxCount: 1 },
-    { name: "emission", maxCount: 1 },
-  ]),
-  function (req, res) {
-    console.log(req.body);
-    var modelfolderpath =
-      req.files.objectfile[0].destination.split("/model")[0];
-    gltfmodel.Create(req.files.objectfile, function (gltfresult) {
-      console.log(gltfresult);
-      res.send("done");
-    });
-  }
-);
 
 // Begin reading from stdin so the process does not exit imidiately
 process.stdin.resume();
 process.on("SIGINT", function () {
-  console.log("Interrupted");
   process.exit();
 });
 
 process.on("exit", () => {
   uploadsmanager_model.closeTmpFolder();
-  console.log("process.exit() method is fired");
 });
 
 //WORKING DOWNLOAD ASSET POST
-// app.post("/downloadasset/:type/:modelid", function (req, res) {
-//   var dbmanager = databasemanager_model;
-//   var update;
-//   var filter;
-//   console.log("post download item", req.params.modelid);
-//   //console.log(req.param.modelid);
-//   switch (req.params.type) {
-//     case "model":
-//       dbmanager = databasemanager_model;
-//       update = {
-//         $push: {
-//           downloadedModels: mongoose.Types.ObjectId(req.params.modelid),
-//         },
-//       };
-//       filter = {
-//         _id: req.user._id,
-//         downloadedModels: req.params.modelid,
-//       };
-//       break;
-//     case "360":
-//       dbmanager = databasemanager_360;
-//       update = {
-//         $push: {
-//           downloadedThreeSixty: mongoose.Types.ObjectId(req.params.modelid),
-//         },
-//       };
-//       filter = {
-//         _id: req.user._id,
-//         downloadedThreeSixty: req.params.modelid,
-//       };
-//       break;
-//   }
-//   //get userid and add modelid into userid database
-//   dbmanager.GetModel(req.params.modelid, (result) => {
-//     var downloadpath = __dirname + result.assetPath.folderpath.slice(1);
-//     filedownloader.CreateZipArchive(result.title, downloadpath, (tmppath) => {
-//       res.download(tmppath, req.param("file"), function (err) {
-//         //CHECK FOR ERROR
-//         fs.unlink(tmppath, async (err) => {
-//           if (err) console.log(err);
-//           else {
-//             console.log("complete fs delete tmp file", req.user);
-//             //check if is already in array
-//             //save asset id into user downloaded array
-//               let doc = await userModel.findOne(filter);
-//               console.log("doc", doc);
-//               if (doc === null) {
-//                 userModel.findOneAndUpdate({_id: req.user._id}, update, function (err, doc) {
-//                   if (err) console.log(err);
-//                   console.log("updated", doc);
-//                 });
-//               } else {
-//                 console.log("user has downloaded before");
-//               }
-//           }
-//         });
-//       });
-//     });
-//   });
-// });
-
 app.post("/downloadasset/:type/:modelid", function (req, res) {
   var dbmanager = databasemanager_model;
   var update;
   var filter;
-  console.log("post download item", req.params.modelid);
-  //console.log(req.param.modelid);
   switch (req.params.type) {
     case "model":
       dbmanager = databasemanager_model;
@@ -831,24 +433,20 @@ app.post("/downloadasset/:type/:modelid", function (req, res) {
     try {
       //download from aws
       const zipFiles = await awsMethods.downloadFiles(result._id);
-      console.log("downloadeddata", zipFiles);
       // res is the response object in the http request. You may want to create your own write stream object to write files in your local machine
       zipFiles.pipe(res);
       // use finalize function to start the process
       zipFiles.finalize();
       let doc = await userModel.findOne(filter);
-      console.log("doc", doc);
       if (doc === null) {
         userModel.findOneAndUpdate(
           { _id: req.user._id },
           update,
           function (err, doc) {
             if (err) console.log(err);
-            console.log("updated", doc);
           }
         );
       } else {
-        console.log("user has downloaded before");
       }
     } catch (error) {
       console.log(error);
