@@ -10,7 +10,6 @@ const session = require("express-session");
 
 const path = require("path");
 const url = require("url");
-const userObj = require("./config/userLogin");
 
 const gltfmodel = require("./scripts/gltfmodel");
 const uploadsmanager_model = require("./scripts/uploadsmanager_model");
@@ -78,6 +77,8 @@ app.listen(port, async () => {
     console.log(`Failed to connect to DB`);
     process.exit(1);
   }
+  databasemanager_360.UpdateThumbnailUrl()
+  databasemanager_model.UpdateThumbnailUrl()
   job();
   console.log(`Immersive Library backend listening on port ${port}`);
 });
@@ -110,7 +111,8 @@ app.get(
       var buffers;
       // buffers = await awsMethods.getFolderContent(modelid);
       if(isModel){
-        buffers = await awsMethods.getSingleModelContent(req.params.modelid,result.assetPath.gltfmodelpath)
+        // buffers = await awsMethods.getSingleModelContent(req.params.modelid,result.assetPath.gltfmodelpath)
+        buffers = await awsMethods.getSingleModelContentByURL(req.params.modelid,result.assetPath.gltfmodelpath)
       } else {
         if(result.assetPath.equirectangular) {
           buffers = await awsMethods.getSingleEquirectangularContent(req.params.modelid,result.assetPath.equirectangular)
@@ -118,6 +120,8 @@ app.get(
           buffers = await awsMethods.getSingleCubemapContent(req.params.modelid,result.assetPath.cubemap)
         }
       } 
+      const used = process.memoryUsage().heapUsed / 1024 / 1024;
+      console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
       userModel.findById(result.owner, function (err, doc) {
         res.render("view_asset", {
           // uri : presignedUri,
@@ -158,6 +162,7 @@ const check3dModelFilters = async (result, query) => {
         filteredResult,
         query.format
       );
+      console.log("--->list", list)
       return list;
     } else {
       return filteredResult;
@@ -221,6 +226,7 @@ app.get(
       });
     } else {
       databasemanager_model.SearchBar(req.query.search, async (result) => {
+        console.log("result--->",result)
         filteredResult = await check3dModelFilters(result, req.query);
         filteredResult = await sortResults(filteredResult);
         console.log('running this');
@@ -255,7 +261,7 @@ app.post("/assets", function (req, res) {
       })
     );
   } else {
-    req.body.format === "obj" || req.body.format === "fbx"
+    req.body.format === "obj" || req.body.format === "fbx" || req.body.format === "gltf"
       ? null
       : (req.body.format = "format");
     res.redirect(

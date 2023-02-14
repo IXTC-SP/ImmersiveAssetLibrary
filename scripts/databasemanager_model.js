@@ -36,27 +36,27 @@ const Save = async function (req, res, callback) {
   assetpath.thumbnail = req.files.newthumbnail[0].originalname;
   console.log(assetpath.folderpath, "before fast folder size");
   console.log(body.format);
-  let modelOutFolderSize = null
-  if(fs.existsSync("./uploads/tmp/model_out")){
+  let modelOutFolderSize = null;
+  if (fs.existsSync("./uploads/tmp/model_out")) {
     fastFolderSize(`${assetpath.folderpath}/model_out`, (err, bytes) => {
       if (err) {
         console.log("fast folder fail");
         throw err;
-      }else{
-        modelOutFolderSize = bytes
+      } else {
+        modelOutFolderSize = bytes;
       }
-    })
-  }else{
-    modelOutFolderSize = 2
+    });
+  } else {
+    modelOutFolderSize = 2;
   }
   fastFolderSize(assetpath.folderpath, (err, bytes) => {
     if (err) {
       console.log("fast folder fail");
       throw err;
     }
-    console.log(modelOutFolderSize)
+    console.log(modelOutFolderSize);
     console.log(typeof body.tags[0]);
-    console.log(bytes)
+    console.log(bytes);
     var foldersize =
       (
         Math.round(((bytes - modelOutFolderSize) / (1024 * 1024)) * 10) / 10
@@ -91,10 +91,10 @@ const updateToAwsPaths = async function (doc, uploadedDataToAws, cb){
     { $set: { "assetPath.folderpath": newFolderPath, "assetPath.thumbnail": newThumbnailPath } },
     { new: true }
   );
-  console.log(result)
-  cb(doc._id.toString())
-  console.log("updated")
-}
+  console.log(result);
+  cb(doc._id.toString());
+  console.log("updated");
+};
 
 module.exports.updateToAwsPaths = updateToAwsPaths;
 
@@ -106,7 +106,6 @@ async function changePath(objid, newassetpath) {
     }
   );
 }
-
 
 const GetModel = (id, callback) => {
   modeldb.findOne(
@@ -147,30 +146,58 @@ function FindModelsByTags(tags) {
   );
 }
 
-const SearchBar = (searchterm, callback) => {
-  var arr = [];
-  const searchTermLowerCase = searchterm.toLowerCase();
+// const SearchBar = (searchterm, callback) => {
+//   var arr = [];
+//   let searchArr = searchterm.toLowerCase().split(" ")
+//   console.log(searchArr)
+//   //const searchTermLowerCase = searchterm.toLowerCase();
+//   console.log("start mongoose search");
+//   modeldb
+//     .find({
+//       title:{$in:[...searchArr]}
+//     })
+//     .then(function (nameresult) {
+//       arr.push(nameresult);
+//       console.log("finish search name", nameresult);
+//       modeldb
+//         .find({
+//           tags: {$in:[...searchArr]},
+//         })
+//         .then(function (tagresult) {
+//            //arr.push(tagresult);
+//           //arr = [...new Set(tagresult)];
+//           arr = [...tagresult,...nameresult];
+//           console.log("finish search tag", tagresult);
+//           console.log("arr--->",arr)
+//           callback(arr);
+//         });
+//     });
+// };
+const SearchBar = async (searchterm, callback) => {
+  //var arr = [];
+  let searchArr = searchterm.split(" ");
+  console.log(searchArr);
   console.log("start mongoose search");
   modeldb
-    .find({
-      title: searchTermLowerCase,
-    })
-    .then(function (nameresult) {
-      arr.push(nameresult);
-      console.log("finish search name", nameresult);
-      modeldb
-        .find({
-          tags: searchTermLowerCase,
-        })
-        .then(function (tagresult) {
-          // arr.push(tagresult);
-          arr = [...new Set(tagresult)];
-          console.log("finish search tag", tagresult);
-          callback(arr);
-        });
+    .aggregate([
+      { $addFields: { title_arr: { $split: ["$title", " "] } } },
+      {
+        $match: {
+          $or: [
+            { title_arr: { $in: [...searchArr] } },
+            { tags: { $in: [...searchArr] } },
+          ],
+        },
+      },
+    ])
+    .collation({ locale: "en", strength: 2 })
+    .then(function (results) {
+      console.log("finish search name", results);
+      callback(results);
     });
 };
 module.exports.SearchBar = SearchBar;
+
 const FindModelById = (id, callback) => {
   modeldb.findOne(
     {
@@ -246,9 +273,15 @@ const UpdateThumbnailUrl = function() {
   modeldb.find({}, (err,results)=> {
     results.forEach(async (result,index)=> {
       //original path is called 'new_thumbnail.png'
-      var newThumbnailPath = await awsMethod.reloadThumbnailUrl(result._id,'new_thumbnail.png');
-      modeldb.findByIdAndUpdate(result._id, {$set: { "assetPath.thumbnail": newThumbnailPath }}, (result)=> {
-      })
+      var newThumbnailPath = await awsMethod.reloadThumbnailUrl(
+        result._id,
+        "new_thumbnail.png"
+      );
+      modeldb.findByIdAndUpdate(
+        result._id,
+        { $set: { "assetPath.thumbnail": newThumbnailPath } },
+        (result) => {}
+      );
     });
   });
   // setInterval(function(){
@@ -261,3 +294,4 @@ module.exports.UpdateThumbnailUrl = UpdateThumbnailUrl;
 // UpdateThumbnailUrl();
 
 
+// UpdateThumbnailUrlOnInterval();

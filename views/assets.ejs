@@ -63,6 +63,7 @@
             <%if(is3dmodelPage){%>
             <option class="format" type="button" value="obj">.obj</option>
             <option class="format" type="button" value="fbx">.fbx</option>
+            <option class="format" type="button" value="gltf">.gltf</option>
             <%}else{%>
             <option class="format" type="button" value="equirectangular">
               Equirectangular
@@ -197,7 +198,7 @@
     let clone = cardmain.cloneNode(true);
     clone.style.display = "block";
     let link = clone.querySelector("#asset-link")
-    console.log(data._id)
+    // console.log(data._id)
     link.href = `/asset/<%- assettype %>/${data._id}`
     let assetimg = clone.querySelector("#asset-img");
     //console.log(assetimg);
@@ -244,7 +245,7 @@
 
   const storeInlocalStorage = (elementId, keyName) => {
     let el = document.getElementById(elementId);
-    console.log("store", el.value);
+    // console.log("store", el.value);
     localStorage.setItem(keyName, JSON.stringify(el.value));
   };
 
@@ -258,13 +259,13 @@
       const selectedAttributes = arrayCheckedItems.map((item) => {
         return item.value;
       });
-      console.log("theres checked boxes");
+      // console.log("theres checked boxes");
       localStorage.setItem(
         "selectedAttributes",
         JSON.stringify(selectedAttributes)
       );
     } else {
-      console.log("theres no checked boxes");
+      // console.log("theres no checked boxes");
       localStorage.setItem("selectedAttributes", JSON.stringify([]));
     }
     // //invoke the submit
@@ -289,11 +290,11 @@
   };
 
   const showPreviousCheckedItems = () => {
-    console.log("show checked items");
+    // console.log("show checked items");
     const selectedAttributes = JSON.parse(
       localStorage.getItem("selectedAttributes")
     );
-    console.log("------->", selectedAttributes);
+    // console.log("------->", selectedAttributes);
     //iff theres previous checked items, the clear btn should enabled
     if (selectedAttributes !== null && selectedAttributes.length > 0) {
       selectedAttributes.forEach((item) => {
@@ -302,7 +303,7 @@
     }
   };
   const showPreviousSelectedFilter = () => {
-    console.log("show Selected Filter");
+    // console.log("show Selected Filter");
     const selectedAssetType = JSON.parse(
       localStorage.getItem("selectedAssetType")
     );
@@ -311,7 +312,7 @@
     setSeachString(searchTerm);
     setSelectedOption("asset", selectedAssetType);
     setSelectedOption("format", selectedFormat);
-    console.log("------->", selectedAssetType, selectedFormat);
+    // console.log("------->", selectedAssetType, selectedFormat);
   };
 
   const init = () => {

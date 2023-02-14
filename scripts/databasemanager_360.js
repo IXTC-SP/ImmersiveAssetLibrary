@@ -84,7 +84,7 @@ const updateToAwsPaths = async function (doc, uploadedDataToAws, cb) {
     { $set: { "assetPath.folderpath": newFolderPath , "assetPath.thumbnail": newThumbnailPath } },
     { new: true }
   );
-  console.log(result)
+  console.log(result);
   cb(doc._id.toString());
   console.log("updated");
 };
@@ -147,26 +147,48 @@ const FindByFormat = async (results, format) => {
 
 module.exports.FindByFormat = FindByFormat;
 
+// const SearchBar = (searchterm, callback) => {
+//   var arr = [];
+//   console.log("start mongoose search");
+//   threesixtydb
+//     .find({
+//       title: searchterm,
+//     })
+//     .then(function (nameresult) {
+//       arr.push(nameresult);
+//       console.log("finish search name", nameresult);
+//       threesixtydb
+//         .find({
+//           tags: searchterm,
+//         })
+//         .then(function (tagresult) {
+//           // arr.push(tagresult);
+//           arr = [...new Set(tagresult)];
+//           console.log("finish search tag", tagresult);
+//           callback(arr);
+//         });
+//     });
+// };
+
 const SearchBar = (searchterm, callback) => {
-  var arr = [];
+  let searchArr = searchterm.split(" ");
   console.log("start mongoose search");
   threesixtydb
-    .find({
-      title: searchterm,
-    })
-    .then(function (nameresult) {
-      arr.push(nameresult);
-      console.log("finish search name", nameresult);
-      threesixtydb
-        .find({
-          tags: searchterm,
-        })
-        .then(function (tagresult) {
-          // arr.push(tagresult);
-          arr = [...new Set(tagresult)];
-          console.log("finish search tag", tagresult);
-          callback(arr);
-        });
+    .aggregate([
+      { $addFields: { title_arr: { $split: ["$title", " "] } } },
+      {
+        $match: {
+          $or: [
+            { title_arr: { $in: [...searchArr] } },
+            { tags: { $in: [...searchArr] } },
+          ],
+        },
+      },
+    ])
+    .collation({ locale: "en", strength: 2 })
+    .then(function (results) {
+      console.log("finish search tag", results);
+      callback(results);
     });
 };
 module.exports.SearchBar = SearchBar;
@@ -213,9 +235,15 @@ const UpdateThumbnailUrl = function() {
   threesixtydb.find({}, (err,results)=> {
     results.forEach(async (result,index)=> {
       //original path is called 'new_thumbnail.png'
-      var newThumbnailPath = await awsMethod.reloadThumbnailUrl(result._id,'new_thumbnail.png');
-      threesixtydb.findByIdAndUpdate(result._id, {$set: { "assetPath.thumbnail": newThumbnailPath }}, (result)=> {
-      })
+      var newThumbnailPath = await awsMethod.reloadThumbnailUrl(
+        result._id,
+        "new_thumbnail.png"
+      );
+      threesixtydb.findByIdAndUpdate(
+        result._id,
+        { $set: { "assetPath.thumbnail": newThumbnailPath } },
+        (result) => {}
+      );
     });
   });
   // setInterval(function(){

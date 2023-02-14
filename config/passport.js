@@ -14,8 +14,6 @@ const bcrypt = require("bcryptjs");
 //if req is the first param it will accept the req.body also,
 const verifyCallback = async (req, username, password, done) => {
   let user = null;
-  console.log("verify callback");
-  //console.log(req.session);
  
   //passport use promise, .then and .catch, async and awaits wrapping the promise
   try {
@@ -57,14 +55,14 @@ passport.use(strategy);
 //store the user id in the passport prop in session, under user property
 //so the id is in req.session.passport.user
 passport.serializeUser((user, done) => {
-  console.log("serialise");
+  
   return done(null, user);
 });
 //passport.serializeUser(userModel.serializeUser())
 //get the user out of the session, logout//base on the user id in the session, is not log in, wont do this
 //populate a req.user and attach the req.user with this found user object, and use for every req
 passport.deserializeUser(async (id, done) => {
-  console.log("deserialise");
+ 
   return done(null, id);
 });
 //passport.deserializeUser(userModel.deserializeUser())

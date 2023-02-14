@@ -22,15 +22,15 @@ const emailValidation = (emailInput) => {
   const spMailFormat = "[a-z.]*[@]sp.edu.sg";
   const ichatMailFormat = "[a-z.]*[@]ichat.sp.edu.sg";
   if (emailInput.match(spMailFormat) || emailInput.match(ichatMailFormat)) {
-    console.log("email allowed");
+    // console.log("email allowed");
     return true;
   }
-  console.log("email disallowed");
+  // console.log("email disallowed");
 
   return false;
 };
 
-const superAdmin = { "637c8339c46b477d10e8b585": "sandra_fong@sp.edu.sg" };
+const superAdmin = { "637c8339c46b477d10e8b585": "sandra_fong@sp.edu.sg", "63d22d60fa6042e19ea144df":"goh_zhe_an@sp.edu.sg" };
 
 // let isSuccess = alertMessage(false, "");
 // let errorObj = errorMessage(false, "");
@@ -76,9 +76,9 @@ const controller = {
   showProfile: async (req, res) => {
     let renderObj = new RenderObjs();
 
-    console.log(renderObj);
-    console.log("------>", req.body.email);
-    console.log("---->", req.body.confirmPassword);
+    // console.log(renderObj);
+    // console.log("------>", req.body.email);
+    // console.log("---->", req.body.confirmPassword);
     const { password, confirmPassword, email } = req.body;
     try {
       if (email) {
@@ -144,7 +144,7 @@ const controller = {
 
     try {
       renderObj.accounts = await userModel.find({isActivated:true});
-      console.log(renderObj.accounts);
+      // console.log(renderObj.accounts);
       console.log("Get the accounts");
     } catch (err) {
       console.log(err);
