@@ -6,22 +6,15 @@ const obj2gltf = require("obj2gltf");
 
 const Create = (objectfile, callback) => {
   var modelfolderpath = path.resolve(objectfile.destination);
-  // var modelfolderpath = path.resolve(objectfile.destination.split("/model")[0]);
   var modeltype = objectfile.filename.split(".")[1];
   var modelfilepath = path.resolve(objectfile.destination + "/" + objectfile.originalname);
-  // var modelfilepath = path.resolve(objectfile.destination + "\\" + objectfile.originalname);
-  // var gltfpath = modelfolderpath + "\\model.gltf";
   var gltfpath = modelfolderpath + "/model.gltf";
-  console.log(objectfile.destination, objectfile.originalname, gltfpath);
-  // var gltfpath = modelfolderpath + "\\" + "gltf" + "\\" + "model.gltf";
 
   try {
     if (fs.existsSync(modelfolderpath)) {
       //file exists
-      console.log("file exist");
     }
   } catch (error) {
-    console.error(error)
   }
   switch (modeltype) {
     case "obj":
@@ -30,28 +23,10 @@ const Create = (objectfile, callback) => {
       var objgltfpath = objectfile.destination + "/model.gltf";
       obj2gltf(objpath).then(function (gltf) {
         const data = Buffer.from(JSON.stringify(gltf));
-        console.log(data);
         fs.writeFileSync(objgltfpath, data);
         callback(gltfpath);
       });
 
-      // console.log("running obj conversion", modelfilepath, gltfpath);
-      // var runcode = 'obj2gltf -i ';
-      // // runcode += file;
-      // runcode += modelfilepath + ' -o ' + gltfpath;
-      // exec(runcode, (err, output) => {
-      //   // once the command has completed, the callback function is called
-      //   if (err) {
-      //     // log and return if we encounter an error
-      //     console.error("could not execute command: ", err)
-      //     return
-      //   }
-      //   // log the output received from the command
-      //   console.log("Output: \n", output)
-
-      //   callback(gltfpath);
-      // });
-      // gltfpath = modelfolderpath + "\\model.gltf"
 
       break;
     case "fbx":
@@ -89,53 +64,42 @@ const Create = (objectfile, callback) => {
 module.exports.Create = Create;
 
 const ClearMaterialFromModel = (gltfmodelpath, callback) => {
-  // console.log(gltfmodelpath);
   let path =  gltfmodelpath.replace('model.gltf','');
   let rawdata = fs.readFileSync(gltfmodelpath);
   let jsonfile = JSON.parse(rawdata);
-  console.log('json file materials' ,jsonfile.materials);
   if(jsonfile.images){
     jsonfile.images.forEach((image,i)=>{
-      console.log(image.uri);
       let imagepath = path + image.uri;
       var imageexist = fs.existsSync(imagepath);
       if(!imageexist){
-        console.log(imagepath + " does not exist");
         jsonfile.textures.forEach((texture,t)=>{
           if(texture.source == i){
-            console.log(texture + ' has source from image ' + i);
             jsonfile.materials.forEach((material,m)=>{
               if(material.pbrMetallicRoughness['baseColorTexture']){
                 if(material.pbrMetallicRoughness['baseColorTexture']['index'] == t){
-                  console.log(material + ' has source from texture ' + t);
                   delete material.pbrMetallicRoughness['baseColorTexture'];
                 }
               }
               if(material.pbrMetallicRoughness.metallicRoughnessTexture){
                 if(material.pbrMetallicRoughness.metallicRoughnessTexture['index'] == t){
-                  console.log(material + ' has source from texture ' + t);
                   delete material.pbrMetallicRoughness.metallicRoughnessTexture;
                 }
               }
               if(material.occlusionTexture){
                 if(material.occlusionTexture['index'] == t){
-                  console.log(material + ' has source from texture ' + t);
                   delete material.occlusionTexture;
                 }
               }
 
             });
-            // jsonfile.textures.splice(t,1);
             delete jsonfile.textures[t]
           }
         })
-        // jsonfile.images.splice(i,1);
         delete jsonfile.images[i]
       }
     })
   }
 
-  //console.log(jsonfile);
   let data = JSON.stringify(jsonfile);
   fs.writeFile(gltfmodelpath, data, (err)=>{
     if (err)
@@ -144,31 +108,5 @@ const ClearMaterialFromModel = (gltfmodelpath, callback) => {
     callback('');
   }
   });
-  // delete jsonfile['images'];
-  // delete jsonfile['textures'];
-  // jsonfile.materials.forEach((item,index)=> {
-  //   delete item.pbrMetallicRoughness['baseColorTexture'];
-  // })
-  // // let readfile = JSON.parse(jsonfile);
-  // console.log(jsonfile);
-  // let data = JSON.stringify(jsonfile);
-  // fs.writeFile(gltfmodelpath, data, (err)=>{
-  //   if (err)
-  //   console.log(err);
-  // else {
-  //   callback('');
-  // }
-  // });
 }
 module.exports.ClearMaterialFromModel = ClearMaterialFromModel;
-
-//TESTING ONLY
-// const TryObj2Gltf = () => {
-//   var modelfolderpath = "./public/deadpool_model/model/deadpool_obj.obj";
-//   var gltfpath = "./public/deadpool_model/model/model.gltf";
-//   obj2gltf(modelfolderpath).then(function (gltf) {
-//     const data = Buffer.from(JSON.stringify(gltf));
-//     console.log(data);
-//     fs.writeFileSync(gltfpath, data);
-//   });
-// }

@@ -1,14 +1,11 @@
 const fs = require("fs");
 const modeldb = require("../models/model");
 const fastFolderSize = require("fast-folder-size");
-const fastFolderSizeSync = require('fast-folder-size/sync')
 const awsMethod = require("../middlewares/aws_methods");
 
 class AssetPath {
   folderpath = "";
   gltfmodelpath = "";
-  // diffuse = "";
-  // emission = "";
   thumbnail = "";
 }
 
@@ -34,13 +31,10 @@ const Save = async function (req, res, callback) {
   assetpath.folderpath = "./uploads/tmp";
   assetpath.gltfmodelpath = "model.gltf";
   assetpath.thumbnail = req.files.newthumbnail[0].originalname;
-  console.log(assetpath.folderpath, "before fast folder size");
-  console.log(body.format);
   let modelOutFolderSize = null;
   if (fs.existsSync("./uploads/tmp/model_out")) {
     fastFolderSize(`${assetpath.folderpath}/model_out`, (err, bytes) => {
       if (err) {
-        console.log("fast folder fail");
         throw err;
       } else {
         modelOutFolderSize = bytes;
@@ -51,12 +45,8 @@ const Save = async function (req, res, callback) {
   }
   fastFolderSize(assetpath.folderpath, (err, bytes) => {
     if (err) {
-      console.log("fast folder fail");
       throw err;
     }
-    console.log(modelOutFolderSize);
-    console.log(typeof body.tags[0]);
-    console.log(bytes);
     var foldersize =
       (
         Math.round(((bytes - modelOutFolderSize) / (1024 * 1024)) * 10) / 10
@@ -91,9 +81,7 @@ const updateToAwsPaths = async function (doc, uploadedDataToAws, cb){
     { $set: { "assetPath.folderpath": newFolderPath, "assetPath.thumbnail": newThumbnailPath } },
     { new: true }
   );
-  console.log(result);
   cb(doc._id.toString());
-  console.log("updated");
 };
 
 module.exports.updateToAwsPaths = updateToAwsPaths;
@@ -129,7 +117,6 @@ const GetAllModels = (callback) => {
     else {
       arr = result;
     }
-    //console.log(arr)
     callback(arr);
   });
 };
@@ -141,43 +128,12 @@ function FindModelsByTags(tags) {
       tags: tags,
     },
     (err, result) => {
-      //console.log(result);
     }
   );
 }
 
-// const SearchBar = (searchterm, callback) => {
-//   var arr = [];
-//   let searchArr = searchterm.toLowerCase().split(" ")
-//   console.log(searchArr)
-//   //const searchTermLowerCase = searchterm.toLowerCase();
-//   console.log("start mongoose search");
-//   modeldb
-//     .find({
-//       title:{$in:[...searchArr]}
-//     })
-//     .then(function (nameresult) {
-//       arr.push(nameresult);
-//       console.log("finish search name", nameresult);
-//       modeldb
-//         .find({
-//           tags: {$in:[...searchArr]},
-//         })
-//         .then(function (tagresult) {
-//            //arr.push(tagresult);
-//           //arr = [...new Set(tagresult)];
-//           arr = [...tagresult,...nameresult];
-//           console.log("finish search tag", tagresult);
-//           console.log("arr--->",arr)
-//           callback(arr);
-//         });
-//     });
-// };
 const SearchBar = async (searchterm, callback) => {
-  //var arr = [];
   let searchArr = searchterm.split(" ");
-  console.log(searchArr);
-  console.log("start mongoose search");
   modeldb
     .aggregate([
       { $addFields: { title_arr: { $split: ["$title", " "] } } },
@@ -192,7 +148,6 @@ const SearchBar = async (searchterm, callback) => {
     ])
     .collation({ locale: "en", strength: 2 })
     .then(function (results) {
-      console.log("finish search name", results);
       callback(results);
     });
 };
@@ -236,40 +191,15 @@ const FindByFormat = async (results, format) => {
   let newResults = [];
   newResults = results.filter((item) => {
     if (item.format === format) {
-      console.log("items");
       return item;
     }
   });
-  console.log("2");
   return await newResults;
 };
 
 module.exports.FindByFormat = FindByFormat;
 
-//FUNCTIONS ------- for development stage ---------
-function updateallsize() {
-  modeldb.find({}, function (err, docs) {
-    docs.forEach(async (doc) => {
-      let size = await getFolderSize(doc.assetPath.folderpath);
-      console.log(size);
-      await modeldb.updateOne(doc, { filesize: size });
-    });
-  });
-}
-
-//manually assign userid to modelDB
-const AssignUserToModel = function (userid, modelid) {};
-
-//search through model db and check if model asset path is valid.
-// if Invalid, remove model from modelDB.
-// If model asset path is not found in modelDB, return them as a list
-const ReconstructModelDB = function () {};
-
-const SetupSampleDB = function () {};
-
-
 const UpdateThumbnailUrl = function() {
-  console.log('loaded');
   modeldb.find({}, (err,results)=> {
     results.forEach(async (result,index)=> {
       //original path is called 'new_thumbnail.png'
@@ -284,14 +214,7 @@ const UpdateThumbnailUrl = function() {
       );
     });
   });
-  // setInterval(function(){
-  //   UpdateThumbnailUrl();
-  // }, 1000*60*10)
 }
 
 module.exports.UpdateThumbnailUrl = UpdateThumbnailUrl;
 
-// UpdateThumbnailUrl();
-
-
-// UpdateThumbnailUrlOnInterval();

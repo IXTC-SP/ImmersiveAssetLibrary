@@ -4,7 +4,6 @@ const os = require('os');
 multer = require('multer');
 
 var storagepath = './uploads/tmp/';
-var uploadcontent;
 const uploadstorage = multer.diskStorage({
   destination: (req, file, cb) => { // setting destination of uploading files
     fs.mkdirSync(storagepath, {
@@ -73,21 +72,13 @@ const publishfile = async function(foldername, files){
         fs.renameSync(oldPath, newPath);
       }
     } catch(err) {
-      console.error(err)
     }
-
-    //data required -> folderpath, totalfilesize, publish date,  assettype, ownedby, main asset type, main asset path, download count
-    console.log('getting file size ' + filesizetotal);
-    // getfilesize(publishpath);
-
 };
 
 const changepath = function changepath(oldpath,newpath){
   fs.rename(oldpath, newpath, function(err) {
   if (err) {
-    console.log(err)
   } else {
-    console.log("Successfully renamed the directory.")
   }
 });
 }
@@ -113,22 +104,6 @@ const getAllFiles = function(dirPath, arrayOfFiles) {
 
   return arrayOfFiles
 }
-
-function setPublishDate(){
-  var today = new Date();
-  var dd = String(today.getDate()).padStart(2, '0');
-  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-  var yyyy = today.getFullYear();
-  today = mm + '/' + dd + '/' + yyyy;
-  return today
-}
-
-function getDirectories(srcpath) {
-  return fs.readdirSync(srcpath)
-    .map(file => path.join(srcpath, file))
-    .filter(path => fs.statSync(path).isDirectory());
-}
-
 
 module.exports.uploadHandler = upload;
 module.exports.publish = publishfile;

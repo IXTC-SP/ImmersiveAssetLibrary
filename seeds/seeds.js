@@ -11,7 +11,6 @@ const seed = async () => {
     '!seeds/config.js',
     '!seeds/seeds.js'
   ]).map((filepath) => {
-    console.log('Seeding: ', filepath)
     return require(`../${filepath}`) //evaluate each file, eg: "seeds/users/user.js"
   })
 

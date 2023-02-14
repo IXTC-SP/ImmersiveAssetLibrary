@@ -16,6 +16,5 @@ datamuse.words({
     }
   })
 
-  console.log(arr);
   //do it!
 });

@@ -16,14 +16,12 @@ const uploadstorage = multer.diskStorage({
 const fileFilter = (req, file, cb) => {
   if (file.fieldname === "objectfile") { // if uploading resume
     let format = file.originalname.split('.')[1]
-    console.log(format);
     if (
       format === 'obj' ||
       format === 'fbx'
     ) { // check file type to be obj or fbx
       cb(null, true);
     } else {
-      console.log('objectfile type is wrong');
       cb(null, false); // else fails
     }
   } else { // else uploading image

@@ -144,10 +144,7 @@ const controller = {
 
     try {
       renderObj.accounts = await userModel.find({isActivated:true});
-      // console.log(renderObj.accounts);
-      console.log("Get the accounts");
     } catch (err) {
-      console.log(err);
       renderObj.errorObj = errorMessage(true, "Failed to get users");
     }
     let renderView = new RenderView(req, renderObj);
@@ -169,7 +166,6 @@ const controller = {
       renderObj.downloads["models"] = [...user.downloadedModels];
       renderObj.downloads["360"] = [...user.downloadedThreeSixty];
     } catch (err) {
-      console.log(err);
     }
     let renderView = new RenderView(req, renderObj);
     res.render("users/dashboard", {
@@ -183,7 +179,6 @@ const controller = {
   showUploads: async (req, res, next) => {
     let renderObj = new RenderObjs();
 
-    console.log("-->", req.errorObj);
     try {
       renderObj.uploads["models"] = await modelModel.find({
         owner: req.user._id,
@@ -192,7 +187,6 @@ const controller = {
         owner: req.user._id,
       });
     } catch (err) {
-      console.log(err);
       req.errorObj = errorMessage(true, err);
     }
     let renderView = new RenderView(req, renderObj);
@@ -221,7 +215,6 @@ const controller = {
         );
         //only created the _id, email, isAdmin field
         req.body.isAdmin === "Admin" ? (isAdmin = true) : (isAdmin = false);
-        console.log("create user");
         addedUser = await userModel.create({
           ...req.body,
           isAdmin,
@@ -231,28 +224,22 @@ const controller = {
         // req.user = user;
         req.addedUser = addedUser;
         // req.accounts = accounts;
-        console.log("next is email activation");
         return true;
       } catch (error) {
-        console.log(error);
         renderObj.errorObj = errorMessage(true, error.message);
         return false;
       }
     };
     try {
-      console.log("---->", req.body);
       renderObj.accounts = await userModel.find({isActivated:true});
-      console.log("Get the accounts");
       if (req.body.email !== "") {
         //check is the sp email
         if (emailValidation(req.body.email)) {
           //check if email has been created before
           addedUser = await userModel.findOne({ email: req.body.email });
-          console.log("check if is activated", addedUser);
           if (addedUser) {
             //and is not activated, incase expire already and try to create again
             if (addedUser.isActivated) {
-              console.log(addedUser);
               renderObj.errorObj = errorMessage(
                 true,
                 "This email has account already been created"
@@ -270,13 +257,9 @@ const controller = {
               const now = new Date();
               //this exp is issued with the token.....so we cant change it
               //not expired and not activate
-              console.log(user);
-              console.log(userExp);
-              console.log(now);
 
               if (userExp > now) {
                 //not expired, not activated, cannot enroll
-                console.log("not expired not activated");
                 renderObj.errorObj = errorMessage(
                   true,
                   "This email account has not been activated"
@@ -285,7 +268,6 @@ const controller = {
             } else {//got deleted and tryna add back again
               req.body.isAdmin === "Admin" ? (isAdmin = true) : (isAdmin = false);
               let reactivateUser = await userModel.findOneAndUpdate({ email: req.body.email }, {isActivated: true, isAdmin}, {new: true});
-              console.log(reactivateUser)
               renderObj.isSuccess = alertMessage(
                 true,
                 "Account has been reactivated"
@@ -311,7 +293,6 @@ const controller = {
         );
       }
     } catch (err) {
-      console.log(err);
       if (err.message === "Invalid token specified") {
         await userModel.deleteOne({ _id: addedUser.id });
         const result = await createUser();
@@ -332,12 +313,10 @@ const controller = {
     });
   },
   deleteEnrollment: async (req, res, next) => {
-    console.log("delete enrollment");
     let isSuccess = alertMessage(false, " ");
     let errorObj = errorMessage(false, " ");
     try {
       //check it is not me
-      console.log(superAdmin[req.params.acct_id]);
       if (superAdmin[req.params.acct_id] === undefined) {
         // await userModel.deleteOne({ _id: req.params.acct_id });
         await userModel.findOneAndUpdate(
@@ -357,7 +336,6 @@ const controller = {
     }
     req.isSuccess = isSuccess;
     req.errorObj = errorObj;
-    //return res.redirect(`/${req.params.user_id}/dashboard/enrollment`)
     return next();
   },
   deleteUploads: async (req, res, next) => {
@@ -365,17 +343,14 @@ const controller = {
     let downloadedType;
     switch (req.params.type) {
       case "model":
-        console.log("model asset type");
         dbmanager = modelModel;
         downloadedType = "downloadedModels";
         break;
       case "360":
-        console.log("360 asset type");
         dbmanager = threeSixtyModel;
         downloadedType = "downloadedThreeSixty";
         break;
     }
-    console.log("delete uploads");
     let isSuccess = alertMessage(false, " ");
     let errorObj = errorMessage(false, " ");
     try {
@@ -383,12 +358,8 @@ const controller = {
         { downloadedType: [req.params.asset_id] },
         { $pullAll: { downloadedType: [req.params.asset_id] } }
       );
-      console.log("1");
       await dbmanager.deleteOne({ _id: req.params.asset_id });
-      console.log("2");
       const deletedInAws = await awsMethods.deleteFiles(req.params.asset_id);
-      console.log("3");
-      console.log(deletedInAws);
       if (deletedInAws.Deleted) {
         isSuccess = alertMessage(true, "Asset successfully deleted");
       }

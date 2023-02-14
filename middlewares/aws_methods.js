@@ -19,7 +19,6 @@ const s3 = new AWS.S3({
 const bucketName = "immersive-asset-library-bucket";
 const awsMethods = {
   uploadFiles: async (tmpContent, objId, type, req, res, next) => {
-    // console.log("AWS temp content details",tmpContent);
     let allFiles = [];
     let params = null;
     if (type === "360") {
@@ -40,14 +39,12 @@ const awsMethods = {
       allFiles.push({ gltfPath: tmpContent.modelviewerpath });
     }
     allFiles.push(tmpContent.thumbnail);
-    // console.log("allfiles", allFiles);
     try {
       const promises = allFiles.map(async (file) => {
         return await new Promise((resolve, reject) => {
           const fileContent = fs.readFileSync(
             file.gltfPath ? file.gltfPath.substring(1) : file.path
           );
-          // console.log(" file content data : ",fileContent);
           // Setting up S3 upload parameters
           params = {
             Bucket: bucketName,
@@ -58,7 +55,6 @@ const awsMethods = {
           };
           const data = s3.upload(params, function (err, data) {
             if (err) {
-              console.log(err);
               reject(err);
               return res.status(500).json({
                 status: "failed",
@@ -66,7 +62,6 @@ const awsMethods = {
                   "An error occured during file upload. Please try again.",
               });
             } else {
-              // console.log(`File uploaded successfully. ${data.Location}`);
               resolve(data);
             }
             
@@ -79,7 +74,6 @@ const awsMethods = {
       });
       return uploadedData;
     } catch (error) {
-      console.log(error);
       return res.status(500).json({
         status: "failed",
         message: error,
@@ -112,10 +106,8 @@ const awsMethods = {
         archive.append(item.passthrough, { name: item.name });
       });
 
-      console.log("archive" ,archive);
       return archive;
     } catch (error) {
-      console.log(error);
       return error;
     }
   },
@@ -140,15 +132,11 @@ const awsMethods = {
       });
 
       const data = await s3.deleteObjects(deleteParams, function (err, data) {
-        if (err) console.log(err, err.stack); // an error occurred
-        else 
-        console.log(data)
         return data ; // successful response
       }).promise()
       return data
 
     } catch (error) {
-      console.log(error)
       return error
     }
   },
@@ -158,29 +146,6 @@ const awsMethods = {
       Key: `sample/modelitem.zip`, // Can be your folder name
     };
     var data = await s3.getObject(params).promise();
-    // Load the zip file data buffer
-    // var zip = new JSZip();
-    // var ziploaded = await zip.loadAsync(data.Body);
-    // // Get the list of files in the zip
-    // var files = Object.keys(ziploaded.files);
-    // // Read the contents of each file in the zip
-    // const fileDatasPromise = files.map(async (file) => {
-    //   return await new Promise((resolve, reject) => {
-    //     resolve(zip.files[file].async("uint8array"));
-    //     // resolve(zip.files[file].async("blob"));
-    //   });
-    // });
-    // const file_datas = await Promise.all(fileDatasPromise);
-    // console.log(file_datas[3])
-    // // console.log(file_datas);
-    // // for (var i = 0; i < files.length; i++) {
-    // //   var file = files[i];
-    // //   zip.files[file].async("blob").then(function(file_data) {
-    // //     console.log(file_data);
-    // //     file_datas.push(file_data);
-    // //   });
-    // // }
-    // return file_datas;
     return data.Body;
   },
   getSingleModelContent: async (objId, gltfpath) => {
@@ -219,8 +184,6 @@ const awsMethods = {
       Key: `uploads/${objId}/${gltfpath}`
     };
     const model = s3.getSignedUrl('getObject', params)
-    console.log(model);
-
     function parse(){
       return new Promise(function(resolve, reject){
           request(model, function (error, response, body) {
@@ -240,36 +203,14 @@ const awsMethods = {
   if(modelfile.images){
     modelfile.images.forEach((image)=> {
       image.uri = s3.getSignedUrl('getObject', {Bucket: bucketName, Key: `uploads/${objId}/${image.uri}`});
-      console.log("running images");
     });
   }
     let stringData = JSON.stringify(modelfile);
-    // let byteCharacters = new TextEncoder().encode(stringData);
-    // let byteArrays = [...Array(byteCharacters.length)].map((_, i) => byteCharacters.slice(i * 8192, i * 8192 + 8192));
-
-    // let binaryData = '';
-    // for (let byteArray of byteArrays) {
-    //   binaryData += String.fromCharCode(...new Uint8Array(byteArray));
-    // }
-
-    // let dataUrl = "data:application/octet-stream;base64," + Buffer.from(binaryData).toString('base64');
     let dataUrl = "data:application/octet-stream;base64," + Buffer.from(stringData).toString("base64");
 
   buffers['gltf'] = dataUrl;
   return buffers;
 
-
-
-    // let stringData = JSON.stringify(model);
-    // let byteCharacters = new TextEncoder().encode(stringData);
-    // let byteArrays = [...Array(byteCharacters.length)].map((_, i) => byteCharacters.slice(i * 8192, i * 8192 + 8192));
-
-    // let binaryData = '';
-    // for (let byteArray of byteArrays) {
-    //   binaryData += String.fromCharCode(...new Uint8Array(byteArray));
-    // }
-
-    // let dataUrl = 'data:' + gltfbuffer.ContentType + ';base64,' + Buffer.from(binaryData).toString('base64');
   },
   getSingleCubemapContent: async (objId, cubemapPaths) => {
     var buffers = {};
@@ -313,7 +254,6 @@ const awsMethods = {
       Expires: 5
     }
     var preassignedUrl = await s3.getSignedUrlPromise("getObject", params);
-    console.log("preassigned url " ,preassignedUrl);
     return preassignedUrl;
   },
   reloadThumbnailUrl : async (objId,thumbnailpath) => {

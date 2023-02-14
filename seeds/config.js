@@ -11,11 +11,9 @@ const connectDb = async()  => {
     try {
         await mongoose.connect(MONGODB_URI , { dbName: process.env.MONGO_DB})
     } catch(err) {
-        console.log(`Failed to connect to DB`)
         process.exit(1)
     }
 
-    console.log(`Example app listening on port ${port}`)
     
 }
 

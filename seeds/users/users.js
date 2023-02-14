@@ -3,7 +3,6 @@ const UserModel = require("../../models/user");
 
 const createUsers = async () => {
     await UserModel.create(UsersJson);
-    console.log(`Created users`);
 };
 
 const addCreatedByField = async () => {
@@ -13,7 +12,6 @@ const addCreatedByField = async () => {
         { new: true }
     )
 
-console.log("addCreatedByField")
 };
 
 module.exports = addCreatedByField();

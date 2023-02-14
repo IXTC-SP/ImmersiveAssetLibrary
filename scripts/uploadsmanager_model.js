@@ -1,10 +1,8 @@
 const path = require('path');
 const fs = require('fs')
-const os = require('os');
 multer = require('multer');
 
 var storagepath = './uploads/tmp/';
-var uploadcontent;
 const uploadstorage  = multer.diskStorage({
   destination: (req, file, cb) => { // setting destination of uploading files
     fs.mkdirSync(storagepath, {
@@ -56,17 +54,9 @@ const upload3D = upload.fields([
 
 const publishfile = async function(foldername, files){
   var filesizetotal = 0;
-    //create a new folder based on title
-    // var publishpath = './uploads/' + foldername;
-    // if (!fs.existsSync(publishpath)){
-    // fs.mkdirSync(publishpath);
-    // }
     //move temp files into new folder
     for (const file of files) {
       var oldPath = './uploads/tmp/' + file
-      // var newPath = publishpath + '/' + file
-      // fs.renameSync(oldPath, newPath);
-      //filesizetotal += getFilesizeInBytes(newPath);
       filesizetotal += getFilesizeInBytes(oldPath);//still
     }
     console.log('move complete');
@@ -75,20 +65,11 @@ const publishfile = async function(foldername, files){
       if (fs.existsSync('./uploads/tmp/model.gltf')) {
         //file exists
         var oldPath = './uploads/tmp/model.gltf'
-        // var newPath = (publishpath + '/model.gltf');
-        // fs.renameSync(oldPath, newPath);
-        // console.log('add gltf folder');
-        //filesizetotal += getFilesizeInBytes(newPath);
         filesizetotal += getFilesizeInBytes(oldPath);
       }
     } catch(err) {
       console.error(err)
     }
-
-    //data required -> folderpath, totalfilesize, publish date,  assettype, ownedby, main asset type, main asset path, download count
-    console.log('getting file size ' + filesizetotal);
-    // getfilesize(publishpath);
-    //closeTmpFolder();
 
 };
 
@@ -114,19 +95,10 @@ const getAllFiles = function(dirPath, arrayOfFiles) {
   return arrayOfFiles
 }
 
-
-function getDirectories(srcpath) {
-  return fs.readdirSync(srcpath)
-    .map(file => path.join(srcpath, file))
-    .filter(path => fs.statSync(path).isDirectory());
-}
-
 const changepath = function changepath(oldpath,newpath){
   fs.rename(oldpath, newpath, function(err) {
   if (err) {
-    console.log(err)
   } else {
-    console.log("Successfully renamed the directory.")
   }
 });
 }

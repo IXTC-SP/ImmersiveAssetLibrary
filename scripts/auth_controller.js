@@ -16,9 +16,7 @@ let mailTransporter = nodemailer.createTransport({
 });
 mailTransporter.verify(function (error, success) {
   if (error) {
-    console.log(error);
   } else {
-    console.log("Server is ready to take our messages");
   }
 });
 
@@ -71,7 +69,6 @@ const controller = {
         errorObj = errorMessage(true, "Confirm password does not match");
       }
     } catch (err) {
-      console.log(err);
       errorObj = errorMessage(true, err);
     }
     return res.render("users/setPassword", {
@@ -121,7 +118,6 @@ const controller = {
                 <a href = ${process.env.CLIENT_URL}/reset-password/?token=${resetPasswordToken}&id=${user._id}>${process.env.CLIENT_URL}/reset-password</a>`,
               };
               mailTransporter.sendMail(mailDetails, function (err, data) {
-                console.log("send email");
                 return res.render("users/passwordLinkSent", {
                   checkEmail: true,
                   email: user.email,
@@ -178,7 +174,6 @@ const controller = {
         }
       }
     } catch (error) {
-        console.log(error)
         errorObj = errorMessage(
             true,
             error
@@ -200,8 +195,6 @@ const controller = {
     let tokenVerified = false;
     let token = null;
     let isInvalid = false;
-    console.log(req.query.token);
-    console.log(req.query.id);
     let secret = null;
     try {
       token = req.query.token;
@@ -216,7 +209,6 @@ const controller = {
         }
       }
     } catch (err) {
-      console.log(err);
       errorObj = errorMessage(true, "Link has Expired");
       isInvalid = true;
     }
@@ -232,7 +224,6 @@ const controller = {
   showlogin: async (req, res, next) => {
     let errorObj = errorMessage(false, " ");
     if (req.session.flash) {
-      console.log("----->", req.session.flash.error[0]);
       errorObj = errorMessage(true, req.session.flash.error[0])
 
     }
@@ -253,7 +244,6 @@ const controller = {
     let isSuccess = alertMessage(false, " ");
     let errorObj = errorMessage(false, " ");
     try {
-      console.log("transporter, is created above, sendMail");
       // send mail with defined transport object
       let mailDetails = {
         from: process.env.AUTH_EMAIL,
@@ -267,7 +257,6 @@ const controller = {
       };
 
       let result = await mailTransporter.sendMail(mailDetails);
-      console.log(result);
       if (result.accepted.length > 0) {
         isSuccess = alertMessage(
           true,
@@ -278,8 +267,6 @@ const controller = {
       }
     } catch (error) {
       errorObj = (true, error.message);
-
-      console.log(error);
     }
     req.isSuccess = isSuccess;
     req.errorObj = errorObj;
