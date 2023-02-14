@@ -44,6 +44,7 @@ app.use(
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
+    tmpContent : [],
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -51,6 +52,9 @@ app.use(
     },
   })
 );
+
+databasemanager_model.UpdateThumbnailUrl();
+databasemanager_360.UpdateThumbnailUrl();
 
 //every route
 //fisrt check if the req.user is there ( on login will store)
@@ -306,29 +310,28 @@ app.get("/upload", function (req, res) {
 });
 
 // ----- model upload to publish ------ START
-var tmpContent = [];
 
 app.post(
   "/uploadtmp3dmodel",
   uploadsmanager_model.uploadtmp3D,
   function (req, res) {
-    tmpContent = req.files;
+    req.session.tmpContent = req.files;
     let result;
-    if (tmpContent.image) {
-      result = tmpContent.image.map((a) => a.originalname);
+    if (req.session.tmpContent.image) {
+      result = req.session.tmpContent.image.map((a) => a.originalname);
     }
-    tmpContent["format"] = tmpContent.model[0].originalname.split(".")[1];
+    req.session.tmpContent["format"] = req.session.tmpContent.model[0].originalname.split(".")[1];
     gltfmodel.Create(req.files.model[0], function (gltfresult) {
       if (gltfresult) {
-        tmpContent["modelviewerpath"] = "../uploads/tmp/model.gltf";
-        tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
+        req.session.tmpContent["modelviewerpath"] = "../uploads/tmp/model.gltf";
+        req.session.tmpContent["folderpath"] = req.session.tmpContent.model[0].originalname.split(".")[0];
         gltfmodel.ClearMaterialFromModel(gltfresult, function () {
           res.end("complete");
         });
       } else {
-        tmpContent["folderpath"] = tmpContent.model[0].originalname.split(".")[0];
-        var fullpath = tmpContent.model[0].destination + tmpContent.model[0].originalname;
-        tmpContent["modelviewerpath"] = "." + fullpath;
+        req.session.tmpContent["folderpath"] = req.session.tmpContent.model[0].originalname.split(".")[0];
+        var fullpath = tmpContent.model[0].destination + req.session.tmpContent.model[0].originalname;
+        req.session.tmpContent["modelviewerpath"] = "." + fullpath;
         gltfmodel.ClearMaterialFromModel(fullpath, function () {
           res.end("complete");
         });
@@ -339,22 +342,22 @@ app.post(
 );
 
 app.get("/editpage/model", function (req, res) {
-  if (tmpContent) {
+  if (req.session.tmpContent) {
     let images;
-    if (tmpContent.image) {
-      images = tmpContent.image.map((a) => a.originalname);
+    if (req.session.tmpContent.image) {
+      images = req.session.tmpContent.image.map((a) => a.originalname);
     }
     res.render("editpage-model", {
       content: {
-        folderpath: tmpContent.folderpath,
-        modelviewerpath: tmpContent.modelviewerpath,
-        modelfile: tmpContent.model[0].originalname,
+        folderpath: req.session.tmpContent.folderpath,
+        modelviewerpath: req.session.tmpContent.modelviewerpath,
+        modelfile: req.session.tmpContent.model[0].originalname,
         thumbnail:
-          typeof tmpContent.thumbnail == "undefined"
+          typeof req.session.tmpContent.thumbnail == "undefined"
             ? ""
-            : tmpContent.thumbnail[0].originalname,
+            : req.session.tmpContent.thumbnail[0].originalname,
         imagefiles: images,
-        format: tmpContent.format,
+        format: req.session.tmpContent.format,
       },
       isLoginpage: true,
       isModel: true,
@@ -367,9 +370,9 @@ app.get("/editpage/model", function (req, res) {
 app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
   //save model database
   databasemanager_model.save(req, res, async function (result) {
-    tmpContent["thumbnail"] = req.files.newthumbnail[0];
-    const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result, "3dModel");
-    tmpContent = []
+    req.session.tmpContent["thumbnail"] = req.files.newthumbnail[0];
+    const uploadedDataToAws = await awsMethods.uploadFiles(req.session.tmpContent, result, "3dModel");
+    req.session.tmpContent = []
     databasemanager_model.GetModel(result, async function (doc) {
       databasemanager_model.updateToAwsPaths(
         doc,
@@ -389,41 +392,39 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
 app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function (req, res) {
   console.log(req.body);
   console.log(req.files);
-  tmpContent["image"] = [];
-  tmpContent["destination"] = req.files.image[0].destination;
+  req.session.tmpContent["image"] = [];
+  req.session.tmpContent["destination"] = req.files.image[0].destination;
   if (req.body.format == "cubemap") {
-    tmpContent["image"]["top"] = req.files.image.find(
+    req.session.tmpContent["image"]["top"] = req.files.image.find(
       (element) => element.originalname.includes("Top")
     );
-    tmpContent["image"]["front"] = req.files.image.find(
+    req.session.tmpContent["image"]["front"] = req.files.image.find(
       (element) => element.originalname.includes("Front") 
     );
-    tmpContent["image"]["bottom"] = req.files.image.find(
+    req.session.tmpContent["image"]["bottom"] = req.files.image.find(
       (element) => element.originalname.includes("Bottom") 
     );
-    tmpContent["image"]["right"] = req.files.image.find(
+    req.session.tmpContent["image"]["right"] = req.files.image.find(
       (element) => element.originalname.includes("Right") 
     );
-    tmpContent["image"]["back"] = req.files.image.find(
+    req.session.tmpContent["image"]["back"] = req.files.image.find(
       (element) => element.originalname.includes( "Back")
     );
-    tmpContent["image"]["left"] = req.files.image.find(
+    req.session.tmpContent["image"]["left"] = req.files.image.find(
       (element) => element.originalname.includes( "Left")
     );
   } else {
-    tmpContent["image"]["equi"] = req.files.image[0];
+    req.session.tmpContent["image"]["equi"] = req.files.image[0];
   }
-  tmpContent["format"] = req.body.format;
-  console.log("-> to tmp", typeof tmpContent);
+  req.session.tmpContent["format"] = req.body.format;
+  console.log("-> to tmp", typeof req.session.tmpContent);
   res.end("complete");
 });
 
 app.get("/editpage/360", function (req, res) {
-  console.log( tmpContent.format )
-  console.log( tmpContent.image )
   res.render("editpage-360", {
-    format: tmpContent.format,
-    images: tmpContent.image,
+    format: req.session.tmpContent.format,
+    images: req.session.tmpContent.image,
     isLoginpage: true,
     isModel: false,
     user: req.user,
@@ -432,9 +433,9 @@ app.get("/editpage/360", function (req, res) {
 
 app.post("/savethreesixty", uploadmanager_360.upload360, function (req, res) {
   databasemanager_360.save(req, res, async function (result) {
-    tmpContent["thumbnail"] = req.files.newthumbnail[0];
-    const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result, "360");
-    tmpContent = []
+    req.session.tmpContent["thumbnail"] = req.files.newthumbnail[0];
+    const uploadedDataToAws = await awsMethods.uploadFiles(req.session.tmpContent, result, "360");
+    req.session.tmpContent = []
      //update model db with the urls
      databasemanager_360.GetModel(result, function (doc) {
       console.log(doc);

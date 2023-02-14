@@ -9,12 +9,15 @@ const Create = (objectfile, callback) => {
   var modeltype = objectfile.filename.split(".")[1];
   var modelfilepath = path.resolve(objectfile.destination + "/" + objectfile.originalname);
   var gltfpath = modelfolderpath + "/model.gltf";
+  console.log(objectfile.destination, objectfile.originalname, gltfpath);
 
   try {
     if (fs.existsSync(modelfolderpath)) {
       //file exists
+      console.log("file exist");
     }
   } catch (error) {
+    console.error(error)
   }
   switch (modeltype) {
     case "obj":
@@ -44,9 +47,7 @@ const Create = (objectfile, callback) => {
               }
               console.log("Directory renamed successfully.");
           });
-          // gltfpath = modelfolderpath + "\\model.gltf"
           gltfpath = modelfolderpath + "/model.gltf"
-          // console.log(gltfpath);
           // yay, do what we will with our shiny new GLB file!
           console.log("completed fbx to gltf conversion");
           callback(gltfpath);
