@@ -14,7 +14,7 @@ const url = require("url");
 const gltfmodel = require("./scripts/gltfmodel");
 const uploadsmanager_model = require("./scripts/uploadsmanager_model");
 const databasemanager_model = require("./scripts/databasemanager_model");
-// const uploadmanager_360 = require("./scripts/uploadmanager_360");
+const uploadmanager_360 = require("./scripts/uploadmanager_360");
 const databasemanager_360 = require("./scripts/databasemanager_360");
 // const storagemanagement = require("./scripts/storagemanagement");
 // const filedownloader = require("./scripts/filedownloader");
@@ -299,7 +299,7 @@ app.get("/assets/360", async function (req, res) {
 const uploadmanager = require("./scripts/uploadsmanager_model");
 app.get("/upload", function (req, res) {
   uploadmanager.closeTmpFolder();
-  res.render("/dragndrop", {
+  res.render("dragndrop", {
     isLoginpage: true,
     user: req.user,
   });
@@ -365,7 +365,6 @@ app.get("/editpage/model", function (req, res) {
 
 
 app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
-
   //save model database
   databasemanager_model.save(req, res, async function (result) {
     tmpContent["thumbnail"] = req.files.newthumbnail[0];
@@ -385,6 +384,71 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
 });
 });
 // ----- model upload to publish ------ END
+
+
+app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function (req, res) {
+  console.log(req.body);
+  console.log(req.files);
+  tmpContent["image"] = [];
+  tmpContent["destination"] = req.files.image[0].destination;
+  if (req.body.format == "cubemap") {
+    tmpContent["image"]["top"] = req.files.image.find(
+      (element) => element.originalname.includes("Top")
+    );
+    tmpContent["image"]["front"] = req.files.image.find(
+      (element) => element.originalname.includes("Front") 
+    );
+    tmpContent["image"]["bottom"] = req.files.image.find(
+      (element) => element.originalname.includes("Bottom") 
+    );
+    tmpContent["image"]["right"] = req.files.image.find(
+      (element) => element.originalname.includes("Right") 
+    );
+    tmpContent["image"]["back"] = req.files.image.find(
+      (element) => element.originalname.includes( "Back")
+    );
+    tmpContent["image"]["left"] = req.files.image.find(
+      (element) => element.originalname.includes( "Left")
+    );
+  } else {
+    tmpContent["image"]["equi"] = req.files.image[0];
+  }
+  tmpContent["format"] = req.body.format;
+  console.log("-> to tmp", typeof tmpContent);
+  res.end("complete");
+});
+
+app.get("/editpage/360", function (req, res) {
+  console.log( tmpContent.format )
+  console.log( tmpContent.image )
+  res.render("editpage-360", {
+    format: tmpContent.format,
+    images: tmpContent.image,
+    isLoginpage: true,
+    isModel: false,
+    user: req.user,
+  });
+});
+
+app.post("/savethreesixty", uploadmanager_360.upload360, function (req, res) {
+  databasemanager_360.save(req, res, async function (result) {
+    tmpContent["thumbnail"] = req.files.newthumbnail[0];
+    const uploadedDataToAws = await awsMethods.uploadFiles(tmpContent, result, "360");
+    tmpContent = []
+     //update model db with the urls
+     databasemanager_360.GetModel(result, function (doc) {
+      console.log(doc);
+      databasemanager_360.updateToAwsPaths(
+        doc,
+        uploadedDataToAws,
+        function (id) {
+          console.log(id)
+          res.send(id);
+        }
+      );
+    });
+  });
+});
 
 
 // Begin reading from stdin so the process does not exit imidiately

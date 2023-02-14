@@ -1,0 +1,216 @@
+<%- include('./partials/header') %>
+
+  <!-- <link rel="stylesheet" href="./public/edit-page.css"> -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script type="text/javascript" src="/datamuse.js"></script>
+
+  <%- include('./partials/edit-properties') %>
+  <script>
+    var suggestedtagelements = [];
+    var selectedtagelements = [];
+    var files = [];
+    var newfiles = [];
+    var modelviewer = document.getElementById('model-viewer');
+    var modelpath = '';
+     //reload page when back button on browser is pressed
+  window.addEventListener( "pageshow", function ( event ) {
+    var historyTraversal = event.persisted ||
+                           ( typeof window.performance != "undefined" &&
+                                window.performance.navigation.type === 2 );
+    if ( historyTraversal ) {
+      // Handle page restore.
+      window.location.reload();
+    }
+  });
+    async function createUploadContent() {
+      const formData = new FormData();
+      const request = new XMLHttpRequest();
+      var nextURL = "/asset/model/";
+      var postURL = "/save3dmodel";
+      console.log("create upload content");
+
+      var data = {
+        files: [],
+        modelfile: <%- JSON.stringify(content.modelfile)%>,
+        gltfmodelpath: modelpath,
+        title : document.querySelector(".title-info").value,
+        description : document.querySelector(".desc-info").value,
+        lowpoly : document.querySelector(".low-poly-info").checked,
+        rigged : document.querySelector(".rigged-info").checked,
+        animated : document.querySelector(".animated-info").checked,
+        textured : document.querySelector(".textured-info").checked,
+        folderpath: <%- JSON.stringify(content.folderpath)%>,
+        diffusepath : getTextureFromFilesArray('diffuse'),
+        emissivepath : getTextureFromFilesArray('emissive'),
+        thumbnail: <%- JSON.stringify(content.thumbnail)%>,
+        tags: [],
+        format: <%- JSON.stringify(content.format) %>,
+      }
+      var tags = document.querySelectorAll(".selected_tag_element");
+      for (i = 0; i < tags.length; i++) { 
+        data.tags.push(tags[i].innerHTML.toLowerCase()); 
+        console.log(tags[i].innerHTML.toLowerCase()); }
+      data.files = files;
+      console.log(data);
+      for (i = 0; i < newfiles.length; i++) { formData.append('file', newfiles[i]); }
+      formData.append('data', JSON.stringify(data));
+      let thumbnailpath = '<%- content.thumbnail %>';
+      if (thumbnailpath == '') {
+        var modelviewer = document.getElementById('model-viewer');
+        var blob = await modelviewer.toBlob();
+        var file = new File([blob], 'new_thumbnail.png');
+        console.log(file);
+        formData.append('newthumbnail', file);
+      }
+
+
+      request.onreadystatechange = function () { // listen for state changes
+        if (request.readyState == 4 && request.status == 200) { // when completed we can move away
+          console.log("-->send from backedn", request.responseText)
+          nextURL += request.responseText;
+          window.location = nextURL;
+        }
+      }
+      request.open("POST", postURL, false);
+      request.send(formData);
+    }
+
+
+    getEJScontent();
+
+    function getEJScontent() {
+      <% if (content) {  %>
+        <% if (content.imagefiles) {  %>
+      files = <%- JSON.stringify(content.imagefiles)%>;
+      <% }  %>
+      modelpath = '<%- content.modelviewerpath %>';
+      console.log("get model path here: ",modelpath);
+      modelviewer.src = modelpath;
+      console.log(getTextureFromFilesArray('diffuse'));
+      <% } else { %>
+      console.log("does not exist");
+      <% } %>
+
+      modelviewer.addEventListener('load', saveThumbnail);
+    }
+
+    function getTextureFromFilesArray(typename) {
+      var result = "";
+      for (i = 0; i < files.length; i++) {
+        if (files[i].split("_")[0] == typename) {
+          result = files[i];
+        }
+      }
+      return result;
+    }
+
+
+    function saveThumbnail(callback) {
+      console.log('running save thumbnail 2');
+      //create thumbnail via canvas then save in formdata afterwards
+      modelviewer.toBlob((result) => {
+        console.log(result);
+        callback(result)
+      }, 'image/jpeg');
+    }
+
+
+    function removeExistingFile(el, filename) {
+      files = files.filter(i => i !== filename);
+      console.log(files);
+      var element = el;
+      element.parentElement.parentElement.remove();
+    }
+
+    function addNewFile(el) {
+      console.log(el.files[0].name);
+      newfiles.push(el.files[0]);
+      let p = document.querySelector('.all-files')
+      let main = document.createElement('div');
+      main.classList.add("new-file")
+      console.log(p);
+      main.innerHTML = `
+                    <div class='d-flex justify-content-between w-100'>
+                      <span class='p-0 text-muted text-overflow'>${el.files[0].name}</span>
+                      <button class='remove-file bg-transparent border-0'onclick='removeNewFile(this,"${el.files[0].name}")'>
+                        <i class='fa-regular fa-trash-can trash-btn'></i>
+                      </button>
+                    </div>
+                      <hr class='m-0'>
+                  `
+      p.appendChild(main);
+    }
+
+    function removeNewFile(el, file) {
+      newfiles = newfiles.filter(i => i !== file);
+      var element = el;
+      element.parentElement.parentElement.remove();
+    }
+
+
+
+
+    const node = document.getElementById("tag_create");
+    node.addEventListener("keyup", function (event) {
+      if (event.key === "Enter") {
+        // Do work
+        if (selectedtagelements.includes(node.value)) return;
+        addTag(node.value);
+        createTagSuggestion(node.value);
+        node.value = "";
+
+      }
+    });
+
+    function clearsuggestedtagelements() {
+      if (suggestedtagelements.length === 0) return;
+      suggestedtagelements.forEach(e => {
+        e.remove();
+      })
+    }
+
+    function createTagSuggestion(tagname) {
+      clearsuggestedtagelements();
+      suggestionsFromDatamuse(tagname).then(result => {
+        result.forEach(a => {
+          createSuggestElement(a.word);
+        });
+      });
+    }
+
+    function createSuggestElement(tagname) {
+      let tag = document.createElement("div");
+      tag.innerHTML = tagname;
+      let addBtn = document.createElement("button")
+      addBtn.setAttribute('id', 'tag_suggest');
+      addBtn.innerHTML = `<div>${tagname}</div><i class="fa-solid fa-plus icon small-icon-size  ms-2 "></i>`;
+      addBtn.classList = "d-flex align-items-center bg-transparent suggested-tag border-secondary border rounded-2 p-1"
+      document.getElementById('tag_suggest').appendChild(addBtn);
+      addBtn.onclick = function () {
+        if (selectedtagelements.includes(tagname)) return;
+        addTag(tagname);
+        createTagSuggestion(tagname);
+      };
+      //add to suggested tag element array
+      suggestedtagelements.push(addBtn);
+    }
+
+    function addTag(tagname) {
+      //get div child from group
+      var div = document.getElementById('selected_tags_group');
+      var tagBtn = document.createElement('button');
+      tagBtn.innerHTML = `<span class= "selected_tag_element">${tagname}</span><i class="fa-solid fa-xmark small-icon-size  ms-2 "></i>`;
+      tagBtn.classList = "p-0 text-white p-1 btn tag rounded-2 px-2"
+      tagBtn.onclick = function () {
+        div.removeChild(tagBtn);
+        selectedtagelements = selectedtagelements.filter(e => e !== tagname);
+      };
+      div.appendChild(tagBtn);
+      let taginput = document.getElementById("tag_input_content");
+      taginput.value = selectedtagelements.toString();
+      selectedtagelements.push(tagname);
+    }
+  </script>
+
+
+  <%- include('./partials/footer') %>
