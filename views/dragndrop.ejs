@@ -366,7 +366,7 @@
               Replace
             </button>
             <button id="modal-alert-okay" type="button" class="btn btn-secondary d-block " data-dismiss="modal"
-              onclick="closeAlertModal()">
+              onclick="closeAlertModal(modalAlert)">
               Okay
             </button>
             <button id="modal-alert-cancel" type="button" class="btn btn-secondary d-none" onclick="cancelReplace()">
@@ -376,6 +376,22 @@
         </div>
       </div>
     </div>
+
+    <!-- loading spinner -->
+    <div id="modal-spinner" class="modal d-none" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content" style="width: 330px">
+          <div class="modal-body d-flex bg-transparent">
+            <div class="spinner-border text-info" role="status">
+              <span id= "modal-spinner-message" class="sr-only">Uploading...</span>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
   </body>
 
   <script type="text/javascript" src="fileextensioncheck.js"></script>
@@ -392,6 +408,8 @@
     const formatTypeCaption = document.getElementById("format-type-caption");
     const modalAlert = document.getElementById("modal-alert");
     const modalAlertMessage = document.getElementById("modal-alert-message");
+    const modalSpinner = document.getElementById("modal-spinner");
+    const modalSpinnerMessage = document.getElementById("modal-spinner-message");
     const cancelButton = document.getElementById("modal-alert-cancel");
     const replaceButton = document.getElementById("modal-alert-replace");
     const okayButton = document.getElementById("modal-alert-okay");
@@ -498,18 +516,27 @@
     var fileObjs = [];
 
     nextpagebtn.addEventListener("click", function (event) {
+      showModal(modalSpinner)
+      modalSpinnerMessage.innerText = "message";
       processUploads();
       event.preventDefault();
     });
 
-    function closeAlertModal() {
-      modalAlert.classList.remove("d-flex");
-      modalAlert.classList += " d-none";
+    function closeAlertModal(modalType) {
+      modalType.classList.remove("d-flex");
+      modalType.classList += " d-none";
     }
     function openAlertModal(message) {
-      modalAlert.classList.remove("d-none");
-      modalAlert.classList += " d-flex";
+      showModal(modalAlert)
       modalAlertMessage.innerText = message;
+    }
+    function openSpinnerModal(message) {
+      showModal(modalSpinner)
+      modalSpinnerMessage.innerText = message;
+    }
+    function showModal(modalType) {
+      modalType.classList.remove("d-none");
+      modalType.classList += " d-flex";
     }
 
     function openConfirmModal(message, callback) {
@@ -526,7 +553,7 @@
 
     function confirmReplace(e) {
       e.preventDefault();
-      closeAlertModal();
+      closeAlertModal(modalAlert);
       hideReplaceAndCancelButton();
 
       const card = document.getElementById(`${foundSameFile.name}`);
@@ -535,7 +562,7 @@
     }
 
     function cancelReplace() {
-      closeAlertModal();
+      closeAlertModal(modalAlert);
       hideReplaceAndCancelButton();
     }
 
@@ -617,13 +644,13 @@
           formData.append("thumbnail", fileObj.file, savedName);
         } else formData.append(fileObj.type, fileObj.file, savedName);
       });
-      request.onreadystatechange = function () {
-        // listen for state changes
-        if (request.readyState == 4 && request.status == 200) {
-          // when completed we can move away
-          window.location = nextURL;
-        }
-      };
+      // request.onreadystatechange = function () {
+      //   // listen for state changes
+      //   if (request.readyState == 4 && request.status == 200) {
+      //     // when completed we can move away
+      //     window.location = nextURL;
+      //   }
+      // };
       request.open("POST", postURL, false);
       request.send(formData);
     }
@@ -669,10 +696,11 @@
 
     //next page btn
     async function processUploads() {
+ 
       //if no uploads added
       if (files.length == 0) {
         openAlertModal("Upload files before proceeding.");
-      } else {
+      } else { 
         setupFileObjs();
         if (currenttype == "3dmodel") {
           var objCount = 0;
