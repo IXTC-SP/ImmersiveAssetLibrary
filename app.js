@@ -41,6 +41,7 @@ app.use(
     extended: true,
   })
 );
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -52,6 +53,9 @@ app.use(
     },
   })
 );
+
+
+
 
 databasemanager_model.UpdateThumbnailUrl();
 databasemanager_360.UpdateThumbnailUrl();
@@ -302,7 +306,7 @@ app.get("/assets/360", async function (req, res) {
 //WORKING (UPLOAD PAGE)
 const uploadmanager = require("./scripts/uploadsmanager_model");
 app.get("/upload", function (req, res) {
-  uploadmanager.closeTmpFolder();
+  uploadmanager.closeTmpFolder(req.session.id);
   res.render("dragndrop", {
     isLoginpage: true,
     user: req.user,
@@ -321,16 +325,18 @@ app.post(
       result = req.session.tmpContent.image.map((a) => a.originalname);
     }
     req.session.tmpContent["format"] = req.session.tmpContent.model[0].originalname.split(".")[1];
-    gltfmodel.Create(req.files.model[0], function (gltfresult) {
+    gltfmodel.Create(req.session.tmpContent.model[0], function (gltfresult) {
       if (gltfresult) {
-        req.session.tmpContent["modelviewerpath"] = "../uploads/tmp/model.gltf";
+        req.session.tmpContent["gltfresult"] = gltfresult;
+        req.session.tmpContent["modelviewerpath"] = `../uploads/tmp/${req.session.id}/model.gltf`;
         req.session.tmpContent["folderpath"] = req.session.tmpContent.model[0].originalname.split(".")[0];
-        gltfmodel.ClearMaterialFromModel(gltfresult, function () {
+        console.log('before clear material',req.session.id, req.session.tmpContent['gltfresult']);
+        gltfmodel.ClearMaterialFromModel(req.session.tmpContent["gltfresult"], function () {
           res.end("complete");
         });
       } else {
         req.session.tmpContent["folderpath"] = req.session.tmpContent.model[0].originalname.split(".")[0];
-        var fullpath = tmpContent.model[0].destination + req.session.tmpContent.model[0].originalname;
+        var fullpath = req.session.tmpContent.model[0].destination + req.session.tmpContent.model[0].originalname;
         req.session.tmpContent["modelviewerpath"] = "." + fullpath;
         gltfmodel.ClearMaterialFromModel(fullpath, function () {
           res.end("complete");
@@ -378,6 +384,7 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
         doc,
         uploadedDataToAws,
         function (id) {
+          uploadsmanager_model.closeTmpFolder(req.session.id);
           res.send(id);
         }
       );
@@ -390,8 +397,6 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
 
 
 app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function (req, res) {
-  console.log(req.body);
-  console.log(req.files);
   req.session.tmpContent["image"] = [];
   req.session.tmpContent["destination"] = req.files.image[0].destination;
   if (req.body.format == "cubemap") {
@@ -417,7 +422,6 @@ app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function (req, res) {
     req.session.tmpContent["image"]["equi"] = req.files.image[0];
   }
   req.session.tmpContent["format"] = req.body.format;
-  console.log("-> to tmp", typeof req.session.tmpContent);
   res.end("complete");
 });
 
@@ -438,12 +442,11 @@ app.post("/savethreesixty", uploadmanager_360.upload360, function (req, res) {
     req.session.tmpContent = []
      //update model db with the urls
      databasemanager_360.GetModel(result, function (doc) {
-      console.log(doc);
       databasemanager_360.updateToAwsPaths(
         doc,
         uploadedDataToAws,
         function (id) {
-          console.log(id)
+          uploadmanager_360.closeTmpFolder(req.session.id);
           res.send(id);
         }
       );
@@ -458,9 +461,9 @@ process.on("SIGINT", function () {
   process.exit();
 });
 
-process.on("exit", () => {
-  uploadsmanager_model.closeTmpFolder();
-});
+// process.on("exit", () => {
+//   uploadsmanager_model.closeTmpFolder(req.session.id);
+// });
 
 //WORKING DOWNLOAD ASSET POST
 app.post("/downloadasset/:type/:modelid", function (req, res) {

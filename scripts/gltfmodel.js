@@ -7,9 +7,9 @@ const obj2gltf = require("obj2gltf");
 const Create = (objectfile, callback) => {
   var modelfolderpath = path.resolve(objectfile.destination);
   var modeltype = objectfile.filename.split(".")[1];
-  var modelfilepath = path.resolve(objectfile.destination + "/" + objectfile.originalname);
+  var modelfilepath = modelfolderpath + "/" + objectfile.originalname;
   var gltfpath = modelfolderpath + "/model.gltf";
-  console.log(objectfile.destination, objectfile.originalname, gltfpath);
+  console.log(modelfolderpath, modelfilepath, gltfpath);
 
   try {
     if (fs.existsSync(modelfolderpath)) {

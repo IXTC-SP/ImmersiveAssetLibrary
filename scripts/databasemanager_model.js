@@ -32,8 +32,8 @@ const Save = async function (req, res, callback) {
   assetpath.gltfmodelpath = "model.gltf";
   assetpath.thumbnail = req.files.newthumbnail[0].originalname;
   let modelOutFolderSize = null;
-  if (fs.existsSync("./uploads/tmp/model_out")) {
-    fastFolderSize(`${assetpath.folderpath}/model_out`, (err, bytes) => {
+  if (fs.existsSync("./uploads/tmp/" + req.session.id + "/model_out")) {
+    fastFolderSize("./uploads/tmp/" + req.session.id + "/model_out", (err, bytes) => {
       if (err) {
         throw err;
       } else {
@@ -43,7 +43,7 @@ const Save = async function (req, res, callback) {
   } else {
     modelOutFolderSize = 2;
   }
-  fastFolderSize(assetpath.folderpath, (err, bytes) => {
+  fastFolderSize("./uploads/tmp/" + req.session.id, (err, bytes) => {0
     if (err) {
       throw err;
     }

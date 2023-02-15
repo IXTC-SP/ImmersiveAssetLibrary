@@ -3,9 +3,12 @@ const fs = require('fs')
 const os = require('os');
 multer = require('multer');
 
-var storagepath = './uploads/tmp/';
+// var storagepath = './uploads/tmp/';
 const uploadstorage = multer.diskStorage({
+
+
   destination: (req, file, cb) => { // setting destination of uploading files
+    var storagepath = './uploads/tmp/' + req.session.id + '/';
     fs.mkdirSync(storagepath, {
       recursive: true
     })
@@ -19,7 +22,8 @@ var upload = multer({
   storage: uploadstorage
 });
 
-function closeTmpFolder() {
+function closeTmpFolder(sessionid) {
+  var storagepath = './uploads/tmp/' + sessionid + '/'
   if (fs.existsSync(storagepath)) {
     fs.rmSync(storagepath, {
       recursive: true
