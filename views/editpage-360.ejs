@@ -48,24 +48,25 @@
 
   function runPannellum(type) {
     console.log(files);
+    const destination = files[0].destination
     var viewer;
     if(type == 'cubemap'){
       viewer = pannellum.viewer('panorama', {
         "type": "cubemap",
         "cubeMap": [
-          "../uploads/tmp/" + files[0].originalname,
-          "../uploads/tmp/" + files[1].originalname,
-          "../uploads/tmp/" + files[2].originalname,
-          "../uploads/tmp/" + files[3].originalname,
-          "../uploads/tmp/" + files[4].originalname,
-          "../uploads/tmp/" + files[5].originalname
+        "." + destination + files[0].originalname,
+        "." + destination + files[1].originalname,
+        "." + destination + files[2].originalname,
+        "." + destination + files[3].originalname,
+        "." + destination + files[4].originalname,
+        "." + destination + files[5].originalname
         ],
         "autoLoad": true
       });
     } else {
       viewer = pannellum.viewer('panorama', {
       "type": "equirectangular",
-      "panorama": "../uploads/tmp/" + files[0].originalname,
+      "panorama": "." + destination + files[0].originalname,
       "autoLoad": true
       });
     }

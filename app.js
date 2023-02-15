@@ -397,7 +397,8 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
 
 
 app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function (req, res) {
-  req.session.tmpContent["image"] = [];
+  req.session.tmpContent = {}
+  req.session.tmpContent["image"] = {};
   req.session.tmpContent["destination"] = req.files.image[0].destination;
   if (req.body.format == "cubemap") {
     req.session.tmpContent["image"]["top"] = req.files.image.find(
@@ -426,6 +427,7 @@ app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function (req, res) {
 });
 
 app.get("/editpage/360", function (req, res) {
+  console.log(req.session.tmpContent)
   res.render("editpage-360", {
     format: req.session.tmpContent.format,
     images: req.session.tmpContent.image,
@@ -553,7 +555,7 @@ app.get(
   userController.showEnrollment
 );
 app.get("/", function (req,res){
-  res.redirect("/login");
+  res.redirect("/assets/models");
 });
 app.get("/login", authController.showlogin);
 app.get("/authentication/activate", authController.showActivateAndSetPassword); //done
