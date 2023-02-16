@@ -111,7 +111,7 @@
       function clickPublish() {
         showModal(modalSpinner)
         setTimeout(function () { createUploadContent() }, 1000);
-        modalSpinner.getElementByTags("p")[0].innerText = "Publishing..."
+        modalSpinner.getElementByTagName("p")[0].innerText = "Publishing..."
       }
 
       async function createUploadContent() {

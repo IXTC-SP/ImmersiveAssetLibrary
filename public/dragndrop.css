@@ -23,8 +23,8 @@
 }
 
 .card {
-  width: 120px;
-  height: 120px;
+  /* width: 120px;
+  height: 120px; */
   position: relative;
   display: inline-block;
 }
