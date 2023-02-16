@@ -11,7 +11,6 @@
   var files = [];
   var newfiles = [];
   var type = '';
-  const modalSpinner = document.getElementById("modal-spinner");
   getEJScontent();
 
   //reload page when back button on browser is pressed
@@ -48,7 +47,7 @@
 
 
   function runPannellum(type) {
-    console.log(files);
+    // console.log(files);
     const destination = files[0].destination
     var viewer;
     if(type == 'cubemap'){
@@ -89,7 +88,7 @@
       viewer.getHfov() / 180 * Math.PI,
       {'returnImage': true});
     var imgblob = dataURItoBlob(img);
-    console.log(imgblob);
+    // console.log(imgblob);
     console.log(typeof(imgblob));
     thumbnailblob = imgblob;
   }
@@ -109,14 +108,9 @@
     //New Code
     return new Blob([ab], {type: mimeString});
 }
-  function showModal(modalType) {
-        modalType.classList.remove("d-none");
-        modalType.classList += " d-flex";
-      }
 
-  function
+
   async function createUploadContent() {
-    showModal(modalSpinner)
     const formData = new FormData();
     const request = new XMLHttpRequest();
     var nextURL = "/asset/360/";
@@ -133,14 +127,14 @@
       var tags = document.querySelectorAll(".selected_tag_element");
       for(i = 0; i<tags.length;i++){ data.tags.push(tags[i].innerHTML.toLowerCase()); }
       data.files = files;
-      console.log(data);
+      // console.log(data);
       for(i=0; i< newfiles.length;i++)
       { formData.append('file', newfiles[i]); }
       formData.append('data', JSON.stringify(data));
 
       if(thumbnailblob){
         var file = new File([thumbnailblob], 'new_thumbnail.png');
-        console.log(file);
+        // console.log(file);
         formData.append('newthumbnail', file);
       }
 
@@ -157,12 +151,12 @@
   }
 
   function addNewFile(el) {
-      console.log(el.files[0].name);
+      // console.log(el.files[0].name);
       newfiles.push(el.files[0]);
       let p = document.querySelector('.all-files')
       let main = document.createElement('div');
       main.classList.add("new-file")
-      console.log(p);
+      // console.log(p);
       main.innerHTML = `
                     <div class='d-flex justify-content-between w-100'>
                       <span class='p-0 text-muted text-overflow'>${el.files[0].name}</span>

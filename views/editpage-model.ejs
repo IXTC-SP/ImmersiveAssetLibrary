@@ -22,12 +22,16 @@
       window.location.reload();
     }
   });
+  function clickPublish() {
+    showModal(modalSpinner)
+    setTimeout(function(){createUploadContent()},1000);
+  }
     async function createUploadContent() {
       const formData = new FormData();
       const request = new XMLHttpRequest();
       var nextURL = "/asset/model/";
       var postURL = "/save3dmodel";
-      console.log("create upload content");
+      // console.log("create upload content");
 
       var data = {
         files: [],
@@ -49,9 +53,8 @@
       var tags = document.querySelectorAll(".selected_tag_element");
       for (i = 0; i < tags.length; i++) { 
         data.tags.push(tags[i].innerHTML.toLowerCase()); 
-        console.log(tags[i].innerHTML.toLowerCase()); }
       data.files = files;
-      console.log(data);
+      // console.log(data);
       for (i = 0; i < newfiles.length; i++) { formData.append('file', newfiles[i]); }
       formData.append('data', JSON.stringify(data));
       let thumbnailpath = '<%- content.thumbnail %>';
@@ -59,14 +62,12 @@
         var modelviewer = document.getElementById('model-viewer');
         var blob = await modelviewer.toBlob();
         var file = new File([blob], 'new_thumbnail.png');
-        console.log(file);
         formData.append('newthumbnail', file);
       }
 
 
       request.onreadystatechange = function () { // listen for state changes
         if (request.readyState == 4 && request.status == 200) { // when completed we can move away
-          console.log("-->send from backedn", request.responseText)
           nextURL += request.responseText;
           window.location = nextURL;
         }
