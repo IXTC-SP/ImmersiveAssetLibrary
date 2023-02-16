@@ -8,6 +8,11 @@
 
 <%- include('./partials/edit-properties') %>
 <script>
+    const modalSpinner = document.getElementById("modal-spinner");
+  function showModal(modalType) {
+      modalType.classList.remove("d-none");
+      modalType.classList += " d-flex";
+    }
   var files = [];
   var newfiles = [];
   var type = '';

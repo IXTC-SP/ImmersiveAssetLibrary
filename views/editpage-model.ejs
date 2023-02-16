@@ -6,6 +6,12 @@
 
   <%- include('./partials/edit-properties') %>
   <script>
+      const modalSpinner = document.getElementById("modal-spinner");
+  function showModal(modalType) {
+      modalType.classList.remove("d-none");
+      modalType.classList += " d-flex";
+      modalType.getElementsByTagName('p')[0].innerText = "Publishing...";
+    }
     var suggestedtagelements = [];
     var selectedtagelements = [];
     var files = [];
@@ -23,15 +29,16 @@
     }
   });
   function clickPublish() {
-    showModal(modalSpinner)
-    setTimeout(function(){createUploadContent()},1000);
+    createUploadContent()
+    // showModal(modalSpinner)
+    // setTimeout(function(){createUploadContent()},1000);
   }
     async function createUploadContent() {
       const formData = new FormData();
       const request = new XMLHttpRequest();
       var nextURL = "/asset/model/";
       var postURL = "/save3dmodel";
-      // console.log("create upload content");
+      console.log("create upload content");
 
       var data = {
         files: [],
@@ -54,7 +61,8 @@
       for (i = 0; i < tags.length; i++) { 
         data.tags.push(tags[i].innerHTML.toLowerCase()); 
       data.files = files;
-      // console.log(data);
+      console.log(data);
+      }
       for (i = 0; i < newfiles.length; i++) { formData.append('file', newfiles[i]); }
       formData.append('data', JSON.stringify(data));
       let thumbnailpath = '<%- content.thumbnail %>';
@@ -64,8 +72,6 @@
         var file = new File([blob], 'new_thumbnail.png');
         formData.append('newthumbnail', file);
       }
-
-
       request.onreadystatechange = function () { // listen for state changes
         if (request.readyState == 4 && request.status == 200) { // when completed we can move away
           nextURL += request.responseText;
@@ -75,6 +81,7 @@
       request.open("POST", postURL, false);
       request.send(formData);
     }
+  
 
 
     getEJScontent();
