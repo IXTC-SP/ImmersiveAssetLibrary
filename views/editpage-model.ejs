@@ -29,9 +29,9 @@
     }
   });
   function clickPublish() {
-    createUploadContent()
-    // showModal(modalSpinner)
-    // setTimeout(function(){createUploadContent()},1000);
+    showModal(modalSpinner)
+    setTimeout(function(){createUploadContent()},1000);
+    modalSpinner.getElementByTags("p")[0].innerText = "Publishing..."
   }
     async function createUploadContent() {
       const formData = new FormData();
@@ -59,10 +59,10 @@
       }
       var tags = document.querySelectorAll(".selected_tag_element");
       for (i = 0; i < tags.length; i++) { 
-        data.tags.push(tags[i].innerHTML.toLowerCase()); 
+        data.tags.push(tags[i].innerHTML.toLowerCase()); }
       data.files = files;
       console.log(data);
-      }
+      
       for (i = 0; i < newfiles.length; i++) { formData.append('file', newfiles[i]); }
       formData.append('data', JSON.stringify(data));
       let thumbnailpath = '<%- content.thumbnail %>';
