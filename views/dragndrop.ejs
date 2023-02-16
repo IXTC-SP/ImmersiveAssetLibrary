@@ -226,6 +226,10 @@
         background-color: yellow;
       }
 
+      .theme-spinner{
+        border-color: #3f7496;
+        border-right: 0.25em solid transparent;
+      }
     </style>
 
 
@@ -362,7 +366,7 @@
           </div>
           <div class="modal-footer border-0 p-0 d-flex w-100 justify-content-evenly">
             <button id="modal-alert-replace" type="button" class="btn btn-primary d-none theme-color
-            data-dismiss=" modal" onclick="confirmReplace(event)">
+            data-dismiss="modal" onclick="confirmReplace(event)">
               Replace
             </button>
             <button id="modal-alert-okay" type="button" class="btn btn-secondary d-block " data-dismiss="modal"
@@ -378,19 +382,7 @@
     </div>
 
     <!-- loading spinner -->
-    <div id="modal-spinner" class="modal d-none" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content" style="width: 330px">
-          <div class="modal-body d-flex bg-transparent">
-            <div class="spinner-border text-info" role="status">
-              <span id= "modal-spinner-message" class="sr-only">Uploading...</span>
-            </div>
-          </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    <%- include('./partials/loading-spinner') %>
 
   </body>
 
@@ -409,7 +401,6 @@
     const modalAlert = document.getElementById("modal-alert");
     const modalAlertMessage = document.getElementById("modal-alert-message");
     const modalSpinner = document.getElementById("modal-spinner");
-    const modalSpinnerMessage = document.getElementById("modal-spinner-message");
     const cancelButton = document.getElementById("modal-alert-cancel");
     const replaceButton = document.getElementById("modal-alert-replace");
     const okayButton = document.getElementById("modal-alert-okay");
@@ -516,9 +507,7 @@
     var fileObjs = [];
 
     nextpagebtn.addEventListener("click", function (event) {
-      showModal(modalSpinner)
-      modalSpinnerMessage.innerText = "message";
-      processUploads();
+      processUploads()
       event.preventDefault();
     });
 
@@ -526,14 +515,12 @@
       modalType.classList.remove("d-flex");
       modalType.classList += " d-none";
     }
+
     function openAlertModal(message) {
       showModal(modalAlert)
       modalAlertMessage.innerText = message;
     }
-    function openSpinnerModal(message) {
-      showModal(modalSpinner)
-      modalSpinnerMessage.innerText = message;
-    }
+      
     function showModal(modalType) {
       modalType.classList.remove("d-none");
       modalType.classList += " d-flex";
@@ -608,7 +595,8 @@
           assignTextureErr.classList += " d-block";
         }
       } else {
-        createuploadcontent();
+        showModal(modalSpinner)
+        setTimeout(function(){ createuploadcontent()},1000);
       }
     }
 
@@ -644,13 +632,13 @@
           formData.append("thumbnail", fileObj.file, savedName);
         } else formData.append(fileObj.type, fileObj.file, savedName);
       });
-      // request.onreadystatechange = function () {
-      //   // listen for state changes
-      //   if (request.readyState == 4 && request.status == 200) {
-      //     // when completed we can move away
-      //     window.location = nextURL;
-      //   }
-      // };
+      request.onreadystatechange = function () {
+        // listen for state changes
+        if (request.readyState == 4 && request.status == 200) {
+          // when completed we can move away
+          window.location = nextURL;
+        }
+      };
       request.open("POST", postURL, false);
       request.send(formData);
     }
@@ -696,11 +684,12 @@
 
     //next page btn
     async function processUploads() {
- 
+     
       //if no uploads added
       if (files.length == 0) {
         openAlertModal("Upload files before proceeding.");
       } else { 
+        
         setupFileObjs();
         if (currenttype == "3dmodel") {
           var objCount = 0;
@@ -711,14 +700,18 @@
           });
           switch (objCount) {
             case 0:
+              // closeAlertModal(modalSpinner)
               openAlertModal(
                 "No model object uploaded.\n Add either a .fbx, .obj file to proceed."
               );
               break;
             case 1:
-              createuploadcontent();
+              showModal(modalSpinner)
+              setTimeout(function(){ createuploadcontent()},1000);
+             ;
               break;
             default:
+              // closeAlertModal(modalSpinner)
               openAlertModal("Please only upload one 3d model file.");
               break;
           }
@@ -733,7 +726,8 @@
               openAlertModal("Upload only 6 images of equal height and width.");
             }
           } else {
-            createuploadcontent();
+            showModal(modalSpinner)
+            setTimeout(function(){ createuploadcontent()},1000);
           }
         }
       }
@@ -751,15 +745,17 @@
       collectedfiles.appendChild(card);
       //create file info
       var fileinfo = document.createElement("div");
+      fileinfo.style = "width: 90%;"
       card.appendChild(fileinfo);
       var fileinfospan = document.createElement("span");
-      fileinfospan.classList.add("text-overflow")
+      fileinfospan.classList += "text-overflow w-100 d-block"
       fileinfospan.innerHTML = filename;
       fileinfo.appendChild(fileinfospan);
 
       //create icon trashcan
       var trashcanBtn = document.createElement("button");
-      trashcanBtn.classList += "btn btn-outline-danger border-0";
+      trashcanBtn.classList += "btn btn-outline-danger border-0 p-0";
+      trashcanBtn.style += "width: 10%;"
       trashcanBtn.innerHTML =
         '<i class="fa-solid fa-trash-can" style= "font-size :15px"></i>';
       trashcanBtn.addEventListener("click", function (event) {
@@ -943,7 +939,6 @@
         }
       }
       if (!hasExtraFolder) {
-        // console.log("complete", collectedfiles);
         readFiles(collectedfiles);
       }
     }

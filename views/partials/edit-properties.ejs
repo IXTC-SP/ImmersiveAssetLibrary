@@ -1,143 +1,170 @@
 <section class="d-flex flex-column m-auto section-content">
 
-    <div class="container-fluid">
-     
-      <div > 
-        <div class="row justify-content-center">
-          <h2 class="Title">Edit Properties</h2>
-        </div>
-        <div class="row justify-content-between">
-          <div class="col-7 d-flex flex-column gap-2 asset-view flex-grow-1 py-1">
-            <%if(isModel){%>
-                <div>
-                    <!-- <h6 class="asset-name">cyberpunk shiba inu</h6> -->
-                    <model-viewer class="model-viewer-dimensions border border-secondary rounded-4" id="model-viewer" alt=""
-                      src='' ar ar-modes="webxr scene-viewer quick-look" seamless-poster
-                      shadow-intensity="1" camera-controls enable-pan autoplay></model-viewer>
-                  </div>
-            <%}else{%>
-                <div class="model-viewer-dimensions" id="panorama"></div>
-            <%}%>
-           
+  <div class="container-fluid">
 
-            <!-- <div class="custom-file">
+    <div>
+      <div class="row justify-content-center">
+        <h2 class="Title">Edit Properties</h2>
+      </div>
+      <div class="row justify-content-between">
+        <div class="col-7 d-flex flex-column gap-2 asset-view flex-grow-1 py-1">
+          <%if(isModel){%>
+            <div>
+              <!-- <h6 class="asset-name">cyberpunk shiba inu</h6> -->
+              <model-viewer class="model-viewer-dimensions border border-secondary rounded-4" id="model-viewer" alt=""
+                src='' ar ar-modes="webxr scene-viewer quick-look" seamless-poster shadow-intensity="1" camera-controls
+                enable-pan autoplay></model-viewer>
+            </div>
+            <%}else{%>
+              <div class="model-viewer-dimensions" id="panorama"></div>
+              <%}%>
+
+
+                <!-- <div class="custom-file">
               <h6>Add Files</h6>
               <input type="file" class="custom-file-input form-control" id="inputGroupFile01"
                 accept="image/png, image/jpeg" onchange="addNewFile(this)"> -->
-              <!-- <span class="btn btn-primary btn-file">
+                <!-- <span class="btn btn-primary btn-file">
             Browse
           </span> -->
-            <!-- </div> -->
-           
-            <div class="accordion" id="accordionExample">
-              <p class="text-center fst-italic fw-light fs-6">Model's textures may not display accurately, however all assets will be uploaded accordingly.</p>
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingOne">
-                  <button class="accordion-button p-2" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    View Attached Files
-                  </button>
-                </h2>
-                <div id="collapseOne" class="accordion-collapse" aria-labelledby="headingOne"
-                  data-bs-parent="#accordionExample">
-                  <div class="accordion-body p-2">
-                    <%if(isModel){%>
-                    <div class="all-files">
-                      <%if (content.imagefiles){%>
-                        <% for(var i=0; i < content.imagefiles.length; i++) {%>
-                          <div class="current-file">
-                            <div class="d-flex justify-content-between w-100">
-  
-                              <span class="p-0 text-muted text-overflow">
-                                <%=content.imagefiles[i]%>
-                              </span>
-                              <!-- <button class="remove-file bg-transparent border-0"
-                                onclick="removeExistingFile(this,'<%-content.imagefiles[i]%>')"><i
-                                  class="fa-regular fa-trash-can trash-btn"></i></button> -->
-                            </div>
-                            <hr class="m-0">
-                          </div>
-  
-                          <%}%>
-                      <%}%>
-                      
-                    </div>
-                    <%}else{%>
-                      <div class="all-files">
-                        </div>
+                <!-- </div> -->
+
+                <div class="accordion" id="accordionExample">
+                  <%if(isModel){%>
+                    <p style="font-size: 11px;" class="text-center fst-italic fw-light">Model's textures may not display
+                      accurately, however all assets will be uploaded accordingly.</p>
                     <%}%>
-                  </div>
-                </div>
-              </div>
-            </div>
-           
+                      <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                          <button class="accordion-button p-2" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            View Attached Files
+                          </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                          data-bs-parent="#accordionExample">
+                          <div class="accordion-body p-2">
+                            <%if(isModel){%>
+                              <div class="all-files">
+                                <%if (content.imagefiles){%>
+                                  <% for(var i=0; i < content.imagefiles.length; i++) {%>
+                                    <div class="current-file">
+                                      <div class="d-flex justify-content-between w-100">
+                                        <span class="p-0 text-muted text-overflow">
+                                          <%=content.imagefiles[i]%>
+                                        </span>
+                                      </div>
+                                      <% if (i !==content.imagefiles.length -1) {%>
+                                        <hr class="m-0">
+                                        <%}%>
+                                    </div>
 
-          </div>
-          <div class="col-5 d-flex flew-wrap gap-4 flex-column flex-grow-1 py-1">
-            <div>
-              <h6>Title</h6>
-              <input class="title-info w-100 form-control" type="text" class="form-control" placeholder="Add a title..."
-                aria-label="Username" aria-describedby="basic-addon1">
-            </div>
-            <div>
-              <h6>Description</h6>
-              <textarea class="desc-info desc-info-dimension form-control" placeholder="Add a brief description..."
-                aria-label="With textarea"></textarea>
-            </div>
-            <%if(isModel){%>
-              <div>
-                <div class="d-flex justify-content-between flex-wrap">
-                  <h6 class="w-100">Technical Details</h6>
-                  <div class="d-flex flex-wrap">
-                    <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
-                      <input class="low-poly-info" name="optradio" class="form-check-input" type="checkbox"
-                        id="detail-lowpoly" value="lowpoly" />
-                      <label class="form-check-label" for="detail-lowpoly">Low-poly</label>
-                    </div>
-                    <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
-                      <input class="rigged-info" name="optradio" class="form-check-input" type="checkbox"
-                        id="detail-rigged" value="rigged" />
-                      <label class="form-check-label" for="detail-rigged" checked>Rigged</label>
-                    </div>
-                    <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
-                      <input class="animated-info" name="optradio" class="form-check-input" type="checkbox"
-                        id="detail-animated" value="animated" />
-                      <label class="form-check-label" for="detail-animated" checked>Animated</label>
-                    </div>
-                    <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
-                      <input class="textured-info" name="optradio" class="form-check-input" type="checkbox"
-                        id="detail-texture" value="textures" />
-                      <label class="form-check-label" for="detail-texture" checked>Textured</label>
-                    </div>
-                  </div>
-  
-                </div>
-              </div>
-            <%}%>
-            <div>
-              <h6>Tags</h6>
-              <input type="text" id="tag_input_content" name="tag_input_content" value="" readonly>
-              <div id="selected_tags_group" class="selected-tags"></div>
-              <input type="text" class="form-control" type="text" id='tag_create' value="" placeholder="Add a tag..."
-                aria-label="Username" aria-describedby="basic-addon1">
-              <div class="selected-tags" id="tag_suggest">
-              </div>
+                                    <%}%>
+                                      <%}%>
 
-            </div>
-            <div>
-            </div>          
-          </div>        
+                              </div>
+                              <%}else{%>
+                                <div class="all-files">
+                                  <% const numOfCubmap=0%>
+                                    <% for(const key in images) {%>
+                                      <% numOfCubmap ++ %>
+                                        <div class="current-file">
+                                          <div class="d-flex justify-content-between w-100">
+                                            <span class="p-0 text-muted text-overflow">
+                                              <%= images[key].originalname %>
+                                            </span>
+                                          </div>
+                                          <% if (numOfCubmap !==6) {%>
+                                            <hr class="m-0">
+                                            <%}%>
+                                              <hr class="m-0">
+                                        </div>
+
+                                        <%}%>
+                                </div>
+                                <%}%>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+
+
         </div>
-        <div class="row justify-content-between">     
-            <div class="col-4">
-              <a href="/upload"> <button type="button" class="btn btn-outline-info rounded-8"><h6 class="m-0">Cancel</h6></button></a>
-             
-            </div>
-            <div class="col-4 d-flex  justify-content-end">
-              <button onclick="createUploadContent()" type="button"
-                class="publish-btn btn theme-color btn-rounded"><h6 class="m-0">Publish</h6></button>
-            </div>
+        <div class="col-5 d-flex flew-wrap gap-4 flex-column flex-grow-1 py-1">
+          <div>
+            <h6>Title</h6>
+            <input class="title-info w-100 form-control" type="text" class="form-control" placeholder="Add a title..."
+              aria-label="Username" aria-describedby="basic-addon1">
           </div>
-        
+          <div>
+            <h6>Description</h6>
+            <textarea class="desc-info desc-info-dimension form-control" placeholder="Add a brief description..."
+              aria-label="With textarea"></textarea>
+          </div>
+          <%if(isModel){%>
+            <div>
+              <div class="d-flex justify-content-between flex-wrap">
+                <h6 class="w-100">Technical Details</h6>
+                <div class="d-flex flex-wrap">
+                  <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
+                    <input class="low-poly-info" name="optradio" class="form-check-input" type="checkbox"
+                      id="detail-lowpoly" value="lowpoly" />
+                    <label class="form-check-label" for="detail-lowpoly">Low-poly</label>
+                  </div>
+                  <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
+                    <input class="rigged-info" name="optradio" class="form-check-input" type="checkbox"
+                      id="detail-rigged" value="rigged" />
+                    <label class="form-check-label" for="detail-rigged" checked>Rigged</label>
+                  </div>
+                  <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
+                    <input class="animated-info" name="optradio" class="form-check-input" type="checkbox"
+                      id="detail-animated" value="animated" />
+                    <label class="form-check-label" for="detail-animated" checked>Animated</label>
+                  </div>
+                  <div class="form-check form-check-inline text-muted p-0 mb-0 d-flex">
+                    <input class="textured-info" name="optradio" class="form-check-input" type="checkbox"
+                      id="detail-texture" value="textures" />
+                    <label class="form-check-label" for="detail-texture" checked>Textured</label>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <%}%>
+              <div>
+                <h6>Tags</h6>
+                <input type="text" id="tag_input_content" name="tag_input_content" value="" readonly>
+                <div id="selected_tags_group" class="selected-tags"></div>
+                <input type="text" class="form-control" type="text" id='tag_create' value="" placeholder="Add a tag..."
+                  aria-label="Username" aria-describedby="basic-addon1">
+                <div class="selected-tags" id="tag_suggest">
+                </div>
+
+              </div>
+              <div>
+              </div>
+        </div>
       </div>
-  </section>
+      <div class="row justify-content-between">
+        <div class="col-4">
+          <a href="/upload"> <button type="button" class="btn btn-outline-info rounded-8">
+              <h6 class="m-0">Cancel</h6>
+            </button></a>
+
+        </div>
+        <div class="col-4 d-flex  justify-content-end">
+          <button onclick="createUploadContent()" type="button" class="publish-btn btn theme-color btn-rounded">
+            <h6 class="m-0">Publish</h6>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+</section>
+<!-- loading spinner -->
+<%- include('./partials/loading-spinner') %>
+<script>
+
+
+</script>

@@ -11,6 +11,7 @@
   var files = [];
   var newfiles = [];
   var type = '';
+  const modalSpinner = document.getElementById("modal-spinner");
   getEJScontent();
 
   //reload page when back button on browser is pressed
@@ -108,8 +109,14 @@
     //New Code
     return new Blob([ab], {type: mimeString});
 }
+  function showModal(modalType) {
+        modalType.classList.remove("d-none");
+        modalType.classList += " d-flex";
+      }
 
+  function
   async function createUploadContent() {
+    showModal(modalSpinner)
     const formData = new FormData();
     const request = new XMLHttpRequest();
     var nextURL = "/asset/360/";
