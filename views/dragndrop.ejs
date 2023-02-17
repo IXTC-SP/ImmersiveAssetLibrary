@@ -378,7 +378,7 @@
     </div>
 
     <!-- loading spinner -->
-    <div id="modal-spinner" class="modal d-none" tabindex="-1" role="dialog">
+    <!-- <div id="modal-spinner" class="modal d-none" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content" style="width: 330px">
           <div class="modal-body d-flex bg-transparent">
@@ -389,9 +389,9 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
-
+    <%- include('./partials/loading-spinner') %>
   </body>
 
   <script type="text/javascript" src="fileextensioncheck.js"></script>
@@ -516,8 +516,8 @@
     var fileObjs = [];
 
     nextpagebtn.addEventListener("click", function (event) {
-      showModal(modalSpinner)
-      modalSpinnerMessage.innerText = "message";
+      // showModal(modalSpinner)
+      // modalSpinnerMessage.innerText = "message";
       processUploads();
       event.preventDefault();
     });
@@ -644,13 +644,13 @@
           formData.append("thumbnail", fileObj.file, savedName);
         } else formData.append(fileObj.type, fileObj.file, savedName);
       });
-      // request.onreadystatechange = function () {
-      //   // listen for state changes
-      //   if (request.readyState == 4 && request.status == 200) {
-      //     // when completed we can move away
-      //     window.location = nextURL;
-      //   }
-      // };
+      request.onreadystatechange = function () {
+        // listen for state changes
+        if (request.readyState == 4 && request.status == 200) {
+          // when completed we can move away
+          window.location = nextURL;
+        }
+      };
       request.open("POST", postURL, false);
       request.send(formData);
     }
