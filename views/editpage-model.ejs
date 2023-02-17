@@ -1,17 +1,11 @@
 <%- include('./partials/header') %>
 
-  <!-- <link rel="stylesheet" href="./public/edit-page.css"> -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <script type="text/javascript" src="/datamuse.js"></script>
 
   <%- include('./partials/edit-properties') %>
   <script>
-      const modalSpinner = document.getElementById("modal-spinner");
-  function showModal(modalType) {
-      modalType.classList.remove("d-none");
-      modalType.classList += " d-flex";
-      modalType.getElementsByTagName('p')[0].innerText = "Publishing...";
-    }
+     
     var suggestedtagelements = [];
     var selectedtagelements = [];
     var files = [];
@@ -28,11 +22,6 @@
       window.location.reload();
     }
   });
-  function clickPublish() {
-    showModal(modalSpinner)
-    setTimeout(function(){createUploadContent()},1000);
-    modalSpinner.getElementByTagName("p")[0].innerText = "Publishing..."
-  }
     async function createUploadContent() {
       const formData = new FormData();
       const request = new XMLHttpRequest();

@@ -97,24 +97,24 @@
               <div id="drop3" class="col-3 texture-assign-box right cubemap-bg-img">
                 <label class="texture-assign-box-label" for="right-texture-selection">Right</label>
 
-                <img id="drag3" alt="" draggable="true" class="texture-assign-box-img" src="/no-preview.jpeg" />
+                <img id="drag3" alt="" draggable="true" class="texture-assign-box-img" src="" />
               </div>
               <div id="drop4" class="col-3 texture-assign-box back cubemap-bg-img">
                 <label class="texture-assign-box-label" for="back-texture-selection">Back</label>
 
-                <img id="drag4" alt="" draggable="true" class="texture-assign-box-img" src="/no-preview.jpeg" />
+                <img id="drag4" alt="" draggable="true" class="texture-assign-box-img" src="" />
               </div>
               <div id="drop5" class="col-3 texture-assign-box left cubemap-bg-img">
                 <label class="texture-assign-box-label" for="left-texture-selection">Left</label>
 
-                <img id="drag5" alt="" draggable="true" class="texture-assign-box-img" src="/no-preview.jpeg" />
+                <img id="drag5" alt="" draggable="true" class="texture-assign-box-img" src="" />
               </div>
             </div>
             <div class="row">
               <div id="drop6" class="col-3 texture-assign-box bottom cubemap-bg-img">
                 <label class="texture-assign-box-label" for="bottom-texture-selection">Bottom</label>
 
-                <img id="drag6" alt="" draggable="true" class="texture-assign-box-img" src="/no-preview.jpeg" />
+                <img id="drag6" alt="" draggable="true" class="texture-assign-box-img" src="" />
               </div>
             </div>
           </div>
@@ -179,7 +179,6 @@
     const formatTypeCaption = document.getElementById("format-type-caption");
     const modalAlert = document.getElementById("modal-alert");
     const modalAlertMessage = document.getElementById("modal-alert-message");
-    const modalSpinner = document.getElementById("modal-spinner");
     const cancelButton = document.getElementById("modal-alert-cancel");
     const replaceButton = document.getElementById("modal-alert-replace");
     const okayButton = document.getElementById("modal-alert-okay");
@@ -295,10 +294,10 @@
       modalType.classList += " d-none";
     }
 
-  function showModal(modalType) {
-      modalType.classList.remove("d-none");
-      modalType.classList += " d-flex";
-    }
+  // function showModal(modalType) {
+  //     modalType.classList.remove("d-none");
+  //     modalType.classList += " d-flex";
+  //   }
     function openAlertModal(message) {
       showModal(modalAlert)
       modalAlertMessage.innerText = message;
