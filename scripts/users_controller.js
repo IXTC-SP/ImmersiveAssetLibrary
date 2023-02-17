@@ -182,14 +182,15 @@ const controller = {
     try {
       renderObj.uploads["models"] = await modelModel.find({
         owner: req.user._id,
-      });
+      }).sort({uploaddate: -1});
       renderObj.uploads["360"] = await threeSixtyModel.find({
         owner: req.user._id,
-      });
+      }).sort({uploaddate: -1});;
     } catch (err) {
       req.errorObj = errorMessage(true, err);
     }
     let renderView = new RenderView(req, renderObj);
+    console.log(renderObj)
     res.render("users/dashboard", {
       ...renderView,
       showProfile: false,
