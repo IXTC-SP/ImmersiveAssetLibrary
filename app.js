@@ -95,6 +95,7 @@ const userModel = require("./models/user");
 app.get(
   "/asset/:type/:modelid",
   authMiddleware.isAuthenticated,
+  authMiddleware.closeTmp,
   function (req, res) {
     var dbmanager;
     var isModel;
@@ -205,6 +206,7 @@ const sortResults = (result) => {
 app.get(
   "/assets/models",
   authMiddleware.isAuthenticated,
+  authMiddleware.closeTmp,
   async function (req, res) {
     let filteredResult = [];
     if (typeof req.query.search === "undefined" || req.query.search === "") {
@@ -270,7 +272,7 @@ app.post("/assets", authMiddleware.isAuthenticated, function (req, res) {
   }
 });
 
-app.get("/assets/360", authMiddleware.isAuthenticated,async function (req, res) {
+app.get("/assets/360", authMiddleware.isAuthenticated,  authMiddleware.closeTmp, async function (req, res) {
   let filteredResult = [];
   if (typeof req.query.search === "undefined" || req.query.search === "") {
     databasemanager_360.GetAllModels(async (result) => {
@@ -306,7 +308,7 @@ app.get("/assets/360", authMiddleware.isAuthenticated,async function (req, res) 
 //WORKING (UPLOAD PAGE)
 const uploadmanager = require("./scripts/uploadsmanager_model");
 const auth_middleware = require("./middlewares/auth_middleware");
-app.get("/upload", authMiddleware.isAuthenticated,function (req, res) {
+app.get("/upload", authMiddleware.isAuthenticated,  authMiddleware.closeTmp,function (req, res) {
   //uploadmanager.closeTmpFolder(req.session.id);
     res.render("dragndrop", {
       isLoginpage: true,
@@ -350,7 +352,7 @@ app.post(
   }
 );
 
-app.get("/editpage/model", authMiddleware.isAuthenticated, function (req, res) {
+app.get("/editpage/model", authMiddleware.isAuthenticated,function (req, res) {
   if (req.session.tmpContent) {
     let images;
     if (req.session.tmpContent.image) {
@@ -473,11 +475,18 @@ process.on("SIGINT", function () {
   console.log("exiting")
   process.exit();
 });
-
+const fs = require('fs')
+// process.on('beforeExit', code => {
+//   // Can make asynchronous calls
+//   setTimeout(() => {
+//     console.log(`Process will exit with code: ${code}`)
+//     process.exit(code)
+//   }, 100)
+// })
 process.on("exit", () => {
   console.log("exiting exit")
   if (fs.existsSync('./uploads/tmp/')) {
-    fs.rmSync(storagepath, {
+    fs.rmSync('./uploads/tmp/', {
       recursive: true
     });
   }
@@ -542,32 +551,38 @@ app.post("/downloadasset/:type/:modelid", authMiddleware.isAuthenticated, functi
 app.get(
   "/:user_id/dashboard/profile",
   authMiddleware.isAuthenticated,
+  authMiddleware.closeTmp,
   userController.showProfile
 );
 app.post(
   "/:user_id/dashboard/profile",
   authMiddleware.isAuthenticated,
+  authMiddleware.closeTmp,
   userController.showProfile
 );
 app.patch(
   "/:user_id/dashboard/profile",
   authMiddleware.isAuthenticated,
+  authMiddleware.closeTmp,
   userController.showProfile
 );
 
 app.get(
   "/:user_id/dashboard/uploads",
   authMiddleware.isAuthenticated,
+  authMiddleware.closeTmp,
   userController.showUploads
 );
 app.get(
   "/:user_id/dashboard/downloads",
   authMiddleware.isAuthenticated,
+  authMiddleware.closeTmp,
   userController.showDownloads
 );
 app.get(
   "/:user_id/dashboard/enrollment",
   authMiddleware.isAuthenticated,
+  authMiddleware.closeTmp,
   userController.showEnrollment
 );
 app.get("/", function (req,res){
@@ -578,7 +593,7 @@ app.get("/login", authController.showlogin);
 app.get("/authentication/activate", authController.showActivateAndSetPassword); //done
 app.get("/forgot-password", authController.showForgotPassword); //done
 app.get("/reset-password", authController.showSetPassword); //done
-app.get("/logout", authMiddleware.isAuthenticated, userController.logout);
+app.get("/logout", authMiddleware.isAuthenticated,  authMiddleware.closeTmp, userController.logout);
 
 app.post(
   "/:user_id/dashboard/enrollment",
