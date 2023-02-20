@@ -73,7 +73,7 @@ require("./config/passport");
 const mongoose = require("mongoose");
 //Mongoose
 const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}.trfz1qc.mongodb.net/`;
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 app.listen(port, async () => {
   try {
     await mongoose.connect(MONGODB_URI, {
@@ -238,7 +238,7 @@ app.get(
     }
   }
 );
-app.post("/assets", function (req, res) {
+app.post("/assets", authMiddleware.isAuthenticated, function (req, res) {
   if (req.body.asset === "360") {
     req.body.format === "equirectangular" || req.body.format === "cubemap"
       ? null
@@ -270,7 +270,7 @@ app.post("/assets", function (req, res) {
   }
 });
 
-app.get("/assets/360", async function (req, res) {
+app.get("/assets/360", authMiddleware.isAuthenticated,async function (req, res) {
   let filteredResult = [];
   if (typeof req.query.search === "undefined" || req.query.search === "") {
     databasemanager_360.GetAllModels(async (result) => {
@@ -305,18 +305,21 @@ app.get("/assets/360", async function (req, res) {
 
 //WORKING (UPLOAD PAGE)
 const uploadmanager = require("./scripts/uploadsmanager_model");
-app.get("/upload", function (req, res) {
-  uploadmanager.closeTmpFolder(req.session.id);
-  res.render("dragndrop", {
-    isLoginpage: true,
-    user: req.user,
-  });
+const auth_middleware = require("./middlewares/auth_middleware");
+app.get("/upload", authMiddleware.isAuthenticated,function (req, res) {
+  //uploadmanager.closeTmpFolder(req.session.id);
+    res.render("dragndrop", {
+      isLoginpage: true,
+      user: req.user,
+    });
+
 });
 
 // ----- model upload to publish ------ START
 
 app.post(
   "/uploadtmp3dmodel",
+  auth_middleware.isAuthenticated,
   uploadsmanager_model.uploadtmp3D,
   function (req, res) {
     req.session.tmpContent = req.files;
@@ -347,7 +350,7 @@ app.post(
   }
 );
 
-app.get("/editpage/model", function (req, res) {
+app.get("/editpage/model", authMiddleware.isAuthenticated, function (req, res) {
   if (req.session.tmpContent) {
     let images;
     if (req.session.tmpContent.image) {
@@ -369,11 +372,13 @@ app.get("/editpage/model", function (req, res) {
       isModel: true,
       user: req.user,
     });
+  }else{
+    res.redirect("/")
   }
 });
 
 
-app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
+app.post("/save3dmodel", authMiddleware.isAuthenticated, uploadsmanager_model.upload3D, function (req, res) {
   //save model database
   databasemanager_model.save(req, res, async function (result) {
     req.session.tmpContent["thumbnail"] = req.files.newthumbnail[0];
@@ -396,7 +401,7 @@ app.post("/save3dmodel", uploadsmanager_model.upload3D, function (req, res) {
 // ----- model upload to publish ------ END
 
 
-app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function (req, res) {
+app.post("/uploadtmp360", authMiddleware.isAuthenticated, uploadmanager_360.uploadtmp360, function (req, res) {
   req.session.tmpContent = {}
   req.session.tmpContent["image"] = {};
   req.session.tmpContent["destination"] = req.files.image[0].destination;
@@ -426,18 +431,23 @@ app.post("/uploadtmp360", uploadmanager_360.uploadtmp360, function (req, res) {
   res.end("complete");
 });
 
-app.get("/editpage/360", function (req, res) {
+app.get("/editpage/360", authMiddleware.isAuthenticated, function (req, res) {
   console.log(req.session.tmpContent)
-  res.render("editpage-360", {
-    format: req.session.tmpContent.format,
-    images: req.session.tmpContent.image,
-    isLoginpage: true,
-    isModel: false,
-    user: req.user,
-  });
+  if (req.session.tmpContent){
+    res.render("editpage-360", {
+      format: req.session.tmpContent.format,
+      images: req.session.tmpContent.image,
+      isLoginpage: true,
+      isModel: false,
+      user: req.user,
+    });
+  }else{
+    console.log("--->",err)
+    res.redirect("/")
+  }
 });
 
-app.post("/savethreesixty", uploadmanager_360.upload360, function (req, res) {
+app.post("/savethreesixty", auth_middleware.isAuthenticated, uploadmanager_360.upload360, function (req, res) {
   databasemanager_360.save(req, res, async function (result) {
     req.session.tmpContent["thumbnail"] = req.files.newthumbnail[0];
     const uploadedDataToAws = await awsMethods.uploadFiles(req.session.tmpContent, result, "360");
@@ -460,15 +470,21 @@ app.post("/savethreesixty", uploadmanager_360.upload360, function (req, res) {
 // Begin reading from stdin so the process does not exit imidiately
 process.stdin.resume();
 process.on("SIGINT", function () {
+  console.log("exiting")
   process.exit();
 });
 
-// process.on("exit", () => {
-//   uploadsmanager_model.closeTmpFolder(req.session.id);
-// });
+process.on("exit", () => {
+  console.log("exiting exit")
+  if (fs.existsSync('./uploads/tmp/')) {
+    fs.rmSync(storagepath, {
+      recursive: true
+    });
+  }
+});
 
 //WORKING DOWNLOAD ASSET POST
-app.post("/downloadasset/:type/:modelid", function (req, res) {
+app.post("/downloadasset/:type/:modelid", authMiddleware.isAuthenticated, function (req, res) {
   var dbmanager = databasemanager_model;
   var update;
   var filter;
@@ -555,6 +571,7 @@ app.get(
   userController.showEnrollment
 );
 app.get("/", function (req,res){
+  console.log(req.session.id)
   res.redirect("/assets/models");
 });
 app.get("/login", authController.showlogin);
