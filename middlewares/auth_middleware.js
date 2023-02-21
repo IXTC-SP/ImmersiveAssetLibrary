@@ -16,21 +16,22 @@ module.exports = {
             if(!req.hasSessionClass){
 
             }
-            let newSessId = new SessId()
-            console.log(newSessId )
-            if(newSessId.sessId === undefined || newSessId.sessId !== req.session.id ){
-                console.log(newSessId.sessId );
-                newSessId.sessId = req.session.id
-            }else(
-                console.log(newSessId.sessId )
-            )
-           
+            let newSessId = new SessId(req.session.id)
             try {
                 console.log("current session id ", req.session.id)         
                 if (req.session.passport.user) {
                     // console.log("is authenticated")                    
                     // uploadsmanager_model.closeTmpFolder(req.session.id);
                     req.user = req.session.passport.user
+                    
+                    console.log(newSessId )
+                    if(newSessId.sessId === undefined || newSessId.sessId !== req.session.id ){
+                        console.log(newSessId.sessId );
+                        newSessId.sessId = req.session.id
+                    }else(
+                        console.log(newSessId.sessId )
+                    )
+                   
                     if (req.session.views) {
                         req.session.views++
                         console.log("sess not expired yet")
