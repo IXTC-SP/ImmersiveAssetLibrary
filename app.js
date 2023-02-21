@@ -46,13 +46,18 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     tmpContent : [],
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24, //2 DAY
+      // maxAge: 1000 * 60 * 60 * 24, //1 DAY
+      maxAge: 1000 * 60  //2 min
     },
+    // vews:0i
+    // cookie: {},
   })
 );
+
+
 
 
 
@@ -69,11 +74,48 @@ app.use(passport.session()); //so that can tap into the express sessions data
 // createStrategy is responsible to setup passport-local LocalStrategy with the correct options.
 require("./config/passport");
 
+// app.use((req, res, next) =>  {
+//   console.log(req.session)
+//     if (req.session.views) {
+//       req.session.views++
+//       console.log("sess not expired yet")
+//       req.session.prevSessId = req.session.id
+//       //req.session.save()
+//       // res.setHeader('Content-Type', 'text/html')
+//       // res.write('<p>views: ' + sess.views + '</p>')
+//       // res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's</p>')
+//       // res.end()
+//     } else {
+//       console.log("sess has expired please log in again")
+//       //delete tmp files
+//       //res.redirect("/login")
+//       console.log(req.session.prevSessId )
+//       uploadmanager.closeTmpFolder(req.session.prevSessId );
+//       // if (fs.existsSync('./uploads/tmp/')) {
+//       //   fs.rmSync('./uploads/tmp/', {
+//       //     recursive: true
+//       //   });
+//       // }
+//       req.session.views = 1
+//       //req.session.save()
+  
+//       // res.end('welcome to the session demo. refresh!')
+    
+  
+//   }
+  
+//   console.log(req.session)
+//   next()
+// })
+// app.post("/session", (req,res)=>{
+//  console.log("clear tmp", req.session.id)
+//  res.send("done")
+// })
 //sandra connection
 const mongoose = require("mongoose");
 //Mongoose
 const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}.trfz1qc.mongodb.net/`;
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 app.listen(port, async () => {
   try {
     await mongoose.connect(MONGODB_URI, {

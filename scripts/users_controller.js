@@ -124,7 +124,7 @@ const controller = {
       renderObj.uploads["360"] = await threeSixtyModel.find({
         owner: req.user._id,
       });
-      console.log(renderObj.isSuccess.alert);
+      //console.log(renderObj.isSuccess.alert);
     } catch (err) {
       console.log(err);
       renderObj.errorObj = errorMessage(true, err.message);
