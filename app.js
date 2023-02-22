@@ -42,18 +42,17 @@ app.use(
   })
 );
 
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     tmpContent : [],
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     cookie: {
       // maxAge: 1000 * 60 * 60 * 24, //1 DAY
-      maxAge: 1000 * 60  //2 min
+      maxAge: 1000 * 60  //1 min
     },
-    // vews:0i
-    // cookie: {},
   })
 );
 
@@ -74,39 +73,48 @@ app.use(passport.session()); //so that can tap into the express sessions data
 // createStrategy is responsible to setup passport-local LocalStrategy with the correct options.
 require("./config/passport");
 
-// app.use((req, res, next) =>  {
-//   console.log(req.session)
-//     if (req.session.views) {
-//       req.session.views++
-//       console.log("sess not expired yet")
-//       req.session.prevSessId = req.session.id
-//       //req.session.save()
-//       // res.setHeader('Content-Type', 'text/html')
-//       // res.write('<p>views: ' + sess.views + '</p>')
-//       // res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's</p>')
-//       // res.end()
-//     } else {
-//       console.log("sess has expired please log in again")
-//       //delete tmp files
-//       //res.redirect("/login")
-//       console.log(req.session.prevSessId )
-//       uploadmanager.closeTmpFolder(req.session.prevSessId );
-//       // if (fs.existsSync('./uploads/tmp/')) {
-//       //   fs.rmSync('./uploads/tmp/', {
-//       //     recursive: true
-//       //   });
-//       // }
-//       req.session.views = 1
-//       //req.session.save()
-  
-//       // res.end('welcome to the session demo. refresh!')
-    
-  
-//   }
-  
-//   console.log(req.session)
-//   next()
-// })
+const MongoDBStore = require('connect-mongo')
+const store = MongoDBStore.create({
+  mongoUrl: `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}.trfz1qc.mongodb.net/`,
+  dbName: process.env.MONGO_DB,
+  collectionName: 'mySessions',
+
+});
+const mysessionsModel = require("./models/mysessions")
+app.use(async (req, res, next) =>  {
+  console.log(req.session.id)
+  // console.log(req.session)
+    if (req.session.views) {
+      req.session.views++
+      // let sessionId = req.session.id
+     
+      console.log("sess not expired yet")
+    } else {
+      console.log("sess has expired please log in again")
+      //delete tmp files
+      //get from the tsore the user id, delete all user id tmp folder
+
+      // const found = await mysessionsModel.find({})
+      // console.log("--->",found)
+      store.all((error, sessions)=>{
+        console.log(sessions)
+        // mySessions = sessions
+        // console.log("mysessions--->", mySessions)
+      for(const session in sessions){
+        console.log(session.user, Date.now())
+        if(session.expires < Date.now()){
+          console.log("destroy this session")
+        }
+        uploadmanager.closeTmpFolder(session.user);
+      }
+      })
+      
+ 
+      
+      req.session.views = 1
+  }
+  next()
+})
 // app.post("/session", (req,res)=>{
 //  console.log("clear tmp", req.session.id)
 //  res.send("done")
@@ -375,7 +383,8 @@ app.post(
     gltfmodel.Create(req.session.tmpContent.model[0], function (gltfresult) {
       if (gltfresult) {
         req.session.tmpContent["gltfresult"] = gltfresult;
-        req.session.tmpContent["modelviewerpath"] = `../uploads/tmp/${req.session.id}/model.gltf`;
+        // req.session.tmpContent["modelviewerpath"] = `../uploads/tmp/${req.session.id}/model.gltf`;
+        req.session.tmpContent["modelviewerpath"] = `../uploads/tmp/${req.user._id}/${req.session.id}/model.gltf`;
         req.session.tmpContent["folderpath"] = req.session.tmpContent.model[0].originalname.split(".")[0];
         console.log('before clear material',req.session.id, req.session.tmpContent['gltfresult']);
         gltfmodel.ClearMaterialFromModel(req.session.tmpContent["gltfresult"], function () {
@@ -433,7 +442,7 @@ app.post("/save3dmodel", authMiddleware.isAuthenticated, uploadsmanager_model.up
         doc,
         uploadedDataToAws,
         function (id) {
-          uploadsmanager_model.closeTmpFolder(req.session.id);
+          uploadsmanager_model.closeTmpFolder(req.user._id);
           res.send(id);
         }
       );
