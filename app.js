@@ -104,8 +104,10 @@ app.use(async (req, res, next) =>  {
         console.log(sessions[i].expiryDate, new Date())
         if(new Date(sessions[i].expiryDate) < new Date()){
           console.log("destroy this session")
+          store.destroy
+          // uploadmanager.closeTmpFolder(session.user);
         }
-        // uploadmanager.closeTmpFolder(session.user);
+        
       }
       })
       req.session.views = 1
