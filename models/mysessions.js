@@ -9,7 +9,7 @@ const sessionsSchema = new Schema({
     type: Date,
   },
   session: {
-    type: String,
+    type: mongoose.Schema.Types.Mixed,
   },
 })
 

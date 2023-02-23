@@ -5,12 +5,14 @@ const tokenModel = require("../models/token");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const session = require("express-session");
 const MongoDBStore = require('connect-mongo')
 const store = MongoDBStore.create({
   mongoUrl: `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}.trfz1qc.mongodb.net/`,
   dbName: process.env.MONGO_DB,
   collectionName: 'mySessions',
-  ttl: 1000 * 60
+  autoRemove:"disabled",
+  //default is 2 weeks
 });
 //need 2 step verfication for app password, cos google diables the less secure apps in may 2022
 let mailTransporter = nodemailer.createTransport({
@@ -38,7 +40,7 @@ const controller = {
   login: async (req, res) => {
     console.log("current session id", )
     try {
-      store.set(req.session.id,{},function(err, session){
+      store.set(req.session.id,{expiryDate:req.session.cookie.expires},function(err, session){
       })
       res.redirect(`/assets/models`);
     } catch (error) {

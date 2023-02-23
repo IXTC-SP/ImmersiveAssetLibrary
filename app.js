@@ -42,7 +42,13 @@ app.use(
   })
 );
 
-
+const MongoDBStore = require('connect-mongo')
+const store = MongoDBStore.create({
+  mongoUrl: `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}.trfz1qc.mongodb.net/`,
+  dbName: process.env.MONGO_DB,
+  collectionName: 'mySessions',
+  autoRemove:"disabled",
+});
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -51,7 +57,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       // maxAge: 1000 * 60 * 60 * 24, //1 DAY
-      maxAge: 1000 * 60  //1 min
+      maxAge: 1000 * 60  //1 min count in miliseconds
     },
   })
 );
@@ -73,13 +79,6 @@ app.use(passport.session()); //so that can tap into the express sessions data
 // createStrategy is responsible to setup passport-local LocalStrategy with the correct options.
 require("./config/passport");
 
-const MongoDBStore = require('connect-mongo')
-const store = MongoDBStore.create({
-  mongoUrl: `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}.trfz1qc.mongodb.net/`,
-  dbName: process.env.MONGO_DB,
-  collectionName: 'mySessions',
-
-});
 const mysessionsModel = require("./models/mysessions")
 app.use(async (req, res, next) =>  {
   console.log(req.session.id)
@@ -91,6 +90,7 @@ app.use(async (req, res, next) =>  {
       console.log("sess not expired yet")
     } else {
       console.log("sess has expired please log in again")
+      //sess expires base on cookies
       //delete tmp files
       //get from the tsore the user id, delete all user id tmp folder
 
@@ -100,17 +100,14 @@ app.use(async (req, res, next) =>  {
         console.log(sessions)
         // mySessions = sessions
         // console.log("mysessions--->", mySessions)
-      for(const session in sessions){
-        console.log(session.user, Date.now())
-        if(session.expires < Date.now()){
+      for(let i = 0; i< sessions.length ; i++){
+        console.log(sessions[i].expiryDate, new Date())
+        if(new Date(sessions[i].expiryDate) < new Date()){
           console.log("destroy this session")
         }
-        uploadmanager.closeTmpFolder(session.user);
+        // uploadmanager.closeTmpFolder(session.user);
       }
       })
-      
- 
-      
       req.session.views = 1
   }
   next()
