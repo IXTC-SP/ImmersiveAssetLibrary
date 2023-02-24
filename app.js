@@ -23,8 +23,7 @@ const authController = require("./scripts/auth_controller");
 const authMiddleware = require("./middlewares/auth_middleware"); // middleware for the authentication, to check if theres a session
 const passport = require("passport");
 const awsMethods = require("./middlewares/aws_methods");
-// const archiver = require("archiver");
-// const PassThrough = require("stream");
+const store = require("./scripts/mongo_store");
 
 const flash = require("connect-flash");
 const methodOverride = require("method-override");
@@ -42,13 +41,13 @@ app.use(
   })
 );
 
-const MongoDBStore = require('connect-mongo')
-const store = MongoDBStore.create({
-  mongoUrl: `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}.trfz1qc.mongodb.net/`,
-  dbName: process.env.MONGO_DB,
-  collectionName: 'mySessions',
-  autoRemove:"disabled",
-});
+// const MongoDBStore = require('connect-mongo')
+// const store = MongoDBStore.create({
+//   mongoUrl: `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}.trfz1qc.mongodb.net/`,
+//   dbName: process.env.MONGO_DB,
+//   collectionName: 'mySessions',
+//   autoRemove:"disabled",
+// });
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -79,7 +78,6 @@ app.use(passport.session()); //so that can tap into the express sessions data
 // createStrategy is responsible to setup passport-local LocalStrategy with the correct options.
 require("./config/passport");
 
-const mysessionsModel = require("./models/mysessions")
 app.use(async (req, res, next) =>  {
   console.log(req.session.id)
   // console.log(req.session)

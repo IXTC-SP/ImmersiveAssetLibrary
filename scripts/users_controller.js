@@ -9,6 +9,7 @@ const jwt_decode = require("jwt-decode");
 const awsMethods = require("../middlewares/aws_methods");
 const { DateTime } = require("luxon");
 const console = require("console");
+const store = require("./mongo_store");
 const errorMessage = (error, message) => {
   return { error, message };
 };
@@ -57,12 +58,12 @@ class RenderView {
     this.user = req.user;
   }
 }
-const MongoDBStore = require('connect-mongo')
-const store = MongoDBStore.create({
-  mongoUrl: `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}.trfz1qc.mongodb.net/`,
-  dbName: process.env.MONGO_DB,
-  collectionName: 'mySessions',
-});
+// const MongoDBStore = require('connect-mongo')
+// const store = MongoDBStore.create({
+//   mongoUrl: `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}.trfz1qc.mongodb.net/`,
+//   dbName: process.env.MONGO_DB,
+//   collectionName: 'mySessions',
+// });
 const uploadmanager= require("./uploadsmanager_model");
 const controller = {
   logout: async (req, res) => {
