@@ -12,6 +12,7 @@ const store = MongoDBStore.create({
   dbName: process.env.MONGO_DB,
   collectionName: 'mySessions',
   autoRemove:"disabled",
+  
   //default is 2 weeks
 });
 //need 2 step verfication for app password, cos google diables the less secure apps in may 2022
@@ -40,7 +41,7 @@ const controller = {
   login: async (req, res) => {
     console.log("current session id", )
     try {
-      store.set(req.session.id,{expiryDate:req.session.cookie.expires},function(err, session){
+      store.set(req.session.id,{sessId: req.session.id, expiryDate:req.session.cookie.expires},function(err, session){
       })
       res.redirect(`/assets/models`);
     } catch (error) {

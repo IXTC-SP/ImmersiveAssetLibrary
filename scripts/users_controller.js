@@ -63,22 +63,16 @@ const store = MongoDBStore.create({
   dbName: process.env.MONGO_DB,
   collectionName: 'mySessions',
 });
+const uploadmanager= require("./uploadsmanager_model");
 const controller = {
   logout: async (req, res) => {
     store.destroy(req.session.id, function(err, session){
+      if(err){console.log(err)}
     })
+    uploadmanager.closeTmpFolder(req.session.id);
     req.logout(function (err) {
       res.redirect("/login");
     });
-    // try {
-    //   //paspport function, clears session, but not cookie
-    //   //but if session is cleared no more id can be found it wont pop req.user,
-
-    // } catch (err) {
-    //   res.redirect("/login");
-    //  // return res.status(404).json("error:", err.message);
-
-    // }
   },
   showProfile: async (req, res) => {
     let renderObj = new RenderObjs();

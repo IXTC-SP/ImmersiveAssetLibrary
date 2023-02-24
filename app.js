@@ -85,27 +85,31 @@ app.use(async (req, res, next) =>  {
   // console.log(req.session)
     if (req.session.views) {
       req.session.views++
+      console.log("new exiry", req.session.cookie._expires)
       // let sessionId = req.session.id
-     
+     //update the store expiry date
+     if(req.session.passport){
+      store.set(req.session.id,{sessId: req.session.id, expiryDate:req.session.cookie.expires}, function(err, session){
+        if (err)console.log(err)
+       })
+     }
+
       console.log("sess not expired yet")
     } else {
       console.log("sess has expired please log in again")
-      //sess expires base on cookies
-      //delete tmp files
-      //get from the tsore the user id, delete all user id tmp folder
-
-      // const found = await mysessionsModel.find({})
-      // console.log("--->",found)
+      //sess expires base on cookies, which is getting updated on every req
+      //but is not geting deleted in the store, cause store expiry is 2 weeks (default)
+      //so we can obtain the expired session
       store.all((error, sessions)=>{
         console.log(sessions)
-        // mySessions = sessions
-        // console.log("mysessions--->", mySessions)
       for(let i = 0; i< sessions.length ; i++){
-        console.log(sessions[i].expiryDate, new Date())
+        console.log(sessions[i].sessId)
         if(new Date(sessions[i].expiryDate) < new Date()){
-          console.log("destroy this session")
-          store.destroy
-          // uploadmanager.closeTmpFolder(session.user);
+          console.log("destroy this session", sessions[i].sessId)
+          store.destroy(sessions[i].sessId, function(err, session){
+            if(err){console.log(err)}
+          })
+          uploadmanager.closeTmpFolder(sessions[i].sessId);
         }
         
       }
@@ -114,10 +118,7 @@ app.use(async (req, res, next) =>  {
   }
   next()
 })
-// app.post("/session", (req,res)=>{
-//  console.log("clear tmp", req.session.id)
-//  res.send("done")
-// })
+
 //sandra connection
 const mongoose = require("mongoose");
 //Mongoose
@@ -144,7 +145,6 @@ const userModel = require("./models/user");
 app.get(
   "/asset/:type/:modelid",
   authMiddleware.isAuthenticated,
-  authMiddleware.closeTmp,
   function (req, res) {
     var dbmanager;
     var isModel;
@@ -255,7 +255,6 @@ const sortResults = (result) => {
 app.get(
   "/assets/models",
   authMiddleware.isAuthenticated,
-  authMiddleware.closeTmp,
   async function (req, res) {
     let filteredResult = [];
     if (typeof req.query.search === "undefined" || req.query.search === "") {
@@ -321,7 +320,7 @@ app.post("/assets", authMiddleware.isAuthenticated, function (req, res) {
   }
 });
 
-app.get("/assets/360", authMiddleware.isAuthenticated,  authMiddleware.closeTmp, async function (req, res) {
+app.get("/assets/360", authMiddleware.isAuthenticated, async function (req, res) {
   let filteredResult = [];
   if (typeof req.query.search === "undefined" || req.query.search === "") {
     databasemanager_360.GetAllModels(async (result) => {
@@ -357,8 +356,8 @@ app.get("/assets/360", authMiddleware.isAuthenticated,  authMiddleware.closeTmp,
 //WORKING (UPLOAD PAGE)
 const uploadmanager = require("./scripts/uploadsmanager_model");
 const auth_middleware = require("./middlewares/auth_middleware");
-app.get("/upload", authMiddleware.isAuthenticated,  authMiddleware.closeTmp,function (req, res) {
-  //uploadmanager.closeTmpFolder(req.session.id);
+app.get("/upload", authMiddleware.isAuthenticated,function (req, res) {
+  uploadmanager.closeTmpFolder(req.session.id);
     res.render("dragndrop", {
       isLoginpage: true,
       user: req.user,
@@ -382,8 +381,7 @@ app.post(
     gltfmodel.Create(req.session.tmpContent.model[0], function (gltfresult) {
       if (gltfresult) {
         req.session.tmpContent["gltfresult"] = gltfresult;
-        // req.session.tmpContent["modelviewerpath"] = `../uploads/tmp/${req.session.id}/model.gltf`;
-        req.session.tmpContent["modelviewerpath"] = `../uploads/tmp/${req.user._id}/${req.session.id}/model.gltf`;
+        req.session.tmpContent["modelviewerpath"] = `../uploads/tmp/${req.session.id}/model.gltf`;
         req.session.tmpContent["folderpath"] = req.session.tmpContent.model[0].originalname.split(".")[0];
         console.log('before clear material',req.session.id, req.session.tmpContent['gltfresult']);
         gltfmodel.ClearMaterialFromModel(req.session.tmpContent["gltfresult"], function () {
@@ -441,7 +439,7 @@ app.post("/save3dmodel", authMiddleware.isAuthenticated, uploadsmanager_model.up
         doc,
         uploadedDataToAws,
         function (id) {
-          uploadsmanager_model.closeTmpFolder(req.user._id);
+          uploadsmanager_model.closeTmpFolder(req.session.id);
           res.send(id);
         }
       );
@@ -601,38 +599,32 @@ app.post("/downloadasset/:type/:modelid", authMiddleware.isAuthenticated, functi
 app.get(
   "/:user_id/dashboard/profile",
   authMiddleware.isAuthenticated,
-  authMiddleware.closeTmp,
   userController.showProfile
 );
 app.post(
   "/:user_id/dashboard/profile",
   authMiddleware.isAuthenticated,
-  authMiddleware.closeTmp,
   userController.showProfile
 );
 app.patch(
   "/:user_id/dashboard/profile",
   authMiddleware.isAuthenticated,
-  authMiddleware.closeTmp,
   userController.showProfile
 );
 
 app.get(
   "/:user_id/dashboard/uploads",
   authMiddleware.isAuthenticated,
-  authMiddleware.closeTmp,
   userController.showUploads
 );
 app.get(
   "/:user_id/dashboard/downloads",
   authMiddleware.isAuthenticated,
-  authMiddleware.closeTmp,
   userController.showDownloads
 );
 app.get(
   "/:user_id/dashboard/enrollment",
   authMiddleware.isAuthenticated,
-  authMiddleware.closeTmp,
   userController.showEnrollment
 );
 app.get("/", function (req,res){
@@ -643,7 +635,7 @@ app.get("/login", authController.showlogin);
 app.get("/authentication/activate", authController.showActivateAndSetPassword); //done
 app.get("/forgot-password", authController.showForgotPassword); //done
 app.get("/reset-password", authController.showSetPassword); //done
-app.get("/logout", authMiddleware.isAuthenticated,  authMiddleware.closeTmp, userController.logout);
+app.get("/logout", authMiddleware.isAuthenticated,userController.logout);
 
 app.post(
   "/:user_id/dashboard/enrollment",

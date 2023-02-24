@@ -28,12 +28,12 @@ const Save = async function (req, res, callback) {
 
   let assetpath = new AssetPath();
   //get size from tmp folder straight
-  assetpath.folderpath = `./uploads/tmp/${req.user._id}/`;
+  assetpath.folderpath = `./uploads/tmp/`;
   assetpath.gltfmodelpath = "model.gltf";
   assetpath.thumbnail = req.files.newthumbnail[0].originalname;
   let modelOutFolderSize = null;
-  if (fs.existsSync(`./uploads/tmp/${req.user._id}/` + req.session.id + "/model_out")) {
-    fastFolderSize(`./uploads/tmp/${req.user._id}/` + req.session.id + "/model_out", (err, bytes) => {
+  if (fs.existsSync(`./uploads/tmp/` + req.session.id + "/model_out")) {
+    fastFolderSize(`./uploads/tmp/` + req.session.id + "/model_out", (err, bytes) => {
       if (err) {
         throw err;
       } else {
@@ -43,7 +43,7 @@ const Save = async function (req, res, callback) {
   } else {
     modelOutFolderSize = 2;
   }
-  fastFolderSize(`./uploads/tmp/${req.user._id}/` + req.session.id, (err, bytes) => {0
+  fastFolderSize(`./uploads/tmp/` + req.session.id, (err, bytes) => {0
     if (err) {
       throw err;
     }
