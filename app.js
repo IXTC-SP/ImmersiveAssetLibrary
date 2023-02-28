@@ -367,30 +367,34 @@ app.post(
 );
 
 app.get("/editpage/model", authMiddleware.isAuthenticated,function (req, res) {
-  if (req.session.tmpContent) {
-    let images;
-    if (req.session.tmpContent.image) {
-      images = req.session.tmpContent.image.map((a) => a.originalname);
+  try {
+    if (req.session.tmpContent) {
+      let images;
+      if (req.session.tmpContent.image) {
+        images = req.session.tmpContent.image.map((a) => a.originalname);
+      }
+      res.render("editpage-model", {
+        content: {
+          folderpath: req.session.tmpContent.folderpath,
+          modelviewerpath: req.session.tmpContent.modelviewerpath,
+          modelfile: req.session.tmpContent.model[0].originalname,
+          thumbnail:
+            typeof req.session.tmpContent.thumbnail == "undefined"
+              ? ""
+              : req.session.tmpContent.thumbnail[0].originalname,
+          imagefiles: images,
+          format: req.session.tmpContent.format,
+        },
+        isLoginpage: true,
+        isModel: true,
+        user: req.user,
+      });
     }
-    res.render("editpage-model", {
-      content: {
-        folderpath: req.session.tmpContent.folderpath,
-        modelviewerpath: req.session.tmpContent.modelviewerpath,
-        modelfile: req.session.tmpContent.model[0].originalname,
-        thumbnail:
-          typeof req.session.tmpContent.thumbnail == "undefined"
-            ? ""
-            : req.session.tmpContent.thumbnail[0].originalname,
-        imagefiles: images,
-        format: req.session.tmpContent.format,
-      },
-      isLoginpage: true,
-      isModel: true,
-      user: req.user,
-    });
-  }else{
+  } catch (error) {
+    console.log(error)
     res.redirect("/")
   }
+
 });
 
 
@@ -449,16 +453,18 @@ app.post("/uploadtmp360", authMiddleware.isAuthenticated, uploadmanager_360.uplo
 
 app.get("/editpage/360", authMiddleware.isAuthenticated, function (req, res) {
   console.log(req.session.tmpContent)
-  if (req.session.tmpContent){
-    res.render("editpage-360", {
-      format: req.session.tmpContent.format,
-      images: req.session.tmpContent.image,
-      isLoginpage: true,
-      isModel: false,
-      user: req.user,
-    });
-  }else{
-    console.log("--->",err)
+  try {
+    if (req.session.tmpContent){
+      res.render("editpage-360", {
+        format: req.session.tmpContent.format,
+        images: req.session.tmpContent.image,
+        isLoginpage: true,
+        isModel: false,
+        user: req.user,
+      });
+    }
+  } catch (error) {
+    console.log("--->",error)
     res.redirect("/")
   }
 });
