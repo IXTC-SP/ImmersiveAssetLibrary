@@ -48,9 +48,7 @@ const recreateThumbnailSignedURLJob = nodeCron.schedule("55 */11 * * *", recreat
 const removeTmpFolders = async()=> {
   console.log("Remove Tmp folders");
   store.all((error, sessions)=>{
-    console.log(sessions)
   for(let i = 0; i< sessions.length ; i++){
-    console.log(sessions[i].sessId)
     if(new Date(sessions[i].expiryDate) < new Date()){
       console.log("destroy this session", sessions[i].sessId)
       store.destroy(sessions[i].sessId, function(err, session){
@@ -64,7 +62,7 @@ const removeTmpFolders = async()=> {
 
 }
 
-const removeTmpFoldersJob = nodeCron.schedule("55 */11 * * *", removeTmpFolders);//in 11:55 each night
+const removeTmpFoldersJob = nodeCron.schedule("0 4 * * *", removeTmpFolders);//4am each night
 
 module.exports = () => {  
   console.log("running cron jobs");
