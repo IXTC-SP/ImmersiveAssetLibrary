@@ -1,6 +1,5 @@
 <%- include('./partials/header') %>
   <script type="text/javascript" src="jszip.min.js"></script>
-
   <body>
     <section class="w-75 d-flex flex-column m-auto mt-5">
       <svg xmlns="http://www.w3.org/2000/svg" style="display: none">
@@ -10,223 +9,7 @@
         </symbol>
       </svg>
     </section>
-    <style>
-      .drop-zone {
-        border: 2px dotted gray;
-        width: auto;
-        height: 400px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .text-center {
-        text-align: center;
-      }
-
-      .browse-btn {
-        text-decoration: underline;
-      }
-
-
-      .page-btn {
-        border: 1px solid black;
-        background-color: white;
-        color: black;
-
-      }
-
-      .card {
-        width: 120px;
-        height: 120px;
-        position: relative;
-        display: inline-block;
-      }
-
-      .file-btn {
-        position: absolute;
-        left: 100px;
-        font-size: 20px;
-        top: -5px;
-      }
-
-      .card-file-info {
-        position: absolute;
-        height: 32px;
-        width: 100%;
-        bottom: 0;
-        left: 0;
-      }
-
-      .dragging {
-        cursor: grabbing;
-      }
-
-      .draggable {
-        cursor: grab;
-      }
-
-
-
-      .texture-assign-box {
-        border: 1px solid #444444;
-        background-color: white;
-        padding: 0px;
-        height: 140px;
-      }
-
-      .texture-assign-box.top {
-        border-top-left-radius: 6px;
-        border-top-right-radius: 6px;
-      }
-
-      .texture-assign-box.bottom {
-        border-bottom-left-radius: 6px;
-        border-bottom-right-radius: 6px;
-      }
-
-      .texture-assign-box.left {
-        border-top-right-radius: 6px;
-        border-bottom-right-radius: 6px;
-      }
-
-      .texture-assign-box.front {
-        border-top: 0px;
-        border-right: 0px;
-        border-bottom: 0px;
-      }
-
-      .texture-assign-box.right {
-        border-right: 0px;
-      }
-
-      .texture-assign-box.back {
-        border-right: 0px;
-      }
-
-      .texture-assign-box-label {
-        position: absolute;
-        color: white;
-        padding-left: 5px;
-        text-shadow: 1px 1px 3px black;
-        font-weight: 300;
-      }
-
-      /* The Modal (background) */
-      .modal {
-        display: none;
-        /* Hidden by default */
-        position: fixed;
-        /* Stay in place */
-        z-index: 1;
-        /* Sit on top */
-        padding-top: 100px;
-        /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%;
-        /* Full width */
-        height: 100%;
-        /* Full height */
-        overflow: auto;
-        /* Enable scroll if needed */
-        background-color: rgb(0, 0, 0);
-        /* Fallback color */
-        background-color: rgba(0, 0, 0, 0.4);
-        /* Black w/ opacity */
-      }
-
-      /* Modal Content */
-      .modal-content {
-        background-color: #fefefe;
-        margin: auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 600px;
-        align-items: center;
-        display: flex;
-      }
-
-      /* The Close Button */
-      .close {
-        color: #aaaaaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        align-self: flex-end;
-      }
-
-      .close:hover,
-      .close:focus {
-        color: #000;
-        text-decoration: none;
-        cursor: pointer;
-      }
-
-      .drop-icon {
-        font-size: 60px;
-        color: #0092ff;
-      }
-
-      .drag-text {
-        font-size: 28px;
-      }
-
-      .browse-btn {
-        color: #0092ff;
-        text-decoration: none;
-        cursor: pointer;
-      }
-
-      .support-types-text {
-        font-size: 14px;
-        font-weight: 300;
-      }
-
-      .title-upload {
-        font-weight: 300;
-      }
-
-      .btn-size {
-        width: 100px;
-      }
-
-      .drop-zone-border {
-        border: 0px;
-        text-align: center;
-        background: linear-gradient(to right,
-            #2b7a9e 50%,
-            rgba(255, 255, 255, 0) 0%),
-          linear-gradient(#2b7a9e 50%, rgba(255, 255, 255, 0) 0%),
-          linear-gradient(to right, #2b7a9e 50%, rgba(255, 255, 255, 0) 0%),
-          linear-gradient(#2b7a9e 50%, rgba(255, 255, 255, 0) 0%);
-        background-position: top, right, bottom, left;
-        background-repeat: repeat-x, repeat-y;
-        background-size: 30px 2px, 2px 30px;
-        width: auto;
-        height: 400px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .cubemap-texture-assign {
-        width: 100%;
-        text-overflow: ellipsis;
-      }
-
-      .texture-assign-box img {
-        width: 100%;
-        height: 100%;
-      }
-
-      option:hover {
-        background-color: yellow;
-      }
-
-    </style>
+    
 
 
     <div class="card-body w-100">
@@ -314,24 +97,24 @@
               <div id="drop3" class="col-3 texture-assign-box right cubemap-bg-img">
                 <label class="texture-assign-box-label" for="right-texture-selection">Right</label>
 
-                <img id="drag3" alt="" draggable="true" class="texture-assign-box-img" src="/no-preview.jpeg" />
+                <img id="drag3" alt="" draggable="true" class="texture-assign-box-img" src="" />
               </div>
               <div id="drop4" class="col-3 texture-assign-box back cubemap-bg-img">
                 <label class="texture-assign-box-label" for="back-texture-selection">Back</label>
 
-                <img id="drag4" alt="" draggable="true" class="texture-assign-box-img" src="/no-preview.jpeg" />
+                <img id="drag4" alt="" draggable="true" class="texture-assign-box-img" src="" />
               </div>
               <div id="drop5" class="col-3 texture-assign-box left cubemap-bg-img">
                 <label class="texture-assign-box-label" for="left-texture-selection">Left</label>
 
-                <img id="drag5" alt="" draggable="true" class="texture-assign-box-img" src="/no-preview.jpeg" />
+                <img id="drag5" alt="" draggable="true" class="texture-assign-box-img" src="" />
               </div>
             </div>
             <div class="row">
               <div id="drop6" class="col-3 texture-assign-box bottom cubemap-bg-img">
                 <label class="texture-assign-box-label" for="bottom-texture-selection">Bottom</label>
 
-                <img id="drag6" alt="" draggable="true" class="texture-assign-box-img" src="/no-preview.jpeg" />
+                <img id="drag6" alt="" draggable="true" class="texture-assign-box-img" src="" />
               </div>
             </div>
           </div>
@@ -362,7 +145,7 @@
           </div>
           <div class="modal-footer border-0 p-0 d-flex w-100 justify-content-evenly">
             <button id="modal-alert-replace" type="button" class="btn btn-primary d-none theme-color
-            data-dismiss=" modal" onclick="confirmReplace(event)">
+            data-dismiss="modal" onclick="confirmReplace(event)">
               Replace
             </button>
             <button id="modal-alert-okay" type="button" class="btn btn-secondary d-block " data-dismiss="modal"
@@ -378,20 +161,8 @@
     </div>
 
     <!-- loading spinner -->
-    <!-- <div id="modal-spinner" class="modal d-none" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content" style="width: 330px">
-          <div class="modal-body d-flex bg-transparent">
-            <div class="spinner-border text-info" role="status">
-              <span id= "modal-spinner-message" class="sr-only">Uploading...</span>
-            </div>
-          </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
-
     <%- include('./partials/loading-spinner') %>
+
   </body>
 
   <script type="text/javascript" src="fileextensioncheck.js"></script>
@@ -408,8 +179,6 @@
     const formatTypeCaption = document.getElementById("format-type-caption");
     const modalAlert = document.getElementById("modal-alert");
     const modalAlertMessage = document.getElementById("modal-alert-message");
-    const modalSpinner = document.getElementById("modal-spinner");
-    const modalSpinnerMessage = document.getElementById("modal-spinner-message");
     const cancelButton = document.getElementById("modal-alert-cancel");
     const replaceButton = document.getElementById("modal-alert-replace");
     const okayButton = document.getElementById("modal-alert-okay");
@@ -516,9 +285,7 @@
     var fileObjs = [];
 
     nextpagebtn.addEventListener("click", function (event) {
-      // showModal(modalSpinner)
-      // modalSpinnerMessage.innerText = "message";
-      processUploads();
+      processUploads()
       event.preventDefault();
     });
 
@@ -526,17 +293,14 @@
       modalType.classList.remove("d-flex");
       modalType.classList += " d-none";
     }
+
+  // function showModal(modalType) {
+  //     modalType.classList.remove("d-none");
+  //     modalType.classList += " d-flex";
+  //   }
     function openAlertModal(message) {
       showModal(modalAlert)
       modalAlertMessage.innerText = message;
-    }
-    function openSpinnerModal(message) {
-      showModal(modalSpinner)
-      modalSpinnerMessage.innerText = message;
-    }
-    function showModal(modalType) {
-      modalType.classList.remove("d-none");
-      modalType.classList += " d-flex";
     }
 
     function openConfirmModal(message, callback) {
@@ -608,7 +372,8 @@
           assignTextureErr.classList += " d-block";
         }
       } else {
-        createuploadcontent();
+        showModal(modalSpinner)
+        setTimeout(function(){ createuploadcontent()},1000);
       }
     }
 
@@ -696,11 +461,12 @@
 
     //next page btn
     async function processUploads() {
- 
+     
       //if no uploads added
       if (files.length == 0) {
         openAlertModal("Upload files before proceeding.");
       } else { 
+        
         setupFileObjs();
         if (currenttype == "3dmodel") {
           var objCount = 0;
@@ -711,14 +477,18 @@
           });
           switch (objCount) {
             case 0:
+              // closeAlertModal(modalSpinner)
               openAlertModal(
                 "No model object uploaded.\n Add either a .fbx, .obj file to proceed."
               );
               break;
             case 1:
-              createuploadcontent();
+              showModal(modalSpinner)
+              setTimeout(function(){ createuploadcontent()},1000);
+             ;
               break;
             default:
+              // closeAlertModal(modalSpinner)
               openAlertModal("Please only upload one 3d model file.");
               break;
           }
@@ -733,7 +503,8 @@
               openAlertModal("Upload only 6 images of equal height and width.");
             }
           } else {
-            createuploadcontent();
+            showModal(modalSpinner)
+            setTimeout(function(){ createuploadcontent()},1000);
           }
         }
       }
@@ -751,15 +522,17 @@
       collectedfiles.appendChild(card);
       //create file info
       var fileinfo = document.createElement("div");
+      fileinfo.style = "width: 90%;"
       card.appendChild(fileinfo);
       var fileinfospan = document.createElement("span");
-      fileinfospan.classList.add("text-overflow")
+      fileinfospan.classList += "text-overflow w-100 d-block"
       fileinfospan.innerHTML = filename;
       fileinfo.appendChild(fileinfospan);
 
       //create icon trashcan
       var trashcanBtn = document.createElement("button");
-      trashcanBtn.classList += "btn btn-outline-danger border-0";
+      trashcanBtn.classList += "btn btn-outline-danger border-0 p-0";
+      trashcanBtn.style += "width: 10%;"
       trashcanBtn.innerHTML =
         '<i class="fa-solid fa-trash-can" style= "font-size :15px"></i>';
       trashcanBtn.addEventListener("click", function (event) {
@@ -943,7 +716,6 @@
         }
       }
       if (!hasExtraFolder) {
-        // console.log("complete", collectedfiles);
         readFiles(collectedfiles);
       }
     }

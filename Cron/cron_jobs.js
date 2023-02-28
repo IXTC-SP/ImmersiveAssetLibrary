@@ -2,6 +2,9 @@ const nodeCron = require("node-cron");
 const userModel = require("../models/user");
 const modelDb = require("../scripts/databasemanager_model");
 const threesixtyDb = require("../scripts/databasemanager_360");
+const store = require("../scripts/mongo_store");
+const uploadmanager = require("../scripts/uploadsmanager_model");
+const uploadmanager_360 = require("../scripts/uploadmanager_360");
 //nodeCron.schedule(expression, function, options);
 //1st arg * is the time scheduler. all * means every seccond
 //2nd arg ia a function executing the job
@@ -38,9 +41,34 @@ const recreateThumbnailSignedURL = async () => {
 };
 const recreateThumbnailSignedURLJob = nodeCron.schedule("55 */11 * * *", recreateThumbnailSignedURL);
 
+//sess expires base on cookies, which is getting updated on every req
+//but is not geting deleted in the store, cause store expiry is 2 weeks (default)
+//so we can obtain the expired session
+
+const removeTmpFolders = async()=> {
+  console.log("Remove Tmp folders");
+  store.all((error, sessions)=>{
+    console.log(sessions)
+  for(let i = 0; i< sessions.length ; i++){
+    console.log(sessions[i].sessId)
+    if(new Date(sessions[i].expiryDate) < new Date()){
+      console.log("destroy this session", sessions[i].sessId)
+      store.destroy(sessions[i].sessId, function(err, session){
+        if(err){console.log(err)}
+      })
+      uploadmanager.closeTmpFolder(sessions[i].sessId);
+    }
+    
+  }
+  })
+
+}
+
+const removeTmpFoldersJob = nodeCron.schedule("55 */11 * * *", removeTmpFolders);//in 11:55 each night
 
 module.exports = () => {  
   console.log("running cron jobs");
   recreateThumbnailSignedURLJob.start();
   removeUnactivatedAccJob.start();
+  removeTmpFoldersJob.start();
 }
