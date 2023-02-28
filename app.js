@@ -3,31 +3,24 @@ require("dotenv").config();
 const express = require("express");
 const ejs = require("ejs");
 const app = express();
-// const fs = require("fs");
 const bodyParser = require("body-parser");
-
 const session = require("express-session");
-
-// const path = require("path");
 const url = require("url");
-
 const gltfmodel = require("./scripts/gltfmodel");
 const uploadsmanager_model = require("./scripts/uploadsmanager_model");
 const databasemanager_model = require("./scripts/databasemanager_model");
 const uploadmanager_360 = require("./scripts/uploadmanager_360");
 const databasemanager_360 = require("./scripts/databasemanager_360");
-// const storagemanagement = require("./scripts/storagemanagement");
-// const filedownloader = require("./scripts/filedownloader");
 const userController = require("./scripts/users_controller");
 const authController = require("./scripts/auth_controller");
 const authMiddleware = require("./middlewares/auth_middleware"); // middleware for the authentication, to check if theres a session
 const passport = require("passport");
 const awsMethods = require("./middlewares/aws_methods");
 const store = require("./scripts/mongo_store");
-
 const flash = require("connect-flash");
 const methodOverride = require("method-override");
 const job = require("./Cron/cron_jobs");
+
 app.use(methodOverride("_method"));
 app.use(express.static("public"));
 app.use("/uploads", express.static("uploads"));
@@ -56,7 +49,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       // maxAge: 1000 * 60 * 60 * 24, //1 DAY
-      maxAge: 1000 * 60  //1 min count in miliseconds
+      maxAge: 1000 * 600  //10 min count in miliseconds
     },
   })
 );
@@ -80,44 +73,20 @@ require("./config/passport");
 
 app.use(async (req, res, next) =>  {
   console.log(req.session.id)
-  // console.log(req.session)
     if (req.session.views) {
       req.session.views++
       console.log("new exiry", req.session.cookie._expires)
-      // let sessionId = req.session.id
      //update the store expiry date
      if(req.session.passport){
       store.set(req.session.id,{sessId: req.session.id, expiryDate:req.session.cookie.expires}, function(err, session){
         if (err)console.log(err)
        })
      }
-
-      console.log("sess not expired yet")
-    } else {
-      console.log("sess has expired please log in again")
-      //sess expires base on cookies, which is getting updated on every req
-      //but is not geting deleted in the store, cause store expiry is 2 weeks (default)
-      //so we can obtain the expired session
-      store.all((error, sessions)=>{
-        console.log(sessions)
-      for(let i = 0; i< sessions.length ; i++){
-        console.log(sessions[i].sessId)
-        if(new Date(sessions[i].expiryDate) < new Date()){
-          console.log("destroy this session", sessions[i].sessId)
-          store.destroy(sessions[i].sessId, function(err, session){
-            if(err){console.log(err)}
-          })
-          uploadmanager.closeTmpFolder(sessions[i].sessId);
-        }
-        
-      }
-      })
-      req.session.views = 1
-  }
+    } 
+      req.session.views = 1 
   next()
 })
-
-//sandra connection
+//mongoose connection
 const mongoose = require("mongoose");
 //Mongoose
 const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}.trfz1qc.mongodb.net/`;
@@ -352,10 +321,9 @@ app.get("/assets/360", authMiddleware.isAuthenticated, async function (req, res)
 });
 
 //WORKING (UPLOAD PAGE)
-const uploadmanager = require("./scripts/uploadsmanager_model");
-const auth_middleware = require("./middlewares/auth_middleware");
+
 app.get("/upload", authMiddleware.isAuthenticated,function (req, res) {
-  uploadmanager.closeTmpFolder(req.session.id);
+  uploadsmanager_model.closeTmpFolder(req.session.id);
     res.render("dragndrop", {
       isLoginpage: true,
       user: req.user,
@@ -367,7 +335,7 @@ app.get("/upload", authMiddleware.isAuthenticated,function (req, res) {
 
 app.post(
   "/uploadtmp3dmodel",
-  auth_middleware.isAuthenticated,
+  authMiddleware.isAuthenticated,
   uploadsmanager_model.uploadtmp3D,
   function (req, res) {
     req.session.tmpContent = req.files;
@@ -495,7 +463,7 @@ app.get("/editpage/360", authMiddleware.isAuthenticated, function (req, res) {
   }
 });
 
-app.post("/savethreesixty", auth_middleware.isAuthenticated, uploadmanager_360.upload360, function (req, res) {
+app.post("/savethreesixty", authMiddleware.isAuthenticated, uploadmanager_360.upload360, function (req, res) {
   databasemanager_360.save(req, res, async function (result) {
     req.session.tmpContent["thumbnail"] = req.files.newthumbnail[0];
     const uploadedDataToAws = await awsMethods.uploadFiles(req.session.tmpContent, result, "360");
