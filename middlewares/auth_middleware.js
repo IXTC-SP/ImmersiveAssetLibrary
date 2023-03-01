@@ -14,18 +14,7 @@ module.exports = {
                 return res.redirect('/login')  
             }
            
-        },
-        // closeTmp: async(req,res,next)=>{
-        //     // try {
-        //     //     console.log("remove current session id ", req.session.id)
-        //     //     uploadsmanager_model.closeTmpFolder(req.session.id);
-        //     //     next()
-        //     // } catch (error) {
-        //     //     console.log(error)
-        //     //     return res.redirect('/login')  
-        //     // }
-        // next()
-        // }
+        }
     }
     
 

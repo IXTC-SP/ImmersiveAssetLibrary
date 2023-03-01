@@ -72,10 +72,10 @@ app.use(passport.session()); //so that can tap into the express sessions data
 require("./config/passport");
 
 app.use(async (req, res, next) =>  {
-  console.log(req.session.id)
+  // console.log(req.session.id)
     if (req.session.views) {
       req.session.views++
-      console.log("new exiry", req.session.cookie._expires)
+      //console.log("new exiry", req.session.cookie._expires)
      //update the store expiry date
      if(req.session.passport){
       store.set(req.session.id,{sessId: req.session.id, expiryDate:req.session.cookie.expires}, function(err, session){
@@ -349,7 +349,7 @@ app.post(
         req.session.tmpContent["gltfresult"] = gltfresult;
         req.session.tmpContent["modelviewerpath"] = `../uploads/tmp/${req.session.id}/model.gltf`;
         req.session.tmpContent["folderpath"] = req.session.tmpContent.model[0].originalname.split(".")[0];
-        console.log('before clear material',req.session.id, req.session.tmpContent['gltfresult']);
+        //console.log('before clear material',req.session.id, req.session.tmpContent['gltfresult']);
         gltfmodel.ClearMaterialFromModel(req.session.tmpContent["gltfresult"], function () {
           res.end("complete");
         });
@@ -368,7 +368,6 @@ app.post(
 
 app.get("/editpage/model", authMiddleware.isAuthenticated,function (req, res) {
   try {
-    console.log(req.session.tmpContent )
     if (req.session.tmpContent !== "undefined") {
       let images;
       if (req.session.tmpContent.image) {
@@ -454,7 +453,7 @@ app.post("/uploadtmp360", authMiddleware.isAuthenticated, uploadmanager_360.uplo
 });
 
 app.get("/editpage/360", authMiddleware.isAuthenticated, function (req, res) {
-  console.log(req.session.tmpContent)
+
   try {
     if (req.session.tmpContent.format === "cubemap" || req.session.tmpContent.format === "equirectangular"){
       res.render("editpage-360", {
@@ -604,7 +603,6 @@ app.get(
   userController.showEnrollment
 );
 app.get("/", function (req,res){
-  console.log(req.session.id)
   res.redirect("/assets/models");
 });
 app.get("/login", authController.showlogin);

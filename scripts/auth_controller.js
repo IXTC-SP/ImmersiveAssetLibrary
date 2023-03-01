@@ -39,7 +39,6 @@ const alertMessage = (alert, message) => {
 
 const controller = {
   login: async (req, res) => {
-    console.log("current session id", )
     try {
       store.set(req.session.id,{sessId: req.session.id, expiryDate:req.session.cookie.expires},function(err, session){
       })

@@ -17,29 +17,27 @@ const uploadmanager_360 = require("../scripts/uploadmanager_360");
 //   });
 
 const removeUnactivatedAcc = async () => {
-  const now = new Date();
-  console.log(now);
+  const now = new Date();;
   const dateForCleansing = now.setDate(now.getDate() - 1);
-  console.log("------>", new Date(dateForCleansing));
   try {
     const accts = await userModel.deleteMany({
       isActivated: false,
       createdAt: { $lte: new Date(dateForCleansing) },
     });
-    console.log(accts);
-    console.log("Deleting accounts every min, greated then 1 day");
+    // console.log(accts);
+    console.log("Deleting accounts ");
   } catch (error) {
     console.log(error);
   }
 };
-const removeUnactivatedAccJob = nodeCron.schedule("0 8 * * *", removeUnactivatedAcc);
+const removeUnactivatedAccJob = nodeCron.schedule("0 2 * * *", removeUnactivatedAcc);
 
 const recreateThumbnailSignedURL = async () => {
   console.log("regenerating thumbnail URL");
   modelDb.UpdateThumbnailUrl();
   threesixtyDb.UpdateThumbnailUrl();
 };
-const recreateThumbnailSignedURLJob = nodeCron.schedule("55 */11 * * *", recreateThumbnailSignedURL);
+const recreateThumbnailSignedURLJob = nodeCron.schedule("0 23 * * *", recreateThumbnailSignedURL);
 
 //sess expires base on cookies, which is getting updated on every req
 //but is not geting deleted in the store, cause store expiry is 2 weeks (default)
@@ -62,7 +60,7 @@ const removeTmpFolders = async()=> {
 
 }
 
-const removeTmpFoldersJob = nodeCron.schedule("00 2 * * *", removeTmpFolders);//2am each night
+const removeTmpFoldersJob = nodeCron.schedule("0 4 * * *", removeTmpFolders);//4am each night
 
 module.exports = () => {  
   console.log("running cron jobs");
