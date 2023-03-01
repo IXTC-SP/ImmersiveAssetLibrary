@@ -368,11 +368,13 @@ app.post(
 
 app.get("/editpage/model", authMiddleware.isAuthenticated,function (req, res) {
   try {
-    if (req.session.tmpContent) {
+    console.log(req.session.tmpContent )
+    if (req.session.tmpContent !== "undefined") {
       let images;
       if (req.session.tmpContent.image) {
         images = req.session.tmpContent.image.map((a) => a.originalname);
       }
+      
       res.render("editpage-model", {
         content: {
           folderpath: req.session.tmpContent.folderpath,
@@ -454,7 +456,7 @@ app.post("/uploadtmp360", authMiddleware.isAuthenticated, uploadmanager_360.uplo
 app.get("/editpage/360", authMiddleware.isAuthenticated, function (req, res) {
   console.log(req.session.tmpContent)
   try {
-    if (req.session.tmpContent){
+    if (req.session.tmpContent.format === "cubemap" || req.session.tmpContent.format === "equirectangular"){
       res.render("editpage-360", {
         format: req.session.tmpContent.format,
         images: req.session.tmpContent.image,
@@ -462,6 +464,8 @@ app.get("/editpage/360", authMiddleware.isAuthenticated, function (req, res) {
         isModel: false,
         user: req.user,
       });
+    }else{
+      res.redirect("/")
     }
   } catch (error) {
     console.log("--->",error)

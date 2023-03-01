@@ -62,7 +62,7 @@ const removeTmpFolders = async()=> {
 
 }
 
-const removeTmpFoldersJob = nodeCron.schedule("0 4 * * *", removeTmpFolders);//4am each night
+const removeTmpFoldersJob = nodeCron.schedule("00 2 * * *", removeTmpFolders);//2am each night
 
 module.exports = () => {  
   console.log("running cron jobs");
