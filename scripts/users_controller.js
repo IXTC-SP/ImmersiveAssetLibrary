@@ -58,12 +58,6 @@ class RenderView {
     this.user = req.user;
   }
 }
-// const MongoDBStore = require('connect-mongo')
-// const store = MongoDBStore.create({
-//   mongoUrl: `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}.trfz1qc.mongodb.net/`,
-//   dbName: process.env.MONGO_DB,
-//   collectionName: 'mySessions',
-// });
 const uploadmanager= require("./uploadsmanager_model");
 const controller = {
   logout: async (req, res) => {
@@ -78,14 +72,10 @@ const controller = {
   showProfile: async (req, res) => {
     let renderObj = new RenderObjs();
 
-    // console.log(renderObj);
-    // console.log("------>", req.body.email);
-    // console.log("---->", req.body.confirmPassword);
     const { password, confirmPassword, email } = req.body;
     try {
       if (email) {
         if (confirmPassword) {
-          console.log("--->", "save pw");
           if (password === "" || confirmPassword === "") {
             renderObj.profile = "edit";
             renderObj.errorObj = errorMessage(
@@ -94,7 +84,6 @@ const controller = {
             );
           }
           if (password === confirmPassword) {
-            console.log("pw same");
             const hash = await bcrypt.hash(password, 10);
             await userModel.findOneAndUpdate(
               {
@@ -113,11 +102,9 @@ const controller = {
               "Confirm password does not match"
             );
             renderObj.profile = "edit";
-            console.log("click save");
           }
         } else {
           renderObj.profile = "edit";
-          console.log("click change pw");
         }
       }
       renderObj.uploads["models"] = await modelModel.find({

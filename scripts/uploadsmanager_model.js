@@ -62,7 +62,7 @@ const publishfile = async function(foldername, files){
       var oldPath = './uploads/tmp/' + file
       filesizetotal += getFilesizeInBytes(oldPath);//still
     }
-    console.log('move complete');
+    // console.log('move complete');
 
     try {
       if (fs.existsSync('./uploads/tmp/model.gltf')) {
