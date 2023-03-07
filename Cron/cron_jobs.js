@@ -30,7 +30,7 @@ const removeUnactivatedAcc = async () => {
     console.log(error);
   }
 };
-const removeUnactivatedAccJob = nodeCron.schedule("0 18 * * *", removeUnactivatedAcc);//18 is utc, local 2am
+const removeUnactivatedAccJob = nodeCron.schedule("0 22 * * *", removeUnactivatedAcc);//18 is utc, local 2am
 
 const recreateThumbnailSignedURL = async () => {
   console.log("regenerating thumbnail URL");
@@ -60,7 +60,7 @@ const removeTmpFolders = async()=> {
 
 }
 
-const removeTmpFoldersJob = nodeCron.schedule("0 17 * * *", removeTmpFolders);//17 is utc, local 1am
+const removeTmpFoldersJob = nodeCron.schedule("0 22 * * *", removeTmpFolders);//17 is utc, local 1am
 
 module.exports = () => {  
   console.log("running cron jobs");

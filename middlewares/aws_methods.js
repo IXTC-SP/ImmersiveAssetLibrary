@@ -202,7 +202,7 @@ const awsMethods = {
 
   var modelfile = await parse()
   if(modelfile.images){
-    console.log(modelfile.images);
+    // console.log(modelfile.images);
     modelfile.images.forEach((image)=> {
       if(image != null)
       image.uri = s3.getSignedUrl('getObject', {Bucket: bucketName, Key: `uploads/${objId}/${image.uri}`});

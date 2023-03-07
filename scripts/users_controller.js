@@ -179,7 +179,7 @@ const controller = {
       req.errorObj = errorMessage(true, err);
     }
     let renderView = new RenderView(req, renderObj);
-    console.log(renderObj)
+    // console.log(renderObj)
     res.render("users/dashboard", {
       ...renderView,
       showProfile: false,
