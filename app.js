@@ -614,6 +614,7 @@ app.get("/logout", authMiddleware.isAuthenticated,userController.logout);
 app.post(
   "/:user_id/dashboard/enrollment",
   authMiddleware.isAuthenticated,
+  authMiddleware.isUserAdmin,
   userController.createEnrollment,
   authController.emailActivation,
   userController.showEnrollment

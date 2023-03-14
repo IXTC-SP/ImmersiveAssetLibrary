@@ -42,7 +42,6 @@
         >Profile</a
       >
     </li>
-    <% if (user.isAdmin){%>
     <li class="nav-item" role="presentation">
       <a
         class="nav-link <%= showUploads? 'active' :'' %>"
@@ -51,7 +50,6 @@
         >Uploads</a
       >
     </li>
-    <%}%>
     <li class="nav-item" role="presentation">
       <a
         class="nav-link <%= showDownloads? 'active' :'' %>"
@@ -98,7 +96,7 @@
     >
       <%- include('./profile')%>
     </div>
-    <% if (user.isAdmin){%>
+   
     <div
       class="tab-pane fade <%= showUploads? 'show active' :'' %>"
       id="ex3-tabs-2"
@@ -107,7 +105,7 @@
     >
       <%- include('./uploads'); %>
     </div>
-    <%}%>
+    
     <div
       class="tab-pane fade <%= showDownloads? 'show active' :'' %>"
       id="ex3-tabs-3"

@@ -31,7 +31,7 @@ const emailValidation = (emailInput) => {
   return false;
 };
 
-const superAdmin = { "637c8339c46b477d10e8b585": "sandra_fong@sp.edu.sg", "63d22d60fa6042e19ea144df":"goh_zhe_an@sp.edu.sg" };
+const superAdmin = { "637c8339c46b477d10e8b585": "sandra_fong@sp.edu.sg", "63d22d60fa6042e19ea144df":"goh_zhe_an@sp.edu.sg", "63d22e25fa6042e19ea144f2": "tan_rijian@sp.edu.sg","63d22e55fa6042e19ea144f7": "eric_lim@sp.edu.sg"};
 
 // let isSuccess = alertMessage(false, "");
 // let errorObj = errorMessage(false, "");
