@@ -10,7 +10,7 @@ module.exports = {
                     }
                 
             } catch (error) {
-                console.log("unauthenticated")
+                // console.log("unauthenticated")
                 return res.redirect('/login')  
             }
            

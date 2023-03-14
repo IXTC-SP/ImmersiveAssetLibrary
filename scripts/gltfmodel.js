@@ -19,7 +19,7 @@ const Create = (objectfile, callback) => {
   } catch (error) {
     console.error(error)
   }
-  switch (modeltype) {
+  switch (modeltype.toLowerCase()) {
     case "obj":
       // code block
       var objpath = objectfile.destination + "/" + objectfile.originalname;

@@ -61,7 +61,7 @@
       for (i = 0; i < tags.length; i++) { 
         data.tags.push(tags[i].innerHTML.toLowerCase()); }
       data.files = files;
-      console.log(data);
+      // console.log(data);
       
       for (i = 0; i < newfiles.length; i++) { formData.append('file', newfiles[i]); }
       formData.append('data', JSON.stringify(data));
