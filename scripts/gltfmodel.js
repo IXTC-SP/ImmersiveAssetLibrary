@@ -93,17 +93,20 @@ const ClearMaterialFromModel = (gltfmodelpath, callback) => {
   if (jsonfile.images) {
     jsonfile.images.forEach((image, i) => {
       let imagepath = path + image.uri;
-      console.log("looking for image", imagepath)
       var imageexist = fs.existsSync(imagepath);
       if (!imageexist) {
         jsonfile.textures.forEach((texture, t) => {
           if (texture.source == i) {
             jsonfile.materials.forEach((material, m) => {
-              if(material.normalTexture){
-                delete material.normalTexture;
+              if (material.normalTexture) {
+                if (material.normalTexture["index"] == t) {
+                  delete material.normalTexture;
+                }
               }
-              if(material.emissiveTexture){
-                delete material.emissiveTexture;
+              if (material.emissiveTexture) {
+                if (material.emissiveTexture["index"] == t) {
+                  delete material.emissiveTexture;
+                }
               }
               if (material.pbrMetallicRoughness["baseColorTexture"]) {
                 if (
@@ -135,9 +138,6 @@ const ClearMaterialFromModel = (gltfmodelpath, callback) => {
       }
     });
     console.log("cleared")
-
-    // jsonfile.images = jsonfile.images.filter(item => item !== null && item !== undefined);
-    // jsonfile.textures = jsonfile.textures.filter(item => item !== null && item !== undefined);
 
   }
 

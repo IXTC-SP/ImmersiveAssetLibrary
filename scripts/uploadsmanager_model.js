@@ -40,13 +40,13 @@ const uploadtmp3D = upload.fields([
   },
   {
     name: 'image',
-    maxCount: 10
+    // maxCount: 10
   }
 ]);
 const upload3D = upload.fields([
   {
     name: 'file',
-    maxCount: 10
+    // maxCount: 10
   },
   {
     name: 'newthumbnail',
