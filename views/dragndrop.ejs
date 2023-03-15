@@ -378,6 +378,7 @@
     }
 
     function createuploadcontent() {
+      console.log("after creating upload content")
       const formData = new FormData();
       const request = new XMLHttpRequest();
       var nextURL = "";
@@ -392,7 +393,7 @@
           nextURL = "/editpage/360";
           postURL = "/uploadtmp360";
           break;
-          l - alert - okay;
+          // l - alert - okay;
       }
       //decide asset type
       formData.append("type", currenttype);
@@ -414,8 +415,10 @@
         if (request.readyState == 4 && request.status == 200) {
           // when completed we can move away
           window.location = nextURL;
+          console.log("redirecting")
         }
       };
+      console.log("before send req ")
       request.open("POST", postURL, false);
       request.send(formData);
     }
@@ -484,6 +487,7 @@
               break;
             case 1:
               showModal(modalSpinner)
+              console.log("creating upload content")
               setTimeout(function(){ createuploadcontent()},1000);
              ;
               break;

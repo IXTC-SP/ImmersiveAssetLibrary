@@ -344,12 +344,13 @@ app.post(
       result = req.session.tmpContent.image.map((a) => a.originalname);
     }
     req.session.tmpContent["format"] = req.session.tmpContent.model[0].originalname.split(".")[1];
+    console.log("before create");
     gltfmodel.Create(req.session.tmpContent.model[0], function (gltfresult) {
       if (gltfresult) {
         req.session.tmpContent["gltfresult"] = gltfresult;
         req.session.tmpContent["modelviewerpath"] = `../uploads/tmp/${req.session.id}/model.gltf`;
         req.session.tmpContent["folderpath"] = req.session.tmpContent.model[0].originalname.split(".")[0];
-        //console.log('before clear material',req.session.id, req.session.tmpContent['gltfresult']);
+        console.log('before clear material',req.session.id, req.session.tmpContent['gltfresult']);
         gltfmodel.ClearMaterialFromModel(req.session.tmpContent["gltfresult"], function () {
           res.end("complete");
         });
