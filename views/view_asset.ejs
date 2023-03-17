@@ -26,7 +26,7 @@
       <!-- Carousel wrapper -->
       <div
         id="carouselExampleIndicators"
-        class="carousel slide carousel-model-view"
+        class="carousel slide carousel-model-view mb-3"
         data-bs-interval="false"
       >
         <!-- Slides -->
@@ -48,7 +48,9 @@
               camera-controls
               enable-pan
             ></model-viewer>
+            
           </div>
+
           <%}else{%>
           <div class="model-viewer-dimensions" id="panorama"></div>
           <%}%>
@@ -59,7 +61,9 @@
               alt="..."
             />
           </div> -->
+
         </div>
+
         <!-- Slides -->
 
         <!-- Controls -->
@@ -81,6 +85,7 @@
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
           <span class="visually-hidden">Next</span>
         </button>
+
         <!-- Controls -->
 
         <!-- Thumbnails -->
@@ -107,41 +112,48 @@
             </ul>
           </div>
         </section> -->
-        <div
-          class="carousel-indicators"
-          style="margin-bottom: -20px; margin-left: 0; right: auto"
-        >
-          <button
-            type="button"
-            data-mdb-target="#carouselExampleIndicators"
-            data-mdb-slide-to="0"
-            class="active"
-            aria-current="true"
-            aria-label="Slide 1"
-            style="width: 100px"
+        <!-- <div>
+            <div
+            class="carousel-indicators"
+            style="margin-bottom: -20px; margin-left: 0; right: auto"
           >
-            <img
-              class="thumbnail-img d-block w-100 shadow-1-strong rounded carousel-size"
-              src=""
-              class="img-fluid"
-            />
-          </button>
-          <!-- <buttonsection-
-            type="button"
-            data-mdb-target="#carouselExampleIndicators"
-            data-mdb-slide-to="1"
-            aria-label="Slide 2"
-            style="width: 100px"
-          >
-            <img
-              class="thumbnail-img d-block w-100 shadow-1-strong rounded carousel-size"
-              src=""
-              class="img-fluid"
-            />
-          </button> -->
-        </div>
+  
+            <button
+              type="button"
+              data-mdb-target="#carouselExampleIndicators"
+              data-mdb-slide-to="0"
+              class="active"
+              aria-current="true"
+              aria-label="Slide 1"
+              style="width: 100px"
+            >
+              <img
+                class="thumbnail-img d-block w-100 shadow-1-strong rounded carousel-size"
+                src=""
+                class="img-fluid"
+              />
+            </button> -->
+            <!-- <buttonsection-
+              type="button"
+              data-mdb-target="#carouselExampleIndicators"
+              data-mdb-slide-to="1"
+              aria-label="Slide 2"
+              style="width: 100px"
+            >
+              <img
+                class="thumbnail-img d-block w-100 shadow-1-strong rounded carousel-size"
+                src=""
+                class="img-fluid"
+              />
+            </button> -->
+          <!-- </div> -->
+        <!-- </div> -->
+     
         <!-- Thumbnails -->
+
       </div>
+      <p style="font-size: 11px;" class="text-center fst-italic fw-light">Model's textures may not display
+        accurately, however all assets will be downloaded accordingly.</p>
       <!-- <div>
         <model-viewer
           class="model-viewer-dimensions border border-secondary rounded-4"

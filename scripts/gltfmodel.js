@@ -75,6 +75,7 @@ const Create = (objectfile, callback) => {
           callback(gltfpath);
         },
         (error) => {
+          console.log("create has err", error)
           // ack, conversion failed: inspect 'error' for details
         }
       );
