@@ -59,7 +59,7 @@ const Save = async function (req, res, callback) {
       assetPath: assetpath,
       atrribute: attribute,
       filesize: foldersize,
-      format: body.format,
+      format: body.format.toLowerCase(),
     });
     model.save(function (err, obj) {
       if (err) return console.log(err);
