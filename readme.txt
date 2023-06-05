@@ -1,2 +1,2 @@
-Run application on heroku:
-https://immersive-asset-library.herokuapp.com/
+Run application on aws lightsail:
+https://immersiveassetlibrary.com/login
